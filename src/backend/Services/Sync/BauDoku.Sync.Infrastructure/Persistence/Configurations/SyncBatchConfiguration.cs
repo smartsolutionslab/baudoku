@@ -38,7 +38,7 @@ public sealed class SyncBatchConfiguration : IEntityTypeConfiguration<SyncBatch>
 
         builder.HasMany(b => b.Deltas)
             .WithOne()
-            .HasForeignKey("SyncBatchId")
+            .HasForeignKey("sync_batch_id")
             .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
 
@@ -47,7 +47,7 @@ public sealed class SyncBatchConfiguration : IEntityTypeConfiguration<SyncBatch>
 
         builder.HasMany(b => b.Conflicts)
             .WithOne()
-            .HasForeignKey("SyncBatchId")
+            .HasForeignKey("sync_batch_id")
             .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
 
