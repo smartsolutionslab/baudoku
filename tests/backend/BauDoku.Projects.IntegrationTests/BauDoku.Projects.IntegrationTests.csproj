@@ -13,6 +13,10 @@
     <PackageReference Include="xunit" Version="2.9.3" />
     <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5" />
     <PackageReference Include="AwesomeAssertions" Version="9.3.0" />
+    <PackageReference Include="Testcontainers.PostgreSql" Version="4.10.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.2" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0" />
     <PackageReference Include="NSubstitute" Version="5.3.0" />
   </ItemGroup>
 
@@ -23,6 +27,8 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\backend\Services\Projects\BauDoku.Projects.Domain\BauDoku.Projects.Domain.csproj" />
     <ProjectReference Include="..\..\..\src\backend\Services\Projects\BauDoku.Projects.Application\BauDoku.Projects.Application.csproj" />
+    <ProjectReference Include="..\..\..\src\backend\Services\Projects\BauDoku.Projects.Infrastructure\BauDoku.Projects.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\src\backend\BuildingBlocks\BauDoku.BuildingBlocks.Application\BauDoku.BuildingBlocks.Application.csproj" />
   </ItemGroup>
 
 </Project>

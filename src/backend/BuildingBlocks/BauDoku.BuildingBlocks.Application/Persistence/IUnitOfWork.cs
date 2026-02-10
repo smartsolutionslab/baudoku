@@ -1,4 +1,4 @@
-namespace BauDoku.BuildingBlocks.Infrastructure.Persistence;
+namespace BauDoku.BuildingBlocks.Application.Persistence;
 
 public interface IUnitOfWork
 {

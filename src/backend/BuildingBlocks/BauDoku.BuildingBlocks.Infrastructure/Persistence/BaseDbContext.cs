@@ -1,4 +1,5 @@
 using BauDoku.BuildingBlocks.Application.Dispatcher;
+using BauDoku.BuildingBlocks.Application.Persistence;
 using BauDoku.BuildingBlocks.Domain;
 using Microsoft.EntityFrameworkCore;
 
@@ -30,7 +31,7 @@ public abstract class BaseDbContext : DbContext, IUnitOfWork
     private List<IDomainEvent> GetDomainEvents()
     {
         var aggregateRoots = ChangeTracker
-            .Entries<AggregateRoot<ValueObject>>()
+            .Entries<IAggregateRoot>()
             .Where(e => e.Entity.DomainEvents.Count != 0)
             .Select(e => e.Entity)
             .ToList();

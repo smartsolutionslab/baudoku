@@ -34,6 +34,7 @@
     <Project Path="../../tests/backend/BauDoku.Documentation.IntegrationTests/BauDoku.Documentation.IntegrationTests.csproj" />
     <Project Path="../../tests/backend/BauDoku.Documentation.UnitTests/BauDoku.Documentation.UnitTests.csproj" />
     <Project Path="../../tests/backend/BauDoku.Projects.UnitTests/BauDoku.Projects.UnitTests.csproj" />
+    <Project Path="../../tests/backend/BauDoku.Projects.IntegrationTests/BauDoku.Projects.IntegrationTests.csproj" />
     <Project Path="../../tests/backend/BauDoku.Sync.IntegrationTests/BauDoku.Sync.IntegrationTests.csproj" />
   </Folder>
 </Solution>
