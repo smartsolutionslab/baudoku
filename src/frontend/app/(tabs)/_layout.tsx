@@ -50,7 +50,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="sync/index"
+        name="sync"
         options={{
           title: "Sync",
           tabBarIcon: ({ color }) => (
