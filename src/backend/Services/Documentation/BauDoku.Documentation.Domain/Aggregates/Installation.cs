@@ -101,6 +101,33 @@ public sealed class Installation : AggregateRoot<InstallationId>
         AddDomainEvent(new PhotoRemoved(Id, photoId, DateTime.UtcNow));
     }
 
+    public void RecordMeasurement(
+        MeasurementId measurementId,
+        MeasurementType type,
+        MeasurementValue value,
+        string? notes = null)
+    {
+        CheckRule(new CompletedInstallationCannotBeModified(Status));
+        CheckRule(new MeasurementValueMustBePositive(value));
+
+        var measurement = Measurement.Create(measurementId, type, value, notes);
+        _measurements.Add(measurement);
+
+        AddDomainEvent(new MeasurementRecorded(Id, measurementId, DateTime.UtcNow));
+    }
+
+    public void RemoveMeasurement(MeasurementId measurementId)
+    {
+        CheckRule(new CompletedInstallationCannotBeModified(Status));
+
+        var measurement = _measurements.FirstOrDefault(m => m.Id == measurementId)
+            ?? throw new InvalidOperationException($"Messung mit ID {measurementId.Value} nicht gefunden.");
+
+        _measurements.Remove(measurement);
+
+        AddDomainEvent(new MeasurementRemoved(Id, measurementId, DateTime.UtcNow));
+    }
+
     public void MarkAsCompleted()
     {
         CheckRule(new CompletedInstallationCannotBeModified(Status));

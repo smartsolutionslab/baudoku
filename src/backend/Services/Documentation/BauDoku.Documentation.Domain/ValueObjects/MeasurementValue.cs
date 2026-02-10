@@ -8,8 +8,10 @@ public sealed record MeasurementValue : ValueObject
 
     public double Value { get; }
     public string Unit { get; }
+    public double? MinThreshold { get; }
+    public double? MaxThreshold { get; }
 
-    public MeasurementValue(double value, string unit)
+    public MeasurementValue(double value, string unit, double? minThreshold = null, double? maxThreshold = null)
     {
         if (string.IsNullOrWhiteSpace(unit))
             throw new ArgumentException("Einheit darf nicht leer sein.", nameof(unit));
@@ -17,5 +19,7 @@ public sealed record MeasurementValue : ValueObject
             throw new ArgumentException($"Einheit darf max. {MaxUnitLength} Zeichen lang sein.", nameof(unit));
         Value = value;
         Unit = unit;
+        MinThreshold = minThreshold;
+        MaxThreshold = maxThreshold;
     }
 }

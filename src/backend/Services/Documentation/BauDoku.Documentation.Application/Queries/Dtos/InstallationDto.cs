@@ -28,4 +28,4 @@ public sealed record InstallationDto(
     DateTime CreatedAt,
     DateTime? CompletedAt,
     IReadOnlyList<PhotoDto> Photos,
-    int MeasurementCount);
+    IReadOnlyList<MeasurementDto> Measurements);

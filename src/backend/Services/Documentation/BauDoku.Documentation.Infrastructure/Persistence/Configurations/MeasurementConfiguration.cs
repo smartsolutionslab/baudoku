@@ -26,9 +26,17 @@ public sealed class MeasurementConfiguration : IEntityTypeConfiguration<Measurem
         {
             val.Property(v => v.Value).HasColumnName("measurement_value").IsRequired();
             val.Property(v => v.Unit).HasColumnName("measurement_unit").HasMaxLength(MeasurementValue.MaxUnitLength).IsRequired();
+            val.Property(v => v.MinThreshold).HasColumnName("min_threshold");
+            val.Property(v => v.MaxThreshold).HasColumnName("max_threshold");
         });
 
         builder.Navigation(m => m.Value).IsRequired();
+
+        builder.Property(m => m.Result)
+            .HasColumnName("result")
+            .HasMaxLength(20)
+            .IsRequired()
+            .HasConversion(r => r.Value, value => new MeasurementResult(value));
 
         builder.Property(m => m.MeasuredAt)
             .HasColumnName("measured_at")

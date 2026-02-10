@@ -26,5 +26,6 @@ if (app.Environment.IsDevelopment())
 app.MapHealthChecks("/health");
 app.MapInstallationEndpoints();
 app.MapPhotoEndpoints();
+app.MapMeasurementEndpoints();
 
 app.Run();

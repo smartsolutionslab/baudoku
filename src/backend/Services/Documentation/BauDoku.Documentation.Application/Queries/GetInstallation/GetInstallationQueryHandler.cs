@@ -37,6 +37,18 @@ public sealed class GetInstallationQueryHandler
             p.Position?.Longitude,
             p.TakenAt)).ToList();
 
+        var measurements = installation.Measurements.Select(m => new MeasurementDto(
+            m.Id.Value,
+            installation.Id.Value,
+            m.Type.Value,
+            m.Value.Value,
+            m.Value.Unit,
+            m.Value.MinThreshold,
+            m.Value.MaxThreshold,
+            m.Result.Value,
+            m.Notes,
+            m.MeasuredAt)).ToList();
+
         return new InstallationDto(
             installation.Id.Value,
             installation.ProjectId,
@@ -65,6 +77,6 @@ public sealed class GetInstallationQueryHandler
             installation.CreatedAt,
             installation.CompletedAt,
             photos,
-            installation.Measurements.Count);
+            measurements);
     }
 }

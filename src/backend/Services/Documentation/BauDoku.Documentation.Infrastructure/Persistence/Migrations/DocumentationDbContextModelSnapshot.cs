@@ -100,6 +100,12 @@ namespace BauDoku.Documentation.Infrastructure.Persistence.Migrations
                         .HasColumnType("character varying(500)")
                         .HasColumnName("notes");
 
+                    b.Property<string>("Result")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("result");
+
                     b.Property<string>("Type")
                         .IsRequired()
                         .HasMaxLength(30)
@@ -292,6 +298,14 @@ namespace BauDoku.Documentation.Infrastructure.Persistence.Migrations
                         {
                             b1.Property<Guid>("MeasurementId")
                                 .HasColumnType("uuid");
+
+                            b1.Property<double?>("MaxThreshold")
+                                .HasColumnType("double precision")
+                                .HasColumnName("max_threshold");
+
+                            b1.Property<double?>("MinThreshold")
+                                .HasColumnType("double precision")
+                                .HasColumnName("min_threshold");
 
                             b1.Property<string>("Unit")
                                 .IsRequired()
