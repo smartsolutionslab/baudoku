@@ -4,12 +4,15 @@ import { useLocalSearchParams, useRouter, Stack } from "expo-router";
 import {
   useProject,
   useZonesByProject,
+  useDeleteProject,
 } from "../../../src/hooks/useOfflineData";
 import { useZoneTree } from "../../../src/hooks/useZoneTree";
+import { useConfirmDelete } from "../../../src/hooks/useConfirmDelete";
 import { ZoneTree } from "../../../src/components/projects/ZoneTree";
 import { StatusBadge } from "../../../src/components/common/StatusBadge";
 import { EmptyState } from "../../../src/components/common/EmptyState";
 import { FloatingActionButton } from "../../../src/components/common/FloatingActionButton";
+import { ActionBar } from "../../../src/components/common/ActionBar";
 import { Colors, Spacing, FontSize } from "../../../src/styles/tokens";
 
 function formatDate(d: Date | null | undefined): string {
@@ -27,12 +30,26 @@ export default function ProjectDetailScreen() {
   const { data: project } = useProject(id!);
   const { data: zones } = useZonesByProject(id!);
   const tree = useZoneTree(zones);
+  const deleteProject = useDeleteProject();
+  const { confirmDelete } = useConfirmDelete();
 
   if (!project) return null;
 
   const address = [project.street, project.zipCode, project.city]
     .filter(Boolean)
     .join(", ");
+
+  const handleDelete = () => {
+    confirmDelete({
+      title: "Projekt löschen",
+      message:
+        "Dieses Projekt und alle zugehörigen Daten wirklich löschen?",
+      onConfirm: async () => {
+        await deleteProject.mutateAsync(id!);
+        router.replace("/(tabs)/projects/");
+      },
+    });
+  };
 
   return (
     <View style={styles.container}>
@@ -66,6 +83,23 @@ export default function ProjectDetailScreen() {
             <Text style={styles.value}>{formatDate(project.createdAt)}</Text>
           </View>
         </View>
+
+        <ActionBar
+          actions={[
+            {
+              icon: "pencil",
+              label: "Bearbeiten",
+              onPress: () =>
+                router.push(`/(tabs)/projects/edit?id=${id}`),
+            },
+            {
+              icon: "trash",
+              label: "Löschen",
+              onPress: handleDelete,
+              color: Colors.danger,
+            },
+          ]}
+        />
 
         <Text style={styles.sectionTitle}>Zonen</Text>
 
@@ -138,6 +172,7 @@ const styles = StyleSheet.create({
     fontSize: FontSize.headline,
     fontWeight: "600",
     marginHorizontal: Spacing.lg,
+    marginTop: Spacing.lg,
     marginBottom: Spacing.sm,
   },
   treeContainer: {

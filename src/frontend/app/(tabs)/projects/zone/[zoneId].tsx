@@ -1,10 +1,13 @@
 import React, { useMemo } from "react";
-import { View, Text, FlatList, StyleSheet } from "react-native";
+import { View, Text, FlatList, TouchableOpacity, StyleSheet } from "react-native";
 import { useLocalSearchParams, useRouter, Stack } from "expo-router";
+import { FontAwesome } from "@expo/vector-icons";
 import {
   useZonesByProject,
   useInstallationsByZone,
+  useDeleteZone,
 } from "../../../../src/hooks/useOfflineData";
+import { useConfirmDelete } from "../../../../src/hooks/useConfirmDelete";
 import { InstallationCard } from "../../../../src/components/installations/InstallationCard";
 import { StatusBadge } from "../../../../src/components/common/StatusBadge";
 import { EmptyState } from "../../../../src/components/common/EmptyState";
@@ -32,6 +35,8 @@ export default function ZoneDetailScreen() {
   const { data: zones } = useZonesByProject(projectId!);
   const { data: installations, isLoading, refetch } =
     useInstallationsByZone(zoneId!);
+  const deleteZone = useDeleteZone();
+  const { confirmDelete } = useConfirmDelete();
 
   const zone = useMemo(
     () => zones?.find((z) => z.id === zoneId),
@@ -44,6 +49,17 @@ export default function ZoneDetailScreen() {
   );
 
   if (!zone) return null;
+
+  const handleDelete = () => {
+    confirmDelete({
+      title: "Zone löschen",
+      message: "Diese Zone und alle zugehörigen Daten wirklich löschen?",
+      onConfirm: async () => {
+        await deleteZone.mutateAsync(zoneId!);
+        router.back();
+      },
+    });
+  };
 
   return (
     <View style={styles.container}>
@@ -59,6 +75,10 @@ export default function ZoneDetailScreen() {
             {breadcrumb.join(" > ")}
           </Text>
         )}
+        <TouchableOpacity style={styles.deleteRow} onPress={handleDelete}>
+          <FontAwesome name="trash-o" size={14} color={Colors.danger} />
+          <Text style={styles.deleteText}>Zone löschen</Text>
+        </TouchableOpacity>
       </View>
 
       <Text style={styles.sectionTitle}>Installationen</Text>
@@ -131,6 +151,19 @@ const styles = StyleSheet.create({
     fontSize: FontSize.caption,
     color: Colors.textTertiary,
     marginTop: Spacing.sm,
+  },
+  deleteRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: Spacing.md,
+    paddingTop: Spacing.sm,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: Colors.separator,
+  },
+  deleteText: {
+    fontSize: FontSize.caption,
+    color: Colors.danger,
+    marginLeft: Spacing.xs,
   },
   sectionTitle: {
     fontSize: FontSize.headline,

@@ -96,6 +96,34 @@ export function useCreateZone() {
   });
 }
 
+export function useUpdateZone() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: Partial<Omit<NewZone, "id" | "version" | "projectId">>;
+    }) => zoneRepo.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["zones"] });
+      queryClient.invalidateQueries({ queryKey: ["syncStatus"] });
+    },
+  });
+}
+
+export function useDeleteZone() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => zoneRepo.remove(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["zones"] });
+      queryClient.invalidateQueries({ queryKey: ["syncStatus"] });
+    },
+  });
+}
+
 // ─── Installations ───────────────────────────────────────────────
 
 export function useInstallationsByZone(zoneId: string) {
@@ -132,6 +160,40 @@ export function useCreateInstallation() {
   });
 }
 
+export function useUpdateInstallation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: Partial<
+        Omit<
+          NewInstallation,
+          "id" | "createdAt" | "updatedAt" | "version" | "projectId" | "zoneId"
+        >
+      >;
+    }) => installationRepo.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["installations"] });
+      queryClient.invalidateQueries({ queryKey: ["installation"] });
+      queryClient.invalidateQueries({ queryKey: ["syncStatus"] });
+    },
+  });
+}
+
+export function useDeleteInstallation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => installationRepo.remove(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["installations"] });
+      queryClient.invalidateQueries({ queryKey: ["syncStatus"] });
+    },
+  });
+}
+
 // ─── Photos ──────────────────────────────────────────────────────
 
 export function usePhotosByInstallation(installationId: string) {
@@ -156,6 +218,17 @@ export function useAddPhoto() {
   });
 }
 
+export function useDeletePhoto() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => photoRepo.remove(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["photos"] });
+      queryClient.invalidateQueries({ queryKey: ["syncStatus"] });
+    },
+  });
+}
+
 // ─── Measurements ────────────────────────────────────────────────
 
 export function useMeasurementsByInstallation(installationId: string) {
@@ -175,6 +248,17 @@ export function useAddMeasurement() {
       queryClient.invalidateQueries({
         queryKey: ["measurements", variables.installationId],
       });
+      queryClient.invalidateQueries({ queryKey: ["syncStatus"] });
+    },
+  });
+}
+
+export function useDeleteMeasurement() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => measurementRepo.remove(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["measurements"] });
       queryClient.invalidateQueries({ queryKey: ["syncStatus"] });
     },
   });

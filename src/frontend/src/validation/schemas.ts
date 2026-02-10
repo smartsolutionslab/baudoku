@@ -40,3 +40,15 @@ export const installationSchema = z.object({
 });
 
 export type InstallationFormData = z.infer<typeof installationSchema>;
+
+export const measurementSchema = z.object({
+  type: z.string().min(1, "Messtyp erforderlich"),
+  value: z.coerce.number({ message: "Messwert erforderlich" }),
+  unit: z.string().min(1, "Einheit erforderlich"),
+  minThreshold: z.coerce.number().optional(),
+  maxThreshold: z.coerce.number().optional(),
+  notes: z.string().optional(),
+  measuredBy: z.string().min(1, "Prüfer erforderlich"),
+});
+
+export type MeasurementFormData = z.infer<typeof measurementSchema>;

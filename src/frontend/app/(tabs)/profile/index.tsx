@@ -18,8 +18,8 @@ export default function ProfileScreen() {
       <View style={styles.card}>
         <Text style={styles.cardTitle}>App-Info</Text>
         <Row label="App" value="BauDoku" />
-        <Row label="Version" value="0.7.0" />
-        <Row label="Build" value="Sprint 7" />
+        <Row label="Version" value="0.8.0" />
+        <Row label="Build" value="Sprint 8" />
       </View>
 
       {/* Gerät */}
