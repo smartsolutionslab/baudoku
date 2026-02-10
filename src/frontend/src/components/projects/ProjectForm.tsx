@@ -21,11 +21,19 @@ const statusOptions = [
 interface ProjectFormProps {
   onSubmit: (data: ProjectFormData) => Promise<void>;
   submitting?: boolean;
+  initialValues?: Partial<ProjectFormData>;
+  submitLabel?: string;
 }
 
-export function ProjectForm({ onSubmit, submitting }: ProjectFormProps) {
+export function ProjectForm({
+  onSubmit,
+  submitting,
+  initialValues,
+  submitLabel,
+}: ProjectFormProps) {
   const [form, setForm] = useState<Partial<ProjectFormData>>({
     status: "active",
+    ...initialValues,
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -131,7 +139,7 @@ export function ProjectForm({ onSubmit, submitting }: ProjectFormProps) {
         disabled={submitting}
       >
         <Text style={styles.buttonText}>
-          {submitting ? "Speichert..." : "Speichern"}
+          {submitting ? "Speichert..." : submitLabel ?? "Speichern"}
         </Text>
       </TouchableOpacity>
     </ScrollView>

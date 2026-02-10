@@ -1,14 +1,16 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { FontAwesome } from "@expo/vector-icons";
 import type { Measurement } from "../../db/repositories/types";
 import { StatusBadge } from "../common/StatusBadge";
 import { Colors, Spacing, FontSize } from "../../styles/tokens";
 
 interface MeasurementCardProps {
   measurement: Measurement;
+  onDelete?: (measurement: Measurement) => void;
 }
 
-export function MeasurementCard({ measurement }: MeasurementCardProps) {
+export function MeasurementCard({ measurement, onDelete }: MeasurementCardProps) {
   const m = measurement;
   const thresholds =
     m.minThreshold != null || m.maxThreshold != null
@@ -24,7 +26,17 @@ export function MeasurementCard({ measurement }: MeasurementCardProps) {
     <View style={styles.card}>
       <View style={styles.header}>
         <Text style={styles.type}>{m.type}</Text>
-        {m.result && <StatusBadge status={m.result} />}
+        <View style={styles.headerRight}>
+          {m.result && <StatusBadge status={m.result} />}
+          {onDelete && (
+            <TouchableOpacity
+              style={styles.deleteButton}
+              onPress={() => onDelete(m)}
+            >
+              <FontAwesome name="trash-o" size={16} color={Colors.danger} />
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
       <Text style={styles.value}>
         {m.value} {m.unit}
@@ -48,12 +60,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 2,
   },
+  headerRight: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+  },
   type: {
     fontSize: FontSize.body,
     fontWeight: "600",
     color: Colors.textPrimary,
     flex: 1,
     marginRight: Spacing.sm,
+  },
+  deleteButton: {
+    padding: Spacing.xs,
   },
   value: {
     fontSize: FontSize.headline,

@@ -9,6 +9,8 @@ import {
 } from "react-native";
 import { FormField } from "../common/FormField";
 import { FormPicker } from "../common/FormPicker";
+import { GpsButton } from "./GpsButton";
+import { useGpsCapture, type GpsPosition } from "../../hooks/useGpsCapture";
 import {
   installationSchema,
   type InstallationFormData,
@@ -31,18 +33,23 @@ const phaseOptions = [
 ];
 
 interface InstallationFormProps {
-  onSubmit: (data: InstallationFormData) => Promise<void>;
+  onSubmit: (data: InstallationFormData, gps: GpsPosition | null) => Promise<void>;
   submitting?: boolean;
+  initialValues?: Partial<InstallationFormData>;
+  initialGps?: GpsPosition | null;
+  submitLabel?: string;
 }
 
 function CollapsibleSection({
   title,
+  defaultOpen,
   children,
 }: {
   title: string;
+  defaultOpen?: boolean;
   children: React.ReactNode;
 }) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(defaultOpen ?? false);
   return (
     <View style={sectionStyles.container}>
       <TouchableOpacity
@@ -60,11 +67,34 @@ function CollapsibleSection({
 export function InstallationForm({
   onSubmit,
   submitting,
+  initialValues,
+  initialGps,
+  submitLabel,
 }: InstallationFormProps) {
   const [form, setForm] = useState<Record<string, unknown>>({
     status: "in_progress",
+    ...initialValues,
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const gps = useGpsCapture();
+
+  // Use initialGps if provided and no new capture has been done
+  const currentGps = gps.position ?? initialGps ?? null;
+
+  const hasComponentValues =
+    !!initialValues?.manufacturer ||
+    !!initialValues?.model ||
+    !!initialValues?.serialNumber;
+  const hasCableValues =
+    !!initialValues?.cableType ||
+    initialValues?.crossSectionMm2 != null ||
+    initialValues?.lengthM != null;
+  const hasElectricalValues =
+    !!initialValues?.circuitId ||
+    !!initialValues?.fuseType ||
+    initialValues?.fuseRatingA != null ||
+    initialValues?.voltageV != null ||
+    initialValues?.phase != null;
 
   const set = useCallback((key: string, value: unknown) => {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -75,7 +105,11 @@ export function InstallationForm({
     });
   }, []);
 
-  const str = (key: string) => (form[key] as string) ?? "";
+  const str = (key: string) => {
+    const val = form[key];
+    if (val == null) return "";
+    return String(val);
+  };
 
   const handleSubmit = useCallback(async () => {
     // Strip empty strings before validation
@@ -98,11 +132,11 @@ export function InstallationForm({
       return;
     }
     try {
-      await onSubmit(result.data);
+      await onSubmit(result.data, currentGps);
     } catch {
       Alert.alert("Fehler", "Installation konnte nicht gespeichert werden.");
     }
-  }, [form, onSubmit]);
+  }, [form, onSubmit, currentGps]);
 
   return (
     <ScrollView
@@ -128,7 +162,7 @@ export function InstallationForm({
         error={errors.status}
       />
 
-      <CollapsibleSection title="Komponente">
+      <CollapsibleSection title="Komponente" defaultOpen={hasComponentValues}>
         <FormField
           label="Hersteller"
           value={str("manufacturer")}
@@ -149,7 +183,7 @@ export function InstallationForm({
         />
       </CollapsibleSection>
 
-      <CollapsibleSection title="Kabel">
+      <CollapsibleSection title="Kabel" defaultOpen={hasCableValues}>
         <FormField
           label="Kabeltyp"
           value={str("cableType")}
@@ -172,7 +206,7 @@ export function InstallationForm({
         />
       </CollapsibleSection>
 
-      <CollapsibleSection title="Elektrik">
+      <CollapsibleSection title="Elektrik" defaultOpen={hasElectricalValues}>
         <FormField
           label="Stromkreis"
           value={str("circuitId")}
@@ -226,14 +260,13 @@ export function InstallationForm({
         style={{ minHeight: 80, textAlignVertical: "top" }}
       />
 
-      <TouchableOpacity
-        style={[styles.gpsButton, styles.gpsButtonDisabled]}
-        disabled
-      >
-        <Text style={styles.gpsButtonText}>
-          GPS-Position erfassen (Sprint 8)
-        </Text>
-      </TouchableOpacity>
+      <GpsButton
+        position={currentGps}
+        capturing={gps.capturing}
+        error={gps.error}
+        onCapture={gps.capturePosition}
+        onClear={gps.clearPosition}
+      />
 
       <TouchableOpacity
         style={[styles.button, submitting && styles.buttonDisabled]}
@@ -241,7 +274,9 @@ export function InstallationForm({
         disabled={submitting}
       >
         <Text style={styles.buttonText}>
-          {submitting ? "Speichert..." : "Speichern"}
+          {submitting
+            ? "Speichert..."
+            : submitLabel ?? "Speichern"}
         </Text>
       </TouchableOpacity>
     </ScrollView>
@@ -292,21 +327,6 @@ const styles = StyleSheet.create({
     color: Colors.textPrimary,
     marginTop: Spacing.lg,
     marginBottom: Spacing.md,
-  },
-  gpsButton: {
-    backgroundColor: Colors.textTertiary,
-    paddingVertical: 12,
-    borderRadius: 10,
-    alignItems: "center",
-    marginTop: Spacing.lg,
-  },
-  gpsButtonDisabled: {
-    backgroundColor: Colors.disabled,
-  },
-  gpsButtonText: {
-    color: Colors.textTertiary,
-    fontSize: FontSize.body,
-    fontWeight: "500",
   },
   button: {
     backgroundColor: Colors.primary,

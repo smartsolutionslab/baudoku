@@ -3,6 +3,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { useCreateInstallation } from "../../../src/hooks/useOfflineData";
 import { InstallationForm } from "../../../src/components/installations/InstallationForm";
 import type { InstallationFormData } from "../../../src/validation/schemas";
+import type { GpsPosition } from "../../../src/hooks/useGpsCapture";
 
 export default function NewInstallationScreen() {
   const { projectId, zoneId } = useLocalSearchParams<{
@@ -12,7 +13,10 @@ export default function NewInstallationScreen() {
   const router = useRouter();
   const createInstallation = useCreateInstallation();
 
-  const handleSubmit = async (data: InstallationFormData) => {
+  const handleSubmit = async (
+    data: InstallationFormData,
+    gps: GpsPosition | null
+  ) => {
     const result = await createInstallation.mutateAsync({
       projectId: projectId!,
       zoneId: zoneId!,
@@ -31,6 +35,17 @@ export default function NewInstallationScreen() {
       phase: data.phase || null,
       depthMm: data.depthMm ?? null,
       notes: data.notes || null,
+      // GPS fields
+      gpsLat: gps?.gpsLat ?? null,
+      gpsLng: gps?.gpsLng ?? null,
+      gpsAltitude: gps?.gpsAltitude ?? null,
+      gpsAccuracy: gps?.gpsAccuracy ?? null,
+      gpsSource: gps?.gpsSource ?? null,
+      gpsCorrService: gps?.gpsCorrService ?? null,
+      gpsRtkStatus: gps?.gpsRtkStatus ?? null,
+      gpsSatCount: gps?.gpsSatCount ?? null,
+      gpsHdop: gps?.gpsHdop ?? null,
+      gpsCorrAge: gps?.gpsCorrAge ?? null,
     });
     router.replace(`/(tabs)/projects/installation/${result.id}`);
   };
