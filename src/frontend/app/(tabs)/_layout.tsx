@@ -31,9 +31,10 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name="projects/index"
+        name="projects"
         options={{
           title: "Projekte",
+          headerShown: false,
           tabBarIcon: ({ color }) => (
             <TabBarIcon name="building" color={color} />
           ),
@@ -41,9 +42,10 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="capture/index"
+        name="capture"
         options={{
           title: "Erfassen",
+          headerShown: false,
           tabBarIcon: ({ color }) => (
             <TabBarIcon name="camera" color={color} />
           ),
@@ -60,9 +62,10 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="profile/index"
+        name="profile"
         options={{
           title: "Profil",
+          headerShown: false,
           tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
         }}
       />

@@ -1,13 +1,65 @@
-import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import React, { useState, useMemo } from "react";
+import { View, TextInput, FlatList, StyleSheet } from "react-native";
+import { useRouter } from "expo-router";
+import { useProjects } from "../../../src/hooks/useOfflineData";
+import { ProjectCard } from "../../../src/components/projects/ProjectCard";
+import { EmptyState } from "../../../src/components/common/EmptyState";
+import { FloatingActionButton } from "../../../src/components/common/FloatingActionButton";
+import { Colors, Spacing } from "../../../src/styles/tokens";
 
 export default function ProjectsScreen() {
+  const router = useRouter();
+  const { data: projects, isLoading, refetch } = useProjects();
+  const [search, setSearch] = useState("");
+
+  const filtered = useMemo(() => {
+    if (!projects) return [];
+    if (!search.trim()) return projects;
+    const q = search.toLowerCase();
+    return projects.filter(
+      (p) =>
+        p.name.toLowerCase().includes(q) ||
+        p.city?.toLowerCase().includes(q) ||
+        p.clientName?.toLowerCase().includes(q)
+    );
+  }, [projects, search]);
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Projekte</Text>
-      <Text style={styles.subtitle}>
-        Projektverwaltung wird in Sprint 6 implementiert
-      </Text>
+      <TextInput
+        style={styles.search}
+        placeholder="Projekte suchen..."
+        placeholderTextColor={Colors.textTertiary}
+        value={search}
+        onChangeText={setSearch}
+        clearButtonMode="while-editing"
+      />
+      {filtered.length === 0 && !isLoading ? (
+        <EmptyState
+          icon="building"
+          title="Noch keine Projekte"
+          subtitle="Erstelle dein erstes Projekt, um loszulegen."
+          actionLabel="Projekt anlegen"
+          onAction={() => router.push("/(tabs)/projects/new")}
+        />
+      ) : (
+        <FlatList
+          data={filtered}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <ProjectCard
+              project={item}
+              onPress={() => router.push(`/(tabs)/projects/${item.id}`)}
+            />
+          )}
+          contentContainerStyle={styles.list}
+          refreshing={isLoading}
+          onRefresh={() => void refetch()}
+        />
+      )}
+      <FloatingActionButton
+        onPress={() => router.push("/(tabs)/projects/new")}
+      />
     </View>
   );
 }
@@ -15,19 +67,21 @@ export default function ProjectsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
-    backgroundColor: "#F2F2F7",
+    backgroundColor: Colors.background,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: "600",
-    marginBottom: 8,
-  },
-  subtitle: {
+  search: {
+    backgroundColor: Colors.card,
+    marginHorizontal: Spacing.lg,
+    marginTop: Spacing.lg,
+    marginBottom: Spacing.sm,
+    borderRadius: 10,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: 10,
     fontSize: 15,
-    color: "#8E8E93",
-    textAlign: "center",
+    color: Colors.textPrimary,
+  },
+  list: {
+    paddingHorizontal: Spacing.lg,
+    paddingBottom: 80,
   },
 });
