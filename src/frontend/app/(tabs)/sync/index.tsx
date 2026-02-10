@@ -4,10 +4,13 @@ import {
   Text,
   FlatList,
   StyleSheet,
-  useColorScheme,
+  TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
+import { useRouter } from "expo-router";
 import { useSyncStore } from "../../../src/store/useSyncStore";
 import { useSyncStatus } from "../../../src/hooks/useSyncStatus";
+import { useSyncManager } from "../../../src/hooks/useSyncManager";
 import type { SyncOutboxEntry } from "../../../src/db/repositories/types";
 
 function formatTimestamp(date: Date): string {
@@ -76,8 +79,10 @@ function OutboxItem({ item }: { item: SyncOutboxEntry }) {
 }
 
 export default function SyncScreen() {
+  const router = useRouter();
   const { isOnline, unsyncedCount, lastSyncTimestamp } = useSyncStatus();
-  const { pendingEntries, loadPendingEntries } = useSyncStore();
+  const { pendingEntries, loadPendingEntries, conflicts } = useSyncStore();
+  const { sync, isSyncing, syncError } = useSyncManager();
 
   useEffect(() => {
     loadPendingEntries();
@@ -112,7 +117,43 @@ export default function SyncScreen() {
             {lastSyncTimestamp ?? "Noch nicht synchronisiert"}
           </Text>
         </View>
+
+        <TouchableOpacity
+          style={[
+            styles.syncButton,
+            (!isOnline || isSyncing) && styles.syncButtonDisabled,
+          ]}
+          onPress={() => void sync()}
+          disabled={!isOnline || isSyncing}
+        >
+          {isSyncing ? (
+            <ActivityIndicator color="#fff" size="small" />
+          ) : (
+            <Text style={styles.syncButtonText}>Jetzt synchronisieren</Text>
+          )}
+        </TouchableOpacity>
+
+        {syncError && (
+          <Text style={styles.syncError}>{syncError}</Text>
+        )}
       </View>
+
+      {conflicts.length > 0 && (
+        <TouchableOpacity
+          style={styles.conflictCard}
+          onPress={() => router.push("/(tabs)/sync/conflicts")}
+        >
+          <View style={styles.conflictBadge}>
+            <Text style={styles.conflictBadgeText}>{conflicts.length}</Text>
+          </View>
+          <Text style={styles.conflictText}>
+            {conflicts.length === 1
+              ? "1 Konflikt zu lösen"
+              : `${conflicts.length} Konflikte zu lösen`}
+          </Text>
+          <Text style={styles.chevron}>›</Text>
+        </TouchableOpacity>
+      )}
 
       <Text style={styles.sectionTitle}>Ausstehende Änderungen</Text>
 
@@ -174,6 +215,59 @@ const styles = StyleSheet.create({
   },
   offline: {
     backgroundColor: "#FF3B30",
+  },
+  syncButton: {
+    backgroundColor: "#007AFF",
+    paddingVertical: 12,
+    borderRadius: 10,
+    alignItems: "center",
+    marginTop: 4,
+  },
+  syncButtonDisabled: {
+    backgroundColor: "#C7C7CC",
+  },
+  syncButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  syncError: {
+    color: "#FF3B30",
+    fontSize: 13,
+    textAlign: "center",
+  },
+  conflictCard: {
+    backgroundColor: "#FFF3CD",
+    marginHorizontal: 16,
+    marginBottom: 16,
+    borderRadius: 12,
+    padding: 14,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  conflictBadge: {
+    backgroundColor: "#FF9500",
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  conflictBadgeText: {
+    color: "#fff",
+    fontSize: 13,
+    fontWeight: "700",
+  },
+  conflictText: {
+    flex: 1,
+    fontSize: 15,
+    fontWeight: "500",
+    color: "#856404",
+  },
+  chevron: {
+    fontSize: 22,
+    color: "#856404",
   },
   sectionTitle: {
     fontSize: 17,

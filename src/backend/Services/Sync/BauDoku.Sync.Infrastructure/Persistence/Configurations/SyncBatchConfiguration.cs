@@ -1,0 +1,59 @@
+using BauDoku.Sync.Domain.Aggregates;
+using BauDoku.Sync.Domain.ValueObjects;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace BauDoku.Sync.Infrastructure.Persistence.Configurations;
+
+public sealed class SyncBatchConfiguration : IEntityTypeConfiguration<SyncBatch>
+{
+    public void Configure(EntityTypeBuilder<SyncBatch> builder)
+    {
+        builder.ToTable("sync_batches");
+
+        builder.HasKey(b => b.Id);
+
+        builder.Property(b => b.Id)
+            .HasColumnName("id")
+            .HasConversion(id => id.Value, value => new SyncBatchId(value));
+
+        builder.Property(b => b.DeviceId)
+            .HasColumnName("device_id")
+            .HasMaxLength(DeviceId.MaxLength)
+            .IsRequired()
+            .HasConversion(d => d.Value, value => new DeviceId(value));
+
+        builder.Property(b => b.Status)
+            .HasColumnName("status")
+            .HasMaxLength(30)
+            .IsRequired()
+            .HasConversion(s => s.Value, value => new BatchStatus(value));
+
+        builder.Property(b => b.SubmittedAt)
+            .HasColumnName("submitted_at")
+            .IsRequired();
+
+        builder.Property(b => b.ProcessedAt)
+            .HasColumnName("processed_at");
+
+        builder.HasMany(b => b.Deltas)
+            .WithOne()
+            .HasForeignKey("SyncBatchId")
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Metadata.FindNavigation(nameof(SyncBatch.Deltas))!
+            .SetPropertyAccessMode(PropertyAccessMode.Field);
+
+        builder.HasMany(b => b.Conflicts)
+            .WithOne()
+            .HasForeignKey("SyncBatchId")
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Metadata.FindNavigation(nameof(SyncBatch.Conflicts))!
+            .SetPropertyAccessMode(PropertyAccessMode.Field);
+
+        builder.Ignore(b => b.DomainEvents);
+    }
+}

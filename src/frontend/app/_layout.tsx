@@ -7,6 +7,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { useColorScheme } from "react-native";
 
 import { QueryProvider } from "../src/providers/QueryProvider";
+import { SyncProvider } from "../src/providers/SyncProvider";
 import { useMigrationsHelper } from "../src/db/useMigrationsHelper";
 import { startConnectivityMonitor, stopConnectivityMonitor } from "../src/sync/ConnectivityMonitor";
 import { OfflineBanner } from "../src/components/sync/OfflineBanner";
@@ -77,10 +78,12 @@ function RootLayoutNav() {
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <OfflineBanner />
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      </Stack>
+      <SyncProvider>
+        <OfflineBanner />
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        </Stack>
+      </SyncProvider>
     </ThemeProvider>
   );
 }
