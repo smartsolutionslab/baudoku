@@ -1,0 +1,71 @@
+import React from "react";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { Tabs } from "expo-router";
+import { useColorScheme } from "react-native";
+
+import Colors from "../../constants/Colors";
+import { SyncIndicator } from "../../src/components/sync/SyncIndicator";
+import { useSyncStatus } from "../../src/hooks/useSyncStatus";
+
+function TabBarIcon(props: {
+  name: React.ComponentProps<typeof FontAwesome>["name"];
+  color: string;
+}) {
+  return <FontAwesome size={24} style={{ marginBottom: -3 }} {...props} />;
+}
+
+function formatBadge(count: number): string | undefined {
+  if (count === 0) return undefined;
+  return count > 99 ? "99+" : String(count);
+}
+
+export default function TabLayout() {
+  const colorScheme = useColorScheme();
+  const { unsyncedCount } = useSyncStatus();
+
+  return (
+    <Tabs
+      screenOptions={{
+        tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
+        headerShown: true,
+      }}
+    >
+      <Tabs.Screen
+        name="projects/index"
+        options={{
+          title: "Projekte",
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="building" color={color} />
+          ),
+          headerRight: () => <SyncIndicator />,
+        }}
+      />
+      <Tabs.Screen
+        name="capture/index"
+        options={{
+          title: "Erfassen",
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="camera" color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="sync/index"
+        options={{
+          title: "Sync",
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="refresh" color={color} />
+          ),
+          tabBarBadge: formatBadge(unsyncedCount),
+        }}
+      />
+      <Tabs.Screen
+        name="profile/index"
+        options={{
+          title: "Profil",
+          tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
+        }}
+      />
+    </Tabs>
+  );
+}
