@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5" />
+    <PackageReference Include="AwesomeAssertions" Version="9.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\backend\BuildingBlocks\BauDoku.BuildingBlocks.Domain\BauDoku.BuildingBlocks.Domain.csproj" />
+    <ProjectReference Include="..\..\..\src\backend\BuildingBlocks\BauDoku.BuildingBlocks.Application\BauDoku.BuildingBlocks.Application.csproj" />
+    <ProjectReference Include="..\..\..\src\backend\BuildingBlocks\BauDoku.BuildingBlocks.Infrastructure\BauDoku.BuildingBlocks.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\src\backend\Services\Projects\BauDoku.Projects.Domain\BauDoku.Projects.Domain.csproj" />
+    <ProjectReference Include="..\..\..\src\backend\Services\Projects\BauDoku.Projects.Application\BauDoku.Projects.Application.csproj" />
+    <ProjectReference Include="..\..\..\src\backend\Services\Projects\BauDoku.Projects.Infrastructure\BauDoku.Projects.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\src\backend\Services\Documentation\BauDoku.Documentation.Domain\BauDoku.Documentation.Domain.csproj" />
+    <ProjectReference Include="..\..\..\src\backend\Services\Documentation\BauDoku.Documentation.Application\BauDoku.Documentation.Application.csproj" />
+    <ProjectReference Include="..\..\..\src\backend\Services\Documentation\BauDoku.Documentation.Infrastructure\BauDoku.Documentation.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\src\backend\Services\Sync\BauDoku.Sync.Domain\BauDoku.Sync.Domain.csproj" />
+    <ProjectReference Include="..\..\..\src\backend\Services\Sync\BauDoku.Sync.Application\BauDoku.Sync.Application.csproj" />
+    <ProjectReference Include="..\..\..\src\backend\Services\Sync\BauDoku.Sync.Infrastructure\BauDoku.Sync.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+</Project>

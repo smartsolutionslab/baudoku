@@ -1,0 +1,90 @@
+using System.Reflection;
+using AwesomeAssertions;
+
+namespace BauDoku.ArchitectureTests;
+
+public sealed class DependencyTests
+{
+    private static readonly Assembly BuildingBlocksDomain =
+        typeof(BauDoku.BuildingBlocks.Domain.ValueObject).Assembly;
+
+    private static readonly Assembly BuildingBlocksApplication =
+        typeof(BauDoku.BuildingBlocks.Application.DependencyInjection).Assembly;
+
+    private static readonly Assembly BuildingBlocksInfrastructure =
+        typeof(BauDoku.BuildingBlocks.Infrastructure.DependencyInjection).Assembly;
+
+    private static Assembly LoadAssembly(string name) => Assembly.Load(name);
+
+    [Fact]
+    public void Domain_ShouldNotDependOn_Application()
+    {
+        var refs = BuildingBlocksDomain.GetReferencedAssemblies().Select(a => a.Name!).ToList();
+        refs.Should().NotContain(name => name.Contains("Application"),
+            "Domain layer must not depend on Application layer");
+    }
+
+    [Fact]
+    public void Domain_ShouldNotDependOn_Infrastructure()
+    {
+        var refs = BuildingBlocksDomain.GetReferencedAssemblies().Select(a => a.Name!).ToList();
+        refs.Should().NotContain(name => name.Contains("Infrastructure"),
+            "Domain layer must not depend on Infrastructure layer");
+    }
+
+    [Fact]
+    public void Domain_ShouldNotDependOn_Api()
+    {
+        var refs = BuildingBlocksDomain.GetReferencedAssemblies().Select(a => a.Name!).ToList();
+        refs.Should().NotContain(name => name.Contains(".Api"),
+            "Domain layer must not depend on Api layer");
+    }
+
+    [Fact]
+    public void Application_ShouldNotDependOn_Infrastructure()
+    {
+        var refs = BuildingBlocksApplication.GetReferencedAssemblies().Select(a => a.Name!).ToList();
+        refs.Should().NotContain(name => name.Contains("Infrastructure"),
+            "Application layer must not depend on Infrastructure layer");
+    }
+
+    [Fact]
+    public void Application_ShouldNotDependOn_Api()
+    {
+        var refs = BuildingBlocksApplication.GetReferencedAssemblies().Select(a => a.Name!).ToList();
+        refs.Should().NotContain(name => name.Contains(".Api"),
+            "Application layer must not depend on Api layer");
+    }
+
+    [Theory]
+    [InlineData("BauDoku.Projects.Domain")]
+    [InlineData("BauDoku.Documentation.Domain")]
+    [InlineData("BauDoku.Sync.Domain")]
+    public void ServiceDomain_ShouldOnlyDependOn_BuildingBlocksDomain(string assemblyName)
+    {
+        var assembly = LoadAssembly(assemblyName);
+
+        var baudokuRefs = assembly.GetReferencedAssemblies()
+            .Where(a => a.Name!.StartsWith("BauDoku"))
+            .Select(a => a.Name!)
+            .ToList();
+
+        baudokuRefs.Should().OnlyContain(
+            name => name == "BauDoku.BuildingBlocks.Domain",
+            "Service Domain should only reference BuildingBlocks.Domain");
+    }
+
+    [Theory]
+    [InlineData("BauDoku.Projects.Application")]
+    [InlineData("BauDoku.Documentation.Application")]
+    [InlineData("BauDoku.Sync.Application")]
+    public void ServiceApplication_ShouldNotDependOn_Infrastructure(string assemblyName)
+    {
+        var assembly = LoadAssembly(assemblyName);
+
+        var refs = assembly.GetReferencedAssemblies().Select(a => a.Name!).ToList();
+        refs.Should().NotContain(
+            name => name.Contains("Infrastructure"),
+            "Service Application should not reference Infrastructure");
+    }
+}

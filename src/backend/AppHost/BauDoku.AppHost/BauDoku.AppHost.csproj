@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsAspireHost>false</IsAspireHost>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Aspire.Hosting" />
+    <PackageReference Include="Aspire.Hosting.AppHost" />
+    <PackageReference Include="Aspire.Hosting.PostgreSQL" />
+    <PackageReference Include="Aspire.Hosting.Redis" />
+    <PackageReference Include="Aspire.Hosting.RabbitMQ" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Services\Projects\BauDoku.Projects.Api\BauDoku.Projects.Api.csproj" />
+    <ProjectReference Include="..\..\Services\Documentation\BauDoku.Documentation.Api\BauDoku.Documentation.Api.csproj" />
+    <ProjectReference Include="..\..\Services\Sync\BauDoku.Sync.Api\BauDoku.Sync.Api.csproj" />
+    <ProjectReference Include="..\..\ApiGateway\BauDoku.ApiGateway\BauDoku.ApiGateway.csproj" />
+  </ItemGroup>
+
+</Project>

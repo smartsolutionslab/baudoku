@@ -1,0 +1,6 @@
+@BauDoku.ApiGateway_HostAddress = http://localhost:5014
+
+GET {{BauDoku.ApiGateway_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

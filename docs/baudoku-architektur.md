@@ -1103,7 +1103,7 @@ public static class InstallationEndpoints
 | **RabbitMQ** | Async Messaging zwischen Bounded Contexts |
 | **Scrutor** | Assembly-Scanning für DI-Registrierung (Handler) |
 | **.NET Aspire** | Lokale Orchestrierung (DB, Keycloak, RabbitMQ, Services) |
-| **xUnit + FluentAssertions** | Unit- und Integration-Tests |
+| **xUnit + AwesomeAssertions** | Unit- und Integration-Tests (Apache 2.0, Fork von FluentAssertions) |
 
 **Bewusst NICHT verwendet:**
 - ~~MediatR~~ → Eigener Dispatcher (leichtgewichtig, kein Reflection-Overhead, volle Kontrolle)
@@ -2363,7 +2363,7 @@ Solution
 
     <!-- Testing -->
     <PackageVersion Include="xunit" Version="2.*" />
-    <PackageVersion Include="FluentAssertions" Version="7.*" />
+    <PackageVersion Include="AwesomeAssertions" Version="9.*" />
     <PackageVersion Include="Testcontainers.PostgreSql" Version="4.*" />
     <PackageVersion Include="NSubstitute" Version="5.*" />
   </ItemGroup>

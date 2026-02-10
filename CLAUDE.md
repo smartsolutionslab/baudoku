@@ -184,7 +184,7 @@ src/backend/
 - **Private fields:** `_camelCase` (z.B. `_domainEvents`, `_photos`)
 - **Commits:** Conventional Commits (`feat(projects): add Project aggregate`)
 - **Ticket-Prefix:** `BD-xxx`
-- **Tests:** xUnit + FluentAssertions + NSubstitute + Testcontainers (PostgreSQL)
+- **Tests:** xUnit + AwesomeAssertions + NSubstitute + Testcontainers (PostgreSQL)
 - **Keine Primitive im Domain:** `ProjectId` statt `Guid`, `ProjectName` statt `string`, `Depth` statt `int`
 
 ## NuGet Packages (Central Package Management)
@@ -194,7 +194,7 @@ src/backend/
 - Polly 8.*, Serilog.AspNetCore 9.*
 - RabbitMQ.Client 7.*, Azure.Storage.Blobs 12.*
 - Yarp.ReverseProxy 2.*, Aspire.Hosting 9.*
-- xUnit 2.*, FluentAssertions 7.*, Testcontainers.PostgreSql 4.*, NSubstitute 5.*
+- xUnit 2.*, AwesomeAssertions 9.*, Testcontainers.PostgreSql 4.*, NSubstitute 5.*
 
 ## GPS/GNSS-Kontext
 

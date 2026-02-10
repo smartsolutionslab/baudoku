@@ -1,0 +1,39 @@
+<Solution>
+  <Folder Name="/AppHost/">
+    <Project Path="AppHost/BauDoku.AppHost/BauDoku.AppHost.csproj" />
+  </Folder>
+  <Folder Name="/BuildingBlocks/">
+    <Project Path="BuildingBlocks/BauDoku.BuildingBlocks.Application/BauDoku.BuildingBlocks.Application.csproj" />
+    <Project Path="BuildingBlocks/BauDoku.BuildingBlocks.Domain/BauDoku.BuildingBlocks.Domain.csproj" />
+    <Project Path="BuildingBlocks/BauDoku.BuildingBlocks.Infrastructure/BauDoku.BuildingBlocks.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/Gateway/">
+    <Project Path="ApiGateway/BauDoku.ApiGateway/BauDoku.ApiGateway.csproj" />
+  </Folder>
+  <Folder Name="/Services/" />
+  <Folder Name="/Services/Documentation/">
+    <Project Path="Services/Documentation/BauDoku.Documentation.Api/BauDoku.Documentation.Api.csproj" />
+    <Project Path="Services/Documentation/BauDoku.Documentation.Application/BauDoku.Documentation.Application.csproj" />
+    <Project Path="Services/Documentation/BauDoku.Documentation.Domain/BauDoku.Documentation.Domain.csproj" />
+    <Project Path="Services/Documentation/BauDoku.Documentation.Infrastructure/BauDoku.Documentation.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/Services/Projects/">
+    <Project Path="Services/Projects/BauDoku.Projects.Api/BauDoku.Projects.Api.csproj" />
+    <Project Path="Services/Projects/BauDoku.Projects.Application/BauDoku.Projects.Application.csproj" />
+    <Project Path="Services/Projects/BauDoku.Projects.Domain/BauDoku.Projects.Domain.csproj" />
+    <Project Path="Services/Projects/BauDoku.Projects.Infrastructure/BauDoku.Projects.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/Services/Sync/">
+    <Project Path="Services/Sync/BauDoku.Sync.Api/BauDoku.Sync.Api.csproj" />
+    <Project Path="Services/Sync/BauDoku.Sync.Application/BauDoku.Sync.Application.csproj" />
+    <Project Path="Services/Sync/BauDoku.Sync.Domain/BauDoku.Sync.Domain.csproj" />
+    <Project Path="Services/Sync/BauDoku.Sync.Infrastructure/BauDoku.Sync.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="../../tests/backend/BauDoku.ArchitectureTests/BauDoku.ArchitectureTests.csproj" />
+    <Project Path="../../tests/backend/BauDoku.Documentation.IntegrationTests/BauDoku.Documentation.IntegrationTests.csproj" />
+    <Project Path="../../tests/backend/BauDoku.Documentation.UnitTests/BauDoku.Documentation.UnitTests.csproj" />
+    <Project Path="../../tests/backend/BauDoku.Projects.UnitTests/BauDoku.Projects.UnitTests.csproj" />
+    <Project Path="../../tests/backend/BauDoku.Sync.IntegrationTests/BauDoku.Sync.IntegrationTests.csproj" />
+  </Folder>
+</Solution>
