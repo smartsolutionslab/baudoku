@@ -27,5 +27,5 @@ public sealed record InstallationDto(
     string? SerialNumber,
     DateTime CreatedAt,
     DateTime? CompletedAt,
-    int PhotoCount,
+    IReadOnlyList<PhotoDto> Photos,
     int MeasurementCount);

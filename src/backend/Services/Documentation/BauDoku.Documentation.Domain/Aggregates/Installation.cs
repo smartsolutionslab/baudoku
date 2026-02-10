@@ -67,6 +67,40 @@ public sealed class Installation : AggregateRoot<InstallationId>
         return installation;
     }
 
+    public void AddPhoto(
+        PhotoId photoId,
+        string fileName,
+        string blobUrl,
+        string contentType,
+        long fileSize,
+        PhotoType photoType,
+        Caption? caption = null,
+        Description? description = null,
+        GpsPosition? position = null)
+    {
+        CheckRule(new CompletedInstallationCannotBeModified(Status));
+
+        var photo = Photo.Create(
+            photoId, fileName, blobUrl, contentType, fileSize,
+            photoType, caption, description, position);
+
+        _photos.Add(photo);
+
+        AddDomainEvent(new PhotoAdded(Id, photoId, DateTime.UtcNow));
+    }
+
+    public void RemovePhoto(PhotoId photoId)
+    {
+        CheckRule(new CompletedInstallationCannotBeModified(Status));
+
+        var photo = _photos.FirstOrDefault(p => p.Id == photoId)
+            ?? throw new InvalidOperationException($"Foto mit ID {photoId.Value} nicht gefunden.");
+
+        _photos.Remove(photo);
+
+        AddDomainEvent(new PhotoRemoved(Id, photoId, DateTime.UtcNow));
+    }
+
     public void MarkAsCompleted()
     {
         CheckRule(new CompletedInstallationCannotBeModified(Status));

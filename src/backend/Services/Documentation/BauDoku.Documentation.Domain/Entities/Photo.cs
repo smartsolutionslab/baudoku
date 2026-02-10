@@ -5,21 +5,40 @@ namespace BauDoku.Documentation.Domain.Entities;
 
 public sealed class Photo : Entity<PhotoId>
 {
-    public string FilePath { get; private set; } = default!;
+    public string FileName { get; private set; } = default!;
+    public string BlobUrl { get; private set; } = default!;
+    public string ContentType { get; private set; } = default!;
+    public long FileSize { get; private set; }
+    public PhotoType PhotoType { get; private set; } = default!;
+    public Caption? Caption { get; private set; }
     public Description? Description { get; private set; }
-    public DateTime CapturedAt { get; private set; }
+    public DateTime TakenAt { get; private set; }
     public GpsPosition? Position { get; private set; }
 
     private Photo() { }
 
-    internal static Photo Create(PhotoId id, string filePath, Description? description, GpsPosition? position)
+    internal static Photo Create(
+        PhotoId id,
+        string fileName,
+        string blobUrl,
+        string contentType,
+        long fileSize,
+        PhotoType photoType,
+        Caption? caption,
+        Description? description,
+        GpsPosition? position)
     {
         return new Photo
         {
             Id = id,
-            FilePath = filePath,
+            FileName = fileName,
+            BlobUrl = blobUrl,
+            ContentType = contentType,
+            FileSize = fileSize,
+            PhotoType = photoType,
+            Caption = caption,
             Description = description,
-            CapturedAt = DateTime.UtcNow,
+            TakenAt = DateTime.UtcNow,
             Position = position
         };
     }

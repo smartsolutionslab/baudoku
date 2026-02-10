@@ -16,18 +16,43 @@ public sealed class PhotoConfiguration : IEntityTypeConfiguration<Photo>
             .HasColumnName("id")
             .HasConversion(id => id.Value, value => new PhotoId(value));
 
-        builder.Property(p => p.FilePath)
-            .HasColumnName("file_path")
-            .HasMaxLength(500)
+        builder.Property(p => p.FileName)
+            .HasColumnName("file_name")
+            .HasMaxLength(255)
             .IsRequired();
+
+        builder.Property(p => p.BlobUrl)
+            .HasColumnName("blob_url")
+            .HasMaxLength(2000)
+            .IsRequired();
+
+        builder.Property(p => p.ContentType)
+            .HasColumnName("content_type")
+            .HasMaxLength(50)
+            .IsRequired();
+
+        builder.Property(p => p.FileSize)
+            .HasColumnName("file_size")
+            .IsRequired();
+
+        builder.Property(p => p.PhotoType)
+            .HasColumnName("photo_type")
+            .HasMaxLength(20)
+            .IsRequired()
+            .HasConversion(pt => pt.Value, value => new PhotoType(value));
+
+        builder.OwnsOne(p => p.Caption, cap =>
+        {
+            cap.Property(c => c.Value).HasColumnName("caption").HasMaxLength(Caption.MaxLength);
+        });
 
         builder.OwnsOne(p => p.Description, desc =>
         {
             desc.Property(d => d.Value).HasColumnName("description").HasMaxLength(Description.MaxLength);
         });
 
-        builder.Property(p => p.CapturedAt)
-            .HasColumnName("captured_at")
+        builder.Property(p => p.TakenAt)
+            .HasColumnName("taken_at")
             .IsRequired();
 
         builder.OwnsOne(p => p.Position, pos =>

@@ -23,6 +23,20 @@ public sealed class GetInstallationQueryHandler
         if (installation is null)
             return null;
 
+        var photos = installation.Photos.Select(p => new PhotoDto(
+            p.Id.Value,
+            installation.Id.Value,
+            p.FileName,
+            p.BlobUrl,
+            p.ContentType,
+            p.FileSize,
+            p.PhotoType.Value,
+            p.Caption?.Value,
+            p.Description?.Value,
+            p.Position?.Latitude,
+            p.Position?.Longitude,
+            p.TakenAt)).ToList();
+
         return new InstallationDto(
             installation.Id.Value,
             installation.ProjectId,
@@ -50,7 +64,7 @@ public sealed class GetInstallationQueryHandler
             installation.SerialNumber?.Value,
             installation.CreatedAt,
             installation.CompletedAt,
-            installation.Photos.Count,
+            photos,
             installation.Measurements.Count);
     }
 }
