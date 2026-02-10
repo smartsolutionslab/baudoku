@@ -1,0 +1,42 @@
+<Project>
+  <ItemGroup>
+    <!-- Framework -->
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="10.0.0-*" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.0-*" />
+    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0-*" />
+    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL.NetTopologySuite" Version="10.0.0-*" />
+
+    <!-- DDD / Application -->
+    <PackageVersion Include="FluentValidation" Version="11.*" />
+    <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="11.*" />
+    <PackageVersion Include="Scrutor" Version="5.*" />
+
+    <!-- Infrastructure -->
+    <PackageVersion Include="Polly" Version="8.*" />
+    <PackageVersion Include="Polly.Extensions.Http" Version="3.*" />
+    <PackageVersion Include="Serilog.AspNetCore" Version="9.*" />
+    <PackageVersion Include="RabbitMQ.Client" Version="7.*" />
+    <PackageVersion Include="Azure.Storage.Blobs" Version="12.*" />
+    <PackageVersion Include="Yarp.ReverseProxy" Version="2.*" />
+
+    <!-- Auth -->
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.0-*" />
+
+    <!-- API -->
+    <PackageVersion Include="Scalar.AspNetCore" Version="2.*" />
+
+    <!-- Aspire -->
+    <PackageVersion Include="Aspire.Hosting" Version="9.*" />
+    <PackageVersion Include="Aspire.Hosting.PostgreSQL" Version="9.*" />
+    <PackageVersion Include="Aspire.Hosting.Redis" Version="9.*" />
+    <PackageVersion Include="Aspire.Hosting.RabbitMQ" Version="9.*" />
+
+    <!-- Testing -->
+    <PackageVersion Include="xunit" Version="2.*" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="2.*" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.*" />
+    <PackageVersion Include="FluentAssertions" Version="7.*" />
+    <PackageVersion Include="NSubstitute" Version="5.*" />
+    <PackageVersion Include="Testcontainers.PostgreSql" Version="4.*" />
+  </ItemGroup>
+</Project>

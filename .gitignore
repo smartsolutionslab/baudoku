@@ -1,0 +1,69 @@
+# ============================================
+# BauDoku Monorepo – .NET 10 + React Native/Expo
+# ============================================
+
+# ---- .NET / C# ----
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.vs/
+*.csproj.user
+project.lock.json
+*.nuget.props
+*.nuget.targets
+packages/
+*.nupkg
+
+# ---- Rider / IntelliJ ----
+.idea/
+*.sln.iml
+
+# ---- Node / npm ----
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ---- Expo / React Native ----
+src/frontend/.expo/
+src/frontend/dist/
+src/frontend/web-build/
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+ios/
+android/
+
+# ---- Testing ----
+coverage/
+TestResults/
+*.trx
+
+# ---- Build Output ----
+dist/
+publish/
+artifacts/
+
+# ---- Environment ----
+.env
+.env.local
+.env.*.local
+appsettings.Development.json
+appsettings.*.local.json
+
+# ---- OS ----
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---- Docker ----
+docker-compose.override.yml
+
+# ---- Aspire ----
+.aspire/
