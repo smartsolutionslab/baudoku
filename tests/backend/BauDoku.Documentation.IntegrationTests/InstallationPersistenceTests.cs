@@ -1,0 +1,138 @@
+using AwesomeAssertions;
+using BauDoku.Documentation.Domain.Aggregates;
+using BauDoku.Documentation.Domain.ValueObjects;
+using BauDoku.Documentation.IntegrationTests.Fixtures;
+using Microsoft.EntityFrameworkCore;
+
+namespace BauDoku.Documentation.IntegrationTests;
+
+[Collection(PostgreSqlCollection.Name)]
+public sealed class InstallationPersistenceTests
+{
+    private readonly PostgreSqlFixture _fixture;
+
+    public InstallationPersistenceTests(PostgreSqlFixture fixture)
+    {
+        _fixture = fixture;
+    }
+
+    [Fact]
+    public async Task CreateInstallation_ShouldPersistAndLoad()
+    {
+        var projectId = Guid.NewGuid();
+        var zoneId = Guid.NewGuid();
+        var installation = Installation.Create(
+            InstallationId.New(),
+            projectId,
+            zoneId,
+            InstallationType.CableTray,
+            new GpsPosition(48.1351, 11.5820, 520.0, 3.5, "internal_gps"),
+            new Description("Test installation"),
+            new CableSpec("NYM-J 5x2.5", 25, "grey", 5),
+            new Depth(600),
+            new Manufacturer("Hager"),
+            new ModelName("VZ312N"),
+            new SerialNumber("SN-12345"));
+
+        await using (var writeContext = _fixture.CreateContext())
+        {
+            writeContext.Installations.Add(installation);
+            await writeContext.SaveChangesAsync();
+        }
+
+        await using (var readContext = _fixture.CreateContext())
+        {
+            var loaded = await readContext.Installations
+                .Include(i => i.Photos)
+                .Include(i => i.Measurements)
+                .FirstOrDefaultAsync(i => i.Id == installation.Id);
+
+            loaded.Should().NotBeNull();
+            loaded!.ProjectId.Should().Be(projectId);
+            loaded.ZoneId.Should().Be(zoneId);
+            loaded.Type.Should().Be(InstallationType.CableTray);
+            loaded.Status.Should().Be(InstallationStatus.InProgress);
+            loaded.Position.Latitude.Should().Be(48.1351);
+            loaded.Position.Longitude.Should().Be(11.5820);
+            loaded.Position.Altitude.Should().Be(520.0);
+            loaded.Position.HorizontalAccuracy.Should().Be(3.5);
+            loaded.Position.Source.Should().Be("internal_gps");
+            loaded.Description!.Value.Should().Be("Test installation");
+            loaded.CableSpec!.CableType.Should().Be("NYM-J 5x2.5");
+            loaded.CableSpec.CrossSection.Should().Be(25);
+            loaded.CableSpec.Color.Should().Be("grey");
+            loaded.CableSpec.ConductorCount.Should().Be(5);
+            loaded.Depth!.ValueInMillimeters.Should().Be(600);
+            loaded.Manufacturer!.Value.Should().Be("Hager");
+            loaded.ModelName!.Value.Should().Be("VZ312N");
+            loaded.SerialNumber!.Value.Should().Be("SN-12345");
+            loaded.Photos.Should().BeEmpty();
+            loaded.Measurements.Should().BeEmpty();
+        }
+    }
+
+    [Fact]
+    public async Task CreateInstallation_WithOptionalFieldsNull_ShouldPersist()
+    {
+        var installation = Installation.Create(
+            InstallationId.New(),
+            Guid.NewGuid(),
+            null,
+            InstallationType.Grounding,
+            new GpsPosition(48.0, 11.0, null, 5.0, "internal_gps"));
+
+        await using (var writeContext = _fixture.CreateContext())
+        {
+            writeContext.Installations.Add(installation);
+            await writeContext.SaveChangesAsync();
+        }
+
+        await using (var readContext = _fixture.CreateContext())
+        {
+            var loaded = await readContext.Installations
+                .FirstOrDefaultAsync(i => i.Id == installation.Id);
+
+            loaded.Should().NotBeNull();
+            loaded!.ZoneId.Should().BeNull();
+            loaded.Description.Should().BeNull();
+            loaded.CableSpec.Should().BeNull();
+            loaded.Depth.Should().BeNull();
+            loaded.Manufacturer.Should().BeNull();
+            loaded.ModelName.Should().BeNull();
+            loaded.SerialNumber.Should().BeNull();
+            loaded.Position.Altitude.Should().BeNull();
+        }
+    }
+
+    [Fact]
+    public async Task CreateInstallation_WithGpsPosition_ShouldPersistAllFields()
+    {
+        var installation = Installation.Create(
+            InstallationId.New(),
+            Guid.NewGuid(),
+            null,
+            InstallationType.CablePull,
+            new GpsPosition(
+                48.1351, 11.5820, 520.0, 0.03, "rtk",
+                "sapos_heps", "fix", 14, 0.8, 1.2));
+
+        await using (var writeContext = _fixture.CreateContext())
+        {
+            writeContext.Installations.Add(installation);
+            await writeContext.SaveChangesAsync();
+        }
+
+        await using (var readContext = _fixture.CreateContext())
+        {
+            var loaded = await readContext.Installations
+                .FirstOrDefaultAsync(i => i.Id == installation.Id);
+
+            loaded.Should().NotBeNull();
+            loaded!.Position.CorrectionService.Should().Be("sapos_heps");
+            loaded.Position.RtkFixStatus.Should().Be("fix");
+            loaded.Position.SatelliteCount.Should().Be(14);
+            loaded.Position.Hdop.Should().Be(0.8);
+            loaded.Position.CorrectionAge.Should().Be(1.2);
+        }
+    }
+}
