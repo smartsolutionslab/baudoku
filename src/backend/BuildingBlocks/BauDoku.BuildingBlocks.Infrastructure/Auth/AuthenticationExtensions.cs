@@ -14,8 +14,24 @@ public static class AuthenticationExtensions
             {
                 var keycloak = configuration.GetSection("Authentication:Keycloak");
                 options.Authority = keycloak["Authority"];
-                options.Audience = keycloak["Audience"];
                 options.RequireHttpsMetadata = false;
+
+                var authority = keycloak["Authority"]!;
+                var validIssuers = new List<string> { authority };
+
+                // In Development, also accept tokens issued via LAN IP (for mobile device testing)
+                var additionalIssuers = keycloak.GetSection("AdditionalIssuers").Get<string[]>();
+                if (additionalIssuers is { Length: > 0 })
+                {
+                    validIssuers.AddRange(additionalIssuers);
+                }
+
+                options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                {
+                    ValidateAudience = false,
+                    ValidateIssuer = true,
+                    ValidIssuers = validIssuers,
+                };
             });
 
         services.AddAuthorization();

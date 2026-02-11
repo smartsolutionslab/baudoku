@@ -20,15 +20,20 @@
       "enabled": true,
       "publicClient": true,
       "standardFlowEnabled": true,
-      "directAccessGrantsEnabled": false,
+      "directAccessGrantsEnabled": true,
       "redirectUris": [
         "baudoku://auth/callback",
         "exp://*/--/auth/callback",
+        "exp://*",
         "http://localhost:8081",
-        "http://localhost:8081/*"
+        "http://localhost:8081/*",
+        "http://10.0.0.6:8081",
+        "http://10.0.0.6:8081/*"
       ],
       "webOrigins": [
-        "http://localhost:8081"
+        "http://localhost:8081",
+        "http://10.0.0.6:8081",
+        "*"
       ],
       "attributes": {
         "pkce.code.challenge.method": "S256"

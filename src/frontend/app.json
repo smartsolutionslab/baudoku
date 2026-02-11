@@ -52,8 +52,8 @@
       "typedRoutes": true
     },
     "extra": {
-      "apiBaseUrl": "http://localhost:5000",
-      "keycloakUrl": "http://localhost:8080",
+      "apiBaseUrl": "http://10.0.0.6:5000",
+      "keycloakUrl": "http://10.0.0.6:8080",
       "keycloakRealm": "baudoku",
       "keycloakClientId": "baudoku-mobile"
     }
