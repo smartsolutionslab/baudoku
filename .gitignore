@@ -61,6 +61,7 @@ appsettings.*.local.json
 .DS_Store
 Thumbs.db
 desktop.ini
+nul
 
 # ---- Docker ----
 docker-compose.override.yml
