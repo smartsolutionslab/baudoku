@@ -23,6 +23,8 @@ const typeOptions = [
 interface ZoneFormProps {
   zones?: Zone[];
   defaultParentZoneId?: string | null;
+  initialValues?: Partial<ZoneFormData>;
+  submitLabel?: string;
   onSubmit: (data: ZoneFormData) => Promise<void>;
   submitting?: boolean;
 }
@@ -30,12 +32,15 @@ interface ZoneFormProps {
 export function ZoneForm({
   zones,
   defaultParentZoneId,
+  initialValues,
+  submitLabel,
   onSubmit,
   submitting,
 }: ZoneFormProps) {
   const [form, setForm] = useState<Partial<ZoneFormData>>({
     type: "building",
     parentZoneId: defaultParentZoneId ?? null,
+    ...initialValues,
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -123,7 +128,7 @@ export function ZoneForm({
         disabled={submitting}
       >
         <Text style={styles.buttonText}>
-          {submitting ? "Speichert..." : "Speichern"}
+          {submitting ? "Speichert..." : (submitLabel ?? "Speichern")}
         </Text>
       </TouchableOpacity>
     </ScrollView>

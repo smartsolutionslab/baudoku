@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
+import { FontAwesome } from "@expo/vector-icons";
 import {
   useProjects,
   useZonesByProject,
 } from "../../../src/hooks/useOfflineData";
 import { ProjectCard } from "../../../src/components/projects/ProjectCard";
 import { EmptyState } from "../../../src/components/common/EmptyState";
-import { Colors, Spacing, FontSize } from "../../../src/styles/tokens";
+import { Colors, Spacing, FontSize, Radius } from "../../../src/styles/tokens";
 
 function ZonePicker({
   projectId,
@@ -67,6 +68,20 @@ export default function CaptureScreen() {
         Wähle ein aktives Projekt und eine Zone.
       </Text>
 
+      <TouchableOpacity
+        style={styles.scanBtn}
+        onPress={() => router.push("/(tabs)/capture/scan")}
+      >
+        <FontAwesome name="qrcode" size={24} color="#fff" />
+        <View style={styles.scanBtnContent}>
+          <Text style={styles.scanBtnTitle}>QR-Code scannen</Text>
+          <Text style={styles.scanBtnSubtitle}>
+            Zone per QR-Code schnell auswählen
+          </Text>
+        </View>
+        <FontAwesome name="chevron-right" size={16} color="rgba(255,255,255,0.7)" />
+      </TouchableOpacity>
+
       {projects.length === 0 ? (
         <EmptyState
           icon="building"
@@ -119,6 +134,29 @@ const styles = StyleSheet.create({
     marginHorizontal: Spacing.lg,
     marginTop: Spacing.xs,
     marginBottom: Spacing.lg,
+  },
+  scanBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: Colors.primary,
+    marginHorizontal: Spacing.lg,
+    marginBottom: Spacing.lg,
+    padding: Spacing.lg,
+    borderRadius: Radius.lg,
+    gap: Spacing.md,
+  },
+  scanBtnContent: {
+    flex: 1,
+  },
+  scanBtnTitle: {
+    color: "#fff",
+    fontSize: FontSize.callout,
+    fontWeight: "700",
+  },
+  scanBtnSubtitle: {
+    color: "rgba(255,255,255,0.8)",
+    fontSize: FontSize.caption,
+    marginTop: 2,
   },
   list: {
     paddingHorizontal: Spacing.lg,

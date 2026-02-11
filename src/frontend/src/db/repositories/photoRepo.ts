@@ -65,3 +65,22 @@ export async function remove(id: string): Promise<void> {
   await db.delete(photos).where(eq(photos.id, id));
   await createOutboxEntry("photo", id, "delete", { id });
 }
+
+export async function updateAnnotation(
+  id: string,
+  annotation: string
+): Promise<void> {
+  await db
+    .update(photos)
+    .set({ annotations: annotation })
+    .where(eq(photos.id, id));
+  const photo = await getById(id);
+  if (photo) {
+    await createOutboxEntry("photo", id, "update", photo);
+  }
+}
+
+export async function getCount(): Promise<number> {
+  const rows = await db.select().from(photos).all();
+  return rows.length;
+}

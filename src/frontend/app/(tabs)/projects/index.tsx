@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from "react";
-import { View, TextInput, FlatList, StyleSheet } from "react-native";
-import { useRouter } from "expo-router";
+import { View, TextInput, FlatList, TouchableOpacity, StyleSheet } from "react-native";
+import { useRouter, Stack } from "expo-router";
+import { FontAwesome } from "@expo/vector-icons";
 import { useProjects } from "../../../src/hooks/useOfflineData";
 import { ProjectCard } from "../../../src/components/projects/ProjectCard";
 import { EmptyState } from "../../../src/components/common/EmptyState";
@@ -26,6 +27,24 @@ export default function ProjectsScreen() {
 
   return (
     <View style={styles.container}>
+      <Stack.Screen
+        options={{
+          headerRight: () => (
+            <View style={{ flexDirection: "row", gap: 16, marginRight: 8 }}>
+              <TouchableOpacity
+                onPress={() => router.push("/(tabs)/projects/search")}
+              >
+                <FontAwesome name="search" size={20} color={Colors.primary} />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => router.push("/(tabs)/projects/dashboard")}
+              >
+                <FontAwesome name="bar-chart" size={20} color={Colors.primary} />
+              </TouchableOpacity>
+            </View>
+          ),
+        }}
+      />
       <TextInput
         style={styles.search}
         placeholder="Projekte suchen..."

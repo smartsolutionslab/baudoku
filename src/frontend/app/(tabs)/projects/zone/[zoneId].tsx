@@ -1,17 +1,20 @@
-import React, { useMemo } from "react";
-import { View, Text, FlatList, TouchableOpacity, StyleSheet } from "react-native";
+import React, { useMemo, useState, useCallback } from "react";
+import { View, Text, FlatList, StyleSheet } from "react-native";
 import { useLocalSearchParams, useRouter, Stack } from "expo-router";
-import { FontAwesome } from "@expo/vector-icons";
 import {
   useZonesByProject,
   useInstallationsByZone,
   useDeleteZone,
+  useUpdateZone,
 } from "../../../../src/hooks/useOfflineData";
 import { useConfirmDelete } from "../../../../src/hooks/useConfirmDelete";
 import { InstallationCard } from "../../../../src/components/installations/InstallationCard";
 import { StatusBadge } from "../../../../src/components/common/StatusBadge";
 import { EmptyState } from "../../../../src/components/common/EmptyState";
 import { FloatingActionButton } from "../../../../src/components/common/FloatingActionButton";
+import { ActionBar } from "../../../../src/components/common/ActionBar";
+import { ZoneQrSheet } from "../../../../src/components/projects/ZoneQrSheet";
+import { encodeZoneQr } from "../../../../src/utils/qrCode";
 import { Colors, Spacing, FontSize } from "../../../../src/styles/tokens";
 import type { Zone } from "../../../../src/db/repositories/types";
 
@@ -36,7 +39,9 @@ export default function ZoneDetailScreen() {
   const { data: installations, isLoading, refetch } =
     useInstallationsByZone(zoneId!);
   const deleteZone = useDeleteZone();
+  const updateZone = useUpdateZone();
   const { confirmDelete } = useConfirmDelete();
+  const [qrSheetVisible, setQrSheetVisible] = useState(false);
 
   const zone = useMemo(
     () => zones?.find((z) => z.id === zoneId),
@@ -48,7 +53,20 @@ export default function ZoneDetailScreen() {
     [zones, zoneId]
   );
 
-  if (!zone) return null;
+  const qrValue = useMemo(
+    () => (projectId && zoneId ? encodeZoneQr(projectId, zoneId) : ""),
+    [projectId, zoneId]
+  );
+
+  const handleQrPress = useCallback(async () => {
+    if (zone && !zone.qrCode) {
+      await updateZone.mutateAsync({
+        id: zoneId!,
+        data: { qrCode: qrValue },
+      });
+    }
+    setQrSheetVisible(true);
+  }, [zone, zoneId, qrValue, updateZone]);
 
   const handleDelete = () => {
     confirmDelete({
@@ -60,6 +78,8 @@ export default function ZoneDetailScreen() {
       },
     });
   };
+
+  if (!zone) return null;
 
   return (
     <View style={styles.container}>
@@ -75,11 +95,27 @@ export default function ZoneDetailScreen() {
             {breadcrumb.join(" > ")}
           </Text>
         )}
-        <TouchableOpacity style={styles.deleteRow} onPress={handleDelete}>
-          <FontAwesome name="trash-o" size={14} color={Colors.danger} />
-          <Text style={styles.deleteText}>Zone löschen</Text>
-        </TouchableOpacity>
       </View>
+
+      <ActionBar
+        actions={[
+          { icon: "qrcode", label: "QR-Code", onPress: handleQrPress },
+          {
+            icon: "pencil",
+            label: "Bearbeiten",
+            onPress: () =>
+              router.push(
+                `/(tabs)/projects/zone/edit?zoneId=${zoneId}&projectId=${projectId}`
+              ),
+          },
+          {
+            icon: "trash-o",
+            label: "Löschen",
+            onPress: handleDelete,
+            color: Colors.danger,
+          },
+        ]}
+      />
 
       <Text style={styles.sectionTitle}>Installationen</Text>
 
@@ -120,6 +156,14 @@ export default function ZoneDetailScreen() {
           )
         }
       />
+
+      <ZoneQrSheet
+        visible={qrSheetVisible}
+        onClose={() => setQrSheetVisible(false)}
+        qrValue={qrValue}
+        zoneName={zone.name}
+        zoneType={zone.type}
+      />
     </View>
   );
 }
@@ -132,6 +176,7 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: Colors.card,
     margin: Spacing.lg,
+    marginBottom: 0,
     borderRadius: 12,
     padding: Spacing.lg,
   },
@@ -152,23 +197,11 @@ const styles = StyleSheet.create({
     color: Colors.textTertiary,
     marginTop: Spacing.sm,
   },
-  deleteRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: Spacing.md,
-    paddingTop: Spacing.sm,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: Colors.separator,
-  },
-  deleteText: {
-    fontSize: FontSize.caption,
-    color: Colors.danger,
-    marginLeft: Spacing.xs,
-  },
   sectionTitle: {
     fontSize: FontSize.headline,
     fontWeight: "600",
     marginHorizontal: Spacing.lg,
+    marginTop: Spacing.lg,
     marginBottom: Spacing.sm,
   },
   list: {
