@@ -1,14 +1,38 @@
 import React from "react";
-import { View, Text, ScrollView, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
+import { router } from "expo-router";
 import { useProjects } from "../../../src/hooks/useOfflineData";
 import { useSyncStatus } from "../../../src/hooks/useSyncStatus";
+import { useAuthStore } from "../../../src/store/useAuthStore";
+import { clearTokens } from "../../../src/auth/tokenStorage";
+import { setAuthToken } from "../../../src/sync/apiClient";
 import { Colors, Spacing, FontSize } from "../../../src/styles/tokens";
 
 export default function ProfileScreen() {
   const { data: projects } = useProjects();
   const { isOnline, unsyncedCount, lastSyncTimestamp } = useSyncStatus();
+  const { isAuthenticated, user, clearAuth } = useAuthStore();
 
   const projectCount = projects?.length ?? 0;
+
+  const handleLogout = async () => {
+    clearAuth();
+    setAuthToken(null);
+    await clearTokens();
+  };
+
+  const displayRole = (roles: string[]) => {
+    if (roles.includes("admin")) return "Admin";
+    if (roles.includes("inspector")) return "Inspektor";
+    if (roles.includes("user")) return "Benutzer";
+    return roles[0] ?? "Unbekannt";
+  };
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
@@ -18,8 +42,38 @@ export default function ProfileScreen() {
       <View style={styles.card}>
         <Text style={styles.cardTitle}>App-Info</Text>
         <Row label="App" value="BauDoku" />
-        <Row label="Version" value="0.9.0" />
-        <Row label="Build" value="Sprint 9" />
+        <Row label="Version" value="1.0.0" />
+        <Row label="Build" value="Sprint 10" />
+      </View>
+
+      {/* Anmeldung */}
+      <View style={styles.card}>
+        <Text style={styles.cardTitle}>Anmeldung</Text>
+        {isAuthenticated && user ? (
+          <>
+            <Row label="Name" value={user.name} />
+            <Row label="Email" value={user.email} />
+            <Row label="Rolle" value={displayRole(user.roles)} />
+            <TouchableOpacity
+              style={styles.logoutButton}
+              onPress={handleLogout}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.logoutButtonText}>Abmelden</Text>
+            </TouchableOpacity>
+          </>
+        ) : (
+          <>
+            <Text style={styles.notLoggedInText}>Nicht angemeldet</Text>
+            <TouchableOpacity
+              style={styles.loginButton}
+              onPress={() => router.push("/(tabs)/profile/login")}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.loginButtonText}>Anmelden</Text>
+            </TouchableOpacity>
+          </>
+        )}
       </View>
 
       {/* Gerät */}
@@ -56,14 +110,6 @@ export default function ProfileScreen() {
           value={lastSyncTimestamp ?? "Noch nicht synchronisiert"}
         />
       </View>
-
-      {/* Login placeholder */}
-      <View style={[styles.card, styles.cardDisabled]}>
-        <Text style={styles.cardTitle}>Anmeldung</Text>
-        <Text style={styles.disabledText}>
-          Anmeldung kommt in einem zukünftigen Update.
-        </Text>
-      </View>
     </ScrollView>
   );
 }
@@ -98,9 +144,6 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.lg,
     gap: Spacing.md,
   },
-  cardDisabled: {
-    opacity: 0.5,
-  },
   cardTitle: {
     fontSize: FontSize.headline,
     fontWeight: "600",
@@ -129,9 +172,31 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     marginRight: 6,
   },
-  disabledText: {
+  notLoggedInText: {
     fontSize: FontSize.body,
     color: Colors.textTertiary,
     fontStyle: "italic",
+  },
+  loginButton: {
+    backgroundColor: Colors.primary,
+    borderRadius: 10,
+    paddingVertical: 12,
+    alignItems: "center",
+  },
+  loginButtonText: {
+    color: "#FFFFFF",
+    fontSize: FontSize.body,
+    fontWeight: "600",
+  },
+  logoutButton: {
+    backgroundColor: Colors.danger,
+    borderRadius: 10,
+    paddingVertical: 12,
+    alignItems: "center",
+  },
+  logoutButtonText: {
+    color: "#FFFFFF",
+    fontSize: FontSize.body,
+    fontWeight: "600",
   },
 });

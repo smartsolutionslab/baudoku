@@ -10,7 +10,8 @@ public static class InstallationEndpoints
     public static void MapInstallationEndpoints(this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("/api/documentation/installations")
-            .WithTags("Installations");
+            .WithTags("Installations")
+            .RequireAuthorization();
 
         group.MapPost("/", async (
             DocumentInstallationCommand command,

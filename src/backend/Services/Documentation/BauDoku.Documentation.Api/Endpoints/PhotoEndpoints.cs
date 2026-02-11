@@ -11,7 +11,8 @@ public static class PhotoEndpoints
     public static void MapPhotoEndpoints(this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("/api/documentation")
-            .WithTags("Photos");
+            .WithTags("Photos")
+            .RequireAuthorization();
 
         group.MapPost("/installations/{installationId:guid}/photos", async (
             Guid installationId,

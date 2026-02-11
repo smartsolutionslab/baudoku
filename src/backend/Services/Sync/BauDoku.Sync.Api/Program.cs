@@ -1,4 +1,5 @@
 using BauDoku.BuildingBlocks.Application;
+using BauDoku.BuildingBlocks.Infrastructure.Auth;
 using BauDoku.Sync.Api.Endpoints;
 using BauDoku.Sync.Infrastructure;
 using Scalar.AspNetCore;
@@ -7,6 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddHealthChecks();
 builder.Services.AddOpenApi();
+
+builder.Services.AddBauDokuAuthentication(builder.Configuration);
 
 var connectionString = builder.Configuration.GetConnectionString("SyncDb")
     ?? throw new InvalidOperationException("Connection string 'SyncDb' not found.");
@@ -21,6 +24,9 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
     app.MapScalarApiReference();
 }
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapHealthChecks("/health");
 app.MapSyncEndpoints();

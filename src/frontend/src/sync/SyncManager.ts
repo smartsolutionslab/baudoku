@@ -1,4 +1,5 @@
 import * as syncRepo from "../db/repositories/syncRepo";
+import * as photoRepo from "../db/repositories/photoRepo";
 import * as syncApi from "./syncApi";
 import { applyServerDelta } from "./applyServerDelta";
 import { getDeviceId } from "../utils/deviceId";
@@ -86,15 +87,57 @@ export class SyncManager {
     }
   }
 
+  async pushPhotos(): Promise<{ uploaded: number; errors: string[] }> {
+    const pending = await photoRepo.getPendingUpload();
+    const failed = await photoRepo.getFailedUpload();
+    const photos = [...pending, ...failed];
+
+    if (photos.length === 0) {
+      return { uploaded: 0, errors: [] };
+    }
+
+    let uploaded = 0;
+    const errors: string[] = [];
+
+    for (const photo of photos) {
+      try {
+        await photoRepo.updateUploadStatus(photo.id, "uploading");
+
+        const fileName = photo.localPath.split("/").pop() ?? `photo_${photo.id}.jpg`;
+        const result = await syncApi.uploadPhoto(
+          photo.installationId,
+          photo.localPath,
+          fileName,
+          "image/jpeg"
+        );
+
+        await photoRepo.updateUploadStatus(photo.id, "uploaded", result.id);
+        uploaded++;
+      } catch (error) {
+        await photoRepo.updateUploadStatus(photo.id, "failed");
+        const message =
+          error instanceof Error ? error.message : "Foto-Upload fehlgeschlagen";
+        errors.push(message);
+      }
+    }
+
+    return { uploaded, errors };
+  }
+
   async sync(): Promise<SyncResult> {
     const pushResult = await this.push();
+    const photoResult = await this.pushPhotos();
     const pullResult = await this.pull();
 
     return {
-      pushed: pushResult.appliedCount,
+      pushed: pushResult.appliedCount + photoResult.uploaded,
       pulled: pullResult.pulled,
       conflicts: pushResult.conflictCount,
-      errors: [...pushResult.errors, ...pullResult.errors],
+      errors: [
+        ...pushResult.errors,
+        ...photoResult.errors,
+        ...pullResult.errors,
+      ],
     };
   }
 }

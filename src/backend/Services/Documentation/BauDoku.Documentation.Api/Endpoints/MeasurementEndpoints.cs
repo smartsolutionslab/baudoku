@@ -10,7 +10,8 @@ public static class MeasurementEndpoints
     public static void MapMeasurementEndpoints(this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("/api/documentation")
-            .WithTags("Measurements");
+            .WithTags("Measurements")
+            .RequireAuthorization();
 
         group.MapPost("/installations/{installationId:guid}/measurements", async (
             Guid installationId,
