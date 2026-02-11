@@ -22,7 +22,7 @@ COPY src/backend/Services/Projects/BauDoku.Projects.Application/BauDoku.Projects
 COPY src/backend/Services/Projects/BauDoku.Projects.Infrastructure/BauDoku.Projects.Infrastructure.csproj Services/Projects/BauDoku.Projects.Infrastructure/
 COPY src/backend/Services/Projects/BauDoku.Projects.Api/BauDoku.Projects.Api.csproj Services/Projects/BauDoku.Projects.Api/
 
-RUN dotnet restore BauDoku.slnx --project Services/Projects/BauDoku.Projects.Api/BauDoku.Projects.Api.csproj
+RUN dotnet restore Services/Projects/BauDoku.Projects.Api/BauDoku.Projects.Api.csproj
 
 # Copy source code
 COPY src/backend/ .

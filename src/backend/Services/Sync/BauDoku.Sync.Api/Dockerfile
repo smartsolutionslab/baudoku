@@ -22,7 +22,7 @@ COPY src/backend/Services/Sync/BauDoku.Sync.Application/BauDoku.Sync.Application
 COPY src/backend/Services/Sync/BauDoku.Sync.Infrastructure/BauDoku.Sync.Infrastructure.csproj Services/Sync/BauDoku.Sync.Infrastructure/
 COPY src/backend/Services/Sync/BauDoku.Sync.Api/BauDoku.Sync.Api.csproj Services/Sync/BauDoku.Sync.Api/
 
-RUN dotnet restore BauDoku.slnx --project Services/Sync/BauDoku.Sync.Api/BauDoku.Sync.Api.csproj
+RUN dotnet restore Services/Sync/BauDoku.Sync.Api/BauDoku.Sync.Api.csproj
 
 # Copy source code
 COPY src/backend/ .

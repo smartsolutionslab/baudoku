@@ -22,7 +22,7 @@ COPY src/backend/Services/Documentation/BauDoku.Documentation.Application/BauDok
 COPY src/backend/Services/Documentation/BauDoku.Documentation.Infrastructure/BauDoku.Documentation.Infrastructure.csproj Services/Documentation/BauDoku.Documentation.Infrastructure/
 COPY src/backend/Services/Documentation/BauDoku.Documentation.Api/BauDoku.Documentation.Api.csproj Services/Documentation/BauDoku.Documentation.Api/
 
-RUN dotnet restore BauDoku.slnx --project Services/Documentation/BauDoku.Documentation.Api/BauDoku.Documentation.Api.csproj
+RUN dotnet restore Services/Documentation/BauDoku.Documentation.Api/BauDoku.Documentation.Api.csproj
 
 # Copy source code
 COPY src/backend/ .

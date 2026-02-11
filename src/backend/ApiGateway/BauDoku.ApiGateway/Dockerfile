@@ -19,7 +19,7 @@ COPY src/backend/BuildingBlocks/BauDoku.BuildingBlocks.Infrastructure/BauDoku.Bu
 COPY src/backend/BuildingBlocks/BauDoku.ServiceDefaults/BauDoku.ServiceDefaults.csproj BuildingBlocks/BauDoku.ServiceDefaults/
 COPY src/backend/ApiGateway/BauDoku.ApiGateway/BauDoku.ApiGateway.csproj ApiGateway/BauDoku.ApiGateway/
 
-RUN dotnet restore BauDoku.slnx --project ApiGateway/BauDoku.ApiGateway/BauDoku.ApiGateway.csproj
+RUN dotnet restore ApiGateway/BauDoku.ApiGateway/BauDoku.ApiGateway.csproj
 
 # Copy source code
 COPY src/backend/ .
