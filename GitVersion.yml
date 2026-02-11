@@ -1,33 +1,25 @@
-mode: ContinuousDeployment
+workflow: GitHubFlow/v1
 next-version: 0.1.0
 branches:
   main:
     regex: ^master$|^main$
-    mode: ContinuousDeployment
-    tag: ''
+    is-main-branch: true
+    label: ''
     increment: Minor
-    prevent-increment-of-merged-branch-version: true
-    track-merge-target: false
-    is-release-branch: false
-    is-mainline: true
   feature:
     regex: ^features?[/-]
-    mode: ContinuousDeployment
-    tag: '{BranchName}'
+    label: '{BranchName}'
     increment: Inherit
     source-branches: ['main']
   pull-request:
     regex: ^(pull|pull\-requests|pr)[/-]
-    mode: ContinuousDeployment
-    tag: pr
+    label: pr
     increment: Inherit
     source-branches: ['main', 'feature']
   hotfix:
     regex: ^hotfix(es)?[/-]
-    mode: ContinuousDeployment
-    tag: beta
+    label: beta
     increment: Patch
     source-branches: ['main']
 ignore:
   sha: []
-merge-message-formats: {}

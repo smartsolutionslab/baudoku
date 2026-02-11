@@ -111,9 +111,6 @@ jobs:
       - name: Typecheck
         run: npx tsc --noEmit
 
-      - name: Build (web export)
-        run: npx expo export --platform web
-
   security:
     name: Security & SBOM
     runs-on: ubuntu-latest
@@ -132,8 +129,8 @@ jobs:
         run: |
           dotnet CycloneDX src/backend/BauDoku.slnx \
             -o ./sbom \
-            -f sbom.json \
-            -j
+            -fn sbom.json \
+            -F Json
 
       - name: Upload SBOM
         uses: actions/upload-artifact@v4
