@@ -102,7 +102,8 @@ public static class Extensions
             {
                 metrics.AddAspNetCoreInstrumentation()
                     .AddHttpClientInstrumentation()
-                    .AddRuntimeInstrumentation();
+                    .AddRuntimeInstrumentation()
+                    .AddMeter("BauDoku.Projects", "BauDoku.Documentation", "BauDoku.Sync");
             })
             .WithTracing(tracing =>
             {

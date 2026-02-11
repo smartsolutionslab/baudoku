@@ -1,0 +1,124 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": { "type": "grafana", "uid": "-- Grafana --" },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "title": "Request Duration by Endpoint (p50 / p95 / p99)",
+      "type": "timeseries",
+      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.50, sum(rate(http_server_request_duration_seconds_bucket{job=~\"baudoku.*\"}[5m])) by (le, http_route))",
+          "legendFormat": "p50 {{http_route}}"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(http_server_request_duration_seconds_bucket{job=~\"baudoku.*\"}[5m])) by (le, http_route))",
+          "legendFormat": "p95 {{http_route}}"
+        },
+        {
+          "expr": "histogram_quantile(0.99, sum(rate(http_server_request_duration_seconds_bucket{job=~\"baudoku.*\"}[5m])) by (le, http_route))",
+          "legendFormat": "p99 {{http_route}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "custom": { "drawStyle": "line", "fillOpacity": 5, "lineWidth": 2 }
+        }
+      }
+    },
+    {
+      "title": "Slowest Endpoints (p95, last 5m)",
+      "type": "table",
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 10 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "topk(10, histogram_quantile(0.95, sum(rate(http_server_request_duration_seconds_bucket{job=~\"baudoku.*\"}[5m])) by (le, http_route, http_request_method)))",
+          "legendFormat": "{{http_request_method}} {{http_route}}",
+          "format": "table",
+          "instant": true
+        }
+      ],
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "renameByName": {
+              "http_route": "Endpoint",
+              "http_request_method": "Method",
+              "Value": "p95 Latency (s)"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "title": "EF Core Query Duration",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 18 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(db_client_operation_duration_seconds_bucket{job=~\"baudoku.*\"}[5m])) by (le, job))",
+          "legendFormat": "p95 {{job}}"
+        },
+        {
+          "expr": "histogram_quantile(0.50, sum(rate(db_client_operation_duration_seconds_bucket{job=~\"baudoku.*\"}[5m])) by (le, job))",
+          "legendFormat": "p50 {{job}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "custom": { "drawStyle": "line", "fillOpacity": 10, "lineWidth": 2 }
+        }
+      }
+    },
+    {
+      "title": "Request Rate by Endpoint",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 18 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "sum(rate(http_server_request_duration_seconds_count{job=~\"baudoku.*\"}[5m])) by (http_route, http_request_method)",
+          "legendFormat": "{{http_request_method}} {{http_route}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "custom": { "drawStyle": "bars", "fillOpacity": 50, "lineWidth": 1 }
+        }
+      }
+    }
+  ],
+  "schemaVersion": 39,
+  "tags": ["baudoku", "latency"],
+  "templating": {
+    "list": []
+  },
+  "time": { "from": "now-1h", "to": "now" },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "BauDoku - API Latency",
+  "uid": "baudoku-api-latency"
+}

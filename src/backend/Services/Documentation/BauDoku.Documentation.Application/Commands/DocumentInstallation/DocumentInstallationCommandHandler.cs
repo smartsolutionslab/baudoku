@@ -1,6 +1,7 @@
 using BauDoku.BuildingBlocks.Application.Commands;
 using BauDoku.BuildingBlocks.Application.Persistence;
 using BauDoku.Documentation.Application.Contracts;
+using BauDoku.Documentation.Application.Diagnostics;
 using BauDoku.Documentation.Domain.Aggregates;
 using BauDoku.Documentation.Domain.ValueObjects;
 
@@ -69,6 +70,8 @@ public sealed class DocumentInstallationCommandHandler
 
         await _installationRepository.AddAsync(installation, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        DocumentationMetrics.InstallationsDocumented.Add(1);
 
         return installationId.Value;
     }

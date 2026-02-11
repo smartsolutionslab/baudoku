@@ -1,6 +1,7 @@
 using BauDoku.BuildingBlocks.Application.Commands;
 using BauDoku.BuildingBlocks.Application.Persistence;
 using BauDoku.Documentation.Application.Contracts;
+using BauDoku.Documentation.Application.Diagnostics;
 using BauDoku.Documentation.Domain.ValueObjects;
 
 namespace BauDoku.Documentation.Application.Commands.RecordMeasurement;
@@ -31,6 +32,8 @@ public sealed class RecordMeasurementCommandHandler : ICommandHandler<RecordMeas
         installation.RecordMeasurement(measurementId, type, value, command.Notes);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        DocumentationMetrics.MeasurementsRecorded.Add(1);
 
         return measurementId.Value;
     }

@@ -1,6 +1,7 @@
 using BauDoku.BuildingBlocks.Application.Commands;
 using BauDoku.BuildingBlocks.Application.Persistence;
 using BauDoku.Projects.Application.Contracts;
+using BauDoku.Projects.Application.Diagnostics;
 using BauDoku.Projects.Domain.ValueObjects;
 
 namespace BauDoku.Projects.Application.Commands.AddZone;
@@ -30,5 +31,7 @@ public sealed class AddZoneCommandHandler : ICommandHandler<AddZoneCommand>
         project.AddZone(zoneId, zoneName, zoneType, parentZoneId);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        ProjectsMetrics.ZonesAdded.Add(1);
     }
 }

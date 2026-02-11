@@ -1,6 +1,7 @@
 using BauDoku.BuildingBlocks.Application.Commands;
 using BauDoku.BuildingBlocks.Application.Persistence;
 using BauDoku.Documentation.Application.Contracts;
+using BauDoku.Documentation.Application.Diagnostics;
 using BauDoku.Documentation.Domain.ValueObjects;
 
 namespace BauDoku.Documentation.Application.Commands.RemoveMeasurement;
@@ -28,5 +29,7 @@ public sealed class RemoveMeasurementCommandHandler : ICommandHandler<RemoveMeas
         installation.RemoveMeasurement(measurementId);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        DocumentationMetrics.MeasurementsRemoved.Add(1);
     }
 }

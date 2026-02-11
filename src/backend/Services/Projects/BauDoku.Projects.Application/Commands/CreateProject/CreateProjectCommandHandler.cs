@@ -1,6 +1,7 @@
 using BauDoku.BuildingBlocks.Application.Commands;
 using BauDoku.BuildingBlocks.Application.Persistence;
 using BauDoku.Projects.Application.Contracts;
+using BauDoku.Projects.Application.Diagnostics;
 using BauDoku.Projects.Domain.Aggregates;
 using BauDoku.Projects.Domain.ValueObjects;
 
@@ -28,6 +29,8 @@ public sealed class CreateProjectCommandHandler : ICommandHandler<CreateProjectC
 
         await _projectRepository.AddAsync(project, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        ProjectsMetrics.ProjectsCreated.Add(1);
 
         return projectId.Value;
     }

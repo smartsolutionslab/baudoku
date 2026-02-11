@@ -1,6 +1,7 @@
 using BauDoku.BuildingBlocks.Application.Commands;
 using BauDoku.BuildingBlocks.Application.Persistence;
 using BauDoku.Sync.Application.Contracts;
+using BauDoku.Sync.Application.Diagnostics;
 using BauDoku.Sync.Domain.ValueObjects;
 
 namespace BauDoku.Sync.Application.Commands.ResolveConflict;
@@ -54,5 +55,7 @@ public sealed class ResolveConflictCommandHandler : ICommandHandler<ResolveConfl
         }
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        SyncMetrics.ConflictsResolved.Add(1);
     }
 }
