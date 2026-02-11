@@ -1,0 +1,54 @@
+global:
+  image:
+    pullPolicy: Always
+
+services:
+  projectsApi:
+    replicaCount: 1
+    env:
+      - name: ASPNETCORE_ENVIRONMENT
+        value: Staging
+      - name: ConnectionStrings__ProjectsDb
+        valueFrom:
+          secretKeyRef:
+            name: baudoku-db-credentials
+            key: projects-connection-string
+
+  documentationApi:
+    replicaCount: 1
+    env:
+      - name: ASPNETCORE_ENVIRONMENT
+        value: Staging
+      - name: ConnectionStrings__DocumentationDb
+        valueFrom:
+          secretKeyRef:
+            name: baudoku-db-credentials
+            key: documentation-connection-string
+
+  syncApi:
+    replicaCount: 1
+    env:
+      - name: ASPNETCORE_ENVIRONMENT
+        value: Staging
+      - name: ConnectionStrings__SyncDb
+        valueFrom:
+          secretKeyRef:
+            name: baudoku-db-credentials
+            key: sync-connection-string
+
+  apiGateway:
+    replicaCount: 1
+    env:
+      - name: ASPNETCORE_ENVIRONMENT
+        value: Staging
+
+ingress:
+  enabled: true
+  className: nginx
+  host: staging.baudoku.example.com
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  tls:
+    - secretName: baudoku-staging-tls
+      hosts:
+        - staging.baudoku.example.com
