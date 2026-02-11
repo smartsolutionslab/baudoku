@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BauDoku.Documentation.Infrastructure\BauDoku.Documentation.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\BauDoku.ServiceDefaults\BauDoku.ServiceDefaults.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

@@ -1,12 +1,13 @@
 using BauDoku.BuildingBlocks.Application;
 using BauDoku.BuildingBlocks.Infrastructure.Auth;
+using BauDoku.ServiceDefaults;
 using BauDoku.Sync.Api.Endpoints;
 using BauDoku.Sync.Infrastructure;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddHealthChecks();
+builder.AddServiceDefaults();
 builder.Services.AddOpenApi();
 
 builder.Services.AddBauDokuAuthentication(builder.Configuration);
@@ -28,7 +29,7 @@ if (app.Environment.IsDevelopment())
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapHealthChecks("/health");
+app.MapDefaultEndpoints();
 app.MapSyncEndpoints();
 
 app.Run();

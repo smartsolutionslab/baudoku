@@ -1,9 +1,12 @@
+using BauDoku.ServiceDefaults;
+
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddReverseProxy()
-    .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
+builder.AddServiceDefaults();
 
-builder.Services.AddHealthChecks();
+builder.Services.AddReverseProxy()
+    .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"))
+    .AddServiceDiscoveryDestinationResolver();
 
 builder.Services.AddCors(options =>
 {
@@ -12,7 +15,10 @@ builder.Services.AddCors(options =>
         policy.WithOrigins(
                 "http://localhost:8081",
                 "http://localhost:19006",
-                "exp://localhost:8081")
+                "exp://localhost:8081",
+                "http://10.0.0.6:8081",
+                "http://10.0.0.6:5000",
+                "exp://10.0.0.6:8081")
               .AllowAnyMethod()
               .AllowAnyHeader()
               .WithExposedHeaders("Authorization");
@@ -23,6 +29,6 @@ var app = builder.Build();
 
 app.UseCors();
 app.MapReverseProxy();
-app.MapHealthChecks("/health");
+app.MapDefaultEndpoints();
 
 app.Run();

@@ -1,11 +1,12 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
 var postgres = builder.AddPostgres("postgres")
+    .WithImage("postgis/postgis", "17-3.5")
     .WithPgAdmin();
 
-var projectsDb = postgres.AddDatabase("projects-db");
-var documentationDb = postgres.AddDatabase("documentation-db");
-var syncDb = postgres.AddDatabase("sync-db");
+var projectsDb = postgres.AddDatabase("ProjectsDb");
+var documentationDb = postgres.AddDatabase("DocumentationDb");
+var syncDb = postgres.AddDatabase("SyncDb");
 
 var redis = builder.AddRedis("redis");
 
@@ -22,20 +23,31 @@ var keycloak = builder.AddContainer("keycloak", "quay.io/keycloak/keycloak", "26
 
 var projectsApi = builder.AddProject("projects-api", @"..\..\Services\Projects\BauDoku.Projects.Api\BauDoku.Projects.Api.csproj")
     .WithReference(projectsDb)
-    .WithReference(rabbitmq);
+    .WithReference(rabbitmq)
+    .WaitFor(projectsDb)
+    .WaitFor(rabbitmq);
 
 var documentationApi = builder.AddProject("documentation-api", @"..\..\Services\Documentation\BauDoku.Documentation.Api\BauDoku.Documentation.Api.csproj")
     .WithReference(documentationDb)
-    .WithReference(rabbitmq);
+    .WithReference(rabbitmq)
+    .WaitFor(documentationDb)
+    .WaitFor(rabbitmq);
 
 var syncApi = builder.AddProject("sync-api", @"..\..\Services\Sync\BauDoku.Sync.Api\BauDoku.Sync.Api.csproj")
     .WithReference(syncDb)
     .WithReference(redis)
-    .WithReference(rabbitmq);
+    .WithReference(rabbitmq)
+    .WaitFor(syncDb)
+    .WaitFor(redis)
+    .WaitFor(rabbitmq);
 
 builder.AddProject("api-gateway", @"..\..\ApiGateway\BauDoku.ApiGateway\BauDoku.ApiGateway.csproj")
     .WithReference(projectsApi)
     .WithReference(documentationApi)
-    .WithReference(syncApi);
+    .WithReference(syncApi)
+    .WithExternalHttpEndpoints()
+    .WaitFor(projectsApi)
+    .WaitFor(documentationApi)
+    .WaitFor(syncApi);
 
 builder.Build().Run();
