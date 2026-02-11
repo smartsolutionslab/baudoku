@@ -7,13 +7,17 @@ using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.AddServiceDefaults();
+var connectionString = builder.Configuration.GetConnectionString("DocumentationDb")
+    ?? throw new InvalidOperationException("Connection string 'DocumentationDb' not found.");
+
+builder.AddServiceDefaults(health =>
+{
+    health.AddNpgSql(connectionString, name: "postgresql", tags: ["ready"]);
+});
+
 builder.Services.AddOpenApi();
 
 builder.Services.AddBauDokuAuthentication(builder.Configuration);
-
-var connectionString = builder.Configuration.GetConnectionString("DocumentationDb")
-    ?? throw new InvalidOperationException("Connection string 'DocumentationDb' not found.");
 
 builder.Services.AddApplication(BauDoku.Documentation.Application.DependencyInjection.Assembly);
 builder.Services.AddDocumentationInfrastructure(connectionString);
