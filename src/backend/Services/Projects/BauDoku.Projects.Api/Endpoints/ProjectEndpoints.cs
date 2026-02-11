@@ -10,7 +10,7 @@ public static class ProjectEndpoints
 {
     public static void MapProjectEndpoints(this IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/api/projects").WithTags("Projects");
+        var group = app.MapGroup("/api/projects").WithTags("Projects").RequireAuthorization();
 
         group.MapPost("/", async (CreateProjectCommand command, IDispatcher dispatcher, CancellationToken ct) =>
         {

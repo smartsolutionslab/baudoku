@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BauDoku.Sync.Infrastructure\BauDoku.Sync.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\BauDoku.ServiceDefaults\BauDoku.ServiceDefaults.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

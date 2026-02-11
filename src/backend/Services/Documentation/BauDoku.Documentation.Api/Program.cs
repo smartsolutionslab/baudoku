@@ -1,13 +1,16 @@
 using BauDoku.BuildingBlocks.Application;
-using BauDoku.BuildingBlocks.Application.Dispatcher;
+using BauDoku.BuildingBlocks.Infrastructure.Auth;
 using BauDoku.Documentation.Api.Endpoints;
 using BauDoku.Documentation.Infrastructure;
+using BauDoku.ServiceDefaults;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddHealthChecks();
+builder.AddServiceDefaults();
 builder.Services.AddOpenApi();
+
+builder.Services.AddBauDokuAuthentication(builder.Configuration);
 
 var connectionString = builder.Configuration.GetConnectionString("DocumentationDb")
     ?? throw new InvalidOperationException("Connection string 'DocumentationDb' not found.");
@@ -23,7 +26,10 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
-app.MapHealthChecks("/health");
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapDefaultEndpoints();
 app.MapInstallationEndpoints();
 app.MapPhotoEndpoints();
 app.MapMeasurementEndpoints();

@@ -45,10 +45,17 @@
         {
           "cameraPermission": "BauDoku benötigt Kamerazugriff zum Scannen von QR-Codes an Zonen."
         }
-      ]
+      ],
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "apiBaseUrl": "http://10.0.0.6:5000",
+      "keycloakUrl": "http://10.0.0.6:8080",
+      "keycloakRealm": "baudoku",
+      "keycloakClientId": "baudoku-mobile"
     }
   }
 }

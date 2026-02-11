@@ -6,6 +6,7 @@
     <Project Path="BuildingBlocks/BauDoku.BuildingBlocks.Application/BauDoku.BuildingBlocks.Application.csproj" />
     <Project Path="BuildingBlocks/BauDoku.BuildingBlocks.Domain/BauDoku.BuildingBlocks.Domain.csproj" />
     <Project Path="BuildingBlocks/BauDoku.BuildingBlocks.Infrastructure/BauDoku.BuildingBlocks.Infrastructure.csproj" />
+    <Project Path="BuildingBlocks/BauDoku.ServiceDefaults/BauDoku.ServiceDefaults.csproj" />
   </Folder>
   <Folder Name="/Gateway/">
     <Project Path="ApiGateway/BauDoku.ApiGateway/BauDoku.ApiGateway.csproj" />

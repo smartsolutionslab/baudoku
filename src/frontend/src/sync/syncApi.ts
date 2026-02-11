@@ -1,4 +1,4 @@
-import { apiGet, apiPost } from "./apiClient";
+import { apiGet, apiPost, apiUpload } from "./apiClient";
 
 export interface SyncDeltaDto {
   entityType: string;
@@ -75,6 +75,31 @@ export async function getConflicts(
 
   const qs = params.toString();
   return apiGet<ConflictDto[]>(`/api/sync/conflicts${qs ? `?${qs}` : ""}`);
+}
+
+export interface PhotoUploadResult {
+  id: string;
+}
+
+export async function uploadPhoto(
+  installationId: string,
+  fileUri: string,
+  fileName: string,
+  mimeType: string,
+  caption?: string
+): Promise<PhotoUploadResult> {
+  const formData = new FormData();
+  formData.append("file", {
+    uri: fileUri,
+    name: fileName,
+    type: mimeType,
+  } as unknown as Blob);
+  if (caption) formData.append("caption", caption);
+
+  return apiUpload<PhotoUploadResult>(
+    `/api/documentation/installations/${installationId}/photos`,
+    formData
+  );
 }
 
 export async function resolveConflict(
