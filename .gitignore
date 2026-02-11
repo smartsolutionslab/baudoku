@@ -67,3 +67,6 @@ docker-compose.override.yml
 
 # ---- Aspire ----
 .aspire/
+
+# ---- Claude Code ----
+.claude/
