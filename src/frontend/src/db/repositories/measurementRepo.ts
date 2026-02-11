@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, count } from "drizzle-orm";
 import { db } from "../client";
 import { measurements } from "../schema";
 import { generateId } from "../../utils/uuid";
@@ -98,4 +98,21 @@ export async function update(
 export async function remove(id: string): Promise<void> {
   await db.delete(measurements).where(eq(measurements.id, id));
   await createOutboxEntry("measurement", id, "delete", { id });
+}
+
+export async function getCountByResult(): Promise<Record<string, number>> {
+  const rows = await db
+    .select({
+      result: measurements.result,
+      count: count(),
+    })
+    .from(measurements)
+    .groupBy(measurements.result)
+    .all();
+
+  const result: Record<string, number> = {};
+  for (const r of rows) {
+    if (r.result) result[r.result] = r.count;
+  }
+  return result;
 }

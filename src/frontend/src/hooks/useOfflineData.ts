@@ -229,6 +229,18 @@ export function useDeletePhoto() {
   });
 }
 
+export function useUpdatePhotoAnnotation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, annotation }: { id: string; annotation: string }) =>
+      photoRepo.updateAnnotation(id, annotation),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["photos"] });
+      queryClient.invalidateQueries({ queryKey: ["syncStatus"] });
+    },
+  });
+}
+
 // ─── Measurements ────────────────────────────────────────────────
 
 export function useMeasurementsByInstallation(installationId: string) {

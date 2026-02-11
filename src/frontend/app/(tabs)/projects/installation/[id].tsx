@@ -8,6 +8,7 @@ import {
   useMeasurementsByInstallation,
   useAddPhoto,
   useDeletePhoto,
+  useUpdatePhotoAnnotation,
   useAddMeasurement,
   useDeleteMeasurement,
   useDeleteInstallation,
@@ -44,6 +45,7 @@ export default function InstallationDetailScreen() {
 
   const addPhoto = useAddPhoto();
   const deletePhoto = useDeletePhoto();
+  const { mutateAsync: saveAnnotation } = useUpdatePhotoAnnotation();
   const addMeasurement = useAddMeasurement();
   const deleteMeasurement = useDeleteMeasurement();
   const deleteInstallation = useDeleteInstallation();
@@ -273,6 +275,9 @@ export default function InstallationDetailScreen() {
         visible={showViewer}
         onClose={() => setShowViewer(false)}
         onDelete={handleDeletePhoto}
+        onSaveAnnotation={(photoId, annotation) => {
+          void saveAnnotation({ id: photoId, annotation });
+        }}
       />
     </View>
   );

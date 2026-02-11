@@ -39,6 +39,12 @@
           "locationAlwaysAndWhenInUsePermission": "BauDoku benötigt Zugriff auf Ihren Standort zur GPS-Dokumentation von Installationen.",
           "locationWhenInUsePermission": "BauDoku benötigt Zugriff auf Ihren Standort zur GPS-Dokumentation von Installationen."
         }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "BauDoku benötigt Kamerazugriff zum Scannen von QR-Codes an Zonen."
+        }
       ]
     ],
     "experiments": {

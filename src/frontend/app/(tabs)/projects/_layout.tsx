@@ -25,12 +25,24 @@ export default function ProjectsLayout() {
         options={{ headerShown: true, title: "Zone" }}
       />
       <Stack.Screen
+        name="zone/edit"
+        options={{ headerShown: true, title: "Zone bearbeiten" }}
+      />
+      <Stack.Screen
         name="installation/[id]"
         options={{ headerShown: true, title: "Installation" }}
       />
       <Stack.Screen
         name="installation/edit"
         options={{ headerShown: true, title: "Installation bearbeiten" }}
+      />
+      <Stack.Screen
+        name="search"
+        options={{ headerShown: true, title: "Suche" }}
+      />
+      <Stack.Screen
+        name="dashboard"
+        options={{ headerShown: true, title: "Dashboard" }}
       />
     </Stack>
   );
