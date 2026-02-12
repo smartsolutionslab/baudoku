@@ -41,7 +41,7 @@ var syncApi = builder.AddProject("sync-api", @"..\..\Services\Sync\BauDoku.Sync.
     .WaitFor(redis)
     .WaitFor(rabbitmq);
 
-builder.AddProject("api-gateway", @"..\..\ApiGateway\BauDoku.ApiGateway\BauDoku.ApiGateway.csproj")
+var apiGateway = builder.AddProject("api-gateway", @"..\..\ApiGateway\BauDoku.ApiGateway\BauDoku.ApiGateway.csproj")
     .WithReference(projectsApi)
     .WithReference(documentationApi)
     .WithReference(syncApi)
@@ -49,5 +49,10 @@ builder.AddProject("api-gateway", @"..\..\ApiGateway\BauDoku.ApiGateway\BauDoku.
     .WaitFor(projectsApi)
     .WaitFor(documentationApi)
     .WaitFor(syncApi);
+
+builder.AddViteApp("web", @"..\..\..\..\src\web")
+    .WithReference(apiGateway)
+    .WithHttpEndpoint(port: 5173, env: "PORT")
+    .WithExternalHttpEndpoints();
 
 builder.Build().Run();

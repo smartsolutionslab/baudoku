@@ -66,6 +66,21 @@ services:
         memory: 256Mi
     env: []
 
+  web:
+    name: web
+    replicaCount: 1
+    image:
+      name: web
+    port: 80
+    resources:
+      requests:
+        cpu: 50m
+        memory: 32Mi
+      limits:
+        cpu: 200m
+        memory: 64Mi
+    env: []
+
 ingress:
   enabled: true
   className: nginx

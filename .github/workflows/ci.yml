@@ -103,9 +103,6 @@ jobs:
   frontend:
     name: Frontend Build & Typecheck
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: src/frontend
     steps:
       - uses: actions/checkout@v4
 
@@ -114,16 +111,44 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
-          cache-dependency-path: src/frontend/package-lock.json
+          cache-dependency-path: src/package-lock.json
 
       - name: Install dependencies
+        working-directory: src
         run: npm ci
 
       - name: Typecheck
+        working-directory: src/frontend
         run: npx tsc --noEmit
 
       - name: Bundle (Android JS)
+        working-directory: src/frontend
         run: npx expo export --platform android
+
+  web:
+    name: Web Build & Typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: src/package-lock.json
+
+      - name: Install dependencies
+        working-directory: src
+        run: npm ci
+
+      - name: Typecheck
+        working-directory: src/web
+        run: npx tsc --noEmit
+
+      - name: Build
+        working-directory: src/web
+        run: npx vite build
 
   build-android:
     name: Android Build (Local)
@@ -141,7 +166,7 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
-          cache-dependency-path: src/frontend/package-lock.json
+          cache-dependency-path: src/package-lock.json
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -153,6 +178,7 @@ jobs:
         uses: android-actions/setup-android@v3
 
       - name: Install dependencies
+        working-directory: src
         run: npm ci
 
       - name: Expo prebuild
@@ -193,9 +219,10 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
-          cache-dependency-path: src/frontend/package-lock.json
+          cache-dependency-path: src/package-lock.json
 
       - name: Install dependencies
+        working-directory: src
         run: npm ci
 
       - name: Expo prebuild
@@ -243,9 +270,10 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
-          cache-dependency-path: src/frontend/package-lock.json
+          cache-dependency-path: src/package-lock.json
 
       - name: Install dependencies
+        working-directory: src
         run: npm ci
 
       - name: Setup Expo
@@ -288,7 +316,7 @@ jobs:
   docker:
     name: Docker Build & Push
     runs-on: ubuntu-latest
-    needs: [version, backend]
+    needs: [version, backend, web]
     if: github.ref == 'refs/heads/main' || (github.event_name == 'pull_request' && github.base_ref == 'main')
     strategy:
       matrix:
@@ -301,6 +329,8 @@ jobs:
             dockerfile: src/backend/Services/Sync/BauDoku.Sync.Api/Dockerfile
           - name: api-gateway
             dockerfile: src/backend/ApiGateway/BauDoku.ApiGateway/Dockerfile
+          - name: web
+            dockerfile: src/web/Dockerfile
     steps:
       - uses: actions/checkout@v4
 
