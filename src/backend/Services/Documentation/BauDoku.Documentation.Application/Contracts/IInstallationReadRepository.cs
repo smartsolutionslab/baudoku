@@ -14,4 +14,23 @@ public interface IInstallationReadRepository
         int page,
         int pageSize,
         CancellationToken cancellationToken = default);
+
+    Task<PagedResult<NearbyInstallationDto>> SearchInRadiusAsync(
+        double latitude,
+        double longitude,
+        double radiusMeters,
+        Guid? projectId,
+        int page,
+        int pageSize,
+        CancellationToken cancellationToken = default);
+
+    Task<PagedResult<InstallationListItemDto>> SearchInBoundingBoxAsync(
+        double minLatitude,
+        double minLongitude,
+        double maxLatitude,
+        double maxLongitude,
+        Guid? projectId,
+        int page,
+        int pageSize,
+        CancellationToken cancellationToken = default);
 }

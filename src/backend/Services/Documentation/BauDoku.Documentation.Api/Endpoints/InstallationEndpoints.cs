@@ -1,6 +1,8 @@
 using BauDoku.BuildingBlocks.Application.Dispatcher;
 using BauDoku.Documentation.Application.Commands.DocumentInstallation;
 using BauDoku.Documentation.Application.Queries.GetInstallation;
+using BauDoku.Documentation.Application.Queries.GetInstallationsInBoundingBox;
+using BauDoku.Documentation.Application.Queries.GetInstallationsInRadius;
 using BauDoku.Documentation.Application.Queries.ListInstallations;
 
 namespace BauDoku.Documentation.Api.Endpoints;
@@ -38,6 +40,39 @@ public static class InstallationEndpoints
                 page ?? 1, pageSize ?? 20);
             var result = await dispatcher.Query(query, ct);
             return Results.Ok(result);
+        });
+
+        group.MapGet("/nearby", async (
+            double latitude,
+            double longitude,
+            double radiusMeters,
+            Guid? projectId,
+            int? page,
+            int? pageSize,
+            IDispatcher dispatcher,
+            CancellationToken ct) =>
+        {
+            var query = new GetInstallationsInRadiusQuery(
+                latitude, longitude, radiusMeters, projectId,
+                page ?? 1, pageSize ?? 20);
+            return Results.Ok(await dispatcher.Query(query, ct));
+        });
+
+        group.MapGet("/in-area", async (
+            double minLatitude,
+            double minLongitude,
+            double maxLatitude,
+            double maxLongitude,
+            Guid? projectId,
+            int? page,
+            int? pageSize,
+            IDispatcher dispatcher,
+            CancellationToken ct) =>
+        {
+            var query = new GetInstallationsInBoundingBoxQuery(
+                minLatitude, minLongitude, maxLatitude, maxLongitude,
+                projectId, page ?? 1, pageSize ?? 20);
+            return Results.Ok(await dispatcher.Query(query, ct));
         });
 
         group.MapGet("/{id:guid}", async (
