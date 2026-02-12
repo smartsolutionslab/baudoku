@@ -5,6 +5,8 @@ import {
   ScrollView,
   StyleSheet,
   TouchableOpacity,
+  Switch,
+  Platform,
 } from "react-native";
 import { router } from "expo-router";
 import { useProjects } from "../../../src/hooks/useOfflineData";
@@ -13,11 +15,13 @@ import { useAuthStore } from "../../../src/store/useAuthStore";
 import { clearTokens } from "../../../src/auth/tokenStorage";
 import { setAuthToken } from "../../../src/sync/apiClient";
 import { Colors, Spacing, FontSize } from "../../../src/styles/tokens";
+import { useSettingsStore } from "../../../src/store/useSettingsStore";
 
 export default function ProfileScreen() {
   const { data: projects } = useProjects();
   const { isOnline, unsyncedCount, lastSyncTimestamp } = useSyncStatus();
   const { isAuthenticated, user, clearAuth } = useAuthStore();
+  const { allowMockLocation, setAllowMockLocation } = useSettingsStore();
 
   const projectCount = projects?.length ?? 0;
 
@@ -93,6 +97,31 @@ export default function ProfileScreen() {
             </Text>
           </View>
         </View>
+      </View>
+
+      {/* GPS-Einstellungen */}
+      <View style={styles.card}>
+        <Text style={styles.cardTitle}>GPS-Einstellungen</Text>
+        {Platform.OS === "android" ? (
+          <>
+            <View style={styles.row}>
+              <Text style={styles.label}>Externes GPS erlauben</Text>
+              <Switch
+                value={allowMockLocation}
+                onValueChange={setAllowMockLocation}
+                trackColor={{ false: Colors.disabled, true: Colors.primary }}
+              />
+            </View>
+            <Text style={styles.helpText}>
+              Erlaubt die Nutzung externer GNSS-Empfänger (DGNSS/RTK) über Mock
+              Location.
+            </Text>
+          </>
+        ) : (
+          <Text style={styles.helpText}>
+            Externe GPS-Empfänger werden unter iOS nicht unterstützt.
+          </Text>
+        )}
       </View>
 
       {/* Datenbank */}
@@ -171,6 +200,11 @@ const styles = StyleSheet.create({
     height: 8,
     borderRadius: 4,
     marginRight: 6,
+  },
+  helpText: {
+    fontSize: FontSize.caption,
+    color: Colors.textTertiary,
+    fontStyle: "italic",
   },
   notLoggedInText: {
     fontSize: FontSize.body,

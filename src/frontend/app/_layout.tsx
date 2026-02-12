@@ -11,6 +11,7 @@ import { AuthProvider } from "../src/providers/AuthProvider";
 import { SyncProvider } from "../src/providers/SyncProvider";
 import { useMigrationsHelper } from "../src/db/useMigrationsHelper";
 import { startConnectivityMonitor, stopConnectivityMonitor } from "../src/sync/ConnectivityMonitor";
+import { useSettingsStore } from "../src/store/useSettingsStore";
 import { OfflineBanner } from "../src/components/sync/OfflineBanner";
 import { View, Text, ActivityIndicator, StyleSheet } from "react-native";
 
@@ -55,6 +56,7 @@ function RootLayoutNav() {
 
   useEffect(() => {
     startConnectivityMonitor();
+    useSettingsStore.getState().hydrate();
     return () => stopConnectivityMonitor();
   }, []);
 
