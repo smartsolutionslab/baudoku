@@ -5,6 +5,7 @@ public sealed record InstallationListItemDto(
     Guid ProjectId,
     string Type,
     string Status,
+    string QualityGrade,
     double Latitude,
     double Longitude,
     string? Description,

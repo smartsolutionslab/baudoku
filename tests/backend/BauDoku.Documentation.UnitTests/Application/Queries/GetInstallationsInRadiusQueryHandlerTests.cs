@@ -23,7 +23,7 @@ public sealed class GetInstallationsInRadiusQueryHandlerTests
     {
         var items = new List<NearbyInstallationDto>
         {
-            new(Guid.NewGuid(), Guid.NewGuid(), "cable_tray", "in_progress",
+            new(Guid.NewGuid(), Guid.NewGuid(), "cable_tray", "in_progress", "b",
                 48.137154, 11.576124, "Test", DateTime.UtcNow, 2, 1, 150.5)
         };
         var expected = new PagedResult<NearbyInstallationDto>(items, 1, 1, 20);
