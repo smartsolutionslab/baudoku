@@ -23,7 +23,7 @@ public sealed class GetInstallationsInBoundingBoxQueryHandlerTests
     {
         var items = new List<InstallationListItemDto>
         {
-            new(Guid.NewGuid(), Guid.NewGuid(), "cable_tray", "in_progress",
+            new(Guid.NewGuid(), Guid.NewGuid(), "cable_tray", "in_progress", "b",
                 48.137154, 11.576124, "Test", DateTime.UtcNow, 2, 1)
         };
         var expected = new PagedResult<InstallationListItemDto>(items, 1, 1, 20);

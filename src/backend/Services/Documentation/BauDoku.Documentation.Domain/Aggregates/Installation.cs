@@ -22,6 +22,7 @@ public sealed class Installation : AggregateRoot<InstallationId>
     public Manufacturer? Manufacturer { get; private set; }
     public ModelName? ModelName { get; private set; }
     public SerialNumber? SerialNumber { get; private set; }
+    public GpsQualityGrade QualityGrade { get; private set; } = default!;
     public DateTime CreatedAt { get; private set; }
     public DateTime? CompletedAt { get; private set; }
     public IReadOnlyList<Photo> Photos => _photos.AsReadOnly();
@@ -44,6 +45,8 @@ public sealed class Installation : AggregateRoot<InstallationId>
     {
         CheckRule(new InstallationMustHaveValidGpsPosition(position));
 
+        var qualityGrade = position.CalculateQualityGrade();
+
         var installation = new Installation
         {
             Id = id,
@@ -52,6 +55,7 @@ public sealed class Installation : AggregateRoot<InstallationId>
             Type = type,
             Status = InstallationStatus.InProgress,
             Position = position,
+            QualityGrade = qualityGrade,
             Description = description,
             CableSpec = cableSpec,
             Depth = depth,
@@ -63,6 +67,9 @@ public sealed class Installation : AggregateRoot<InstallationId>
 
         installation.AddDomainEvent(new InstallationDocumented(
             id, projectId, type, DateTime.UtcNow));
+
+        if (qualityGrade == GpsQualityGrade.D)
+            installation.AddDomainEvent(new LowGpsQualityDetected(id, qualityGrade, DateTime.UtcNow));
 
         return installation;
     }

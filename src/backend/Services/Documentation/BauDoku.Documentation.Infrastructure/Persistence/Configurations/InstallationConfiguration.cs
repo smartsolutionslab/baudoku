@@ -37,6 +37,12 @@ public sealed class InstallationConfiguration : IEntityTypeConfiguration<Install
             .IsRequired()
             .HasConversion(s => s.Value, value => new InstallationStatus(value));
 
+        builder.Property(i => i.QualityGrade)
+            .HasColumnName("gps_quality_grade")
+            .HasMaxLength(1)
+            .IsRequired()
+            .HasConversion(g => g.Value, value => new GpsQualityGrade(value));
+
         builder.OwnsOne(i => i.Position, pos =>
         {
             pos.Property(p => p.Latitude).HasColumnName("gps_latitude").IsRequired();

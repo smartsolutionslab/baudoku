@@ -5,6 +5,7 @@ public sealed record NearbyInstallationDto(
     Guid ProjectId,
     string Type,
     string Status,
+    string QualityGrade,
     double Latitude,
     double Longitude,
     string? Description,
