@@ -5,7 +5,7 @@ import * as installationRepo from "../../../../src/db/repositories/installationR
 import { useUpdateInstallation } from "../../../../src/hooks/useOfflineData";
 import { InstallationForm } from "../../../../src/components/installations/InstallationForm";
 import type { InstallationFormData } from "../../../../src/validation/schemas";
-import type { GpsPosition } from "../../../../src/hooks/useGpsCapture";
+import type { GpsPosition, GpsSource, GpsCorrService, GpsRtkStatus } from "../../../../src/hooks/useGpsCapture";
 
 export default function EditInstallationScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -44,12 +44,13 @@ export default function EditInstallationScreen() {
           gpsLng: installation.gpsLng,
           gpsAltitude: installation.gpsAltitude ?? null,
           gpsAccuracy: installation.gpsAccuracy ?? 0,
-          gpsSource: (installation.gpsSource as "internal_gps") ?? "internal_gps",
-          gpsCorrService: (installation.gpsCorrService as "none") ?? "none",
-          gpsRtkStatus: (installation.gpsRtkStatus as "autonomous") ?? "autonomous",
+          gpsSource: (installation.gpsSource as GpsSource) ?? "internal_gps",
+          gpsCorrService: (installation.gpsCorrService as GpsCorrService) ?? "none",
+          gpsRtkStatus: (installation.gpsRtkStatus as GpsRtkStatus) ?? "autonomous",
           gpsSatCount: installation.gpsSatCount ?? null,
           gpsHdop: installation.gpsHdop ?? null,
           gpsCorrAge: installation.gpsCorrAge ?? null,
+          isMocked: installation.gpsSource === "external_dgnss" || installation.gpsSource === "external_rtk",
         }
       : null;
 

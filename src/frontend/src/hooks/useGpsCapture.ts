@@ -1,17 +1,24 @@
 import { useState, useCallback } from "react";
+import { Platform } from "react-native";
 import * as Location from "expo-location";
+import { useSettingsStore } from "../store/useSettingsStore";
+
+export type GpsSource = "internal_gps" | "external_dgnss" | "external_rtk";
+export type GpsCorrService = "none" | "sapos_eps" | "sapos_heps" | "sapos_gpps";
+export type GpsRtkStatus = "no_fix" | "autonomous" | "dgps" | "rtk_float" | "rtk_fixed";
 
 export interface GpsPosition {
   gpsLat: number;
   gpsLng: number;
   gpsAltitude: number | null;
   gpsAccuracy: number;
-  gpsSource: "internal_gps";
-  gpsCorrService: "none";
-  gpsRtkStatus: "autonomous";
+  gpsSource: GpsSource;
+  gpsCorrService: GpsCorrService;
+  gpsRtkStatus: GpsRtkStatus;
   gpsSatCount: number | null;
   gpsHdop: number | null;
   gpsCorrAge: number | null;
+  isMocked: boolean;
 }
 
 export interface UseGpsCaptureReturn {
@@ -26,6 +33,7 @@ export function useGpsCapture(): UseGpsCaptureReturn {
   const [position, setPosition] = useState<GpsPosition | null>(null);
   const [capturing, setCapturing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const allowMockLocation = useSettingsStore((s) => s.allowMockLocation);
 
   const capturePosition = useCallback(async (): Promise<GpsPosition | null> => {
     setCapturing(true);
@@ -43,17 +51,28 @@ export function useGpsCapture(): UseGpsCaptureReturn {
         accuracy: Location.Accuracy.BestForNavigation,
       });
 
+      const isMocked =
+        Platform.OS === "android" &&
+        (location as unknown as { mocked?: boolean }).mocked === true;
+
+      if (isMocked && !allowMockLocation) {
+        setError("Externes GPS ist in den Einstellungen deaktiviert.");
+        setCapturing(false);
+        return null;
+      }
+
       const gps: GpsPosition = {
         gpsLat: location.coords.latitude,
         gpsLng: location.coords.longitude,
         gpsAltitude: location.coords.altitude,
         gpsAccuracy: location.coords.accuracy ?? 0,
-        gpsSource: "internal_gps",
-        gpsCorrService: "none",
-        gpsRtkStatus: "autonomous",
+        gpsSource: isMocked ? "external_dgnss" : "internal_gps",
+        gpsCorrService: isMocked ? "sapos_eps" : "none",
+        gpsRtkStatus: isMocked ? "dgps" : "autonomous",
         gpsSatCount: null,
         gpsHdop: null,
         gpsCorrAge: null,
+        isMocked,
       };
 
       setPosition(gps);
@@ -66,7 +85,7 @@ export function useGpsCapture(): UseGpsCaptureReturn {
       setCapturing(false);
       return null;
     }
-  }, []);
+  }, [allowMockLocation]);
 
   const clearPosition = useCallback(() => {
     setPosition(null);
