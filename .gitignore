@@ -15,6 +15,7 @@ project.lock.json
 *.nuget.props
 *.nuget.targets
 packages/
+!src/packages/
 *.nupkg
 
 # ---- Rider / IntelliJ ----
@@ -68,6 +69,9 @@ docker-compose.override.yml
 
 # ---- Aspire ----
 .aspire/
+
+# ---- Web App (Vite) ----
+src/web/dist/
 
 # ---- Claude Code ----
 .claude/

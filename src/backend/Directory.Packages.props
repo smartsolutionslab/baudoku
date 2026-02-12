@@ -34,6 +34,7 @@
     <PackageVersion Include="Scalar.AspNetCore" Version="2.12.36" />
 
     <!-- Aspire -->
+    <PackageVersion Include="Aspire.Hosting.JavaScript" Version="13.1.1" />
     <PackageVersion Include="Aspire.Hosting.PostgreSQL" Version="13.1.0" />
     <PackageVersion Include="Aspire.Hosting.Redis" Version="13.1.0" />
     <PackageVersion Include="Aspire.Hosting.RabbitMQ" Version="13.1.0" />

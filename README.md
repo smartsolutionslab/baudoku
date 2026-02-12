@@ -4,6 +4,19 @@ Mobile App zur Dokumentation elektrischer Installationen auf Baustellen.
 
 **Status:** 🚧 Phase 0 – Foundation
 
+## Projektbeschreibung
+
+BauDoku ist eine offline-faehige mobile Anwendung zur systematischen Dokumentation elektrischer Installationen auf Baustellen. Die App richtet sich an Elektriker, Tiefbauer, Elektroplaner und Bauleiter.
+
+### Kernfunktionen
+
+- **Installationsdokumentation** – Erfassung von Elektrokomponenten (Kabeltrassen, Verteilerdosen, Erdung, Blitzschutz u.v.m.) mit strukturierten Metadaten wie Kabelspezifikationen, Einbautiefen und Herstellerangaben
+- **Fotodokumentation** – Vorher-/Nachher-/Detailfotos direkt an Installationen anhaengen, mit optionaler GPS-Verortung pro Bild
+- **Messprotokollierung** – Elektrische Pruefmessungen (Isolationswiderstand, Schleifenimpedanz, RCD-Ausloesezeit) mit automatischer Pass/Fail-Bewertung anhand konfigurierbarer Schwellwerte
+- **GPS-Positionierung** – Dreistufiges Positionierungskonzept: internes Smartphone-GPS (~3-5 m), externes DGNSS mit SAPOS-EPS (~30-50 cm) und RTK mit SAPOS-HEPS (~1-3 cm)
+- **Offline-Synchronisation** – Vollstaendige Offline-Faehigkeit mit Delta-Sync, Versionskontrolle und automatischer Konflikterkennung/-aufloesung beim Wiederherstellen der Verbindung
+- **Projektverwaltung** – Hierarchische Zonenstruktur (Gebaeude, Stockwerk, Raum, Graben) zur raeumlichen Organisation aller Installationen
+
 ## Stack
 
 | Schicht | Technologie |

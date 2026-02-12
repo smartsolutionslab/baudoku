@@ -292,9 +292,9 @@ public sealed class InstallationMeasurementTests
     }
 
     [Fact]
-    public void RecordMeasurement_WithRcdTripCurrent_ShouldSucceed()
+    public void RecordMeasurement_WithRcdTripCurrent_OnSwitchgear_ShouldSucceed()
     {
-        var installation = CreateValidInstallation();
+        var installation = CreateElectricalInstallation();
 
         installation.RecordMeasurement(
             MeasurementId.New(),
@@ -303,5 +303,68 @@ public sealed class InstallationMeasurementTests
 
         installation.Measurements.Should().ContainSingle();
         installation.Measurements[0].Type.Should().Be(MeasurementType.RcdTripCurrent);
+    }
+
+    [Fact]
+    public void RecordMeasurement_WithRcdTripTime_OnCableTray_ShouldThrowBusinessRuleException()
+    {
+        var installation = CreateValidInstallation();
+
+        var act = () => installation.RecordMeasurement(
+            MeasurementId.New(),
+            MeasurementType.RcdTripTime,
+            new MeasurementValue(25.0, "ms"));
+
+        act.Should().Throw<BusinessRuleException>();
+    }
+
+    [Fact]
+    public void RecordMeasurement_WithRcdTripCurrent_OnCableTray_ShouldThrowBusinessRuleException()
+    {
+        var installation = CreateValidInstallation();
+
+        var act = () => installation.RecordMeasurement(
+            MeasurementId.New(),
+            MeasurementType.RcdTripCurrent,
+            new MeasurementValue(30.0, "mA"));
+
+        act.Should().Throw<BusinessRuleException>();
+    }
+
+    [Fact]
+    public void RecordMeasurement_WithLoopImpedance_OnCableTray_ShouldThrowBusinessRuleException()
+    {
+        var installation = CreateValidInstallation();
+
+        var act = () => installation.RecordMeasurement(
+            MeasurementId.New(),
+            MeasurementType.LoopImpedance,
+            new MeasurementValue(0.5, "Ohm"));
+
+        act.Should().Throw<BusinessRuleException>();
+    }
+
+    [Fact]
+    public void RecordMeasurement_WithVoltage_OnCableTray_ShouldSucceed()
+    {
+        var installation = CreateValidInstallation();
+
+        installation.RecordMeasurement(
+            MeasurementId.New(),
+            MeasurementType.Voltage,
+            new MeasurementValue(230.0, "V"));
+
+        installation.Measurements.Should().ContainSingle();
+    }
+
+    private static Installation CreateElectricalInstallation()
+    {
+        return Installation.Create(
+            InstallationId.New(),
+            Guid.NewGuid(),
+            Guid.NewGuid(),
+            InstallationType.Switchgear,
+            new GpsPosition(48.1351, 11.5820, 520.0, 3.5, "internal_gps"),
+            new Description("Schaltanlage im Keller"));
     }
 }

@@ -1,5 +1,14 @@
 import React, { useState, useCallback } from "react";
-import { View, Text, ScrollView, StyleSheet, Alert } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  Alert,
+  Modal,
+  TextInput,
+  TouchableOpacity,
+} from "react-native";
 import { useLocalSearchParams, useRouter, Stack } from "expo-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import * as installationRepo from "../../../../src/db/repositories/installationRepo";
@@ -13,7 +22,10 @@ import {
   useDeleteMeasurement,
   useDeleteInstallation,
 } from "../../../../src/hooks/useOfflineData";
-import { usePhotoCapture } from "../../../../src/hooks/usePhotoCapture";
+import {
+  usePhotoCapture,
+  type CapturedPhoto,
+} from "../../../../src/hooks/usePhotoCapture";
 import { useConfirmDelete } from "../../../../src/hooks/useConfirmDelete";
 import { deletePhotoFile } from "../../../../src/utils/photoStorage";
 import { StatusBadge } from "../../../../src/components/common/StatusBadge";
@@ -29,6 +41,24 @@ import { MeasurementForm } from "../../../../src/components/installations/Measur
 import { Colors, Spacing, FontSize } from "../../../../src/styles/tokens";
 import type { Photo } from "../../../../src/db/repositories/types";
 import type { MeasurementFormData } from "../../../../src/validation/schemas";
+
+function uploadStatusColor(status: string): string {
+  switch (status) {
+    case "uploaded": return Colors.success;
+    case "uploading": return Colors.primary;
+    case "failed": return Colors.danger;
+    default: return Colors.textTertiary;
+  }
+}
+
+function uploadStatusLabel(status: string): string {
+  switch (status) {
+    case "uploaded": return "hochgeladen";
+    case "uploading": return "lädt hoch";
+    case "failed": return "fehlgeschlagen";
+    default: return "ausstehend";
+  }
+}
 
 export default function InstallationDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -55,7 +85,10 @@ export default function InstallationDetailScreen() {
   // Photo flow state
   const [showSourceSheet, setShowSourceSheet] = useState(false);
   const [showTypeSheet, setShowTypeSheet] = useState(false);
-  const [pendingPhotoPath, setPendingPhotoPath] = useState<string | null>(null);
+  const [showCaptionModal, setShowCaptionModal] = useState(false);
+  const [pendingPhoto, setPendingPhoto] = useState<CapturedPhoto | null>(null);
+  const [pendingPhotoType, setPendingPhotoType] = useState<PhotoType | null>(null);
+  const [captionText, setCaptionText] = useState("");
   const [viewerPhoto, setViewerPhoto] = useState<Photo | null>(null);
   const [showViewer, setShowViewer] = useState(false);
 
@@ -66,7 +99,7 @@ export default function InstallationDetailScreen() {
     setShowSourceSheet(false);
     const result = await takePhoto();
     if (result) {
-      setPendingPhotoPath(result.localPath);
+      setPendingPhoto(result);
       setShowTypeSheet(true);
     }
   }, [takePhoto]);
@@ -75,26 +108,40 @@ export default function InstallationDetailScreen() {
     setShowSourceSheet(false);
     const result = await pickFromGallery();
     if (result) {
-      setPendingPhotoPath(result.localPath);
+      setPendingPhoto(result);
       setShowTypeSheet(true);
     }
   }, [pickFromGallery]);
 
   const handlePhotoTypeSelect = useCallback(
-    async (type: PhotoType) => {
+    (type: PhotoType) => {
       setShowTypeSheet(false);
-      if (!pendingPhotoPath) return;
-      await addPhoto.mutateAsync({
-        installationId: id!,
-        localPath: pendingPhotoPath,
-        type,
-        takenAt: new Date(),
-        uploadStatus: "pending",
-      });
-      setPendingPhotoPath(null);
+      setPendingPhotoType(type);
+      setCaptionText("");
+      setShowCaptionModal(true);
     },
-    [pendingPhotoPath, id, addPhoto]
+    []
   );
+
+  const handleCaptionConfirm = useCallback(async () => {
+    setShowCaptionModal(false);
+    if (!pendingPhoto || !pendingPhotoType) return;
+    await addPhoto.mutateAsync({
+      installationId: id!,
+      localPath: pendingPhoto.localPath,
+      type: pendingPhotoType,
+      caption: captionText.trim() || null,
+      exifLatitude: pendingPhoto.exif?.gpsLatitude ?? null,
+      exifLongitude: pendingPhoto.exif?.gpsLongitude ?? null,
+      exifDateTime: pendingPhoto.exif?.dateTime ?? null,
+      exifCameraModel: pendingPhoto.exif?.cameraModel ?? null,
+      takenAt: new Date(),
+      uploadStatus: "pending",
+    });
+    setPendingPhoto(null);
+    setPendingPhotoType(null);
+    setCaptionText("");
+  }, [pendingPhoto, pendingPhotoType, captionText, id, addPhoto]);
 
   const handleDeletePhoto = useCallback(
     (photo: Photo) => {
@@ -227,6 +274,21 @@ export default function InstallationDetailScreen() {
             }}
             onAddPhoto={() => setShowSourceSheet(true)}
           />
+          {photos && photos.length > 0 && (
+            <View style={styles.uploadSummary}>
+              {(['pending', 'uploading', 'uploaded', 'failed'] as const).map((status) => {
+                const count = photos.filter((p) => p.uploadStatus === status).length;
+                if (count === 0) return null;
+                return (
+                  <View key={status} style={[styles.uploadBadge, { backgroundColor: uploadStatusColor(status) }]}>
+                    <Text style={styles.uploadBadgeText}>
+                      {count} {uploadStatusLabel(status)}
+                    </Text>
+                  </View>
+                );
+              })}
+            </View>
+          )}
         </View>
 
         {/* Messungen */}
@@ -267,9 +329,46 @@ export default function InstallationDetailScreen() {
         onSelect={handlePhotoTypeSelect}
         onClose={() => {
           setShowTypeSheet(false);
-          setPendingPhotoPath(null);
+          setPendingPhoto(null);
         }}
       />
+
+      {/* Caption input modal */}
+      <Modal
+        visible={showCaptionModal}
+        transparent
+        animationType="slide"
+        onRequestClose={() => {
+          setShowCaptionModal(false);
+          setPendingPhoto(null);
+          setPendingPhotoType(null);
+        }}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.captionModal}>
+            <Text style={styles.captionModalTitle}>Beschriftung (optional)</Text>
+            <TextInput
+              style={styles.captionInput}
+              value={captionText}
+              onChangeText={setCaptionText}
+              placeholder="z.B. Kabeltrasse Nordseite"
+              placeholderTextColor={Colors.textTertiary}
+              maxLength={200}
+              autoFocus
+            />
+            <View style={styles.captionActions}>
+              <TouchableOpacity
+                style={styles.captionSkipButton}
+                onPress={handleCaptionConfirm}
+              >
+                <Text style={styles.captionSkipText}>
+                  {captionText.trim() ? "Hinzufügen" : "Überspringen"}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
       <PhotoViewer
         photo={viewerPhoto}
         visible={showViewer}
@@ -338,5 +437,61 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     marginBottom: Spacing.md,
+  },
+  uploadSummary: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: Spacing.xs,
+    marginTop: Spacing.sm,
+  },
+  uploadBadge: {
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 2,
+    borderRadius: 10,
+  },
+  uploadBadgeText: {
+    color: "#fff",
+    fontSize: FontSize.footnote,
+    fontWeight: "600",
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "flex-end",
+  },
+  captionModal: {
+    backgroundColor: Colors.card,
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+    padding: Spacing.xl,
+    paddingBottom: 40,
+  },
+  captionModalTitle: {
+    fontSize: FontSize.headline,
+    fontWeight: "600",
+    marginBottom: Spacing.md,
+  },
+  captionInput: {
+    borderWidth: 1,
+    borderColor: Colors.separator,
+    borderRadius: 10,
+    padding: Spacing.md,
+    fontSize: FontSize.body,
+    color: Colors.textPrimary,
+    marginBottom: Spacing.lg,
+  },
+  captionActions: {
+    alignItems: "flex-end",
+  },
+  captionSkipButton: {
+    backgroundColor: Colors.primary,
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: Spacing.md,
+    borderRadius: 10,
+  },
+  captionSkipText: {
+    color: "#fff",
+    fontSize: FontSize.body,
+    fontWeight: "600",
   },
 });

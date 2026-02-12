@@ -109,6 +109,7 @@ public sealed class Installation : AggregateRoot<InstallationId>
     {
         CheckRule(new CompletedInstallationCannotBeModified(Status));
         CheckRule(new MeasurementValueMustBePositive(value));
+        CheckRule(new MeasurementTypeMustMatchInstallationType(Type, type));
 
         var measurement = Measurement.Create(measurementId, type, value, notes);
         _measurements.Add(measurement);

@@ -119,6 +119,11 @@ export const photos = sqliteTable("photos", {
   gpsCorrService: text("gps_corr_service", {
     enum: ["none", "sapos_eps", "sapos_heps"],
   }),
+  caption: text("caption"),
+  exifLatitude: real("exif_latitude"),
+  exifLongitude: real("exif_longitude"),
+  exifDateTime: text("exif_date_time"),
+  exifCameraModel: text("exif_camera_model"),
   takenAt: integer("taken_at", { mode: "timestamp" }).notNull(),
   uploadStatus: text("upload_status", {
     enum: ["pending", "uploading", "uploaded", "failed"],
