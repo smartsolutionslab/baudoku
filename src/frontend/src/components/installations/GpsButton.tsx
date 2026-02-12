@@ -18,6 +18,27 @@ interface GpsButtonProps {
   onClear?: () => void;
 }
 
+function getAccuracyColor(accuracy: number): string {
+  if (accuracy < 5) return Colors.success;
+  if (accuracy < 15) return Colors.warning;
+  if (accuracy < 30) return "#FF6B00";
+  return Colors.danger;
+}
+
+function getAccuracyLabel(accuracy: number): string {
+  if (accuracy < 5) return "Ausgezeichnet";
+  if (accuracy < 15) return "Akzeptabel";
+  if (accuracy < 30) return "Ungenau";
+  return "Sehr ungenau";
+}
+
+function getAccuracyBackground(accuracy: number): string {
+  if (accuracy < 5) return "#E8F5E9";
+  if (accuracy < 15) return "#FFF8E1";
+  if (accuracy < 30) return "#FFF3E0";
+  return "#FFEBEE";
+}
+
 export function GpsButton({
   position,
   capturing,
@@ -35,28 +56,52 @@ export function GpsButton({
   }
 
   if (position) {
+    const color = getAccuracyColor(position.gpsAccuracy);
+    const label = getAccuracyLabel(position.gpsAccuracy);
+    const bgColor = getAccuracyBackground(position.gpsAccuracy);
+
     return (
-      <View style={styles.successCard}>
+      <View style={[styles.successCard, { backgroundColor: bgColor }]}>
         <View style={styles.successHeader}>
           <FontAwesome
             name="map-marker"
             size={16}
-            color={Colors.success}
+            color={color}
             style={styles.successIcon}
           />
-          <Text style={styles.successTitle}>GPS-Position erfasst</Text>
-          {onClear && (
-            <TouchableOpacity onPress={onClear}>
-              <FontAwesome name="close" size={16} color={Colors.textTertiary} />
+          <Text style={[styles.successTitle, { color }]}>
+            GPS-Position erfasst
+          </Text>
+          <View style={styles.headerActions}>
+            <TouchableOpacity
+              style={styles.recaptureButton}
+              onPress={onCapture}
+            >
+              <FontAwesome name="refresh" size={14} color={Colors.primary} />
+              <Text style={styles.recaptureText}>Erneut</Text>
             </TouchableOpacity>
-          )}
+            {onClear && (
+              <TouchableOpacity onPress={onClear} style={styles.clearButton}>
+                <FontAwesome
+                  name="close"
+                  size={16}
+                  color={Colors.textTertiary}
+                />
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
         <Text style={styles.coordText}>
           {position.gpsLat.toFixed(6)}, {position.gpsLng.toFixed(6)}
         </Text>
-        <Text style={styles.accuracyText}>
-          Genauigkeit: {position.gpsAccuracy.toFixed(1)} m
-        </Text>
+        <View style={styles.accuracyRow}>
+          <View style={[styles.accuracyBadge, { backgroundColor: color }]}>
+            <Text style={styles.accuracyBadgeText}>
+              {position.gpsAccuracy.toFixed(1)} m
+            </Text>
+          </View>
+          <Text style={styles.accuracyLabel}>{label}</Text>
+        </View>
       </View>
     );
   }
@@ -110,7 +155,6 @@ const styles = StyleSheet.create({
     marginLeft: Spacing.sm,
   },
   successCard: {
-    backgroundColor: "#E8F5E9",
     borderRadius: 10,
     padding: Spacing.md,
     marginTop: Spacing.lg,
@@ -126,18 +170,54 @@ const styles = StyleSheet.create({
   successTitle: {
     fontSize: FontSize.body,
     fontWeight: "600",
-    color: Colors.success,
     flex: 1,
+  },
+  headerActions: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+  },
+  recaptureButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.xs,
+    borderRadius: 6,
+    backgroundColor: "rgba(0, 122, 255, 0.1)",
+  },
+  recaptureText: {
+    fontSize: FontSize.footnote,
+    color: Colors.primary,
+    fontWeight: "600",
+    marginLeft: 4,
+  },
+  clearButton: {
+    padding: Spacing.xs,
   },
   coordText: {
     fontSize: FontSize.caption,
     color: Colors.textSecondary,
     fontFamily: "SpaceMono",
   },
-  accuracyText: {
+  accuracyRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: Spacing.xs,
+  },
+  accuracyBadge: {
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 2,
+    borderRadius: 10,
+    marginRight: Spacing.sm,
+  },
+  accuracyBadgeText: {
+    color: "#fff",
+    fontSize: FontSize.footnote,
+    fontWeight: "700",
+  },
+  accuracyLabel: {
     fontSize: FontSize.footnote,
     color: Colors.textTertiary,
-    marginTop: 2,
   },
   errorText: {
     fontSize: FontSize.caption,

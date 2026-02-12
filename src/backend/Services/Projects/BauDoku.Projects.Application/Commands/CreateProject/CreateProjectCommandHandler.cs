@@ -1,8 +1,10 @@
 using BauDoku.BuildingBlocks.Application.Commands;
 using BauDoku.BuildingBlocks.Application.Persistence;
+using BauDoku.BuildingBlocks.Domain;
 using BauDoku.Projects.Application.Contracts;
 using BauDoku.Projects.Application.Diagnostics;
 using BauDoku.Projects.Domain.Aggregates;
+using BauDoku.Projects.Domain.Rules;
 using BauDoku.Projects.Domain.ValueObjects;
 
 namespace BauDoku.Projects.Application.Commands.CreateProject;
@@ -22,6 +24,12 @@ public sealed class CreateProjectCommandHandler : ICommandHandler<CreateProjectC
     {
         var projectId = ProjectId.New();
         var name = new ProjectName(command.Name);
+
+        var nameExists = await _projectRepository.ExistsByNameAsync(name, cancellationToken);
+        var rule = new ProjectMustHaveUniqueName(nameExists);
+        if (rule.IsBroken())
+            throw new BusinessRuleException(rule);
+
         var address = new Address(command.Street, command.City, command.ZipCode);
         var client = new ClientInfo(command.ClientName, command.ClientEmail, command.ClientPhone);
 

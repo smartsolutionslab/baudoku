@@ -30,6 +30,17 @@ public sealed class SyncBatchRepository : ISyncBatchRepository
             .FirstOrDefaultAsync(b => b.Conflicts.Any(c => c.Id == conflictId), cancellationToken);
     }
 
+    public async Task<List<SyncBatch>> GetPendingBatchesAsync(int limit, CancellationToken cancellationToken = default)
+    {
+        return await _context.SyncBatches
+            .Include(b => b.Deltas)
+            .Include(b => b.Conflicts)
+            .Where(b => b.Status == BatchStatus.Pending)
+            .OrderBy(b => b.SubmittedAt)
+            .Take(limit)
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task AddAsync(SyncBatch aggregate, CancellationToken cancellationToken = default)
     {
         await _context.SyncBatches.AddAsync(aggregate, cancellationToken);

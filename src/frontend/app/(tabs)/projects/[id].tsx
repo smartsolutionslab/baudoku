@@ -87,6 +87,14 @@ export default function ProjectDetailScreen() {
         <ActionBar
           actions={[
             {
+              icon: "list",
+              label: "Installationen",
+              onPress: () =>
+                router.push(
+                  `/(tabs)/projects/installations?projectId=${id}`
+                ),
+            },
+            {
               icon: "pencil",
               label: "Bearbeiten",
               onPress: () =>

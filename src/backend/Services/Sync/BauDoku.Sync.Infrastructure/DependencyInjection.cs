@@ -1,5 +1,6 @@
 using BauDoku.BuildingBlocks.Application.Persistence;
 using BauDoku.Sync.Application.Contracts;
+using BauDoku.Sync.Infrastructure.BackgroundServices;
 using BauDoku.Sync.Infrastructure.Persistence;
 using BauDoku.Sync.Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -27,6 +28,8 @@ public static class DependencyInjection
         services.Add(entityVersionStore);
         services.AddScoped<IEntityVersionStore>(sp => sp.GetRequiredService<EntityVersionStore>());
         services.AddScoped<IEntityVersionReadStore>(sp => sp.GetRequiredService<EntityVersionStore>());
+
+        services.AddHostedService<SyncSchedulerService>();
 
         return services;
     }

@@ -21,6 +21,12 @@ public sealed class ProjectRepository : IProjectRepository
             .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
     }
 
+    public async Task<bool> ExistsByNameAsync(ProjectName name, CancellationToken ct = default)
+    {
+        return await _context.Projects
+            .AnyAsync(p => p.Name == name, ct);
+    }
+
     public async Task AddAsync(Project aggregate, CancellationToken cancellationToken = default)
     {
         await _context.Projects.AddAsync(aggregate, cancellationToken);
