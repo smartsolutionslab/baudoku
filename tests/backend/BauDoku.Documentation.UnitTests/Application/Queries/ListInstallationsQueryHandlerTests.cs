@@ -24,7 +24,7 @@ public sealed class ListInstallationsQueryHandlerTests
         var projectId = Guid.NewGuid();
         var items = new List<InstallationListItemDto>
         {
-            new(Guid.NewGuid(), projectId, "cable_tray", "in_progress", 48.0, 11.0, "Test", DateTime.UtcNow, 2, 1)
+            new(Guid.NewGuid(), projectId, "cable_tray", "in_progress", "b", 48.0, 11.0, "Test", DateTime.UtcNow, 2, 1)
         };
         var expected = new PagedResult<InstallationListItemDto>(items, 1, 1, 20);
 

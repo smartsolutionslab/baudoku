@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import type { Installation } from "../../db/repositories/types";
 import { StatusBadge } from "../common/StatusBadge";
+import { calculateGpsQuality } from "../../utils/gpsQuality";
 import { Colors, Spacing, FontSize } from "../../styles/tokens";
 
 interface InstallationCardProps {
@@ -26,12 +27,32 @@ export function InstallationCard({
     .filter(Boolean)
     .join(" — ");
 
+  const gpsQuality =
+    installation.gpsAccuracy != null
+      ? calculateGpsQuality({
+          gpsAccuracy: installation.gpsAccuracy,
+          gpsHdop: installation.gpsHdop,
+          gpsSatCount: installation.gpsSatCount,
+          gpsCorrService: installation.gpsCorrService,
+        })
+      : null;
+
   return (
     <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.7}>
       <View style={styles.header}>
         <Text style={styles.type} numberOfLines={1}>
           {installation.type}
         </Text>
+        {gpsQuality && (
+          <View
+            style={[
+              styles.gpsBadge,
+              { backgroundColor: gpsQuality.color },
+            ]}
+          >
+            <Text style={styles.gpsBadgeText}>{gpsQuality.grade}</Text>
+          </View>
+        )}
         <StatusBadge status={installation.status} />
       </View>
       {subtitle ? (
@@ -63,6 +84,19 @@ const styles = StyleSheet.create({
     color: Colors.textPrimary,
     flex: 1,
     marginRight: Spacing.sm,
+  },
+  gpsBadge: {
+    width: 20,
+    height: 20,
+    borderRadius: 5,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: Spacing.xs,
+  },
+  gpsBadgeText: {
+    color: "#fff",
+    fontSize: 10,
+    fontWeight: "700",
   },
   subtitle: {
     fontSize: FontSize.caption,

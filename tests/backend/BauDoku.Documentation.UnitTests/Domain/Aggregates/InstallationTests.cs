@@ -50,6 +50,14 @@ public sealed class InstallationTests
     }
 
     [Fact]
+    public void Create_ShouldSetQualityGrade()
+    {
+        var installation = CreateValidInstallation();
+        installation.QualityGrade.Should().NotBeNull();
+        installation.QualityGrade.Should().Be(GpsQualityGrade.B);
+    }
+
+    [Fact]
     public void Create_ShouldRaiseInstallationDocumentedEvent()
     {
         var installation = CreateValidInstallation();
@@ -111,6 +119,30 @@ public sealed class InstallationTests
 
         var act = () => installation.MarkAsCompleted();
         act.Should().Throw<BusinessRuleException>();
+    }
+
+    [Fact]
+    public void Create_WithLowQualityGps_ShouldRaiseLowGpsQualityDetectedEvent()
+    {
+        var installation = Installation.Create(
+            InstallationId.New(),
+            Guid.NewGuid(),
+            null,
+            InstallationType.JunctionBox,
+            new GpsPosition(48.0, 11.0, null, 50.0, "internal_gps"));
+
+        installation.QualityGrade.Should().Be(GpsQualityGrade.D);
+        installation.DomainEvents.Should().HaveCount(2);
+        installation.DomainEvents.Should().ContainSingle(e => e is LowGpsQualityDetected);
+    }
+
+    [Fact]
+    public void Create_WithGoodQualityGps_ShouldNotRaiseLowGpsQualityDetectedEvent()
+    {
+        var installation = CreateValidInstallation();
+
+        installation.QualityGrade.Should().NotBe(GpsQualityGrade.D);
+        installation.DomainEvents.Should().NotContain(e => e is LowGpsQualityDetected);
     }
 
     [Fact]

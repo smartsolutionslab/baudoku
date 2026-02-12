@@ -8,6 +8,8 @@ import {
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import type { GpsPosition } from "../../hooks/useGpsCapture";
+import { QualityIndicator } from "./QualityIndicator";
+import { calculateGpsQuality } from "../../utils/gpsQuality";
 import { Colors, Spacing, FontSize } from "../../styles/tokens";
 
 interface GpsButtonProps {
@@ -16,27 +18,6 @@ interface GpsButtonProps {
   error: string | null;
   onCapture: () => void;
   onClear?: () => void;
-}
-
-function getAccuracyColor(accuracy: number): string {
-  if (accuracy < 5) return Colors.success;
-  if (accuracy < 15) return Colors.warning;
-  if (accuracy < 30) return "#FF6B00";
-  return Colors.danger;
-}
-
-function getAccuracyLabel(accuracy: number): string {
-  if (accuracy < 5) return "Ausgezeichnet";
-  if (accuracy < 15) return "Akzeptabel";
-  if (accuracy < 30) return "Ungenau";
-  return "Sehr ungenau";
-}
-
-function getAccuracyBackground(accuracy: number): string {
-  if (accuracy < 5) return "#E8F5E9";
-  if (accuracy < 15) return "#FFF8E1";
-  if (accuracy < 30) return "#FFF3E0";
-  return "#FFEBEE";
 }
 
 export function GpsButton({
@@ -56,20 +37,18 @@ export function GpsButton({
   }
 
   if (position) {
-    const color = getAccuracyColor(position.gpsAccuracy);
-    const label = getAccuracyLabel(position.gpsAccuracy);
-    const bgColor = getAccuracyBackground(position.gpsAccuracy);
+    const quality = calculateGpsQuality(position);
 
     return (
-      <View style={[styles.successCard, { backgroundColor: bgColor }]}>
+      <View style={[styles.successCard, { backgroundColor: quality.bgColor }]}>
         <View style={styles.successHeader}>
           <FontAwesome
             name="map-marker"
             size={16}
-            color={color}
+            color={quality.color}
             style={styles.successIcon}
           />
-          <Text style={[styles.successTitle, { color }]}>
+          <Text style={[styles.successTitle, { color: quality.color }]}>
             GPS-Position erfasst
           </Text>
           <View style={styles.headerActions}>
@@ -94,14 +73,13 @@ export function GpsButton({
         <Text style={styles.coordText}>
           {position.gpsLat.toFixed(6)}, {position.gpsLng.toFixed(6)}
         </Text>
-        <View style={styles.accuracyRow}>
-          <View style={[styles.accuracyBadge, { backgroundColor: color }]}>
-            <Text style={styles.accuracyBadgeText}>
-              {position.gpsAccuracy.toFixed(1)} m
-            </Text>
-          </View>
-          <Text style={styles.accuracyLabel}>{label}</Text>
-        </View>
+        <QualityIndicator
+          gpsAccuracy={position.gpsAccuracy}
+          gpsHdop={position.gpsHdop}
+          gpsSatCount={position.gpsSatCount}
+          gpsCorrService={position.gpsCorrService}
+          gpsSource={position.gpsSource}
+        />
       </View>
     );
   }
@@ -198,26 +176,6 @@ const styles = StyleSheet.create({
     fontSize: FontSize.caption,
     color: Colors.textSecondary,
     fontFamily: "SpaceMono",
-  },
-  accuracyRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: Spacing.xs,
-  },
-  accuracyBadge: {
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: 2,
-    borderRadius: 10,
-    marginRight: Spacing.sm,
-  },
-  accuracyBadgeText: {
-    color: "#fff",
-    fontSize: FontSize.footnote,
-    fontWeight: "700",
-  },
-  accuracyLabel: {
-    fontSize: FontSize.footnote,
-    color: Colors.textTertiary,
   },
   errorText: {
     fontSize: FontSize.caption,

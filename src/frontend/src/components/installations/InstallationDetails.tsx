@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import type { Installation } from "../../db/repositories/types";
+import { QualityIndicator } from "./QualityIndicator";
 import { Colors, Spacing, FontSize } from "../../styles/tokens";
 
 interface InstallationDetailsProps {
@@ -55,6 +56,17 @@ export function InstallationDetails({ installation }: InstallationDetailsProps) 
       {hasGps && (
         <>
           <Text style={styles.subTitle}>GPS / GNSS</Text>
+          {i.gpsAccuracy != null && (
+            <View style={styles.qualityRow}>
+              <QualityIndicator
+                gpsAccuracy={i.gpsAccuracy}
+                gpsHdop={i.gpsHdop}
+                gpsSatCount={i.gpsSatCount}
+                gpsCorrService={i.gpsCorrService}
+                gpsSource={i.gpsSource}
+              />
+            </View>
+          )}
           <Row label="Breitengrad" value={i.gpsLat?.toFixed(6)} />
           <Row label="Längengrad" value={i.gpsLng?.toFixed(6)} />
           <Row
@@ -157,6 +169,9 @@ const styles = StyleSheet.create({
     color: Colors.primary,
     marginTop: Spacing.md,
     marginBottom: Spacing.xs,
+  },
+  qualityRow: {
+    marginBottom: Spacing.sm,
   },
   row: {
     flexDirection: "row",

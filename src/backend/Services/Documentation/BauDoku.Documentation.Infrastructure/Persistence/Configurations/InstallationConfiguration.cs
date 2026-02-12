@@ -3,6 +3,7 @@ using BauDoku.Documentation.Domain.Entities;
 using BauDoku.Documentation.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using NetTopologySuite.Geometries;
 
 namespace BauDoku.Documentation.Infrastructure.Persistence.Configurations;
 
@@ -36,6 +37,12 @@ public sealed class InstallationConfiguration : IEntityTypeConfiguration<Install
             .IsRequired()
             .HasConversion(s => s.Value, value => new InstallationStatus(value));
 
+        builder.Property(i => i.QualityGrade)
+            .HasColumnName("gps_quality_grade")
+            .HasMaxLength(1)
+            .IsRequired()
+            .HasConversion(g => g.Value, value => new GpsQualityGrade(value));
+
         builder.OwnsOne(i => i.Position, pos =>
         {
             pos.Property(p => p.Latitude).HasColumnName("gps_latitude").IsRequired();
@@ -51,6 +58,16 @@ public sealed class InstallationConfiguration : IEntityTypeConfiguration<Install
         });
 
         builder.Navigation(i => i.Position).IsRequired();
+
+        // PostGIS computed geometry column for spatial queries (BD-801)
+        builder.Property<Point>("Location")
+            .HasColumnName("location")
+            .HasColumnType("geometry(Point, 4326)")
+            .HasComputedColumnSql("ST_SetSRID(ST_MakePoint(gps_longitude, gps_latitude), 4326)", stored: true)
+            .ValueGeneratedOnAddOrUpdate();
+
+        builder.HasIndex("Location")
+            .HasMethod("gist");
 
         builder.OwnsOne(i => i.Description, desc =>
         {

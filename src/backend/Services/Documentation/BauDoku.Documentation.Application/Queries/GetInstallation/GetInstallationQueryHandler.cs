@@ -65,6 +65,7 @@ public sealed class GetInstallationQueryHandler
             installation.Position.SatelliteCount,
             installation.Position.Hdop,
             installation.Position.CorrectionAge,
+            installation.QualityGrade.Value,
             installation.Description?.Value,
             installation.CableSpec?.CableType,
             installation.CableSpec?.CrossSection,

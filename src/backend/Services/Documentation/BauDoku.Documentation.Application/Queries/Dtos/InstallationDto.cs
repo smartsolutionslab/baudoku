@@ -16,6 +16,7 @@ public sealed record InstallationDto(
     int? SatelliteCount,
     double? Hdop,
     double? CorrectionAge,
+    string QualityGrade,
     string? Description,
     string? CableType,
     int? CrossSection,

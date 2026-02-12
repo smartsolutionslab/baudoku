@@ -1,6 +1,6 @@
 namespace BauDoku.Documentation.Application.Queries.Dtos;
 
-public sealed record InstallationListItemDto(
+public sealed record NearbyInstallationDto(
     Guid Id,
     Guid ProjectId,
     string Type,
@@ -11,4 +11,5 @@ public sealed record InstallationListItemDto(
     string? Description,
     DateTime CreatedAt,
     int PhotoCount,
-    int MeasurementCount);
+    int MeasurementCount,
+    double DistanceMeters);
