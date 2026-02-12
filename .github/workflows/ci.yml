@@ -122,6 +122,9 @@ jobs:
       - name: Typecheck
         run: npx tsc --noEmit
 
+      - name: Bundle (Android JS)
+        run: npx expo export --platform android
+
   build-android:
     name: Android Build (Local)
     runs-on: ubuntu-latest
