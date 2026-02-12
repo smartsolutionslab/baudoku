@@ -23,6 +23,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\backend\Services\Sync\BauDoku.Sync.Domain\BauDoku.Sync.Domain.csproj" />
     <ProjectReference Include="..\..\..\src\backend\Services\Sync\BauDoku.Sync.Application\BauDoku.Sync.Application.csproj" />
+    <ProjectReference Include="..\..\..\src\backend\Services\Sync\BauDoku.Sync.Infrastructure\BauDoku.Sync.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
