@@ -316,7 +316,7 @@ jobs:
   docker:
     name: Docker Build & Push
     runs-on: ubuntu-latest
-    needs: [version, backend]
+    needs: [version, backend, web]
     if: github.ref == 'refs/heads/main' || (github.event_name == 'pull_request' && github.base_ref == 'main')
     strategy:
       matrix:
@@ -329,6 +329,8 @@ jobs:
             dockerfile: src/backend/Services/Sync/BauDoku.Sync.Api/Dockerfile
           - name: api-gateway
             dockerfile: src/backend/ApiGateway/BauDoku.ApiGateway/Dockerfile
+          - name: web
+            dockerfile: src/web/Dockerfile
     steps:
       - uses: actions/checkout@v4
 

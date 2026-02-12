@@ -22,11 +22,18 @@ spec:
     - host: {{ .Values.ingress.host }}
       http:
         paths:
-          - path: /
+          - path: /api
             pathType: Prefix
             backend:
               service:
                 name: {{ .Values.services.apiGateway.name }}
+                port:
+                  number: 80
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Values.services.web.name }}
                 port:
                   number: 80
 {{- end }}
