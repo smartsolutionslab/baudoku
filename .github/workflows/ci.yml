@@ -121,9 +121,9 @@ jobs:
         working-directory: src/frontend
         run: npx tsc --noEmit
 
-      - name: Bundle (Android JS)
+      - name: Test
         working-directory: src/frontend
-        run: npx expo export --platform android
+        run: npm test
 
   web:
     name: Web Build & Typecheck
