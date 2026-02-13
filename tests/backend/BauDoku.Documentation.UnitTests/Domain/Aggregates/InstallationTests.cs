@@ -3,26 +3,13 @@ using BauDoku.BuildingBlocks.Domain;
 using BauDoku.Documentation.Domain.Aggregates;
 using BauDoku.Documentation.Domain.Events;
 using BauDoku.Documentation.Domain.ValueObjects;
+using BauDoku.Documentation.UnitTests.Builders;
 
 namespace BauDoku.Documentation.UnitTests.Domain.Aggregates;
 
 public sealed class InstallationTests
 {
-    private static Installation CreateValidInstallation()
-    {
-        return Installation.Create(
-            InstallationId.New(),
-            Guid.NewGuid(),
-            Guid.NewGuid(),
-            InstallationType.CableTray,
-            new GpsPosition(48.1351, 11.5820, 520.0, 3.5, "internal_gps"),
-            new Description("Kabeltrasse im Erdgeschoss"),
-            new CableSpec("NYM-J 5x2.5", 25),
-            new Depth(600),
-            new Manufacturer("Hager"),
-            new ModelName("VZ312N"),
-            new SerialNumber("SN-12345"));
-    }
+    private static Installation CreateValidInstallation() => new InstallationBuilder().Build();
 
     [Fact]
     public void Create_ShouldSetProperties()

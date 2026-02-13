@@ -37,3 +37,5 @@ app.MapDefaultEndpoints();
 app.MapSyncEndpoints();
 
 app.Run();
+
+public partial class Program { }

@@ -48,12 +48,17 @@ public sealed class SyncSchedulerServiceTests
     [Fact]
     public async Task ExecuteAsync_WhenNoPendingBatches_ShouldNotCallSaveChanges()
     {
+        var repositoryCalled = new TaskCompletionSource<bool>();
         _repository.GetPendingBatchesAsync(Arg.Any<int>(), Arg.Any<CancellationToken>())
-            .Returns(new List<SyncBatch>());
+            .Returns(_ =>
+            {
+                repositoryCalled.TrySetResult(true);
+                return new List<SyncBatch>();
+            });
 
-        using var cts = new CancellationTokenSource(TimeSpan.FromMilliseconds(500));
+        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
         await _service.StartAsync(cts.Token);
-        await Task.Delay(200);
+        await repositoryCalled.Task.WaitAsync(TimeSpan.FromSeconds(5));
         await _service.StopAsync(CancellationToken.None);
 
         await _unitOfWork.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
@@ -67,14 +72,17 @@ public sealed class SyncSchedulerServiceTests
             new DeviceId("device-1"),
             DateTime.UtcNow);
 
+        var saveChangesCalled = new TaskCompletionSource<bool>();
         _repository.GetPendingBatchesAsync(Arg.Any<int>(), Arg.Any<CancellationToken>())
             .Returns(
                 new List<SyncBatch> { batch },
                 new List<SyncBatch>());
+        _unitOfWork.When(u => u.SaveChangesAsync(Arg.Any<CancellationToken>()))
+            .Do(_ => saveChangesCalled.TrySetResult(true));
 
-        using var cts = new CancellationTokenSource(TimeSpan.FromMilliseconds(500));
+        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
         await _service.StartAsync(cts.Token);
-        await Task.Delay(200);
+        await saveChangesCalled.Task.WaitAsync(TimeSpan.FromSeconds(5));
         await _service.StopAsync(CancellationToken.None);
 
         batch.Status.Should().Be(BatchStatus.Completed);
@@ -84,12 +92,17 @@ public sealed class SyncSchedulerServiceTests
     [Fact]
     public async Task ExecuteAsync_WhenRepositoryThrows_ShouldNotCrash()
     {
+        var repositoryCalled = new TaskCompletionSource<bool>();
         _repository.GetPendingBatchesAsync(Arg.Any<int>(), Arg.Any<CancellationToken>())
-            .Throws(new InvalidOperationException("DB connection lost"));
+            .Returns<List<SyncBatch>>(_ =>
+            {
+                repositoryCalled.TrySetResult(true);
+                throw new InvalidOperationException("DB connection lost");
+            });
 
-        using var cts = new CancellationTokenSource(TimeSpan.FromMilliseconds(500));
+        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
         await _service.StartAsync(cts.Token);
-        await Task.Delay(300);
+        await repositoryCalled.Task.WaitAsync(TimeSpan.FromSeconds(5));
 
         // Service should still be alive (not crashed)
         var stopAct = () => _service.StopAsync(CancellationToken.None);

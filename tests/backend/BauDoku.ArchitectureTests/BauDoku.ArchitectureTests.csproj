@@ -27,6 +27,9 @@
     <ProjectReference Include="..\..\..\src\backend\Services\Sync\BauDoku.Sync.Domain\BauDoku.Sync.Domain.csproj" />
     <ProjectReference Include="..\..\..\src\backend\Services\Sync\BauDoku.Sync.Application\BauDoku.Sync.Application.csproj" />
     <ProjectReference Include="..\..\..\src\backend\Services\Sync\BauDoku.Sync.Infrastructure\BauDoku.Sync.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\src\backend\Services\Projects\BauDoku.Projects.Api\BauDoku.Projects.Api.csproj" />
+    <ProjectReference Include="..\..\..\src\backend\Services\Documentation\BauDoku.Documentation.Api\BauDoku.Documentation.Api.csproj" />
+    <ProjectReference Include="..\..\..\src\backend\Services\Sync\BauDoku.Sync.Api\BauDoku.Sync.Api.csproj" />
   </ItemGroup>
 
   <ItemGroup>
