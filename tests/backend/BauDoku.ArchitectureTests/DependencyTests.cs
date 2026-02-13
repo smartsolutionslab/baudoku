@@ -87,4 +87,29 @@ public sealed class DependencyTests
             name => name.Contains("Infrastructure"),
             "Service Application should not reference Infrastructure");
     }
+
+    [Theory]
+    [InlineData("BauDoku.Projects.Domain")]
+    [InlineData("BauDoku.Documentation.Domain")]
+    [InlineData("BauDoku.Sync.Domain")]
+    public void AllValueObjects_ShouldImplement_IValueObject(string assemblyName)
+    {
+        var assembly = LoadAssembly(assemblyName);
+
+        var valueObjectBase = typeof(BauDoku.BuildingBlocks.Domain.ValueObject);
+        var iValueObject = typeof(BauDoku.BuildingBlocks.Domain.IValueObject);
+
+        var valueObjectTypes = assembly.GetTypes()
+            .Where(t => t.IsClass && !t.IsAbstract && valueObjectBase.IsAssignableFrom(t))
+            .ToList();
+
+        valueObjectTypes.Should().NotBeEmpty(
+            $"Assembly {assemblyName} should contain at least one ValueObject");
+
+        foreach (var voType in valueObjectTypes)
+        {
+            iValueObject.IsAssignableFrom(voType).Should().BeTrue(
+                $"{voType.Name} inherits from ValueObject and should implement IValueObject");
+        }
+    }
 }
