@@ -17,11 +17,16 @@ import { ZoneQrSheet } from "../../../../src/components/projects/ZoneQrSheet";
 import { encodeZoneQr } from "../../../../src/utils/qrCode";
 import { Colors, Spacing, FontSize } from "../../../../src/styles/tokens";
 import type { Zone } from "../../../../src/db/repositories/types";
+import {
+  projectId as toProjectId,
+  zoneId as toZoneId,
+} from "../../../../src/types/branded";
+import type { ZoneId } from "../../../../src/types/branded";
 
-function buildBreadcrumb(zones: Zone[], zoneId: string): string[] {
-  const byId = new Map(zones.map((z) => [z.id, z]));
+function buildBreadcrumb(zones: Zone[], id: ZoneId): string[] {
+  const byId = new Map(zones.map((z) => [z.id as string, z]));
   const parts: string[] = [];
-  let current = byId.get(zoneId);
+  let current = byId.get(id);
   while (current) {
     parts.unshift(current.name);
     current = current.parentZoneId ? byId.get(current.parentZoneId) : undefined;
@@ -30,14 +35,16 @@ function buildBreadcrumb(zones: Zone[], zoneId: string): string[] {
 }
 
 export default function ZoneDetailScreen() {
-  const { zoneId, projectId } = useLocalSearchParams<{
+  const { zoneId: rawZoneId, projectId: rawProjectId } = useLocalSearchParams<{
     zoneId: string;
     projectId: string;
   }>();
+  const zoneId = toZoneId(rawZoneId!);
+  const projectId = toProjectId(rawProjectId!);
   const router = useRouter();
-  const { data: zones } = useZonesByProject(projectId!);
+  const { data: zones } = useZonesByProject(projectId);
   const { data: installations, isLoading, refetch } =
-    useInstallationsByZone(zoneId!);
+    useInstallationsByZone(zoneId);
   const deleteZone = useDeleteZone();
   const updateZone = useUpdateZone();
   const { confirmDelete } = useConfirmDelete();
@@ -61,7 +68,7 @@ export default function ZoneDetailScreen() {
   const handleQrPress = useCallback(async () => {
     if (zone && !zone.qrCode) {
       await updateZone.mutateAsync({
-        id: zoneId!,
+        id: zoneId,
         data: { qrCode: qrValue },
       });
     }
@@ -73,7 +80,7 @@ export default function ZoneDetailScreen() {
       title: "Zone löschen",
       message: "Diese Zone und alle zugehörigen Daten wirklich löschen?",
       onConfirm: async () => {
-        await deleteZone.mutateAsync(zoneId!);
+        await deleteZone.mutateAsync(zoneId);
         router.back();
       },
     });

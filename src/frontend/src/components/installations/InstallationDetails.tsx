@@ -4,9 +4,9 @@ import type { Installation } from "../../db/repositories/types";
 import { QualityIndicator } from "./QualityIndicator";
 import { Colors, Spacing, FontSize } from "../../styles/tokens";
 
-interface InstallationDetailsProps {
+type InstallationDetailsProps = {
   installation: Installation;
-}
+};
 
 function Row({ label, value }: { label: string; value?: string | number | null }) {
   if (value == null || value === "") return null;

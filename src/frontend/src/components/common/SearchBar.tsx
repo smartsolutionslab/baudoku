@@ -3,12 +3,12 @@ import { View, TextInput, TouchableOpacity, StyleSheet } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
 
-interface SearchBarProps {
+type SearchBarProps = {
   value: string;
   onChangeText: (text: string) => void;
   placeholder?: string;
   autoFocus?: boolean;
-}
+};
 
 export function SearchBar({
   value,

@@ -2,16 +2,16 @@ import React from "react";
 import { ScrollView, TouchableOpacity, Text, StyleSheet } from "react-native";
 import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
 
-interface FilterOption {
+type FilterOption = {
   label: string;
   value: string;
-}
+};
 
-interface FilterChipsProps {
+type FilterChipsProps = {
   options: FilterOption[];
   selected: string[];
   onToggle: (value: string) => void;
-}
+};
 
 export function FilterChips({ options, selected, onToggle }: FilterChipsProps) {
   return (

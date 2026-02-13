@@ -10,12 +10,12 @@ import {
 import { FontAwesome } from "@expo/vector-icons";
 import { Colors, Spacing, FontSize } from "../../styles/tokens";
 
-interface PhotoSourceSheetProps {
+type PhotoSourceSheetProps = {
   visible: boolean;
   onCamera: () => void;
   onGallery: () => void;
   onClose: () => void;
-}
+};
 
 export function PhotoSourceSheet({
   visible,

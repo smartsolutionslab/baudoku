@@ -3,12 +3,12 @@ import * as SecureStore from "expo-secure-store";
 
 const MOCK_LOCATION_KEY = "baudoku_settings_mockLocation";
 
-interface SettingsState {
+type SettingsState = {
   allowMockLocation: boolean;
   hydrated: boolean;
   setAllowMockLocation: (allow: boolean) => void;
   hydrate: () => Promise<void>;
-}
+};
 
 export const useSettingsStore = create<SettingsState>((set) => ({
   allowMockLocation: true,

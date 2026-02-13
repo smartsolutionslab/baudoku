@@ -2,19 +2,19 @@ import { Colors } from "../styles/tokens";
 
 export type GpsQualityGrade = "A" | "B" | "C" | "D";
 
-export interface GpsQualityResult {
+export type GpsQualityResult = {
   grade: GpsQualityGrade;
   label: string;
   color: string;
   bgColor: string;
-}
+};
 
-interface GpsQualityInput {
+type GpsQualityInput = {
   gpsAccuracy: number;
   gpsHdop?: number | null;
   gpsSatCount?: number | null;
   gpsCorrService?: string | null;
-}
+};
 
 const gradeLabels: Record<GpsQualityGrade, string> = {
   A: "Ausgezeichnet",

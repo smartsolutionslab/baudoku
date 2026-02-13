@@ -5,10 +5,10 @@ import { StatusBadge } from "../common/StatusBadge";
 import { calculateGpsQuality } from "../../utils/gpsQuality";
 import { Colors, Spacing, FontSize } from "../../styles/tokens";
 
-interface InstallationCardProps {
+type InstallationCardProps = {
   installation: Installation;
   onPress: () => void;
-}
+};
 
 function formatDate(d: Date | null | undefined): string {
   if (!d) return "";

@@ -1,13 +1,15 @@
+import type { ProjectId, ZoneId } from "../types/branded";
+
 const QR_PREFIX = "baudoku://zone/";
 
-export function encodeZoneQr(projectId: string, zoneId: string): string {
+export function encodeZoneQr(projectId: ProjectId, zoneId: ZoneId): string {
   return `${QR_PREFIX}${projectId}/${zoneId}`;
 }
 
-export interface DecodedZoneQr {
-  projectId: string;
-  zoneId: string;
-}
+export type DecodedZoneQr = {
+  projectId: ProjectId;
+  zoneId: ZoneId;
+};
 
 export function decodeZoneQr(data: string): DecodedZoneQr | null {
   if (!data.startsWith(QR_PREFIX)) return null;
@@ -19,5 +21,5 @@ export function decodeZoneQr(data: string): DecodedZoneQr | null {
   const [projectId, zoneId] = parts;
   if (!projectId || !zoneId) return null;
 
-  return { projectId, zoneId };
+  return { projectId: projectId as ProjectId, zoneId: zoneId as ZoneId };
 }

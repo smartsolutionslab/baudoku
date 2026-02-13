@@ -9,13 +9,14 @@ import {
 import { ProjectCard } from "../../../src/components/projects/ProjectCard";
 import { EmptyState } from "../../../src/components/common/EmptyState";
 import { Colors, Spacing, FontSize, Radius } from "../../../src/styles/tokens";
+import type { ProjectId, ZoneId } from "../../../src/types/branded";
 
 function ZonePicker({
   projectId,
   onSelect,
 }: {
-  projectId: string;
-  onSelect: (zoneId: string) => void;
+  projectId: ProjectId;
+  onSelect: (zoneId: ZoneId) => void;
 }) {
   const { data: zones } = useZonesByProject(projectId);
 
@@ -49,13 +50,13 @@ function ZonePicker({
 export default function CaptureScreen() {
   const router = useRouter();
   const { data: allProjects } = useProjects();
-  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(
+  const [selectedProjectId, setSelectedProjectId] = useState<ProjectId | null>(
     null
   );
 
   const projects = allProjects?.filter((p) => p.status === "active") ?? [];
 
-  const handleZoneSelect = (zoneId: string) => {
+  const handleZoneSelect = (zoneId: ZoneId) => {
     router.push(
       `/(tabs)/capture/new?projectId=${selectedProjectId}&zoneId=${zoneId}`
     );

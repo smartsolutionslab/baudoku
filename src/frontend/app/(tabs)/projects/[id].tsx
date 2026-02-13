@@ -14,6 +14,7 @@ import { EmptyState } from "../../../src/components/common/EmptyState";
 import { FloatingActionButton } from "../../../src/components/common/FloatingActionButton";
 import { ActionBar } from "../../../src/components/common/ActionBar";
 import { Colors, Spacing, FontSize } from "../../../src/styles/tokens";
+import { projectId } from "../../../src/types/branded";
 
 function formatDate(d: Date | null | undefined): string {
   if (!d) return "";
@@ -25,10 +26,11 @@ function formatDate(d: Date | null | undefined): string {
 }
 
 export default function ProjectDetailScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id: rawId } = useLocalSearchParams<{ id: string }>();
+  const id = projectId(rawId!);
   const router = useRouter();
-  const { data: project } = useProject(id!);
-  const { data: zones } = useZonesByProject(id!);
+  const { data: project } = useProject(id);
+  const { data: zones } = useZonesByProject(id);
   const tree = useZoneTree(zones);
   const deleteProject = useDeleteProject();
   const { confirmDelete } = useConfirmDelete();
@@ -45,7 +47,7 @@ export default function ProjectDetailScreen() {
       message:
         "Dieses Projekt und alle zugehörigen Daten wirklich löschen?",
       onConfirm: async () => {
-        await deleteProject.mutateAsync(id!);
+        await deleteProject.mutateAsync(id);
         router.replace("/(tabs)/projects/");
       },
     });

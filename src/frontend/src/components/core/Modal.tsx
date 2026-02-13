@@ -1,57 +1,49 @@
 import React from "react";
 import {
+  Modal as RNModal,
   View,
   Text,
   TouchableOpacity,
-  Modal,
-  StyleSheet,
   Pressable,
+  StyleSheet,
 } from "react-native";
 import { Colors, Spacing, FontSize } from "../../styles/tokens";
 
-const PHOTO_TYPES = [
-  { value: "before", label: "Vorher" },
-  { value: "after", label: "Nachher" },
-  { value: "detail", label: "Detail" },
-  { value: "overview", label: "Übersicht" },
-] as const;
-
-export type PhotoType = (typeof PHOTO_TYPES)[number]["value"];
-
-type PhotoTypeSheetProps = {
+type ModalProps = {
   visible: boolean;
-  onSelect: (type: PhotoType) => void;
   onClose: () => void;
+  title?: string;
+  children: React.ReactNode;
+  footer?: React.ReactNode;
 };
 
-export function PhotoTypeSheet({
+export function Modal({
   visible,
-  onSelect,
   onClose,
-}: PhotoTypeSheetProps) {
+  title,
+  children,
+  footer,
+}: ModalProps) {
   return (
-    <Modal visible={visible} transparent animationType="slide">
+    <RNModal visible={visible} transparent animationType="slide">
       <Pressable style={styles.overlay} onPress={onClose}>
         <Pressable style={styles.sheet} onPress={(e) => e.stopPropagation()}>
           <View style={styles.handle} />
-          <Text style={styles.title}>Foto-Typ wählen</Text>
 
-          {PHOTO_TYPES.map((pt) => (
-            <TouchableOpacity
-              key={pt.value}
-              style={styles.option}
-              onPress={() => onSelect(pt.value)}
-            >
-              <Text style={styles.optionText}>{pt.label}</Text>
+          {title ? <Text style={styles.title}>{title}</Text> : null}
+
+          <View style={styles.body}>{children}</View>
+
+          {footer ? (
+            <View style={styles.footer}>{footer}</View>
+          ) : (
+            <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+              <Text style={styles.closeText}>Schlie\u00dfen</Text>
             </TouchableOpacity>
-          ))}
-
-          <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
-            <Text style={styles.cancelText}>Abbrechen</Text>
-          </TouchableOpacity>
+          )}
         </Pressable>
       </Pressable>
-    </Modal>
+    </RNModal>
   );
 }
 
@@ -83,23 +75,20 @@ const styles = StyleSheet.create({
     color: Colors.textPrimary,
     marginBottom: Spacing.lg,
   },
-  option: {
-    paddingVertical: Spacing.md,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: Colors.separator,
+  body: {
+    marginBottom: Spacing.md,
   },
-  optionText: {
-    fontSize: FontSize.callout,
-    color: Colors.textPrimary,
+  footer: {
+    marginTop: Spacing.sm,
   },
-  cancelButton: {
+  closeButton: {
     alignItems: "center",
     paddingVertical: 14,
     marginTop: Spacing.lg,
     backgroundColor: Colors.background,
     borderRadius: 10,
   },
-  cancelText: {
+  closeText: {
     fontSize: FontSize.callout,
     fontWeight: "600",
     color: Colors.textTertiary,

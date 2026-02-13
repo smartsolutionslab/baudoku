@@ -1,33 +1,34 @@
 import { create } from "zustand";
+import type { PhotoId } from "../types/branded";
 
 export type UploadStatus = "queued" | "uploading" | "completed" | "failed";
 
-export interface UploadItem {
-  photoId: string;
+export type UploadItem = {
+  photoId: PhotoId;
   status: UploadStatus;
   percentage: number;
   error?: string;
-}
+};
 
-export interface QueueSummary {
+export type QueueSummary = {
   total: number;
   completed: number;
   failed: number;
   uploading: number;
-}
+};
 
-interface UploadState {
+type UploadState = {
   queue: UploadItem[];
   isProcessing: boolean;
 
-  enqueue: (photoId: string) => void;
-  updateProgress: (photoId: string, percentage: number) => void;
-  markCompleted: (photoId: string) => void;
-  markFailed: (photoId: string, error: string) => void;
+  enqueue: (photoId: PhotoId) => void;
+  updateProgress: (photoId: PhotoId, percentage: number) => void;
+  markCompleted: (photoId: PhotoId) => void;
+  markFailed: (photoId: PhotoId, error: string) => void;
   setProcessing: (processing: boolean) => void;
   removeCompleted: () => void;
   getQueueSummary: () => QueueSummary;
-}
+};
 
 export const useUploadStore = create<UploadState>((set, get) => ({
   queue: [],

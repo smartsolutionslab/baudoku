@@ -4,6 +4,7 @@ import { measurements } from "../schema";
 import { generateId } from "../../utils/uuid";
 import { createOutboxEntry } from "./syncRepo";
 import type { Measurement, NewMeasurement } from "./types";
+import type { MeasurementId, InstallationId } from "../../types/branded";
 
 function evaluateResult(
   value: number,
@@ -17,23 +18,23 @@ function evaluateResult(
 }
 
 export async function getByInstallationId(
-  installationId: string
+  installationId: InstallationId
 ): Promise<Measurement[]> {
   return db
     .select()
     .from(measurements)
     .where(eq(measurements.installationId, installationId))
-    .all();
+    .all() as unknown as Measurement[];
 }
 
 export async function getById(
-  id: string
+  id: MeasurementId
 ): Promise<Measurement | undefined> {
   return db
     .select()
     .from(measurements)
     .where(eq(measurements.id, id))
-    .get();
+    .get() as unknown as Measurement | undefined;
 }
 
 export async function create(
@@ -60,11 +61,11 @@ export async function create(
     measurement
   );
 
-  return measurement as Measurement;
+  return measurement as unknown as Measurement;
 }
 
 export async function update(
-  id: string,
+  id: MeasurementId,
   data: Partial<
     Omit<NewMeasurement, "id" | "version" | "installationId" | "result">
   >
@@ -95,7 +96,7 @@ export async function update(
   return { ...existing, ...updated } as Measurement;
 }
 
-export async function remove(id: string): Promise<void> {
+export async function remove(id: MeasurementId): Promise<void> {
   await db.delete(measurements).where(eq(measurements.id, id));
   await createOutboxEntry("measurement", id, "delete", { id });
 }

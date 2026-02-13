@@ -4,7 +4,7 @@ import type { SyncOutboxEntry } from "../db/repositories/types";
 import type { SyncResult } from "../sync/SyncManager";
 import type { ConflictDto } from "../sync/syncApi";
 
-interface SyncState {
+type SyncState = {
   unsyncedCount: number;
   isOnline: boolean;
   lastSyncTimestamp: string | null;
@@ -23,7 +23,7 @@ interface SyncState {
   setSyncResult: (result: SyncResult) => void;
   setSyncError: (error: string | null) => void;
   setConflicts: (conflicts: ConflictDto[]) => void;
-}
+};
 
 export const useSyncStore = create<SyncState>((set) => ({
   unsyncedCount: 0,
