@@ -1,20 +1,21 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace BauDoku.BuildingBlocks.Infrastructure.Auth;
 
 public static class AuthenticationExtensions
 {
     public static IServiceCollection AddBauDokuAuthentication(
-        this IServiceCollection services, IConfiguration configuration)
+        this IServiceCollection services, IConfiguration configuration, IHostEnvironment environment)
     {
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
                 var keycloak = configuration.GetSection("Authentication:Keycloak");
                 options.Authority = keycloak["Authority"];
-                options.RequireHttpsMetadata = false;
+                options.RequireHttpsMetadata = !environment.IsDevelopment();
 
                 var authority = keycloak["Authority"]!;
                 var validIssuers = new List<string> { authority };
@@ -28,7 +29,9 @@ public static class AuthenticationExtensions
 
                 options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
                 {
-                    ValidateAudience = false,
+                    ValidateAudience = true,
+                    ValidAudiences = keycloak.GetSection("Audiences").Get<string[]>()
+                        ?? [keycloak["Audience"] ?? "baudoku-api"],
                     ValidateIssuer = true,
                     ValidIssuers = validIssuers,
                 };

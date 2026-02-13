@@ -140,6 +140,51 @@ public sealed class SyncBatchTests
     }
 
     [Fact]
+    public void MarkFailed_ShouldRaiseSyncBatchProcessedEvent()
+    {
+        var batch = CreateValidBatch();
+        batch.ClearDomainEvents();
+
+        batch.MarkFailed();
+
+        batch.DomainEvents.Should().ContainSingle()
+            .Which.Should().BeOfType<SyncBatchProcessed>();
+    }
+
+    [Fact]
+    public void ResolveConflict_ShouldResolveAndRaiseConflictResolvedEvent()
+    {
+        var batch = CreateValidBatch();
+        var conflictId = ConflictRecordIdentifier.New();
+        batch.AddConflict(
+            conflictId,
+            EntityReference.Create(EntityType.Project, Guid.NewGuid()),
+            DeltaPayload.From("""{"c":1}"""),
+            DeltaPayload.From("""{"s":2}"""),
+            SyncVersion.From(1),
+            SyncVersion.From(2));
+        batch.ClearDomainEvents();
+
+        batch.ResolveConflict(conflictId, ConflictResolutionStrategy.ClientWins);
+
+        batch.Conflicts.First(c => c.Id == conflictId).Status
+            .Should().Be(ConflictStatus.ClientWins);
+        batch.DomainEvents.Should().ContainSingle()
+            .Which.Should().BeOfType<ConflictResolved>();
+    }
+
+    [Fact]
+    public void ResolveConflict_WithInvalidId_ShouldThrow()
+    {
+        var batch = CreateValidBatch();
+        var unknownId = ConflictRecordIdentifier.New();
+
+        var act = () => batch.ResolveConflict(unknownId, ConflictResolutionStrategy.ServerWins);
+
+        act.Should().Throw<InvalidOperationException>();
+    }
+
+    [Fact]
     public void AddDelta_OnCompletedBatch_ShouldThrowBusinessRuleException()
     {
         var batch = CreateValidBatch();

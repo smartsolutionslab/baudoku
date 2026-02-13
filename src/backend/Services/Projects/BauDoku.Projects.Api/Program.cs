@@ -21,7 +21,7 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 
 builder.Services.AddOpenApi();
 
-builder.Services.AddBauDokuAuthentication(builder.Configuration);
+builder.Services.AddBauDokuAuthentication(builder.Configuration, builder.Environment);
 
 builder.Services.AddApplication(BauDoku.Projects.Application.DependencyInjection.Assembly);
 builder.Services.AddProjectsInfrastructure(connectionString);

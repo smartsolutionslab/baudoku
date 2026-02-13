@@ -32,11 +32,11 @@ public sealed class RemovePhotoCommandHandler : ICommandHandler<RemovePhotoComma
         var photo = installation.Photos.FirstOrDefault(p => p.Id == photoId)
             ?? throw new InvalidOperationException($"Foto mit ID {command.PhotoId} nicht gefunden.");
 
-        await photoStorage.DeleteAsync(photo.BlobUrl, cancellationToken);
-
         installation.RemovePhoto(photoId);
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        await photoStorage.DeleteAsync(photo.BlobUrl, cancellationToken);
 
         DocumentationMetrics.PhotosRemoved.Add(1);
     }

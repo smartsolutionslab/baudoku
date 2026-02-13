@@ -1,4 +1,4 @@
-import { eq, like, or, inArray, sql, count } from "drizzle-orm";
+import { and, eq, like, or, inArray, sql, count } from "drizzle-orm";
 import { db } from "../client";
 import { installations, zones, projects } from "../schema";
 import { generateId } from "../../utils/uuid";
@@ -142,9 +142,7 @@ export async function search(
   }
 
   if (conditions.length > 0) {
-    for (const cond of conditions) {
-      if (cond) q = q.where(cond);
-    }
+    q = q.where(and(...conditions));
   }
 
   const rows = await q.all();
