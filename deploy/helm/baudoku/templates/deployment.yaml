@@ -27,9 +27,15 @@ spec:
           ports:
             - containerPort: {{ $svc.port }}
               protocol: TCP
-          {{- if $svc.env }}
+          {{- if or $svc.env $.Values.otel.enabled }}
           env:
+            {{- if $.Values.otel.enabled }}
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: {{ $.Values.otel.endpoint | quote }}
+            {{- end }}
+            {{- if $svc.env }}
             {{- toYaml $svc.env | nindent 12 }}
+            {{- end }}
           {{- end }}
           resources:
             {{- toYaml $svc.resources | nindent 12 }}
