@@ -19,11 +19,11 @@ const redirectUri = AuthSession.makeRedirectUri({
   path: "auth/callback",
 });
 
-export interface AuthTokens {
+export type AuthTokens = {
   accessToken: string;
   refreshToken: string;
   idToken: string;
-}
+};
 
 export async function loginWithKeycloak(): Promise<AuthTokens> {
   const request = new AuthSession.AuthRequest({

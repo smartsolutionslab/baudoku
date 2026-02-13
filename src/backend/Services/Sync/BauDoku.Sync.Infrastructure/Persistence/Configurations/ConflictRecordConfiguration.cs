@@ -15,7 +15,7 @@ public sealed class ConflictRecordConfiguration : IEntityTypeConfiguration<Confl
 
         builder.Property(c => c.Id)
             .HasColumnName("id")
-            .HasConversion(id => id.Value, value => new ConflictRecordId(value));
+            .HasConversion(id => id.Value, value => ConflictRecordIdentifier.From(value));
 
         builder.OwnsOne(c => c.EntityRef, entityRef =>
         {
@@ -23,7 +23,7 @@ public sealed class ConflictRecordConfiguration : IEntityTypeConfiguration<Confl
                 .HasColumnName("entity_type")
                 .HasMaxLength(30)
                 .IsRequired()
-                .HasConversion(t => t.Value, value => new EntityType(value));
+                .HasConversion(t => t.Value, value => EntityType.From(value));
 
             entityRef.Property(e => e.EntityId)
                 .HasColumnName("entity_id")
@@ -35,34 +35,34 @@ public sealed class ConflictRecordConfiguration : IEntityTypeConfiguration<Confl
         builder.Property(c => c.ClientPayload)
             .HasColumnName("client_payload")
             .IsRequired()
-            .HasConversion(p => p.Value, value => new DeltaPayload(value));
+            .HasConversion(p => p.Value, value => DeltaPayload.From(value));
 
         builder.Property(c => c.ServerPayload)
             .HasColumnName("server_payload")
             .IsRequired()
-            .HasConversion(p => p.Value, value => new DeltaPayload(value));
+            .HasConversion(p => p.Value, value => DeltaPayload.From(value));
 
         builder.Property(c => c.ClientVersion)
             .HasColumnName("client_version")
             .IsRequired()
-            .HasConversion(v => v.Value, value => new SyncVersion(value));
+            .HasConversion(v => v.Value, value => SyncVersion.From(value));
 
         builder.Property(c => c.ServerVersion)
             .HasColumnName("server_version")
             .IsRequired()
-            .HasConversion(v => v.Value, value => new SyncVersion(value));
+            .HasConversion(v => v.Value, value => SyncVersion.From(value));
 
         builder.Property(c => c.Status)
             .HasColumnName("status")
             .HasMaxLength(20)
             .IsRequired()
-            .HasConversion(s => s.Value, value => new ConflictStatus(value));
+            .HasConversion(s => s.Value, value => ConflictStatus.From(value));
 
         builder.Property(c => c.ResolvedPayload)
             .HasColumnName("resolved_payload")
             .HasConversion(
                 p => p != null ? p.Value : null,
-                value => value != null ? new DeltaPayload(value) : null);
+                value => value != null ? DeltaPayload.From(value) : null);
 
         builder.Property(c => c.DetectedAt)
             .HasColumnName("detected_at")

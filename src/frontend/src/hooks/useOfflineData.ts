@@ -12,6 +12,13 @@ import type {
   NewPhoto,
   NewMeasurement,
 } from "../db/repositories/types";
+import type {
+  ProjectId,
+  ZoneId,
+  InstallationId,
+  PhotoId,
+  MeasurementId,
+} from "../types/branded";
 
 // ─── Projects ────────────────────────────────────────────────────
 
@@ -22,7 +29,7 @@ export function useProjects() {
   });
 }
 
-export function useProject(id: string) {
+export function useProject(id: ProjectId) {
   return useQuery({
     queryKey: ["projects", id],
     queryFn: () => projectRepo.getById(id),
@@ -49,7 +56,7 @@ export function useUpdateProject() {
       id,
       data,
     }: {
-      id: string;
+      id: ProjectId;
       data: Partial<
         Omit<NewProject, "id" | "createdAt" | "updatedAt" | "version" | "createdBy">
       >;
@@ -64,7 +71,7 @@ export function useUpdateProject() {
 export function useDeleteProject() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => projectRepo.remove(id),
+    mutationFn: (id: ProjectId) => projectRepo.remove(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["projects"] });
       queryClient.invalidateQueries({ queryKey: ["syncStatus"] });
@@ -74,7 +81,7 @@ export function useDeleteProject() {
 
 // ─── Zones ───────────────────────────────────────────────────────
 
-export function useZonesByProject(projectId: string) {
+export function useZonesByProject(projectId: ProjectId) {
   return useQuery({
     queryKey: ["zones", projectId],
     queryFn: () => zoneRepo.getByProjectId(projectId),
@@ -103,7 +110,7 @@ export function useUpdateZone() {
       id,
       data,
     }: {
-      id: string;
+      id: ZoneId;
       data: Partial<Omit<NewZone, "id" | "version" | "projectId">>;
     }) => zoneRepo.update(id, data),
     onSuccess: () => {
@@ -116,7 +123,7 @@ export function useUpdateZone() {
 export function useDeleteZone() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => zoneRepo.remove(id),
+    mutationFn: (id: ZoneId) => zoneRepo.remove(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["zones"] });
       queryClient.invalidateQueries({ queryKey: ["syncStatus"] });
@@ -126,7 +133,7 @@ export function useDeleteZone() {
 
 // ─── Installations ───────────────────────────────────────────────
 
-export function useInstallationsByZone(zoneId: string) {
+export function useInstallationsByZone(zoneId: ZoneId) {
   return useQuery({
     queryKey: ["installations", "zone", zoneId],
     queryFn: () => installationRepo.getByZoneId(zoneId),
@@ -134,7 +141,7 @@ export function useInstallationsByZone(zoneId: string) {
   });
 }
 
-export function useInstallationsByProject(projectId: string) {
+export function useInstallationsByProject(projectId: ProjectId) {
   return useQuery({
     queryKey: ["installations", "project", projectId],
     queryFn: () => installationRepo.getByProjectId(projectId),
@@ -167,7 +174,7 @@ export function useUpdateInstallation() {
       id,
       data,
     }: {
-      id: string;
+      id: InstallationId;
       data: Partial<
         Omit<
           NewInstallation,
@@ -186,7 +193,7 @@ export function useUpdateInstallation() {
 export function useDeleteInstallation() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => installationRepo.remove(id),
+    mutationFn: (id: InstallationId) => installationRepo.remove(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["installations"] });
       queryClient.invalidateQueries({ queryKey: ["syncStatus"] });
@@ -196,7 +203,7 @@ export function useDeleteInstallation() {
 
 // ─── Photos ──────────────────────────────────────────────────────
 
-export function usePhotosByInstallation(installationId: string) {
+export function usePhotosByInstallation(installationId: InstallationId) {
   return useQuery({
     queryKey: ["photos", installationId],
     queryFn: () => photoRepo.getByInstallationId(installationId),
@@ -221,7 +228,7 @@ export function useAddPhoto() {
 export function useDeletePhoto() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => photoRepo.remove(id),
+    mutationFn: (id: PhotoId) => photoRepo.remove(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["photos"] });
       queryClient.invalidateQueries({ queryKey: ["syncStatus"] });
@@ -232,7 +239,7 @@ export function useDeletePhoto() {
 export function useUpdatePhotoAnnotation() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, annotation }: { id: string; annotation: string }) =>
+    mutationFn: ({ id, annotation }: { id: PhotoId; annotation: string }) =>
       photoRepo.updateAnnotation(id, annotation),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["photos"] });
@@ -243,7 +250,7 @@ export function useUpdatePhotoAnnotation() {
 
 // ─── Measurements ────────────────────────────────────────────────
 
-export function useMeasurementsByInstallation(installationId: string) {
+export function useMeasurementsByInstallation(installationId: InstallationId) {
   return useQuery({
     queryKey: ["measurements", installationId],
     queryFn: () => measurementRepo.getByInstallationId(installationId),
@@ -268,7 +275,7 @@ export function useAddMeasurement() {
 export function useDeleteMeasurement() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => measurementRepo.remove(id),
+    mutationFn: (id: MeasurementId) => measurementRepo.remove(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["measurements"] });
       queryClient.invalidateQueries({ queryKey: ["syncStatus"] });

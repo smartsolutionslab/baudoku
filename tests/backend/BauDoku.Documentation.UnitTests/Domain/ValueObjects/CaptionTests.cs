@@ -8,7 +8,7 @@ public sealed class CaptionTests
     [Fact]
     public void Create_WithValidCaption_ShouldSucceed()
     {
-        var caption = new Caption("Kabeltrasse vor Verlegung");
+        var caption = Caption.From("Kabeltrasse vor Verlegung");
         caption.Value.Should().Be("Kabeltrasse vor Verlegung");
     }
 
@@ -16,7 +16,7 @@ public sealed class CaptionTests
     public void Create_WithMaxLengthCaption_ShouldSucceed()
     {
         var value = new string('a', Caption.MaxLength);
-        var caption = new Caption(value);
+        var caption = Caption.From(value);
         caption.Value.Should().HaveLength(Caption.MaxLength);
     }
 
@@ -24,7 +24,7 @@ public sealed class CaptionTests
     public void Create_WithTooLongCaption_ShouldThrow()
     {
         var value = new string('a', Caption.MaxLength + 1);
-        var act = () => new Caption(value);
+        var act = () => Caption.From(value);
         act.Should().Throw<ArgumentException>();
     }
 
@@ -33,14 +33,14 @@ public sealed class CaptionTests
     [InlineData("   ")]
     public void Create_WithEmptyCaption_ShouldThrow(string value)
     {
-        var act = () => new Caption(value);
+        var act = () => Caption.From(value);
         act.Should().Throw<ArgumentException>();
     }
 
     [Fact]
     public void Create_WithNullCaption_ShouldThrow()
     {
-        var act = () => new Caption(null!);
+        var act = () => Caption.From(null!);
         act.Should().Throw<ArgumentNullException>();
     }
 }

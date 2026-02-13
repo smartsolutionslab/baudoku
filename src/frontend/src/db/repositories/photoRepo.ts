@@ -4,19 +4,20 @@ import { photos } from "../schema";
 import { generateId } from "../../utils/uuid";
 import { createOutboxEntry } from "./syncRepo";
 import type { Photo, NewPhoto } from "./types";
+import type { PhotoId, InstallationId } from "../../types/branded";
 
 export async function getByInstallationId(
-  installationId: string
+  installationId: InstallationId
 ): Promise<Photo[]> {
   return db
     .select()
     .from(photos)
     .where(eq(photos.installationId, installationId))
-    .all();
+    .all() as unknown as Photo[];
 }
 
-export async function getById(id: string): Promise<Photo | undefined> {
-  return db.select().from(photos).where(eq(photos.id, id)).get();
+export async function getById(id: PhotoId): Promise<Photo | undefined> {
+  return db.select().from(photos).where(eq(photos.id, id)).get() as unknown as Photo | undefined;
 }
 
 export async function getPendingUpload(): Promise<Photo[]> {
@@ -24,7 +25,7 @@ export async function getPendingUpload(): Promise<Photo[]> {
     .select()
     .from(photos)
     .where(eq(photos.uploadStatus, "pending"))
-    .all();
+    .all() as unknown as Photo[];
 }
 
 export async function getFailedUpload(): Promise<Photo[]> {
@@ -32,7 +33,7 @@ export async function getFailedUpload(): Promise<Photo[]> {
     .select()
     .from(photos)
     .where(eq(photos.uploadStatus, "failed"))
-    .all();
+    .all() as unknown as Photo[];
 }
 
 export async function create(
@@ -47,11 +48,11 @@ export async function create(
   await db.insert(photos).values(photo);
   await createOutboxEntry("photo", photo.id, "create", photo);
 
-  return photo as Photo;
+  return photo as unknown as Photo;
 }
 
 export async function updateUploadStatus(
-  id: string,
+  id: PhotoId,
   uploadStatus: "pending" | "uploading" | "uploaded" | "failed",
   remotePath?: string
 ): Promise<void> {
@@ -61,13 +62,13 @@ export async function updateUploadStatus(
   await db.update(photos).set(updates).where(eq(photos.id, id));
 }
 
-export async function remove(id: string): Promise<void> {
+export async function remove(id: PhotoId): Promise<void> {
   await db.delete(photos).where(eq(photos.id, id));
   await createOutboxEntry("photo", id, "delete", { id });
 }
 
 export async function updateAnnotation(
-  id: string,
+  id: PhotoId,
   annotation: string
 ): Promise<void> {
   await db

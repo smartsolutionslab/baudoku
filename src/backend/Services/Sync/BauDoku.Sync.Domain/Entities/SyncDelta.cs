@@ -3,7 +3,7 @@ using BauDoku.Sync.Domain.ValueObjects;
 
 namespace BauDoku.Sync.Domain.Entities;
 
-public sealed class SyncDelta : Entity<SyncDeltaId>
+public sealed class SyncDelta : Entity<SyncDeltaIdentifier>
 {
     public EntityReference EntityRef { get; private set; } = default!;
     public DeltaOperation Operation { get; private set; } = default!;
@@ -15,7 +15,7 @@ public sealed class SyncDelta : Entity<SyncDeltaId>
     private SyncDelta() { }
 
     internal static SyncDelta Create(
-        SyncDeltaId id,
+        SyncDeltaIdentifier id,
         EntityReference entityRef,
         DeltaOperation operation,
         SyncVersion baseVersion,

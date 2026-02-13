@@ -4,7 +4,7 @@ using BauDoku.Projects.Domain.ValueObjects;
 
 namespace BauDoku.Projects.Application.Contracts;
 
-public interface IProjectRepository : IRepository<Project, ProjectId>
+public interface IProjectRepository : IRepository<Project, ProjectIdentifier>
 {
     Task<bool> ExistsByNameAsync(ProjectName name, CancellationToken ct = default);
 }

@@ -6,7 +6,7 @@ namespace BauDoku.Documentation.UnitTests.Application.Validators;
 
 public sealed class DocumentInstallationCommandValidatorTests
 {
-    private readonly DocumentInstallationCommandValidator _validator = new();
+    private readonly DocumentInstallationCommandValidator validator = new();
 
     private static DocumentInstallationCommand CreateValidCommand() =>
         new(Guid.NewGuid(), null, "cable_tray",
@@ -17,7 +17,7 @@ public sealed class DocumentInstallationCommandValidatorTests
     [Fact]
     public void ValidCommand_ShouldHaveNoErrors()
     {
-        var result = _validator.TestValidate(CreateValidCommand());
+        var result = validator.TestValidate(CreateValidCommand());
         result.ShouldNotHaveAnyValidationErrors();
     }
 
@@ -25,90 +25,90 @@ public sealed class DocumentInstallationCommandValidatorTests
     public void ProjectId_WhenEmpty_ShouldHaveError()
     {
         var cmd = CreateValidCommand() with { ProjectId = Guid.Empty };
-        _validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.ProjectId);
+        validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.ProjectId);
     }
 
     [Fact]
     public void Type_WhenEmpty_ShouldHaveError()
     {
         var cmd = CreateValidCommand() with { Type = "" };
-        _validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.Type);
+        validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.Type);
     }
 
     [Fact]
     public void Latitude_WhenBelowMinus90_ShouldHaveError()
     {
         var cmd = CreateValidCommand() with { Latitude = -91 };
-        _validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.Latitude);
+        validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.Latitude);
     }
 
     [Fact]
     public void Latitude_WhenAbove90_ShouldHaveError()
     {
         var cmd = CreateValidCommand() with { Latitude = 91 };
-        _validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.Latitude);
+        validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.Latitude);
     }
 
     [Fact]
     public void Longitude_WhenBelowMinus180_ShouldHaveError()
     {
         var cmd = CreateValidCommand() with { Longitude = -181 };
-        _validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.Longitude);
+        validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.Longitude);
     }
 
     [Fact]
     public void Longitude_WhenAbove180_ShouldHaveError()
     {
         var cmd = CreateValidCommand() with { Longitude = 181 };
-        _validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.Longitude);
+        validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.Longitude);
     }
 
     [Fact]
     public void HorizontalAccuracy_WhenZero_ShouldHaveError()
     {
         var cmd = CreateValidCommand() with { HorizontalAccuracy = 0 };
-        _validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.HorizontalAccuracy);
+        validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.HorizontalAccuracy);
     }
 
     [Fact]
     public void HorizontalAccuracy_WhenNegative_ShouldHaveError()
     {
         var cmd = CreateValidCommand() with { HorizontalAccuracy = -1 };
-        _validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.HorizontalAccuracy);
+        validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.HorizontalAccuracy);
     }
 
     [Fact]
     public void GpsSource_WhenEmpty_ShouldHaveError()
     {
         var cmd = CreateValidCommand() with { GpsSource = "" };
-        _validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.GpsSource);
+        validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.GpsSource);
     }
 
     [Fact]
     public void Description_WhenTooLong_ShouldHaveError()
     {
         var cmd = CreateValidCommand() with { Description = new string('a', Description.MaxLength + 1) };
-        _validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.Description);
+        validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.Description);
     }
 
     [Fact]
     public void Manufacturer_WhenTooLong_ShouldHaveError()
     {
         var cmd = CreateValidCommand() with { Manufacturer = new string('a', Manufacturer.MaxLength + 1) };
-        _validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.Manufacturer);
+        validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.Manufacturer);
     }
 
     [Fact]
     public void CrossSection_WhenZero_ShouldHaveError()
     {
         var cmd = CreateValidCommand() with { CrossSection = 0 };
-        _validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.CrossSection);
+        validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.CrossSection);
     }
 
     [Fact]
     public void DepthMm_WhenNegative_ShouldHaveError()
     {
         var cmd = CreateValidCommand() with { DepthMm = -1 };
-        _validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.DepthMm);
+        validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.DepthMm);
     }
 }

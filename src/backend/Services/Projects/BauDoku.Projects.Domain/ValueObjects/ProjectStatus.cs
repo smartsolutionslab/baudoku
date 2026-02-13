@@ -1,4 +1,5 @@
 using BauDoku.BuildingBlocks.Domain;
+using BauDoku.BuildingBlocks.Domain.Guards;
 
 namespace BauDoku.Projects.Domain.ValueObjects;
 
@@ -13,12 +14,13 @@ public sealed record ProjectStatus : ValueObject
 
     public string Value { get; }
 
-    public ProjectStatus(string value)
+    private ProjectStatus(string value) => Value = value;
+
+    public static ProjectStatus From(string value)
     {
-        if (string.IsNullOrWhiteSpace(value))
-            throw new ArgumentException("Projektstatus darf nicht leer sein.", nameof(value));
-        if (!ValidValues.Contains(value))
-            throw new ArgumentException($"Ungültiger Projektstatus: {value}.", nameof(value));
-        Value = value;
+        Ensure.That(value)
+            .IsNotNullOrWhiteSpace("Projektstatus darf nicht leer sein.")
+            .IsOneOf(ValidValues, $"Ungueltiger Projektstatus: {value}.");
+        return new ProjectStatus(value);
     }
 }

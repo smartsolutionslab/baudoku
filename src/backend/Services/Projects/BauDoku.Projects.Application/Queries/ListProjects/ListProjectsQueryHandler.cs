@@ -7,15 +7,15 @@ namespace BauDoku.Projects.Application.Queries.ListProjects;
 
 public sealed class ListProjectsQueryHandler : IQueryHandler<ListProjectsQuery, PagedResult<ProjectListItemDto>>
 {
-    private readonly IProjectReadRepository _readRepository;
+    private readonly IProjectReadRepository readRepository;
 
     public ListProjectsQueryHandler(IProjectReadRepository readRepository)
     {
-        _readRepository = readRepository;
+        this.readRepository = readRepository;
     }
 
     public async Task<PagedResult<ProjectListItemDto>> Handle(ListProjectsQuery query, CancellationToken cancellationToken = default)
     {
-        return await _readRepository.ListAsync(query.Search, query.Page, query.PageSize, cancellationToken);
+        return await readRepository.ListAsync(query.Search, query.Page, query.PageSize, cancellationToken);
     }
 }

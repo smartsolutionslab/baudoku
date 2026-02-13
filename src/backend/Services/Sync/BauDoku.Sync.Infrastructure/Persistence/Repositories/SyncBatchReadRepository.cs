@@ -7,19 +7,19 @@ namespace BauDoku.Sync.Infrastructure.Persistence.Repositories;
 
 public sealed class SyncBatchReadRepository : ISyncBatchReadRepository
 {
-    private readonly SyncDbContext _context;
+    private readonly SyncDbContext context;
 
     public SyncBatchReadRepository(SyncDbContext context)
     {
-        _context = context;
+        this.context = context;
     }
 
     public async Task<List<ConflictDto>> GetConflictsAsync(
-        DeviceId? deviceId,
+        DeviceIdentifier? deviceId,
         ConflictStatus? status,
         CancellationToken cancellationToken = default)
     {
-        var query = _context.SyncBatches
+        var query = context.SyncBatches
             .Include(b => b.Conflicts)
             .AsNoTracking()
             .AsQueryable();

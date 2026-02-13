@@ -1,14 +1,14 @@
-import React, { useState, useCallback } from "react";
+import React from "react";
 import {
   ScrollView,
   Text,
   TouchableOpacity,
   StyleSheet,
-  Alert,
 } from "react-native";
 import { FormField } from "../common/FormField";
 import { FormPicker } from "../common/FormPicker";
-import { zoneSchema, type ZoneFormData } from "../../validation/schemas";
+import { useZoneForm } from "../../hooks/useZoneForm";
+import type { ZoneFormData } from "../../validation/schemas";
 import { Colors, Spacing, FontSize } from "../../styles/tokens";
 import type { Zone } from "../../db/repositories/types";
 
@@ -20,14 +20,14 @@ const typeOptions = [
   { label: "Abschnitt", value: "section" },
 ];
 
-interface ZoneFormProps {
+type ZoneFormProps = {
   zones?: Zone[];
   defaultParentZoneId?: string | null;
   initialValues?: Partial<ZoneFormData>;
   submitLabel?: string;
   onSubmit: (data: ZoneFormData) => Promise<void>;
   submitting?: boolean;
-}
+};
 
 export function ZoneForm({
   zones,
@@ -37,49 +37,16 @@ export function ZoneForm({
   onSubmit,
   submitting,
 }: ZoneFormProps) {
-  const [form, setForm] = useState<Partial<ZoneFormData>>({
-    type: "building",
-    parentZoneId: defaultParentZoneId ?? null,
-    ...initialValues,
+  const { form, errors, set, handleSubmit } = useZoneForm({
+    initialValues,
+    defaultParentZoneId,
+    onSubmit,
   });
-  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const parentOptions = [
-    { label: "— Keine —", value: "__none__" },
+    { label: "\u2014 Keine \u2014", value: "__none__" },
     ...(zones?.map((z) => ({ label: z.name, value: z.id })) ?? []),
   ];
-
-  const set = useCallback(
-    <K extends keyof ZoneFormData>(key: K, value: ZoneFormData[K]) => {
-      setForm((prev) => ({ ...prev, [key]: value }));
-      setErrors((prev) => {
-        const next = { ...prev };
-        delete next[key];
-        return next;
-      });
-    },
-    []
-  );
-
-  const handleSubmit = useCallback(async () => {
-    const result = zoneSchema.safeParse(form);
-    if (!result.success) {
-      const fieldErrors: Record<string, string> = {};
-      for (const issue of result.error.issues) {
-        const key = issue.path[0]?.toString();
-        if (key && !fieldErrors[key]) {
-          fieldErrors[key] = issue.message;
-        }
-      }
-      setErrors(fieldErrors);
-      return;
-    }
-    try {
-      await onSubmit(result.data);
-    } catch {
-      Alert.alert("Fehler", "Zone konnte nicht gespeichert werden.");
-    }
-  }, [form, onSubmit]);
 
   return (
     <ScrollView

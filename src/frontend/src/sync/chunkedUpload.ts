@@ -3,11 +3,11 @@ import { initChunkedUpload, uploadChunk, completeChunkedUpload } from "./syncApi
 
 export const CHUNK_SIZE_BYTES = 1_048_576; // 1 MB
 
-export interface UploadProgress {
+export type UploadProgress = {
   chunksUploaded: number;
   totalChunks: number;
   percentage: number;
-}
+};
 
 // Base64 encodes 3 bytes as 4 chars, so 1 MB binary = ceil(1MB * 4/3) base64 chars
 const CHUNK_SIZE_BASE64 = Math.ceil(CHUNK_SIZE_BYTES * 4 / 3);

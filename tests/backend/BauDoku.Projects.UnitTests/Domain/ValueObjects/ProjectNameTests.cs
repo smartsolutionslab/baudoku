@@ -8,7 +8,7 @@ public sealed class ProjectNameTests
     [Fact]
     public void Create_WithValidName_ShouldSucceed()
     {
-        var name = new ProjectName("Baustelle Musterstraße");
+        var name = ProjectName.From("Baustelle Musterstraße");
 
         name.Value.Should().Be("Baustelle Musterstraße");
     }
@@ -19,7 +19,7 @@ public sealed class ProjectNameTests
     [InlineData("   ")]
     public void Create_WithEmptyName_ShouldThrow(string? value)
     {
-        var act = () => new ProjectName(value!);
+        var act = () => ProjectName.From(value!);
 
         act.Should().Throw<ArgumentException>();
     }
@@ -29,7 +29,7 @@ public sealed class ProjectNameTests
     {
         var longName = new string('a', ProjectName.MaxLength + 1);
 
-        var act = () => new ProjectName(longName);
+        var act = () => ProjectName.From(longName);
 
         act.Should().Throw<ArgumentException>();
     }
@@ -39,7 +39,7 @@ public sealed class ProjectNameTests
     {
         var maxName = new string('a', ProjectName.MaxLength);
 
-        var name = new ProjectName(maxName);
+        var name = ProjectName.From(maxName);
 
         name.Value.Should().HaveLength(ProjectName.MaxLength);
     }

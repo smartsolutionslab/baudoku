@@ -1,4 +1,5 @@
 using BauDoku.BuildingBlocks.Domain;
+using BauDoku.BuildingBlocks.Domain.Guards;
 
 namespace BauDoku.Projects.Domain.ValueObjects;
 
@@ -12,19 +13,21 @@ public sealed record ClientInfo : ValueObject
     public string? Email { get; }
     public string? Phone { get; }
 
-    public ClientInfo(string name, string? email = null, string? phone = null)
+    private ClientInfo(string name, string? email, string? phone)
     {
-        if (string.IsNullOrWhiteSpace(name))
-            throw new ArgumentException("Kundenname darf nicht leer sein.", nameof(name));
-        if (name.Length > MaxNameLength)
-            throw new ArgumentException($"Kundenname darf max. {MaxNameLength} Zeichen lang sein.", nameof(name));
-        if (email is not null && email.Length > MaxEmailLength)
-            throw new ArgumentException($"E-Mail darf max. {MaxEmailLength} Zeichen lang sein.", nameof(email));
-        if (phone is not null && phone.Length > MaxPhoneLength)
-            throw new ArgumentException($"Telefon darf max. {MaxPhoneLength} Zeichen lang sein.", nameof(phone));
-
         Name = name;
         Email = email;
         Phone = phone;
+    }
+
+    public static ClientInfo Create(string name, string? email = null, string? phone = null)
+    {
+        Ensure.That(name)
+            .IsNotNullOrWhiteSpace("Kundenname darf nicht leer sein.")
+            .MaxLengthIs(MaxNameLength, $"Kundenname darf max. {MaxNameLength} Zeichen lang sein.");
+        Ensure.That(email).MaxLengthIs(MaxEmailLength, $"E-Mail darf max. {MaxEmailLength} Zeichen lang sein.");
+        Ensure.That(phone).MaxLengthIs(MaxPhoneLength, $"Telefon darf max. {MaxPhoneLength} Zeichen lang sein.");
+
+        return new ClientInfo(name, email, phone);
     }
 }

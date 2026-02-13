@@ -1,14 +1,14 @@
 import { useState, useCallback } from "react";
 import { Alert } from "react-native";
 
-interface UseConfirmDeleteReturn {
+type UseConfirmDeleteReturn = {
   deleting: boolean;
   confirmDelete: (opts: {
     title: string;
     message: string;
     onConfirm: () => Promise<void>;
   }) => void;
-}
+};
 
 export function useConfirmDelete(): UseConfirmDeleteReturn {
   const [deleting, setDeleting] = useState(false);

@@ -8,18 +8,18 @@ namespace BauDoku.Documentation.Application.Queries.GetMeasurements;
 public sealed class GetMeasurementsQueryHandler
     : IQueryHandler<GetMeasurementsQuery, IReadOnlyList<MeasurementDto>>
 {
-    private readonly IInstallationRepository _installationRepository;
+    private readonly IInstallationRepository installationRepository;
 
     public GetMeasurementsQueryHandler(IInstallationRepository installationRepository)
     {
-        _installationRepository = installationRepository;
+        this.installationRepository = installationRepository;
     }
 
     public async Task<IReadOnlyList<MeasurementDto>> Handle(
         GetMeasurementsQuery query, CancellationToken cancellationToken)
     {
-        var installationId = new InstallationId(query.InstallationId);
-        var installation = await _installationRepository.GetByIdAsync(installationId, cancellationToken)
+        var installationId = InstallationIdentifier.From(query.InstallationId);
+        var installation = await installationRepository.GetByIdAsync(installationId, cancellationToken)
             ?? throw new InvalidOperationException($"Installation mit ID {query.InstallationId} nicht gefunden.");
 
         return installation.Measurements.Select(m => new MeasurementDto(

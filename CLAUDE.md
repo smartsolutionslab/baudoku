@@ -29,48 +29,80 @@ Mobile App zur Dokumentation elektrischer Installationen auf Baustellen. Zielgru
 ### ValueObject-Pattern
 
 ```csharp
-// Basis: abstract record
-public abstract record ValueObject;
+// Basis: abstract record mit IValueObject Marker-Interface
+public interface IValueObject;
+public abstract record ValueObject : IValueObject;
 
-// Konkretes ValueObject: sealed record mit Konstruktor-Properties + Validierung
+// Konkretes ValueObject: sealed record, private Konstruktor, statische Factory-Methode, Guard-Validierung
 public sealed record ProjectName : ValueObject
 {
     public const int MaxLength = 200;
     public string Value { get; }
 
-    public ProjectName(string value)
+    private ProjectName(string value) => Value = value;
+
+    public static ProjectName From(string value)
     {
-        if (string.IsNullOrWhiteSpace(value))
-            throw new ArgumentException("Projektname darf nicht leer sein.", nameof(value));
-        if (value.Length > MaxLength)
-            throw new ArgumentException($"Projektname darf max. {MaxLength} Zeichen lang sein.", nameof(value));
-        Value = value;
+        Ensure.That(value)
+            .IsNotNullOrWhiteSpace("Projektname darf nicht leer sein.")
+            .MaxLengthIs(MaxLength, $"Projektname darf max. {MaxLength} Zeichen lang sein.");
+        return new ProjectName(value);
     }
 }
 
-// ID-ValueObject
-public sealed record ProjectId : ValueObject
+// ID-ValueObject (Namenskonvention: *Identifier, nicht *Id)
+public sealed record ProjectIdentifier : ValueObject
 {
     public Guid Value { get; }
-    public ProjectId(Guid value)
+    private ProjectIdentifier(Guid value) => Value = value;
+
+    public static ProjectIdentifier From(Guid value)
     {
-        if (value == Guid.Empty)
-            throw new ArgumentException("ID darf nicht leer sein.", nameof(value));
-        Value = value;
+        Ensure.That(value).IsNotEmpty("Projekt-ID darf nicht leer sein.");
+        return new ProjectIdentifier(value);
     }
-    public static ProjectId New() => new(Guid.NewGuid());
+    public static ProjectIdentifier New() => new(Guid.NewGuid());
 }
 
 // Enum-artige ValueObjects (statt C# enums)
 public sealed record InstallationStatus : ValueObject
 {
+    private static readonly HashSet<string> ValidValues = ["in_progress", "completed", "inspected"];
+
     public static readonly InstallationStatus InProgress = new("in_progress");
     public static readonly InstallationStatus Completed = new("completed");
     public static readonly InstallationStatus Inspected = new("inspected");
 
     public string Value { get; }
-    public InstallationStatus(string value) => Value = value ?? throw new ArgumentNullException(nameof(value));
+    private InstallationStatus(string value) => Value = value;
+
+    public static InstallationStatus From(string value)
+    {
+        Ensure.That(value).IsNotNullOrWhiteSpace().IsOneOf(ValidValues);
+        return new InstallationStatus(value);
+    }
 }
+```
+
+### Guard/Ensure-Pattern (Fluent Validierung für ValueObjects)
+
+```csharp
+// Zero-Allocation ref structs mit [CallerArgumentExpression]
+// Deklariert in: BuildingBlocks/BauDoku.BuildingBlocks.Domain/Guards/
+Ensure.That(value).IsNotNullOrWhiteSpace().MaxLengthIs(200);     // StringGuard
+Ensure.That(id).IsNotEmpty();                                      // GuidGuard
+Ensure.That(latitude).IsBetween(-90.0, 90.0);                    // NumericGuard
+Ensure.That(reference).IsNotNull();                                // ReferenceGuard
+```
+
+### ValueObject JSON-Serialisierung
+
+```csharp
+// ValueObjectJsonConverterFactory in BuildingBlocks.Infrastructure/Serialization/
+// Erkennt IValueObject-Typen, liest/schreibt die Value-Property, ruft From() zur Deserialisierung
+// Registrierung in jeder API Program.cs:
+builder.Services.ConfigureHttpJsonOptions(options =>
+    options.SerializerOptions.Converters.Add(new ValueObjectJsonConverterFactory()));
 ```
 
 ### Entity + AggregateRoot
@@ -81,12 +113,12 @@ public abstract class Entity<TId> where TId : ValueObject
     public TId Id { get; protected set; } = default!;
 }
 
-public abstract class AggregateRoot<TId> : Entity<TId> where TId : ValueObject
+public abstract class AggregateRoot<TId> : Entity<TId>, IAggregateRoot where TId : ValueObject
 {
-    private readonly List<IDomainEvent> _domainEvents = [];
-    public IReadOnlyList<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
-    protected void AddDomainEvent(IDomainEvent domainEvent) => _domainEvents.Add(domainEvent);
-    public void ClearDomainEvents() => _domainEvents.Clear();
+    private readonly List<IDomainEvent> domainEvents = [];  // kein Underscore-Prefix!
+    public IReadOnlyList<IDomainEvent> DomainEvents => domainEvents.AsReadOnly();
+    protected void AddDomainEvent(IDomainEvent domainEvent) => domainEvents.Add(domainEvent);
+    public void ClearDomainEvents() => domainEvents.Clear();
 
     protected static void CheckRule(IBusinessRule rule)
     {
@@ -100,11 +132,16 @@ public abstract class AggregateRoot<TId> : Entity<TId> where TId : ValueObject
 Aggregate Roots werden NICHT über Konstruktoren erstellt, sondern über statische Factory Methods:
 
 ```csharp
-public sealed class Project : AggregateRoot<ProjectId>
+public sealed class Project : AggregateRoot<ProjectIdentifier>
 {
+    private readonly List<Zone> zones = [];
+
+    public ProjectName Name { get; private set; } = default!;
+    public IReadOnlyList<Zone> Zones => zones.AsReadOnly();
+
     private Project() { } // EF Core
 
-    public static Project Create(ProjectId id, ProjectName name, Address address, ClientInfo client)
+    public static Project Create(ProjectIdentifier id, ProjectName name, Address address, ClientInfo client)
     {
         var project = new Project { Id = id, Name = name, ... };
         project.AddDomainEvent(new ProjectCreated(id, name, DateTime.UtcNow));
@@ -147,9 +184,10 @@ public static class ProjectEndpoints
 ```
 src/backend/
 ├── BuildingBlocks/
-│   ├── BauDoku.BuildingBlocks.Domain/          # ValueObject, Entity, AggregateRoot, IDomainEvent, IBusinessRule
+│   ├── BauDoku.BuildingBlocks.Domain/          # ValueObject, IValueObject, Entity, AggregateRoot, Guards/Ensure, IDomainEvent, IBusinessRule
 │   ├── BauDoku.BuildingBlocks.Application/     # Dispatcher, ICommand/IQuery, Behaviors (Validation, Logging, Transaction)
-│   └── BauDoku.BuildingBlocks.Infrastructure/  # BaseDbContext, UnitOfWork, Messaging
+│   ├── BauDoku.BuildingBlocks.Infrastructure/  # BaseDbContext, UnitOfWork, Messaging, ValueObjectJsonConverterFactory
+│   └── BauDoku.ServiceDefaults/                # Aspire ServiceDefaults (OpenTelemetry, Health Checks, Service Discovery)
 ├── Services/
 │   ├── Documentation/                          # BC: Installationsdokumentation
 │   │   ├── BauDoku.Documentation.Domain/       # Installation (AggregateRoot), Photo, Measurement (Entities), GpsPosition, CableSpec, Depth (ValueObjects)
@@ -168,7 +206,7 @@ src/backend/
 │       └── BauDoku.Sync.Api/
 ├── ApiGateway/BauDoku.ApiGateway/              # YARP Reverse Proxy
 ├── AppHost/BauDoku.AppHost/                    # .NET Aspire
-└── BauDoku.sln
+└── BauDoku.slnx
 ```
 
 ## Bounded Contexts
@@ -180,21 +218,24 @@ src/backend/
 ## Coding-Standards
 
 - **C#:** `sealed record` für ValueObjects, `sealed class` für Handlers, `private set` für Entity-Properties
+- **ValueObjects:** Private Konstruktoren + statische Factory-Methoden (`From()`, `Create()`, `New()`), Guard-Validierung, `IValueObject` Marker-Interface
+- **ID-Naming:** `*Identifier` (z.B. `ProjectIdentifier`, `InstallationIdentifier`), NICHT `*Id`
 - **Namespaces:** `BauDoku.{BC}.{Layer}` z.B. `BauDoku.Projects.Domain.Aggregates.Project`
-- **Private fields:** `_camelCase` (z.B. `_domainEvents`, `_photos`)
+- **Private fields:** `camelCase` OHNE Underscore-Prefix (z.B. `domainEvents`, `photos`, `zones`)
 - **Commits:** Conventional Commits (`feat(projects): add Project aggregate`)
 - **Ticket-Prefix:** `BD-xxx`
 - **Tests:** xUnit + AwesomeAssertions + NSubstitute + Testcontainers (PostgreSQL)
-- **Keine Primitive im Domain:** `ProjectId` statt `Guid`, `ProjectName` statt `string`, `Depth` statt `int`
+- **Keine Primitive im Domain:** `ProjectIdentifier` statt `Guid`, `ProjectName` statt `string`, `Depth` statt `int`
+- **Frontend:** Branded Types (`src/frontend/src/types/branded.ts`), `type` statt `interface` für Daten-Shapes
 
 ## NuGet Packages (Central Package Management)
 
-- EntityFrameworkCore 10.*, Npgsql.EFCore.PostgreSQL 10.*, NetTopologySuite
-- FluentValidation 11.*, Scrutor 5.*
-- Polly 8.*, Serilog.AspNetCore 9.*
+- EntityFrameworkCore 10.0.2, Npgsql.EFCore.PostgreSQL 10.0.0, NetTopologySuite
+- FluentValidation 12.1.1, Scrutor 7.0.0
+- Polly 8.*, Serilog.AspNetCore 10.0.0
 - RabbitMQ.Client 7.*, Azure.Storage.Blobs 12.*
-- Yarp.ReverseProxy 2.*, Aspire.Hosting 9.*
-- xUnit 2.*, AwesomeAssertions 9.*, Testcontainers.PostgreSql 4.*, NSubstitute 5.*
+- Yarp.ReverseProxy 2.3.0, Aspire.Hosting.* 13.1.0
+- xUnit 2.9.3, AwesomeAssertions 9.3.0, Testcontainers.PostgreSql 4.*, NSubstitute 5.*
 
 ## GPS/GNSS-Kontext
 
@@ -207,7 +248,7 @@ Die App unterstützt ein dreistufiges Positionierungskonzept:
 
 ## Aktuelle Phase
 
-**Phase 0: Foundation** – Repo-Grundgerüst, BuildingBlocks, .NET Solution mit allen Projekten, Aspire AppHost.
+**Sprint 7+: Refactoring & Observability** – ValueObject-Pattern mit Guard-Validierung, IValueObject-Interface, *Identifier-Naming, Serilog-Logging, Aspire-Dashboard-Monitoring, Health Checks, Business Metrics.
 
 ## Referenz-Architektur
 

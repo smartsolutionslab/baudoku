@@ -3,7 +3,7 @@ using BauDoku.Documentation.Domain.ValueObjects;
 
 namespace BauDoku.Documentation.Domain.Entities;
 
-public sealed class Measurement : Entity<MeasurementId>
+public sealed class Measurement : Entity<MeasurementIdentifier>
 {
     public MeasurementType Type { get; private set; } = default!;
     public MeasurementValue Value { get; private set; } = default!;
@@ -13,7 +13,7 @@ public sealed class Measurement : Entity<MeasurementId>
 
     private Measurement() { }
 
-    internal static Measurement Create(MeasurementId id, MeasurementType type, MeasurementValue value, string? notes)
+    internal static Measurement Create(MeasurementIdentifier id, MeasurementType type, MeasurementValue value, string? notes)
     {
         var result = Evaluate(value);
 

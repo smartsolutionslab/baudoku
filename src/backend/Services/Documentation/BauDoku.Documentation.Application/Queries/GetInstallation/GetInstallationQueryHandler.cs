@@ -8,17 +8,17 @@ namespace BauDoku.Documentation.Application.Queries.GetInstallation;
 public sealed class GetInstallationQueryHandler
     : IQueryHandler<GetInstallationQuery, InstallationDto?>
 {
-    private readonly IInstallationRepository _installationRepository;
+    private readonly IInstallationRepository installationRepository;
 
     public GetInstallationQueryHandler(IInstallationRepository installationRepository)
     {
-        _installationRepository = installationRepository;
+        this.installationRepository = installationRepository;
     }
 
     public async Task<InstallationDto?> Handle(GetInstallationQuery query, CancellationToken cancellationToken)
     {
-        var installationId = new InstallationId(query.InstallationId);
-        var installation = await _installationRepository.GetByIdAsync(installationId, cancellationToken);
+        var installationId = InstallationIdentifier.From(query.InstallationId);
+        var installation = await installationRepository.GetByIdAsync(installationId, cancellationToken);
 
         if (installation is null)
             return null;

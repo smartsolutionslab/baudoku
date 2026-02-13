@@ -12,13 +12,13 @@ import { QualityIndicator } from "./QualityIndicator";
 import { calculateGpsQuality } from "../../utils/gpsQuality";
 import { Colors, Spacing, FontSize } from "../../styles/tokens";
 
-interface GpsButtonProps {
+type GpsButtonProps = {
   position: GpsPosition | null;
   capturing: boolean;
   error: string | null;
   onCapture: () => void;
   onClear?: () => void;
-}
+};
 
 export function GpsButton({
   position,

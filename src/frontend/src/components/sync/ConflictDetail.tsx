@@ -10,11 +10,11 @@ import {
 import { ConflictDiffView } from "./ConflictDiffView";
 import type { ConflictDto } from "../../sync/syncApi";
 
-interface ConflictDetailProps {
+type ConflictDetailProps = {
   conflict: ConflictDto;
   onResolve: (strategy: string, mergedPayload?: string) => void;
   isResolving: boolean;
-}
+};
 
 export function ConflictDetail({
   conflict,

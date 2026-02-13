@@ -4,12 +4,12 @@ import type { ZoneNode } from "../../hooks/useZoneTree";
 import { StatusBadge } from "../common/StatusBadge";
 import { Colors, Spacing, FontSize } from "../../styles/tokens";
 
-interface ZoneCardProps {
+type ZoneCardProps = {
   node: ZoneNode;
   expanded?: boolean;
   onPress: () => void;
   onToggle?: () => void;
-}
+};
 
 export function ZoneCard({ node, expanded, onPress, onToggle }: ZoneCardProps) {
   const hasChildren = node.children.length > 0;

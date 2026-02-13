@@ -8,17 +8,17 @@ namespace BauDoku.Documentation.Application.Queries.GetInstallationsInBoundingBo
 public sealed class GetInstallationsInBoundingBoxQueryHandler
     : IQueryHandler<GetInstallationsInBoundingBoxQuery, PagedResult<InstallationListItemDto>>
 {
-    private readonly IInstallationReadRepository _readRepository;
+    private readonly IInstallationReadRepository readRepository;
 
     public GetInstallationsInBoundingBoxQueryHandler(IInstallationReadRepository readRepository)
     {
-        _readRepository = readRepository;
+        this.readRepository = readRepository;
     }
 
     public async Task<PagedResult<InstallationListItemDto>> Handle(
         GetInstallationsInBoundingBoxQuery query, CancellationToken cancellationToken)
     {
-        return await _readRepository.SearchInBoundingBoxAsync(
+        return await readRepository.SearchInBoundingBoxAsync(
             query.MinLatitude,
             query.MinLongitude,
             query.MaxLatitude,

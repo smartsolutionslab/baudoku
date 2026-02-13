@@ -4,10 +4,10 @@ import type { Project } from "../../db/repositories/types";
 import { StatusBadge } from "../common/StatusBadge";
 import { Colors, Spacing, FontSize } from "../../styles/tokens";
 
-interface ProjectCardProps {
+type ProjectCardProps = {
   project: Project;
   onPress: () => void;
-}
+};
 
 export function ProjectCard({ project, onPress }: ProjectCardProps) {
   const address = [project.street, project.zipCode, project.city]

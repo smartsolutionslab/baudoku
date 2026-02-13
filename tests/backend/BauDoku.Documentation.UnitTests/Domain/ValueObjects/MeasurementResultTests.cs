@@ -11,14 +11,14 @@ public sealed class MeasurementResultTests
     [InlineData("warning")]
     public void Create_WithValidValue_ShouldSucceed(string value)
     {
-        var result = new MeasurementResult(value);
+        var result = MeasurementResult.From(value);
         result.Value.Should().Be(value);
     }
 
     [Fact]
     public void Create_WithInvalidValue_ShouldThrow()
     {
-        var act = () => new MeasurementResult("invalid");
+        var act = () => MeasurementResult.From("invalid");
         act.Should().Throw<ArgumentException>();
     }
 
@@ -28,7 +28,7 @@ public sealed class MeasurementResultTests
     [InlineData("   ")]
     public void Create_WithEmptyValue_ShouldThrow(string? value)
     {
-        var act = () => new MeasurementResult(value!);
+        var act = () => MeasurementResult.From(value!);
         act.Should().Throw<ArgumentException>();
     }
 

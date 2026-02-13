@@ -1,5 +1,6 @@
 using BauDoku.BuildingBlocks.Application;
 using BauDoku.BuildingBlocks.Infrastructure.Auth;
+using BauDoku.BuildingBlocks.Infrastructure.Serialization;
 using BauDoku.Projects.Api.Endpoints;
 using BauDoku.Projects.Infrastructure;
 using BauDoku.ServiceDefaults;
@@ -14,6 +15,9 @@ builder.AddServiceDefaults(health =>
 {
     health.AddNpgSql(connectionString, name: "postgresql", tags: ["ready"]);
 });
+
+builder.Services.ConfigureHttpJsonOptions(options =>
+    options.SerializerOptions.Converters.Add(new ValueObjectJsonConverterFactory()));
 
 builder.Services.AddOpenApi();
 

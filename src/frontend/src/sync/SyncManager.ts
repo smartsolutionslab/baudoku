@@ -7,12 +7,12 @@ import { uploadPhotoChunked } from "./chunkedUpload";
 import { useUploadStore } from "../store/useUploadStore";
 import type { SyncDeltaDto, ProcessSyncBatchResult, ChangeSetResult } from "./syncApi";
 
-export interface SyncResult {
+export type SyncResult = {
   pushed: number;
   pulled: number;
   conflicts: number;
   errors: string[];
-}
+};
 
 export class SyncManager {
   async push(): Promise<{

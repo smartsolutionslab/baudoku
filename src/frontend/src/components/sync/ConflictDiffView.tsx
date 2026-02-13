@@ -1,17 +1,17 @@
 import React from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 
-interface DiffRow {
+type DiffRow = {
   field: string;
   clientValue: string;
   serverValue: string;
   isDifferent: boolean;
-}
+};
 
-interface ConflictDiffViewProps {
+type ConflictDiffViewProps = {
   clientPayload: string;
   serverPayload: string;
-}
+};
 
 function parsePayload(json: string): Record<string, unknown> {
   try {

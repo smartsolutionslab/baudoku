@@ -15,10 +15,10 @@ public static class ProjectsMetrics
     public static readonly Histogram<int> ZonesPerProject =
         Meter.CreateHistogram<int>("baudoku.projects.zones_per_project", description: "Number of zones per project after adding a zone");
 
-    private static int _activeProjectCount;
+    private static int activeProjectCount;
 
     public static readonly ObservableGauge<int> ActiveProjectCount =
-        Meter.CreateObservableGauge("baudoku.projects.active_count", () => _activeProjectCount, description: "Number of active projects");
+        Meter.CreateObservableGauge("baudoku.projects.active_count", () => activeProjectCount, description: "Number of active projects");
 
-    public static void SetActiveProjectCount(int count) => _activeProjectCount = count;
+    public static void SetActiveProjectCount(int count) => activeProjectCount = count;
 }

@@ -8,14 +8,20 @@ import {
 import { ZoneForm } from "../../../../src/components/projects/ZoneForm";
 import { Colors, Spacing, FontSize } from "../../../../src/styles/tokens";
 import type { ZoneFormData } from "../../../../src/validation/schemas";
+import {
+  projectId as toProjectId,
+  zoneId as toZoneId,
+} from "../../../../src/types/branded";
 
 export default function ZoneEditScreen() {
-  const { zoneId, projectId } = useLocalSearchParams<{
+  const { zoneId: rawZoneId, projectId: rawProjectId } = useLocalSearchParams<{
     zoneId: string;
     projectId: string;
   }>();
+  const zoneId = toZoneId(rawZoneId!);
+  const projectId = toProjectId(rawProjectId!);
   const router = useRouter();
-  const { data: zones, isLoading } = useZonesByProject(projectId!);
+  const { data: zones, isLoading } = useZonesByProject(projectId);
   const updateZone = useUpdateZone();
 
   const zone = useMemo(
@@ -30,7 +36,7 @@ export default function ZoneEditScreen() {
 
   const handleSubmit = async (data: ZoneFormData) => {
     await updateZone.mutateAsync({
-      id: zoneId!,
+      id: zoneId,
       data: {
         name: data.name,
         type: data.type,

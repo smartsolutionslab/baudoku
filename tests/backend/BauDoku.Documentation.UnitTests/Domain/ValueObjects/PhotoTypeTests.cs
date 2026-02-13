@@ -14,14 +14,14 @@ public sealed class PhotoTypeTests
     [InlineData("other")]
     public void Create_WithValidType_ShouldSucceed(string value)
     {
-        var photoType = new PhotoType(value);
+        var photoType = PhotoType.From(value);
         photoType.Value.Should().Be(value);
     }
 
     [Fact]
     public void Create_WithInvalidType_ShouldThrow()
     {
-        var act = () => new PhotoType("invalid");
+        var act = () => PhotoType.From("invalid");
         act.Should().Throw<ArgumentException>();
     }
 
@@ -31,7 +31,7 @@ public sealed class PhotoTypeTests
     [InlineData("   ")]
     public void Create_WithEmptyType_ShouldThrow(string? value)
     {
-        var act = () => new PhotoType(value!);
+        var act = () => PhotoType.From(value!);
         act.Should().Throw<ArgumentException>();
     }
 

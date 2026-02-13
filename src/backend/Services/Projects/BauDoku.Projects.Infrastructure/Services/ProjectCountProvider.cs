@@ -6,15 +6,15 @@ namespace BauDoku.Projects.Infrastructure.Services;
 
 public sealed class ProjectCountProvider : IProjectCountProvider
 {
-    private readonly ProjectsDbContext _dbContext;
+    private readonly ProjectsDbContext dbContext;
 
     public ProjectCountProvider(ProjectsDbContext dbContext)
     {
-        _dbContext = dbContext;
+        this.dbContext = dbContext;
     }
 
     public async Task<int> GetActiveCountAsync(CancellationToken ct = default)
     {
-        return await _dbContext.Projects.CountAsync(ct);
+        return await dbContext.Projects.CountAsync(ct);
     }
 }

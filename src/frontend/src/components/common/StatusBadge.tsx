@@ -40,10 +40,10 @@ const statusLabels: Record<string, string> = {
   section: "Abschnitt",
 };
 
-interface StatusBadgeProps {
+type StatusBadgeProps = {
   status: string;
   label?: string;
-}
+};
 
 export function StatusBadge({ status, label }: StatusBadgeProps) {
   const bg = statusColors[status] ?? Colors.textTertiary;

@@ -9,7 +9,7 @@ public sealed class DeltaPayloadTests
     public void Create_WithValidJson_ShouldSucceed()
     {
         var json = """{"name":"Test"}""";
-        var payload = new DeltaPayload(json);
+        var payload = DeltaPayload.From(json);
         payload.Value.Should().Be(json);
     }
 
@@ -19,7 +19,7 @@ public sealed class DeltaPayloadTests
     [InlineData("   ")]
     public void Create_WithEmptyValue_ShouldThrow(string? value)
     {
-        var act = () => new DeltaPayload(value!);
+        var act = () => DeltaPayload.From(value!);
         act.Should().Throw<ArgumentException>();
     }
 
@@ -27,7 +27,7 @@ public sealed class DeltaPayloadTests
     public void Create_WithTooLongValue_ShouldThrow()
     {
         var longValue = new string('a', DeltaPayload.MaxLength + 1);
-        var act = () => new DeltaPayload(longValue);
+        var act = () => DeltaPayload.From(longValue);
         act.Should().Throw<ArgumentException>();
     }
 }

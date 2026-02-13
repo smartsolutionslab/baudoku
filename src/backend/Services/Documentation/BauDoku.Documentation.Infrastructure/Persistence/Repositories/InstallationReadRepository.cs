@@ -7,11 +7,11 @@ namespace BauDoku.Documentation.Infrastructure.Persistence.Repositories;
 
 public sealed class InstallationReadRepository : IInstallationReadRepository
 {
-    private readonly DocumentationDbContext _context;
+    private readonly DocumentationDbContext context;
 
     public InstallationReadRepository(DocumentationDbContext context)
     {
-        _context = context;
+        this.context = context;
     }
 
     public async Task<PagedResult<InstallationListItemDto>> ListAsync(
@@ -24,7 +24,7 @@ public sealed class InstallationReadRepository : IInstallationReadRepository
         int pageSize,
         CancellationToken cancellationToken = default)
     {
-        var query = _context.Installations.AsNoTracking();
+        var query = context.Installations.AsNoTracking();
 
         if (projectId.HasValue)
             query = query.Where(i => i.ProjectId == projectId.Value);
@@ -74,7 +74,7 @@ public sealed class InstallationReadRepository : IInstallationReadRepository
         int pageSize,
         CancellationToken cancellationToken = default)
     {
-        var baseQuery = _context.Database.SqlQuery<NearbyInstallationDto>(
+        var baseQuery = context.Database.SqlQuery<NearbyInstallationDto>(
             $"""
             SELECT
                 i.id AS "Id",
@@ -123,7 +123,7 @@ public sealed class InstallationReadRepository : IInstallationReadRepository
         int pageSize,
         CancellationToken cancellationToken = default)
     {
-        var query = _context.Installations
+        var query = context.Installations
             .FromSqlInterpolated(
                 $"""
                 SELECT * FROM installations

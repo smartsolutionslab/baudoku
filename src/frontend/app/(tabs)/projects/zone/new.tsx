@@ -6,19 +6,21 @@ import {
 } from "../../../../src/hooks/useOfflineData";
 import { ZoneForm } from "../../../../src/components/projects/ZoneForm";
 import type { ZoneFormData } from "../../../../src/validation/schemas";
+import { projectId as toProjectId } from "../../../../src/types/branded";
 
 export default function NewZoneScreen() {
-  const { projectId, parentZoneId } = useLocalSearchParams<{
+  const { projectId: rawProjectId, parentZoneId } = useLocalSearchParams<{
     projectId: string;
     parentZoneId?: string;
   }>();
+  const projectId = toProjectId(rawProjectId!);
   const router = useRouter();
-  const { data: zones } = useZonesByProject(projectId!);
+  const { data: zones } = useZonesByProject(projectId);
   const createZone = useCreateZone();
 
   const handleSubmit = async (data: ZoneFormData) => {
     await createZone.mutateAsync({
-      projectId: projectId!,
+      projectId,
       name: data.name,
       type: data.type,
       parentZoneId: data.parentZoneId ?? null,

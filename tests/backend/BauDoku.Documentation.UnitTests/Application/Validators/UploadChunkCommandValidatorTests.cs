@@ -5,7 +5,7 @@ namespace BauDoku.Documentation.UnitTests.Application.Validators;
 
 public sealed class UploadChunkCommandValidatorTests
 {
-    private readonly UploadChunkCommandValidator _validator = new();
+    private readonly UploadChunkCommandValidator validator = new();
 
     private static UploadChunkCommand CreateValidCommand() =>
         new(Guid.NewGuid(), 0, new MemoryStream([1, 2, 3]));
@@ -13,7 +13,7 @@ public sealed class UploadChunkCommandValidatorTests
     [Fact]
     public void ValidCommand_ShouldHaveNoErrors()
     {
-        var result = _validator.TestValidate(CreateValidCommand());
+        var result = validator.TestValidate(CreateValidCommand());
         result.ShouldNotHaveAnyValidationErrors();
     }
 
@@ -21,20 +21,20 @@ public sealed class UploadChunkCommandValidatorTests
     public void SessionId_WhenEmpty_ShouldHaveError()
     {
         var cmd = CreateValidCommand() with { SessionId = Guid.Empty };
-        _validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.SessionId);
+        validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.SessionId);
     }
 
     [Fact]
     public void ChunkIndex_WhenNegative_ShouldHaveError()
     {
         var cmd = CreateValidCommand() with { ChunkIndex = -1 };
-        _validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.ChunkIndex);
+        validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.ChunkIndex);
     }
 
     [Fact]
     public void Data_WhenNull_ShouldHaveError()
     {
         var cmd = CreateValidCommand() with { Data = null! };
-        _validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.Data);
+        validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.Data);
     }
 }

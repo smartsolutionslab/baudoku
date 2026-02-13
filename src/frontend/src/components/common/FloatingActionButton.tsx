@@ -3,11 +3,11 @@ import { TouchableOpacity, Text, StyleSheet } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Colors } from "../../styles/tokens";
 
-interface FloatingActionButtonProps {
+type FloatingActionButtonProps = {
   icon?: React.ComponentProps<typeof FontAwesome>["name"];
   label?: string;
   onPress: () => void;
-}
+};
 
 export function FloatingActionButton({
   icon = "plus",

@@ -11,13 +11,13 @@ import {
 import QRCode from "react-native-qrcode-svg";
 import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
 
-interface ZoneQrSheetProps {
+type ZoneQrSheetProps = {
   visible: boolean;
   onClose: () => void;
   qrValue: string;
   zoneName: string;
   zoneType: string;
-}
+};
 
 const TYPE_LABELS: Record<string, string> = {
   building: "Gebäude",

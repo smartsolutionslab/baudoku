@@ -9,13 +9,13 @@ namespace BauDoku.Sync.UnitTests.Application.Queries;
 
 public sealed class GetConflictsQueryHandlerTests
 {
-    private readonly ISyncBatchReadRepository _readRepository;
-    private readonly GetConflictsQueryHandler _handler;
+    private readonly ISyncBatchReadRepository readRepository;
+    private readonly GetConflictsQueryHandler handler;
 
     public GetConflictsQueryHandlerTests()
     {
-        _readRepository = Substitute.For<ISyncBatchReadRepository>();
-        _handler = new GetConflictsQueryHandler(_readRepository);
+        readRepository = Substitute.For<ISyncBatchReadRepository>();
+        handler = new GetConflictsQueryHandler(readRepository);
     }
 
     [Fact]
@@ -25,13 +25,13 @@ public sealed class GetConflictsQueryHandlerTests
         {
             new(Guid.NewGuid(), "project", Guid.NewGuid(), """{"c":"1"}""", """{"s":"2"}""", 1, 3, "unresolved", DateTime.UtcNow)
         };
-        _readRepository.GetConflictsAsync(
-            Arg.Is<DeviceId>(d => d.Value == "device-001"),
+        readRepository.GetConflictsAsync(
+            Arg.Is<DeviceIdentifier>(d => d.Value == "device-001"),
             Arg.Is<ConflictStatus>(s => s.Value == "unresolved"),
             Arg.Any<CancellationToken>())
             .Returns(expected);
 
-        var result = await _handler.Handle(new GetConflictsQuery("device-001", "unresolved"));
+        var result = await handler.Handle(new GetConflictsQuery("device-001", "unresolved"));
 
         result.Should().BeSameAs(expected);
         result.Should().ContainSingle();
@@ -40,25 +40,25 @@ public sealed class GetConflictsQueryHandlerTests
     [Fact]
     public async Task Handle_WithNullFilters_ShouldPassNulls()
     {
-        _readRepository.GetConflictsAsync(null, null, Arg.Any<CancellationToken>())
+        readRepository.GetConflictsAsync(null, null, Arg.Any<CancellationToken>())
             .Returns(new List<ConflictDto>());
 
-        var result = await _handler.Handle(new GetConflictsQuery(null, null));
+        var result = await handler.Handle(new GetConflictsQuery(null, null));
 
         result.Should().BeEmpty();
-        await _readRepository.Received(1).GetConflictsAsync(null, null, Arg.Any<CancellationToken>());
+        await readRepository.Received(1).GetConflictsAsync(null, null, Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task Handle_WithOnlyDeviceId_ShouldPassDeviceIdAndNullStatus()
     {
-        _readRepository.GetConflictsAsync(
-            Arg.Is<DeviceId>(d => d.Value == "device-002"),
+        readRepository.GetConflictsAsync(
+            Arg.Is<DeviceIdentifier>(d => d.Value == "device-002"),
             null,
             Arg.Any<CancellationToken>())
             .Returns(new List<ConflictDto>());
 
-        var result = await _handler.Handle(new GetConflictsQuery("device-002", null));
+        var result = await handler.Handle(new GetConflictsQuery("device-002", null));
 
         result.Should().BeEmpty();
     }

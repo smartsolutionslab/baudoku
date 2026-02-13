@@ -15,19 +15,19 @@ public sealed class SyncBatchConfiguration : IEntityTypeConfiguration<SyncBatch>
 
         builder.Property(b => b.Id)
             .HasColumnName("id")
-            .HasConversion(id => id.Value, value => new SyncBatchId(value));
+            .HasConversion(id => id.Value, value => SyncBatchIdentifier.From(value));
 
         builder.Property(b => b.DeviceId)
             .HasColumnName("device_id")
-            .HasMaxLength(DeviceId.MaxLength)
+            .HasMaxLength(DeviceIdentifier.MaxLength)
             .IsRequired()
-            .HasConversion(d => d.Value, value => new DeviceId(value));
+            .HasConversion(d => d.Value, value => DeviceIdentifier.From(value));
 
         builder.Property(b => b.Status)
             .HasColumnName("status")
             .HasMaxLength(30)
             .IsRequired()
-            .HasConversion(s => s.Value, value => new BatchStatus(value));
+            .HasConversion(s => s.Value, value => BatchStatus.From(value));
 
         builder.Property(b => b.SubmittedAt)
             .HasColumnName("submitted_at")

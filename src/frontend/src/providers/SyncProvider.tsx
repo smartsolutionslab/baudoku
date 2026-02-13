@@ -5,10 +5,10 @@ import { setOnReconnect } from "../sync/ConnectivityMonitor";
 import { useSyncStore } from "../store/useSyncStore";
 import { UploadProgressBar } from "../components/sync/UploadProgressBar";
 
-interface SyncContextValue {
+type SyncContextValue = {
   syncManager: SyncManager;
   syncScheduler: SyncScheduler;
-}
+};
 
 const SyncContext = createContext<SyncContextValue | null>(null);
 

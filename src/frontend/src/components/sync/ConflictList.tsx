@@ -8,10 +8,10 @@ import {
 } from "react-native";
 import type { ConflictDto } from "../../sync/syncApi";
 
-interface ConflictListProps {
+type ConflictListProps = {
   conflicts: ConflictDto[];
   onSelect: (conflict: ConflictDto) => void;
-}
+};
 
 function ConflictItem({
   item,

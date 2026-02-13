@@ -1,5 +1,6 @@
 using BauDoku.BuildingBlocks.Application;
 using BauDoku.BuildingBlocks.Infrastructure.Auth;
+using BauDoku.BuildingBlocks.Infrastructure.Serialization;
 using BauDoku.Documentation.Api.Endpoints;
 using BauDoku.Documentation.Infrastructure;
 using BauDoku.ServiceDefaults;
@@ -16,6 +17,9 @@ builder.AddServiceDefaults(health =>
     health.AddNpgSql(connectionString, healthQuery: "SELECT PostGIS_Version()",
         name: "postgis", tags: ["ready"]);
 });
+
+builder.Services.ConfigureHttpJsonOptions(options =>
+    options.SerializerOptions.Converters.Add(new ValueObjectJsonConverterFactory()));
 
 builder.Services.AddOpenApi();
 

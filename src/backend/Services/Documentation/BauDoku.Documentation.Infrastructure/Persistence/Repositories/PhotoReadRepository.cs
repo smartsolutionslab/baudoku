@@ -6,21 +6,21 @@ namespace BauDoku.Documentation.Infrastructure.Persistence.Repositories;
 
 public sealed class PhotoReadRepository : IPhotoReadRepository
 {
-    private readonly DocumentationDbContext _context;
+    private readonly DocumentationDbContext context;
 
     public PhotoReadRepository(DocumentationDbContext context)
     {
-        _context = context;
+        this.context = context;
     }
 
     public async Task<PhotoDto?> GetByIdAsync(Guid photoId, CancellationToken cancellationToken = default)
     {
-        return await _context.Photos
+        return await context.Photos
             .AsNoTracking()
             .Where(p => p.Id.Value == photoId)
             .Select(p => new PhotoDto(
                 p.Id.Value,
-                EF.Property<Domain.ValueObjects.InstallationId>(p, "InstallationId").Value,
+                EF.Property<Domain.ValueObjects.InstallationIdentifier>(p, "InstallationId").Value,
                 p.FileName,
                 p.BlobUrl,
                 p.ContentType,
@@ -36,9 +36,9 @@ public sealed class PhotoReadRepository : IPhotoReadRepository
 
     public async Task<IReadOnlyList<PhotoDto>> ListByInstallationIdAsync(Guid installationId, CancellationToken cancellationToken = default)
     {
-        return await _context.Photos
+        return await context.Photos
             .AsNoTracking()
-            .Where(p => EF.Property<Domain.ValueObjects.InstallationId>(p, "InstallationId").Value == installationId)
+            .Where(p => EF.Property<Domain.ValueObjects.InstallationIdentifier>(p, "InstallationId").Value == installationId)
             .OrderByDescending(p => p.TakenAt)
             .Select(p => new PhotoDto(
                 p.Id.Value,

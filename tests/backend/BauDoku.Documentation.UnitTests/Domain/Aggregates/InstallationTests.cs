@@ -11,17 +11,17 @@ public sealed class InstallationTests
     private static Installation CreateValidInstallation()
     {
         return Installation.Create(
-            InstallationId.New(),
+            InstallationIdentifier.New(),
             Guid.NewGuid(),
             Guid.NewGuid(),
             InstallationType.CableTray,
-            new GpsPosition(48.1351, 11.5820, 520.0, 3.5, "internal_gps"),
-            new Description("Kabeltrasse im Erdgeschoss"),
-            new CableSpec("NYM-J 5x2.5", 25),
-            new Depth(600),
-            new Manufacturer("Hager"),
-            new ModelName("VZ312N"),
-            new SerialNumber("SN-12345"));
+            GpsPosition.Create(48.1351, 11.5820, 520.0, 3.5, "internal_gps"),
+            Description.From("Kabeltrasse im Erdgeschoss"),
+            CableSpec.Create("NYM-J 5x2.5", 25),
+            Depth.From(600),
+            Manufacturer.From("Hager"),
+            ModelName.From("VZ312N"),
+            SerialNumber.From("SN-12345"));
     }
 
     [Fact]
@@ -69,11 +69,11 @@ public sealed class InstallationTests
     public void Create_WithInvalidGpsAccuracy_ShouldThrowBusinessRuleException()
     {
         var act = () => Installation.Create(
-            InstallationId.New(),
+            InstallationIdentifier.New(),
             Guid.NewGuid(),
             null,
             InstallationType.JunctionBox,
-            new GpsPosition(48.0, 11.0, null, 150.0, "internal_gps"));
+            GpsPosition.Create(48.0, 11.0, null, 150.0, "internal_gps"));
 
         act.Should().Throw<BusinessRuleException>();
     }
@@ -82,11 +82,11 @@ public sealed class InstallationTests
     public void Create_WithOptionalFieldsNull_ShouldSucceed()
     {
         var installation = Installation.Create(
-            InstallationId.New(),
+            InstallationIdentifier.New(),
             Guid.NewGuid(),
             null,
             InstallationType.Grounding,
-            new GpsPosition(48.0, 11.0, null, 5.0, "internal_gps"));
+            GpsPosition.Create(48.0, 11.0, null, 5.0, "internal_gps"));
 
         installation.Description.Should().BeNull();
         installation.CableSpec.Should().BeNull();
@@ -125,11 +125,11 @@ public sealed class InstallationTests
     public void Create_WithLowQualityGps_ShouldRaiseLowGpsQualityDetectedEvent()
     {
         var installation = Installation.Create(
-            InstallationId.New(),
+            InstallationIdentifier.New(),
             Guid.NewGuid(),
             null,
             InstallationType.JunctionBox,
-            new GpsPosition(48.0, 11.0, null, 50.0, "internal_gps"));
+            GpsPosition.Create(48.0, 11.0, null, 50.0, "internal_gps"));
 
         installation.QualityGrade.Should().Be(GpsQualityGrade.D);
         installation.DomainEvents.Should().HaveCount(2);

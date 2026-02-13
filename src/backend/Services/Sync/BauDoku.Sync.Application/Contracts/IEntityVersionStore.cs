@@ -19,6 +19,6 @@ public interface IEntityVersionStore
         Guid entityId,
         SyncVersion version,
         string payload,
-        DeviceId deviceId,
+        DeviceIdentifier deviceId,
         CancellationToken cancellationToken = default);
 }
