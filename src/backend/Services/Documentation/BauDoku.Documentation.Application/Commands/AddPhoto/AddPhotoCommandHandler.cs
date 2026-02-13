@@ -8,39 +8,39 @@ namespace BauDoku.Documentation.Application.Commands.AddPhoto;
 
 public sealed class AddPhotoCommandHandler : ICommandHandler<AddPhotoCommand, Guid>
 {
-    private readonly IInstallationRepository _installationRepository;
-    private readonly IPhotoStorage _photoStorage;
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IInstallationRepository installationRepository;
+    private readonly IPhotoStorage photoStorage;
+    private readonly IUnitOfWork unitOfWork;
 
     public AddPhotoCommandHandler(
         IInstallationRepository installationRepository,
         IPhotoStorage photoStorage,
         IUnitOfWork unitOfWork)
     {
-        _installationRepository = installationRepository;
-        _photoStorage = photoStorage;
-        _unitOfWork = unitOfWork;
+        this.installationRepository = installationRepository;
+        this.photoStorage = photoStorage;
+        this.unitOfWork = unitOfWork;
     }
 
     public async Task<Guid> Handle(AddPhotoCommand command, CancellationToken cancellationToken)
     {
-        var installationId = new InstallationId(command.InstallationId);
-        var installation = await _installationRepository.GetByIdAsync(installationId, cancellationToken)
+        var installationId = InstallationIdentifier.From(command.InstallationId);
+        var installation = await installationRepository.GetByIdAsync(installationId, cancellationToken)
             ?? throw new InvalidOperationException($"Installation mit ID {command.InstallationId} nicht gefunden.");
 
-        var blobUrl = await _photoStorage.UploadAsync(
+        var blobUrl = await photoStorage.UploadAsync(
             command.Stream, command.FileName, command.ContentType, cancellationToken);
 
-        var photoId = PhotoId.New();
-        var photoType = new PhotoType(command.PhotoType);
-        var caption = command.Caption is not null ? new Caption(command.Caption) : null;
-        var description = command.Description is not null ? new Description(command.Description) : null;
+        var photoId = PhotoIdentifier.New();
+        var photoType = PhotoType.From(command.PhotoType);
+        var caption = command.Caption is not null ? Caption.From(command.Caption) : null;
+        var description = command.Description is not null ? Description.From(command.Description) : null;
 
         GpsPosition? position = null;
         if (command.Latitude.HasValue && command.Longitude.HasValue
             && command.HorizontalAccuracy.HasValue && command.GpsSource is not null)
         {
-            position = new GpsPosition(
+            position = GpsPosition.Create(
                 command.Latitude.Value,
                 command.Longitude.Value,
                 command.Altitude,
@@ -50,9 +50,17 @@ public sealed class AddPhotoCommandHandler : ICommandHandler<AddPhotoCommand, Gu
 
         installation.AddPhoto(
             photoId, command.FileName, blobUrl, command.ContentType, command.FileSize,
-            photoType, caption, description, position);
+            photoType, caption, description, position, command.TakenAt);
 
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        try
+        {
+            await unitOfWork.SaveChangesAsync(cancellationToken);
+        }
+        catch
+        {
+            await photoStorage.DeleteAsync(blobUrl, cancellationToken);
+            throw;
+        }
 
         DocumentationMetrics.PhotosAdded.Add(1);
         DocumentationMetrics.PhotoFileSize.Record(command.FileSize);

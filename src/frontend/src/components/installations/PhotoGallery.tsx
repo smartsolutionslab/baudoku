@@ -21,11 +21,11 @@ const photoTypeLabels: Record<string, string> = {
   overview: "Übersicht",
 };
 
-interface PhotoGalleryProps {
+type PhotoGalleryProps = {
   photos: Photo[];
   onPhotoPress?: (photo: Photo) => void;
   onAddPhoto?: () => void;
-}
+};
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const GAP = Spacing.sm;

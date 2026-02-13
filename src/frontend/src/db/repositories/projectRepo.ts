@@ -4,19 +4,20 @@ import { projects } from "../schema";
 import { generateId } from "../../utils/uuid";
 import { createOutboxEntry } from "./syncRepo";
 import type { Project, NewProject } from "./types";
+import type { ProjectId } from "../../types/branded";
 
 export async function getAll(): Promise<Project[]> {
-  return db.select().from(projects).all();
+  return db.select().from(projects).all() as unknown as Project[];
 }
 
-export async function getById(id: string): Promise<Project | undefined> {
-  return db.select().from(projects).where(eq(projects.id, id)).get();
+export async function getById(id: ProjectId): Promise<Project | undefined> {
+  return db.select().from(projects).where(eq(projects.id, id)).get() as unknown as Project | undefined;
 }
 
 export async function getByStatus(
   status: "active" | "completed" | "archived"
 ): Promise<Project[]> {
-  return db.select().from(projects).where(eq(projects.status, status)).all();
+  return db.select().from(projects).where(eq(projects.status, status)).all() as unknown as Project[];
 }
 
 export async function create(
@@ -34,11 +35,11 @@ export async function create(
   await db.insert(projects).values(project);
   await createOutboxEntry("project", project.id, "create", project);
 
-  return project as Project;
+  return project as unknown as Project;
 }
 
 export async function update(
-  id: string,
+  id: ProjectId,
   data: Partial<
     Omit<NewProject, "id" | "createdAt" | "updatedAt" | "version" | "createdBy">
   >
@@ -58,7 +59,7 @@ export async function update(
   return { ...existing, ...updated } as Project;
 }
 
-export async function remove(id: string): Promise<void> {
+export async function remove(id: ProjectId): Promise<void> {
   await db.delete(projects).where(eq(projects.id, id));
   await createOutboxEntry("project", id, "delete", { id });
 }

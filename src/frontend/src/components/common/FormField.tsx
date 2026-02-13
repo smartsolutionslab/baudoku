@@ -2,11 +2,11 @@ import React from "react";
 import { View, Text, TextInput, StyleSheet, type TextInputProps } from "react-native";
 import { Colors, Spacing, FontSize } from "../../styles/tokens";
 
-interface FormFieldProps extends TextInputProps {
+type FormFieldProps = TextInputProps & {
   label: string;
   error?: string;
   required?: boolean;
-}
+};
 
 export function FormField({ label, error, required, style, ...props }: FormFieldProps) {
   return (

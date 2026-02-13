@@ -52,3 +52,25 @@ ingress:
     - secretName: baudoku-staging-tls
       hosts:
         - staging.baudoku.example.com
+
+dashboard:
+  enabled: true
+  image:
+    pullPolicy: Always
+  auth:
+    browserToken: true
+    secretName: baudoku-dashboard-auth
+    secretKey: browser-token
+  ingress:
+    enabled: true
+    host: monitoring.staging.baudoku.example.com
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+    tls:
+      - secretName: baudoku-monitoring-staging-tls
+        hosts:
+          - monitoring.staging.baudoku.example.com
+
+otel:
+  enabled: true
+  endpoint: http://aspire-dashboard:18889

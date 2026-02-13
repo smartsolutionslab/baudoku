@@ -8,7 +8,7 @@ public sealed class ClientInfoTests
     [Fact]
     public void Create_WithValidData_ShouldSucceed()
     {
-        var client = new ClientInfo("Max Mustermann", "max@example.com", "+49 30 12345");
+        var client = ClientInfo.Create("Max Mustermann", "max@example.com", "+49 30 12345");
 
         client.Name.Should().Be("Max Mustermann");
         client.Email.Should().Be("max@example.com");
@@ -21,7 +21,7 @@ public sealed class ClientInfoTests
     [InlineData("   ")]
     public void Create_WithEmptyName_ShouldThrow(string? name)
     {
-        var act = () => new ClientInfo(name!);
+        var act = () => ClientInfo.Create(name!);
 
         act.Should().Throw<ArgumentException>();
     }
@@ -31,7 +31,7 @@ public sealed class ClientInfoTests
     {
         var longName = new string('a', ClientInfo.MaxNameLength + 1);
 
-        var act = () => new ClientInfo(longName);
+        var act = () => ClientInfo.Create(longName);
 
         act.Should().Throw<ArgumentException>();
     }
@@ -39,7 +39,7 @@ public sealed class ClientInfoTests
     [Fact]
     public void Create_WithOptionalFieldsNull_ShouldSucceed()
     {
-        var client = new ClientInfo("Firma GmbH");
+        var client = ClientInfo.Create("Firma GmbH");
 
         client.Name.Should().Be("Firma GmbH");
         client.Email.Should().BeNull();
@@ -51,7 +51,7 @@ public sealed class ClientInfoTests
     {
         var longEmail = new string('a', ClientInfo.MaxEmailLength + 1);
 
-        var act = () => new ClientInfo("Max", longEmail);
+        var act = () => ClientInfo.Create("Max", longEmail);
 
         act.Should().Throw<ArgumentException>();
     }
@@ -61,7 +61,7 @@ public sealed class ClientInfoTests
     {
         var longPhone = new string('1', ClientInfo.MaxPhoneLength + 1);
 
-        var act = () => new ClientInfo("Max", phone: longPhone);
+        var act = () => ClientInfo.Create("Max", phone: longPhone);
 
         act.Should().Throw<ArgumentException>();
     }
@@ -71,7 +71,7 @@ public sealed class ClientInfoTests
     {
         var maxName = new string('a', ClientInfo.MaxNameLength);
 
-        var client = new ClientInfo(maxName);
+        var client = ClientInfo.Create(maxName);
 
         client.Name.Should().HaveLength(ClientInfo.MaxNameLength);
     }

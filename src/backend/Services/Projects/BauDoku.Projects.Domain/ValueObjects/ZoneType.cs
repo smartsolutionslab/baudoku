@@ -1,4 +1,5 @@
 using BauDoku.BuildingBlocks.Domain;
+using BauDoku.BuildingBlocks.Domain.Guards;
 
 namespace BauDoku.Projects.Domain.ValueObjects;
 
@@ -13,12 +14,13 @@ public sealed record ZoneType : ValueObject
 
     public string Value { get; }
 
-    public ZoneType(string value)
+    private ZoneType(string value) => Value = value;
+
+    public static ZoneType From(string value)
     {
-        if (string.IsNullOrWhiteSpace(value))
-            throw new ArgumentException("Zonentyp darf nicht leer sein.", nameof(value));
-        if (!ValidValues.Contains(value))
-            throw new ArgumentException($"Ungültiger Zonentyp: {value}.", nameof(value));
-        Value = value;
+        Ensure.That(value)
+            .IsNotNullOrWhiteSpace("Zonentyp darf nicht leer sein.")
+            .IsOneOf(ValidValues, $"Ungueltiger Zonentyp: {value}.");
+        return new ZoneType(value);
     }
 }

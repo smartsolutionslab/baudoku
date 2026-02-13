@@ -14,20 +14,20 @@ namespace BauDoku.Sync.UnitTests.Infrastructure.BackgroundServices;
 
 public sealed class SyncSchedulerServiceTests
 {
-    private readonly ISyncBatchRepository _repository;
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly ILogger<SyncSchedulerService> _logger;
-    private readonly SyncSchedulerService _service;
+    private readonly ISyncBatchRepository repository;
+    private readonly IUnitOfWork unitOfWork;
+    private readonly ILogger<SyncSchedulerService> logger;
+    private readonly SyncSchedulerService service;
 
     public SyncSchedulerServiceTests()
     {
-        _repository = Substitute.For<ISyncBatchRepository>();
-        _unitOfWork = Substitute.For<IUnitOfWork>();
-        _logger = Substitute.For<ILogger<SyncSchedulerService>>();
+        repository = Substitute.For<ISyncBatchRepository>();
+        unitOfWork = Substitute.For<IUnitOfWork>();
+        logger = Substitute.For<ILogger<SyncSchedulerService>>();
 
         var serviceProvider = Substitute.For<IServiceProvider>();
-        serviceProvider.GetService(typeof(ISyncBatchRepository)).Returns(_repository);
-        serviceProvider.GetService(typeof(IUnitOfWork)).Returns(_unitOfWork);
+        serviceProvider.GetService(typeof(ISyncBatchRepository)).Returns(repository);
+        serviceProvider.GetService(typeof(IUnitOfWork)).Returns(unitOfWork);
 
         var scope = Substitute.For<IServiceScope>();
         scope.ServiceProvider.Returns(serviceProvider);
@@ -42,14 +42,14 @@ public sealed class SyncSchedulerServiceTests
             })
             .Build();
 
-        _service = new SyncSchedulerService(scopeFactory, _logger, config);
+        service = new SyncSchedulerService(scopeFactory, logger, config);
     }
 
     [Fact]
     public async Task ExecuteAsync_WhenNoPendingBatches_ShouldNotCallSaveChanges()
     {
         var repositoryCalled = new TaskCompletionSource<bool>();
-        _repository.GetPendingBatchesAsync(Arg.Any<int>(), Arg.Any<CancellationToken>())
+        repository.GetPendingBatchesAsync(Arg.Any<int>(), Arg.Any<CancellationToken>())
             .Returns(_ =>
             {
                 repositoryCalled.TrySetResult(true);
@@ -57,43 +57,43 @@ public sealed class SyncSchedulerServiceTests
             });
 
         using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
-        await _service.StartAsync(cts.Token);
+        await service.StartAsync(cts.Token);
         await repositoryCalled.Task.WaitAsync(TimeSpan.FromSeconds(5));
-        await _service.StopAsync(CancellationToken.None);
+        await service.StopAsync(CancellationToken.None);
 
-        await _unitOfWork.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
+        await unitOfWork.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task ExecuteAsync_WithPendingBatches_ShouldProcessAndSave()
     {
         var batch = SyncBatch.Create(
-            SyncBatchId.New(),
-            new DeviceId("device-1"),
+            SyncBatchIdentifier.New(),
+            DeviceIdentifier.From("device-1"),
             DateTime.UtcNow);
 
         var saveChangesCalled = new TaskCompletionSource<bool>();
-        _repository.GetPendingBatchesAsync(Arg.Any<int>(), Arg.Any<CancellationToken>())
+        repository.GetPendingBatchesAsync(Arg.Any<int>(), Arg.Any<CancellationToken>())
             .Returns(
                 new List<SyncBatch> { batch },
                 new List<SyncBatch>());
-        _unitOfWork.When(u => u.SaveChangesAsync(Arg.Any<CancellationToken>()))
+        unitOfWork.When(u => u.SaveChangesAsync(Arg.Any<CancellationToken>()))
             .Do(_ => saveChangesCalled.TrySetResult(true));
 
         using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
-        await _service.StartAsync(cts.Token);
+        await service.StartAsync(cts.Token);
         await saveChangesCalled.Task.WaitAsync(TimeSpan.FromSeconds(5));
-        await _service.StopAsync(CancellationToken.None);
+        await service.StopAsync(CancellationToken.None);
 
         batch.Status.Should().Be(BatchStatus.Completed);
-        await _unitOfWork.Received().SaveChangesAsync(Arg.Any<CancellationToken>());
+        await unitOfWork.Received().SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task ExecuteAsync_WhenRepositoryThrows_ShouldNotCrash()
     {
         var repositoryCalled = new TaskCompletionSource<bool>();
-        _repository.GetPendingBatchesAsync(Arg.Any<int>(), Arg.Any<CancellationToken>())
+        repository.GetPendingBatchesAsync(Arg.Any<int>(), Arg.Any<CancellationToken>())
             .Returns<List<SyncBatch>>(_ =>
             {
                 repositoryCalled.TrySetResult(true);
@@ -101,11 +101,11 @@ public sealed class SyncSchedulerServiceTests
             });
 
         using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
-        await _service.StartAsync(cts.Token);
+        await service.StartAsync(cts.Token);
         await repositoryCalled.Task.WaitAsync(TimeSpan.FromSeconds(5));
 
         // Service should still be alive (not crashed)
-        var stopAct = () => _service.StopAsync(CancellationToken.None);
+        var stopAct = () => service.StopAsync(CancellationToken.None);
         await stopAct.Should().NotThrowAsync();
     }
 
@@ -121,7 +121,7 @@ public sealed class SyncSchedulerServiceTests
 
         var scopeFactory = Substitute.For<IServiceScopeFactory>();
 
-        var service = new SyncSchedulerService(scopeFactory, _logger, config);
+        var service = new SyncSchedulerService(scopeFactory, logger, config);
         service.Should().NotBeNull();
     }
 
@@ -131,7 +131,7 @@ public sealed class SyncSchedulerServiceTests
         var config = new ConfigurationBuilder().Build();
         var scopeFactory = Substitute.For<IServiceScopeFactory>();
 
-        var service = new SyncSchedulerService(scopeFactory, _logger, config);
+        var service = new SyncSchedulerService(scopeFactory, logger, config);
         service.Should().NotBeNull();
     }
 }

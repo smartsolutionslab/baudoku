@@ -8,17 +8,17 @@ namespace BauDoku.Documentation.Application.Queries.GetInstallation;
 public sealed class GetInstallationQueryHandler
     : IQueryHandler<GetInstallationQuery, InstallationDto?>
 {
-    private readonly IInstallationRepository _installationRepository;
+    private readonly IInstallationRepository installationRepository;
 
     public GetInstallationQueryHandler(IInstallationRepository installationRepository)
     {
-        _installationRepository = installationRepository;
+        this.installationRepository = installationRepository;
     }
 
     public async Task<InstallationDto?> Handle(GetInstallationQuery query, CancellationToken cancellationToken)
     {
-        var installationId = new InstallationId(query.InstallationId);
-        var installation = await _installationRepository.GetByIdAsync(installationId, cancellationToken);
+        var installationId = InstallationIdentifier.From(query.InstallationId);
+        var installation = await installationRepository.GetByIdReadOnlyAsync(installationId, cancellationToken);
 
         if (installation is null)
             return null;
@@ -35,6 +35,14 @@ public sealed class GetInstallationQueryHandler
             p.Description?.Value,
             p.Position?.Latitude,
             p.Position?.Longitude,
+            p.Position?.Altitude,
+            p.Position?.HorizontalAccuracy,
+            p.Position?.Source,
+            p.Position?.CorrectionService,
+            p.Position?.RtkFixStatus,
+            p.Position?.SatelliteCount,
+            p.Position?.Hdop,
+            p.Position?.CorrectionAge,
             p.TakenAt)).ToList();
 
         var measurements = installation.Measurements.Select(m => new MeasurementDto(
@@ -51,8 +59,8 @@ public sealed class GetInstallationQueryHandler
 
         return new InstallationDto(
             installation.Id.Value,
-            installation.ProjectId,
-            installation.ZoneId,
+            installation.ProjectId.Value,
+            installation.ZoneId?.Value,
             installation.Type.Value,
             installation.Status.Value,
             installation.Position.Latitude,

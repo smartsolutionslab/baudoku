@@ -1,15 +1,14 @@
-import React, { useState, useCallback } from "react";
+import React from "react";
 import {
-  View,
   Text,
   ScrollView,
-  TouchableOpacity,
   StyleSheet,
-  Alert,
 } from "react-native";
 import { FormField } from "../common/FormField";
 import { FormPicker } from "../common/FormPicker";
-import { projectSchema, type ProjectFormData } from "../../validation/schemas";
+import { Button } from "../core";
+import { useProjectForm } from "../../hooks/useProjectForm";
+import type { ProjectFormData } from "../../validation/schemas";
 import { Colors, Spacing, FontSize } from "../../styles/tokens";
 
 const statusOptions = [
@@ -18,12 +17,12 @@ const statusOptions = [
   { label: "Archiviert", value: "archived" },
 ];
 
-interface ProjectFormProps {
+type ProjectFormProps = {
   onSubmit: (data: ProjectFormData) => Promise<void>;
   submitting?: boolean;
   initialValues?: Partial<ProjectFormData>;
   submitLabel?: string;
-}
+};
 
 export function ProjectForm({
   onSubmit,
@@ -31,43 +30,10 @@ export function ProjectForm({
   initialValues,
   submitLabel,
 }: ProjectFormProps) {
-  const [form, setForm] = useState<Partial<ProjectFormData>>({
-    status: "active",
-    ...initialValues,
+  const { form, errors, set, handleSubmit } = useProjectForm({
+    initialValues,
+    onSubmit,
   });
-  const [errors, setErrors] = useState<Record<string, string>>({});
-
-  const set = useCallback(
-    <K extends keyof ProjectFormData>(key: K, value: ProjectFormData[K]) => {
-      setForm((prev) => ({ ...prev, [key]: value }));
-      setErrors((prev) => {
-        const next = { ...prev };
-        delete next[key];
-        return next;
-      });
-    },
-    []
-  );
-
-  const handleSubmit = useCallback(async () => {
-    const result = projectSchema.safeParse(form);
-    if (!result.success) {
-      const fieldErrors: Record<string, string> = {};
-      for (const issue of result.error.issues) {
-        const key = issue.path[0]?.toString();
-        if (key && !fieldErrors[key]) {
-          fieldErrors[key] = issue.message;
-        }
-      }
-      setErrors(fieldErrors);
-      return;
-    }
-    try {
-      await onSubmit(result.data);
-    } catch {
-      Alert.alert("Fehler", "Projekt konnte nicht gespeichert werden.");
-    }
-  }, [form, onSubmit]);
 
   return (
     <ScrollView
@@ -133,15 +99,12 @@ export function ProjectForm({
         placeholder="Tel. oder E-Mail"
       />
 
-      <TouchableOpacity
-        style={[styles.button, submitting && styles.buttonDisabled]}
+      <Button
+        title={submitLabel ?? "Speichern"}
         onPress={() => void handleSubmit()}
-        disabled={submitting}
-      >
-        <Text style={styles.buttonText}>
-          {submitting ? "Speichert..." : submitLabel ?? "Speichern"}
-        </Text>
-      </TouchableOpacity>
+        loading={submitting}
+        style={styles.button}
+      />
     </ScrollView>
   );
 }
@@ -163,18 +126,6 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
   },
   button: {
-    backgroundColor: Colors.primary,
-    paddingVertical: 14,
-    borderRadius: 10,
-    alignItems: "center",
     marginTop: Spacing.xl,
-  },
-  buttonDisabled: {
-    backgroundColor: Colors.disabled,
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: FontSize.callout,
-    fontWeight: "600",
   },
 });

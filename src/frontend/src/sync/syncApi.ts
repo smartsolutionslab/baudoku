@@ -1,15 +1,15 @@
 import { apiGet, apiPost, apiUpload, apiRawUpload } from "./apiClient";
 
-export interface SyncDeltaDto {
+export type SyncDeltaDto = {
   entityType: string;
   entityId: string;
   operation: string;
   baseVersion: number;
   payload: string;
   timestamp: string;
-}
+};
 
-export interface ConflictDto {
+export type ConflictDto = {
   id: string;
   entityType: string;
   entityId: string;
@@ -19,29 +19,29 @@ export interface ConflictDto {
   serverVersion: number;
   status: string;
   detectedAt: string;
-}
+};
 
-export interface ProcessSyncBatchResult {
+export type ProcessSyncBatchResult = {
   batchId: string;
   appliedCount: number;
   conflictCount: number;
   conflicts: ConflictDto[];
-}
+};
 
-export interface ServerDeltaDto {
+export type ServerDeltaDto = {
   entityType: string;
   entityId: string;
   operation: string;
   version: number;
   payload: string;
   timestamp: string;
-}
+};
 
-export interface ChangeSetResult {
+export type ChangeSetResult = {
   changes: ServerDeltaDto[];
   serverTimestamp: string;
   hasMore: boolean;
-}
+};
 
 export async function pushBatch(
   deviceId: string,
@@ -77,9 +77,9 @@ export async function getConflicts(
   return apiGet<ConflictDto[]>(`/api/sync/conflicts${qs ? `?${qs}` : ""}`);
 }
 
-export interface PhotoUploadResult {
+export type PhotoUploadResult = {
   id: string;
-}
+};
 
 export async function uploadPhoto(
   installationId: string,
@@ -102,9 +102,9 @@ export async function uploadPhoto(
   );
 }
 
-export interface ChunkedUploadInitResult {
+export type ChunkedUploadInitResult = {
   sessionId: string;
-}
+};
 
 export async function initChunkedUpload(
   installationId: string,

@@ -9,37 +9,37 @@ namespace BauDoku.Documentation.IntegrationTests;
 [Collection(PostgreSqlCollection.Name)]
 public sealed class InstallationMeasurementPersistenceTests
 {
-    private readonly PostgreSqlFixture _fixture;
+    private readonly PostgreSqlFixture fixture;
 
     public InstallationMeasurementPersistenceTests(PostgreSqlFixture fixture)
     {
-        _fixture = fixture;
+        this.fixture = fixture;
     }
 
     [Fact]
     public async Task RecordMeasurement_WithThresholds_ShouldPersistAndLoad()
     {
         var installation = Installation.Create(
-            InstallationId.New(),
-            Guid.NewGuid(),
+            InstallationIdentifier.New(),
+            ProjectIdentifier.New(),
             null,
             InstallationType.CableTray,
-            new GpsPosition(48.1351, 11.5820, 520.0, 3.5, "internal_gps"));
+            GpsPosition.Create(48.1351, 11.5820, 520.0, 3.5, "internal_gps"));
 
-        var measurementId = MeasurementId.New();
+        var measurementId = MeasurementIdentifier.New();
         installation.RecordMeasurement(
             measurementId,
             MeasurementType.Voltage,
-            new MeasurementValue(230.0, "V", 220.0, 240.0),
+            MeasurementValue.Create(230.0, "V", 220.0, 240.0),
             "Spannungsmessung Phase L1");
 
-        await using (var writeContext = _fixture.CreateContext())
+        await using (var writeContext = fixture.CreateContext())
         {
             writeContext.Installations.Add(installation);
             await writeContext.SaveChangesAsync();
         }
 
-        await using (var readContext = _fixture.CreateContext())
+        await using (var readContext = fixture.CreateContext())
         {
             var loaded = await readContext.Installations
                 .Include(i => i.Measurements)
@@ -65,24 +65,24 @@ public sealed class InstallationMeasurementPersistenceTests
     public async Task RecordMeasurement_WithoutThresholds_ShouldPersist()
     {
         var installation = Installation.Create(
-            InstallationId.New(),
-            Guid.NewGuid(),
+            InstallationIdentifier.New(),
+            ProjectIdentifier.New(),
             null,
             InstallationType.JunctionBox,
-            new GpsPosition(48.0, 11.0, null, 5.0, "internal_gps"));
+            GpsPosition.Create(48.0, 11.0, null, 5.0, "internal_gps"));
 
         installation.RecordMeasurement(
-            MeasurementId.New(),
+            MeasurementIdentifier.New(),
             MeasurementType.Continuity,
-            new MeasurementValue(0.3, "Ohm"));
+            MeasurementValue.Create(0.3, "Ohm"));
 
-        await using (var writeContext = _fixture.CreateContext())
+        await using (var writeContext = fixture.CreateContext())
         {
             writeContext.Installations.Add(installation);
             await writeContext.SaveChangesAsync();
         }
 
-        await using (var readContext = _fixture.CreateContext())
+        await using (var readContext = fixture.CreateContext())
         {
             var loaded = await readContext.Installations
                 .Include(i => i.Measurements)
@@ -101,24 +101,24 @@ public sealed class InstallationMeasurementPersistenceTests
     public async Task RecordMeasurement_WithFailedResult_ShouldPersist()
     {
         var installation = Installation.Create(
-            InstallationId.New(),
-            Guid.NewGuid(),
+            InstallationIdentifier.New(),
+            ProjectIdentifier.New(),
             null,
             InstallationType.Grounding,
-            new GpsPosition(48.0, 11.0, null, 5.0, "internal_gps"));
+            GpsPosition.Create(48.0, 11.0, null, 5.0, "internal_gps"));
 
         installation.RecordMeasurement(
-            MeasurementId.New(),
+            MeasurementIdentifier.New(),
             MeasurementType.InsulationResistance,
-            new MeasurementValue(0.5, "MOhm", 1.0, 100.0));
+            MeasurementValue.Create(0.5, "MOhm", 1.0, 100.0));
 
-        await using (var writeContext = _fixture.CreateContext())
+        await using (var writeContext = fixture.CreateContext())
         {
             writeContext.Installations.Add(installation);
             await writeContext.SaveChangesAsync();
         }
 
-        await using (var readContext = _fixture.CreateContext())
+        await using (var readContext = fixture.CreateContext())
         {
             var loaded = await readContext.Installations
                 .Include(i => i.Measurements)
@@ -133,23 +133,23 @@ public sealed class InstallationMeasurementPersistenceTests
     public async Task RecordMultipleMeasurements_ShouldPersistAll()
     {
         var installation = Installation.Create(
-            InstallationId.New(),
-            Guid.NewGuid(),
+            InstallationIdentifier.New(),
+            ProjectIdentifier.New(),
             null,
             InstallationType.Switchgear,
-            new GpsPosition(48.0, 11.0, null, 5.0, "internal_gps"));
+            GpsPosition.Create(48.0, 11.0, null, 5.0, "internal_gps"));
 
-        installation.RecordMeasurement(MeasurementId.New(), MeasurementType.Voltage, new MeasurementValue(230.0, "V", 220.0, 240.0));
-        installation.RecordMeasurement(MeasurementId.New(), MeasurementType.Continuity, new MeasurementValue(0.3, "Ohm"));
-        installation.RecordMeasurement(MeasurementId.New(), MeasurementType.RcdTripCurrent, new MeasurementValue(28.0, "mA", 15.0, 30.0));
+        installation.RecordMeasurement(MeasurementIdentifier.New(), MeasurementType.Voltage, MeasurementValue.Create(230.0, "V", 220.0, 240.0));
+        installation.RecordMeasurement(MeasurementIdentifier.New(), MeasurementType.Continuity, MeasurementValue.Create(0.3, "Ohm"));
+        installation.RecordMeasurement(MeasurementIdentifier.New(), MeasurementType.RcdTripCurrent, MeasurementValue.Create(28.0, "mA", 15.0, 30.0));
 
-        await using (var writeContext = _fixture.CreateContext())
+        await using (var writeContext = fixture.CreateContext())
         {
             writeContext.Installations.Add(installation);
             await writeContext.SaveChangesAsync();
         }
 
-        await using (var readContext = _fixture.CreateContext())
+        await using (var readContext = fixture.CreateContext())
         {
             var loaded = await readContext.Installations
                 .Include(i => i.Measurements)

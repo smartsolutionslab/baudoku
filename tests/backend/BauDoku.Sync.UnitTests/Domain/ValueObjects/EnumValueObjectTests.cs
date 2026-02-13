@@ -16,7 +16,7 @@ public sealed class EnumValueObjectTests
     [Fact]
     public void DeltaOperation_InvalidValue_ShouldThrow()
     {
-        var act = () => new DeltaOperation("invalid");
+        var act = () => DeltaOperation.From("invalid");
         act.Should().Throw<ArgumentException>();
     }
 
@@ -33,7 +33,7 @@ public sealed class EnumValueObjectTests
     [Fact]
     public void BatchStatus_InvalidValue_ShouldThrow()
     {
-        var act = () => new BatchStatus("invalid");
+        var act = () => BatchStatus.From("invalid");
         act.Should().Throw<ArgumentException>();
     }
 
@@ -49,7 +49,7 @@ public sealed class EnumValueObjectTests
     [Fact]
     public void ConflictStatus_InvalidValue_ShouldThrow()
     {
-        var act = () => new ConflictStatus("invalid");
+        var act = () => ConflictStatus.From("invalid");
         act.Should().Throw<ArgumentException>();
     }
 
@@ -64,7 +64,7 @@ public sealed class EnumValueObjectTests
     [Fact]
     public void ConflictResolutionStrategy_InvalidValue_ShouldThrow()
     {
-        var act = () => new ConflictResolutionStrategy("invalid");
+        var act = () => ConflictResolutionStrategy.From("invalid");
         act.Should().Throw<ArgumentException>();
     }
 }

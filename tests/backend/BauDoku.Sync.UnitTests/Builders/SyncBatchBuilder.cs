@@ -5,13 +5,13 @@ namespace BauDoku.Sync.UnitTests.Builders;
 
 internal sealed class SyncBatchBuilder
 {
-    private SyncBatchId _id = SyncBatchId.New();
-    private DeviceId _deviceId = new("device-001");
-    private DateTime _submittedAt = DateTime.UtcNow;
+    private SyncBatchIdentifier id = SyncBatchIdentifier.New();
+    private DeviceIdentifier deviceId = DeviceIdentifier.From("device-001");
+    private DateTime submittedAt = DateTime.UtcNow;
 
-    public SyncBatchBuilder WithId(SyncBatchId id) { _id = id; return this; }
-    public SyncBatchBuilder WithDeviceId(DeviceId deviceId) { _deviceId = deviceId; return this; }
-    public SyncBatchBuilder WithSubmittedAt(DateTime submittedAt) { _submittedAt = submittedAt; return this; }
+    public SyncBatchBuilder WithId(SyncBatchIdentifier value) { id = value; return this; }
+    public SyncBatchBuilder WithDeviceId(DeviceIdentifier value) { deviceId = value; return this; }
+    public SyncBatchBuilder WithSubmittedAt(DateTime value) { submittedAt = value; return this; }
 
-    public SyncBatch Build() => SyncBatch.Create(_id, _deviceId, _submittedAt);
+    public SyncBatch Build() => SyncBatch.Create(id, deviceId, submittedAt);
 }

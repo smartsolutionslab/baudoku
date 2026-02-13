@@ -7,24 +7,24 @@ namespace BauDoku.Sync.Infrastructure.Persistence.Repositories;
 
 public sealed class SyncBatchRepository : ISyncBatchRepository
 {
-    private readonly SyncDbContext _context;
+    private readonly SyncDbContext context;
 
     public SyncBatchRepository(SyncDbContext context)
     {
-        _context = context;
+        this.context = context;
     }
 
-    public async Task<SyncBatch?> GetByIdAsync(SyncBatchId id, CancellationToken cancellationToken = default)
+    public async Task<SyncBatch?> GetByIdAsync(SyncBatchIdentifier id, CancellationToken cancellationToken = default)
     {
-        return await _context.SyncBatches
+        return await context.SyncBatches
             .Include(b => b.Deltas)
             .Include(b => b.Conflicts)
             .FirstOrDefaultAsync(b => b.Id == id, cancellationToken);
     }
 
-    public async Task<SyncBatch?> GetByConflictIdAsync(ConflictRecordId conflictId, CancellationToken cancellationToken = default)
+    public async Task<SyncBatch?> GetByConflictIdAsync(ConflictRecordIdentifier conflictId, CancellationToken cancellationToken = default)
     {
-        return await _context.SyncBatches
+        return await context.SyncBatches
             .Include(b => b.Deltas)
             .Include(b => b.Conflicts)
             .FirstOrDefaultAsync(b => b.Conflicts.Any(c => c.Id == conflictId), cancellationToken);
@@ -32,7 +32,7 @@ public sealed class SyncBatchRepository : ISyncBatchRepository
 
     public async Task<List<SyncBatch>> GetPendingBatchesAsync(int limit, CancellationToken cancellationToken = default)
     {
-        return await _context.SyncBatches
+        return await context.SyncBatches
             .Include(b => b.Deltas)
             .Include(b => b.Conflicts)
             .Where(b => b.Status == BatchStatus.Pending)
@@ -43,6 +43,6 @@ public sealed class SyncBatchRepository : ISyncBatchRepository
 
     public async Task AddAsync(SyncBatch aggregate, CancellationToken cancellationToken = default)
     {
-        await _context.SyncBatches.AddAsync(aggregate, cancellationToken);
+        await context.SyncBatches.AddAsync(aggregate, cancellationToken);
     }
 }

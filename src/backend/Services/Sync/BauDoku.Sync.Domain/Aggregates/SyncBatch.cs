@@ -6,21 +6,21 @@ using BauDoku.Sync.Domain.ValueObjects;
 
 namespace BauDoku.Sync.Domain.Aggregates;
 
-public sealed class SyncBatch : AggregateRoot<SyncBatchId>
+public sealed class SyncBatch : AggregateRoot<SyncBatchIdentifier>
 {
-    private readonly List<SyncDelta> _deltas = [];
-    private readonly List<ConflictRecord> _conflicts = [];
+    private readonly List<SyncDelta> deltas = [];
+    private readonly List<ConflictRecord> conflicts = [];
 
-    public DeviceId DeviceId { get; private set; } = default!;
+    public DeviceIdentifier DeviceId { get; private set; } = default!;
     public BatchStatus Status { get; private set; } = default!;
     public DateTime SubmittedAt { get; private set; }
     public DateTime? ProcessedAt { get; private set; }
-    public IReadOnlyList<SyncDelta> Deltas => _deltas.AsReadOnly();
-    public IReadOnlyList<ConflictRecord> Conflicts => _conflicts.AsReadOnly();
+    public IReadOnlyList<SyncDelta> Deltas => deltas.AsReadOnly();
+    public IReadOnlyList<ConflictRecord> Conflicts => conflicts.AsReadOnly();
 
     private SyncBatch() { }
 
-    public static SyncBatch Create(SyncBatchId id, DeviceId deviceId, DateTime submittedAt)
+    public static SyncBatch Create(SyncBatchIdentifier id, DeviceIdentifier deviceId, DateTime submittedAt)
     {
         var batch = new SyncBatch
         {
@@ -30,12 +30,12 @@ public sealed class SyncBatch : AggregateRoot<SyncBatchId>
             SubmittedAt = submittedAt
         };
 
-        batch.AddDomainEvent(new SyncBatchSubmitted(id, deviceId, 0, DateTime.UtcNow));
+        batch.AddDomainEvent(new SyncBatchSubmitted(id, deviceId, DateTime.UtcNow));
         return batch;
     }
 
     public void AddDelta(
-        SyncDeltaId deltaId,
+        SyncDeltaIdentifier deltaId,
         EntityReference entityRef,
         DeltaOperation operation,
         SyncVersion baseVersion,
@@ -46,11 +46,11 @@ public sealed class SyncBatch : AggregateRoot<SyncBatchId>
         CheckRule(new BatchMustNotBeAlreadyProcessed(Status));
 
         var delta = SyncDelta.Create(deltaId, entityRef, operation, baseVersion, serverVersion, payload, timestamp);
-        _deltas.Add(delta);
+        deltas.Add(delta);
     }
 
     public ConflictRecord AddConflict(
-        ConflictRecordId conflictId,
+        ConflictRecordIdentifier conflictId,
         EntityReference entityRef,
         DeltaPayload clientPayload,
         DeltaPayload serverPayload,
@@ -60,7 +60,7 @@ public sealed class SyncBatch : AggregateRoot<SyncBatchId>
         CheckRule(new BatchMustNotBeAlreadyProcessed(Status));
 
         var conflict = ConflictRecord.Create(conflictId, entityRef, clientPayload, serverPayload, clientVersion, serverVersion);
-        _conflicts.Add(conflict);
+        conflicts.Add(conflict);
 
         AddDomainEvent(new ConflictDetected(Id, conflictId, entityRef, DateTime.UtcNow));
         return conflict;
@@ -73,7 +73,7 @@ public sealed class SyncBatch : AggregateRoot<SyncBatchId>
         Status = BatchStatus.Completed;
         ProcessedAt = DateTime.UtcNow;
 
-        AddDomainEvent(new SyncBatchProcessed(Id, _deltas.Count, _conflicts.Count, DateTime.UtcNow));
+        AddDomainEvent(new SyncBatchProcessed(Id, deltas.Count, conflicts.Count, DateTime.UtcNow));
     }
 
     public void MarkPartialConflict()
@@ -83,7 +83,19 @@ public sealed class SyncBatch : AggregateRoot<SyncBatchId>
         Status = BatchStatus.PartialConflict;
         ProcessedAt = DateTime.UtcNow;
 
-        AddDomainEvent(new SyncBatchProcessed(Id, _deltas.Count, _conflicts.Count, DateTime.UtcNow));
+        AddDomainEvent(new SyncBatchProcessed(Id, deltas.Count, conflicts.Count, DateTime.UtcNow));
+    }
+
+    public void ResolveConflict(
+        ConflictRecordIdentifier conflictId,
+        ConflictResolutionStrategy strategy,
+        DeltaPayload? mergedPayload = null)
+    {
+        var conflict = conflicts.FirstOrDefault(c => c.Id == conflictId)
+            ?? throw new InvalidOperationException($"Konflikt {conflictId.Value} nicht gefunden.");
+
+        conflict.Resolve(strategy, mergedPayload);
+        AddDomainEvent(new ConflictResolved(conflictId, strategy, DateTime.UtcNow));
     }
 
     public void MarkFailed()
@@ -92,5 +104,7 @@ public sealed class SyncBatch : AggregateRoot<SyncBatchId>
 
         Status = BatchStatus.Failed;
         ProcessedAt = DateTime.UtcNow;
+
+        AddDomainEvent(new SyncBatchProcessed(Id, deltas.Count, conflicts.Count, DateTime.UtcNow));
     }
 }

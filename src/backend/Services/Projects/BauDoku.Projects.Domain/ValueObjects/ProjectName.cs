@@ -1,4 +1,5 @@
 using BauDoku.BuildingBlocks.Domain;
+using BauDoku.BuildingBlocks.Domain.Guards;
 
 namespace BauDoku.Projects.Domain.ValueObjects;
 
@@ -7,12 +8,13 @@ public sealed record ProjectName : ValueObject
     public const int MaxLength = 200;
     public string Value { get; }
 
-    public ProjectName(string value)
+    private ProjectName(string value) => Value = value;
+
+    public static ProjectName From(string value)
     {
-        if (string.IsNullOrWhiteSpace(value))
-            throw new ArgumentException("Projektname darf nicht leer sein.", nameof(value));
-        if (value.Length > MaxLength)
-            throw new ArgumentException($"Projektname darf max. {MaxLength} Zeichen lang sein.", nameof(value));
-        Value = value;
+        Ensure.That(value)
+            .IsNotNullOrWhiteSpace("Projektname darf nicht leer sein.")
+            .MaxLengthIs(MaxLength, $"Projektname darf max. {MaxLength} Zeichen lang sein.");
+        return new ProjectName(value);
     }
 }

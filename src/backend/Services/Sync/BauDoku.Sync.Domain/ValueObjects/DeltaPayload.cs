@@ -1,4 +1,5 @@
 using BauDoku.BuildingBlocks.Domain;
+using BauDoku.BuildingBlocks.Domain.Guards;
 
 namespace BauDoku.Sync.Domain.ValueObjects;
 
@@ -8,12 +9,13 @@ public sealed record DeltaPayload : ValueObject
 
     public string Value { get; }
 
-    public DeltaPayload(string value)
+    private DeltaPayload(string value) => Value = value;
+
+    public static DeltaPayload From(string value)
     {
-        if (string.IsNullOrWhiteSpace(value))
-            throw new ArgumentException("Delta-Payload darf nicht leer sein.", nameof(value));
-        if (value.Length > MaxLength)
-            throw new ArgumentException($"Delta-Payload darf max. {MaxLength} Zeichen lang sein.", nameof(value));
-        Value = value;
+        Ensure.That(value)
+            .IsNotNullOrWhiteSpace("Delta-Payload darf nicht leer sein.")
+            .MaxLengthIs(MaxLength, $"Delta-Payload darf max. {MaxLength} Zeichen lang sein.");
+        return new DeltaPayload(value);
     }
 }

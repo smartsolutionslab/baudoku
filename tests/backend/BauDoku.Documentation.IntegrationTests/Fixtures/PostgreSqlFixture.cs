@@ -11,14 +11,14 @@ namespace BauDoku.Documentation.IntegrationTests.Fixtures;
 
 public sealed class PostgreSqlFixture : IAsyncLifetime
 {
-    private readonly PostgreSqlContainer _container = new PostgreSqlBuilder("postgis/postgis:17-3.5-alpine")
+    private readonly PostgreSqlContainer container = new PostgreSqlBuilder("postgis/postgis:17-3.5-alpine")
         .Build();
 
-    public string ConnectionString => _container.GetConnectionString();
+    public string ConnectionString => container.GetConnectionString();
 
     public async Task InitializeAsync()
     {
-        await _container.StartAsync();
+        await container.StartAsync();
 
         await using var context = CreateContext();
         await context.Database.EnsureCreatedAsync();
@@ -36,6 +36,6 @@ public sealed class PostgreSqlFixture : IAsyncLifetime
 
     public async Task DisposeAsync()
     {
-        await _container.DisposeAsync().AsTask();
+        await container.DisposeAsync().AsTask();
     }
 }

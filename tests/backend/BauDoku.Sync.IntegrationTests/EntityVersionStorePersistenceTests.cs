@@ -9,11 +9,11 @@ namespace BauDoku.Sync.IntegrationTests;
 [Collection(PostgreSqlCollection.Name)]
 public sealed class EntityVersionStorePersistenceTests
 {
-    private readonly PostgreSqlFixture _fixture;
+    private readonly PostgreSqlFixture fixture;
 
     public EntityVersionStorePersistenceTests(PostgreSqlFixture fixture)
     {
-        _fixture = fixture;
+        this.fixture = fixture;
     }
 
     [Fact]
@@ -21,14 +21,14 @@ public sealed class EntityVersionStorePersistenceTests
     {
         var entityId = Guid.NewGuid();
 
-        await using (var context = _fixture.CreateContext())
+        await using (var context = fixture.CreateContext())
         {
             var store = new EntityVersionStore(context);
-            await store.SetVersionAsync(EntityType.Project, entityId, new SyncVersion(1), """{"name":"Test"}""", new DeviceId("device-001"));
+            await store.SetVersionAsync(EntityType.Project, entityId, SyncVersion.From(1), """{"name":"Test"}""", DeviceIdentifier.From("device-001"));
             await context.SaveChangesAsync();
         }
 
-        await using (var context = _fixture.CreateContext())
+        await using (var context = fixture.CreateContext())
         {
             var store = new EntityVersionStore(context);
             var version = await store.GetCurrentVersionAsync(EntityType.Project, entityId);
@@ -41,21 +41,21 @@ public sealed class EntityVersionStorePersistenceTests
     {
         var entityId = Guid.NewGuid();
 
-        await using (var context = _fixture.CreateContext())
+        await using (var context = fixture.CreateContext())
         {
             var store = new EntityVersionStore(context);
-            await store.SetVersionAsync(EntityType.Project, entityId, new SyncVersion(1), """{"v":1}""", new DeviceId("device-001"));
+            await store.SetVersionAsync(EntityType.Project, entityId, SyncVersion.From(1), """{"v":1}""", DeviceIdentifier.From("device-001"));
             await context.SaveChangesAsync();
         }
 
-        await using (var context = _fixture.CreateContext())
+        await using (var context = fixture.CreateContext())
         {
             var store = new EntityVersionStore(context);
-            await store.SetVersionAsync(EntityType.Project, entityId, new SyncVersion(2), """{"v":2}""", new DeviceId("device-002"));
+            await store.SetVersionAsync(EntityType.Project, entityId, SyncVersion.From(2), """{"v":2}""", DeviceIdentifier.From("device-002"));
             await context.SaveChangesAsync();
         }
 
-        await using (var context = _fixture.CreateContext())
+        await using (var context = fixture.CreateContext())
         {
             var store = new EntityVersionStore(context);
             var version = await store.GetCurrentVersionAsync(EntityType.Project, entityId);
@@ -69,7 +69,7 @@ public sealed class EntityVersionStorePersistenceTests
     [Fact]
     public async Task GetCurrentVersion_WhenNotExists_ShouldReturnInitial()
     {
-        await using var context = _fixture.CreateContext();
+        await using var context = fixture.CreateContext();
         var store = new EntityVersionStore(context);
 
         var version = await store.GetCurrentVersionAsync(EntityType.Project, Guid.NewGuid());
@@ -81,7 +81,7 @@ public sealed class EntityVersionStorePersistenceTests
     [Fact]
     public async Task GetCurrentPayload_WhenNotExists_ShouldReturnNull()
     {
-        await using var context = _fixture.CreateContext();
+        await using var context = fixture.CreateContext();
         var store = new EntityVersionStore(context);
 
         var payload = await store.GetCurrentPayloadAsync(EntityType.Project, Guid.NewGuid());
@@ -94,14 +94,14 @@ public sealed class EntityVersionStorePersistenceTests
     {
         var entityId = Guid.NewGuid();
 
-        await using (var context = _fixture.CreateContext())
+        await using (var context = fixture.CreateContext())
         {
             var store = new EntityVersionStore(context);
-            await store.SetVersionAsync(EntityType.Installation, entityId, new SyncVersion(1), """{"data":"value"}""", new DeviceId("device-001"));
+            await store.SetVersionAsync(EntityType.Installation, entityId, SyncVersion.From(1), """{"data":"value"}""", DeviceIdentifier.From("device-001"));
             await context.SaveChangesAsync();
         }
 
-        await using (var context = _fixture.CreateContext())
+        await using (var context = fixture.CreateContext())
         {
             var store = new EntityVersionStore(context);
             var payload = await store.GetCurrentPayloadAsync(EntityType.Installation, entityId);
@@ -114,14 +114,14 @@ public sealed class EntityVersionStorePersistenceTests
     {
         var entityId = Guid.NewGuid();
 
-        await using (var context = _fixture.CreateContext())
+        await using (var context = fixture.CreateContext())
         {
             var store = new EntityVersionStore(context);
-            await store.SetVersionAsync(EntityType.Project, entityId, new SyncVersion(1), """{"name":"Recent"}""", new DeviceId("device-recent"));
+            await store.SetVersionAsync(EntityType.Project, entityId, SyncVersion.From(1), """{"name":"Recent"}""", DeviceIdentifier.From("device-recent"));
             await context.SaveChangesAsync();
         }
 
-        await using (var context = _fixture.CreateContext())
+        await using (var context = fixture.CreateContext())
         {
             var store = new EntityVersionStore(context);
             var changes = await store.GetChangedSinceAsync(DateTime.UtcNow.AddMinutes(-5), null, 100);

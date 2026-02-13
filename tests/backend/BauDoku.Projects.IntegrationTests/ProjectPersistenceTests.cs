@@ -9,33 +9,33 @@ namespace BauDoku.Projects.IntegrationTests;
 [Collection(PostgreSqlCollection.Name)]
 public sealed class ProjectPersistenceTests
 {
-    private readonly PostgreSqlFixture _fixture;
+    private readonly PostgreSqlFixture fixture;
 
     public ProjectPersistenceTests(PostgreSqlFixture fixture)
     {
-        _fixture = fixture;
+        this.fixture = fixture;
     }
 
     [Fact]
     public async Task CreateProject_ShouldPersistAndLoad()
     {
         // Arrange
-        var projectId = ProjectId.New();
+        var projectId = ProjectIdentifier.New();
         var project = Project.Create(
             projectId,
-            new ProjectName("Testprojekt Persistence"),
-            new Address("Berliner Str. 1", "Hamburg", "20095"),
-            new ClientInfo("Testfirma GmbH", "test@example.com"));
+            ProjectName.From("Testprojekt Persistence"),
+            Address.Create("Berliner Str. 1", "Hamburg", "20095"),
+            ClientInfo.Create("Testfirma GmbH", "test@example.com"));
 
         // Act
-        await using (var writeContext = _fixture.CreateContext())
+        await using (var writeContext = fixture.CreateContext())
         {
             writeContext.Projects.Add(project);
             await writeContext.SaveChangesAsync();
         }
 
         // Assert
-        await using (var readContext = _fixture.CreateContext())
+        await using (var readContext = fixture.CreateContext())
         {
             var loaded = await readContext.Projects
                 .Include(p => p.Zones)
@@ -56,26 +56,26 @@ public sealed class ProjectPersistenceTests
     public async Task AddZone_ShouldPersistWithHierarchy()
     {
         // Arrange
-        var projectId = ProjectId.New();
+        var projectId = ProjectIdentifier.New();
         var project = Project.Create(
             projectId,
-            new ProjectName("Zonenprojekt"),
-            new Address("Hauptstraße 10", "München", "80331"),
-            new ClientInfo("Bau AG"));
+            ProjectName.From("Zonenprojekt"),
+            Address.Create("Hauptstraße 10", "München", "80331"),
+            ClientInfo.Create("Bau AG"));
 
-        var buildingId = ZoneId.New();
-        project.AddZone(buildingId, new ZoneName("Gebäude A"), ZoneType.Building);
-        project.AddZone(ZoneId.New(), new ZoneName("Erdgeschoss"), ZoneType.Floor, buildingId);
+        var buildingId = ZoneIdentifier.New();
+        project.AddZone(buildingId, ZoneName.From("Gebäude A"), ZoneType.Building);
+        project.AddZone(ZoneIdentifier.New(), ZoneName.From("Erdgeschoss"), ZoneType.Floor, buildingId);
 
         // Act
-        await using (var writeContext = _fixture.CreateContext())
+        await using (var writeContext = fixture.CreateContext())
         {
             writeContext.Projects.Add(project);
             await writeContext.SaveChangesAsync();
         }
 
         // Assert
-        await using (var readContext = _fixture.CreateContext())
+        await using (var readContext = fixture.CreateContext())
         {
             var loaded = await readContext.Projects
                 .Include(p => p.Zones)
@@ -86,11 +86,11 @@ public sealed class ProjectPersistenceTests
 
             var building = loaded.Zones.First(z => z.Type == ZoneType.Building);
             building.Name.Value.Should().Be("Gebäude A");
-            building.ParentZoneId.Should().BeNull();
+            building.ParentZoneIdentifier.Should().BeNull();
 
             var floor = loaded.Zones.First(z => z.Type == ZoneType.Floor);
             floor.Name.Value.Should().Be("Erdgeschoss");
-            floor.ParentZoneId.Should().Be(buildingId);
+            floor.ParentZoneIdentifier.Should().Be(buildingId);
         }
     }
 }

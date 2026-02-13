@@ -6,11 +6,13 @@ import {
 } from "../../../src/hooks/useOfflineData";
 import { ProjectForm } from "../../../src/components/projects/ProjectForm";
 import type { ProjectFormData } from "../../../src/validation/schemas";
+import { projectId } from "../../../src/types/branded";
 
 export default function EditProjectScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id: rawId } = useLocalSearchParams<{ id: string }>();
+  const id = projectId(rawId!);
   const router = useRouter();
-  const { data: project } = useProject(id!);
+  const { data: project } = useProject(id);
   const updateProject = useUpdateProject();
 
   if (!project) return null;
@@ -26,7 +28,7 @@ export default function EditProjectScreen() {
   };
 
   const handleSubmit = async (data: ProjectFormData) => {
-    await updateProject.mutateAsync({ id: id!, data });
+    await updateProject.mutateAsync({ id, data });
     router.back();
   };
 

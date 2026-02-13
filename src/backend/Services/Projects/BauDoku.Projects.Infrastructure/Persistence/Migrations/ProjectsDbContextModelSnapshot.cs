@@ -46,6 +46,12 @@ namespace BauDoku.Projects.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Name")
+                        .HasDatabaseName("ix_projects_name");
+
+                    b.HasIndex("Status")
+                        .HasDatabaseName("ix_projects_status");
+
                     b.ToTable("projects", (string)null);
                 });
 
@@ -61,7 +67,7 @@ namespace BauDoku.Projects.Infrastructure.Persistence.Migrations
                         .HasColumnType("character varying(200)")
                         .HasColumnName("name");
 
-                    b.Property<Guid?>("ParentZoneId")
+                    b.Property<Guid?>("ParentZoneIdentifier")
                         .HasColumnType("uuid")
                         .HasColumnName("parent_zone_id");
 
@@ -77,7 +83,8 @@ namespace BauDoku.Projects.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProjectId");
+                    b.HasIndex("ProjectId")
+                        .HasDatabaseName("ix_zones_project_id");
 
                     b.ToTable("zones", (string)null);
                 });

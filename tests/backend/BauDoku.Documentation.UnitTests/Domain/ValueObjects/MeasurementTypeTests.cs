@@ -13,9 +13,9 @@ public sealed class MeasurementTypeTests
     [InlineData("rcd_trip_current")]
     [InlineData("voltage")]
     [InlineData("other")]
-    public void Create_WithValidType_ShouldSucceed(string value)
+    public void From_WithValidType_ShouldSucceed(string value)
     {
-        var type = new MeasurementType(value);
+        var type = MeasurementType.From(value);
 
         type.Value.Should().Be(value);
     }
@@ -24,17 +24,17 @@ public sealed class MeasurementTypeTests
     [InlineData(null)]
     [InlineData("")]
     [InlineData("   ")]
-    public void Create_WithEmptyType_ShouldThrow(string? value)
+    public void From_WithEmptyType_ShouldThrow(string? value)
     {
-        var act = () => new MeasurementType(value!);
+        var act = () => MeasurementType.From(value!);
 
         act.Should().Throw<ArgumentException>();
     }
 
     [Fact]
-    public void Create_WithInvalidType_ShouldThrow()
+    public void From_WithInvalidType_ShouldThrow()
     {
-        var act = () => new MeasurementType("invalid");
+        var act = () => MeasurementType.From("invalid");
 
         act.Should().Throw<ArgumentException>();
     }

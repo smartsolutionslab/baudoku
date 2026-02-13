@@ -6,9 +6,9 @@ namespace BauDoku.Documentation.UnitTests.Domain.ValueObjects;
 public sealed class ModelNameTests
 {
     [Fact]
-    public void Create_WithValidName_ShouldSucceed()
+    public void From_WithValidName_ShouldSucceed()
     {
-        var model = new ModelName("VZ312N");
+        var model = ModelName.From("VZ312N");
 
         model.Value.Should().Be("VZ312N");
     }
@@ -17,29 +17,29 @@ public sealed class ModelNameTests
     [InlineData(null)]
     [InlineData("")]
     [InlineData("   ")]
-    public void Create_WithEmptyName_ShouldThrow(string? value)
+    public void From_WithEmptyName_ShouldThrow(string? value)
     {
-        var act = () => new ModelName(value!);
+        var act = () => ModelName.From(value!);
 
         act.Should().Throw<ArgumentException>();
     }
 
     [Fact]
-    public void Create_WithTooLongName_ShouldThrow()
+    public void From_WithTooLongName_ShouldThrow()
     {
         var longName = new string('a', ModelName.MaxLength + 1);
 
-        var act = () => new ModelName(longName);
+        var act = () => ModelName.From(longName);
 
         act.Should().Throw<ArgumentException>();
     }
 
     [Fact]
-    public void Create_WithMaxLengthName_ShouldSucceed()
+    public void From_WithMaxLengthName_ShouldSucceed()
     {
         var maxName = new string('a', ModelName.MaxLength);
 
-        var model = new ModelName(maxName);
+        var model = ModelName.From(maxName);
 
         model.Value.Should().HaveLength(ModelName.MaxLength);
     }

@@ -7,12 +7,12 @@ namespace BauDoku.BuildingBlocks.Infrastructure.Persistence;
 
 public abstract class BaseDbContext : DbContext, IUnitOfWork
 {
-    private readonly IDispatcher _dispatcher;
+    private readonly IDispatcher dispatcher;
 
     protected BaseDbContext(DbContextOptions options, IDispatcher dispatcher)
         : base(options)
     {
-        _dispatcher = dispatcher;
+        this.dispatcher = dispatcher;
     }
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
@@ -22,7 +22,7 @@ public abstract class BaseDbContext : DbContext, IUnitOfWork
 
         foreach (var domainEvent in domainEvents)
         {
-            await _dispatcher.Publish(domainEvent, cancellationToken);
+            await this.dispatcher.Publish(domainEvent, cancellationToken);
         }
 
         return result;

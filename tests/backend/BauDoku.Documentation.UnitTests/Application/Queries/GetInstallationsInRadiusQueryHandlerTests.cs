@@ -9,13 +9,13 @@ namespace BauDoku.Documentation.UnitTests.Application.Queries;
 
 public sealed class GetInstallationsInRadiusQueryHandlerTests
 {
-    private readonly IInstallationReadRepository _readRepository;
-    private readonly GetInstallationsInRadiusQueryHandler _handler;
+    private readonly IInstallationReadRepository readRepository;
+    private readonly GetInstallationsInRadiusQueryHandler handler;
 
     public GetInstallationsInRadiusQueryHandlerTests()
     {
-        _readRepository = Substitute.For<IInstallationReadRepository>();
-        _handler = new GetInstallationsInRadiusQueryHandler(_readRepository);
+        readRepository = Substitute.For<IInstallationReadRepository>();
+        handler = new GetInstallationsInRadiusQueryHandler(readRepository);
     }
 
     [Fact]
@@ -28,12 +28,12 @@ public sealed class GetInstallationsInRadiusQueryHandlerTests
         };
         var expected = new PagedResult<NearbyInstallationDto>(items, 1, 1, 20);
 
-        _readRepository.SearchInRadiusAsync(
+        readRepository.SearchInRadiusAsync(
                 48.0, 11.0, 500.0, null, 1, 20, Arg.Any<CancellationToken>())
             .Returns(expected);
 
         var query = new GetInstallationsInRadiusQuery(48.0, 11.0, 500.0);
-        var result = await _handler.Handle(query, CancellationToken.None);
+        var result = await handler.Handle(query, CancellationToken.None);
 
         result.Should().BeSameAs(expected);
         result.Items.Should().ContainSingle();
@@ -46,15 +46,15 @@ public sealed class GetInstallationsInRadiusQueryHandlerTests
         var projectId = Guid.NewGuid();
         var expected = new PagedResult<NearbyInstallationDto>([], 0, 1, 20);
 
-        _readRepository.SearchInRadiusAsync(
+        readRepository.SearchInRadiusAsync(
                 48.0, 11.0, 1000.0, projectId, 1, 20, Arg.Any<CancellationToken>())
             .Returns(expected);
 
         var query = new GetInstallationsInRadiusQuery(48.0, 11.0, 1000.0, projectId);
-        var result = await _handler.Handle(query, CancellationToken.None);
+        var result = await handler.Handle(query, CancellationToken.None);
 
         result.Should().BeSameAs(expected);
-        await _readRepository.Received(1).SearchInRadiusAsync(
+        await readRepository.Received(1).SearchInRadiusAsync(
             48.0, 11.0, 1000.0, projectId, 1, 20, Arg.Any<CancellationToken>());
     }
 
@@ -63,12 +63,12 @@ public sealed class GetInstallationsInRadiusQueryHandlerTests
     {
         var expected = new PagedResult<NearbyInstallationDto>([], 0, 3, 10);
 
-        _readRepository.SearchInRadiusAsync(
+        readRepository.SearchInRadiusAsync(
                 48.0, 11.0, 500.0, null, 3, 10, Arg.Any<CancellationToken>())
             .Returns(expected);
 
         var query = new GetInstallationsInRadiusQuery(48.0, 11.0, 500.0, Page: 3, PageSize: 10);
-        var result = await _handler.Handle(query, CancellationToken.None);
+        var result = await handler.Handle(query, CancellationToken.None);
 
         result.Page.Should().Be(3);
         result.PageSize.Should().Be(10);

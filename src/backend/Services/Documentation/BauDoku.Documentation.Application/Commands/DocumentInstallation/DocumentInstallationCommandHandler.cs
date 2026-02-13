@@ -10,22 +10,26 @@ namespace BauDoku.Documentation.Application.Commands.DocumentInstallation;
 public sealed class DocumentInstallationCommandHandler
     : ICommandHandler<DocumentInstallationCommand, Guid>
 {
-    private readonly IInstallationRepository _installationRepository;
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IInstallationRepository installationRepository;
+    private readonly IUnitOfWork unitOfWork;
 
     public DocumentInstallationCommandHandler(
         IInstallationRepository installationRepository,
         IUnitOfWork unitOfWork)
     {
-        _installationRepository = installationRepository;
-        _unitOfWork = unitOfWork;
+        this.installationRepository = installationRepository;
+        this.unitOfWork = unitOfWork;
     }
 
     public async Task<Guid> Handle(DocumentInstallationCommand command, CancellationToken cancellationToken)
     {
-        var installationId = InstallationId.New();
+        var installationId = InstallationIdentifier.New();
 
-        var position = new GpsPosition(
+        var projectId = ProjectIdentifier.From(command.ProjectId);
+        var zoneId = command.ZoneId is not null
+            ? ZoneIdentifier.From(command.ZoneId.Value) : null;
+
+        var position = GpsPosition.Create(
             command.Latitude,
             command.Longitude,
             command.Altitude,
@@ -38,28 +42,28 @@ public sealed class DocumentInstallationCommandHandler
             command.CorrectionAge);
 
         var description = command.Description is not null
-            ? new Description(command.Description) : null;
+            ? Description.From(command.Description) : null;
 
         var cableSpec = command.CableType is not null
-            ? new CableSpec(command.CableType, command.CrossSection, command.CableColor, command.ConductorCount) : null;
+            ? CableSpec.Create(command.CableType, command.CrossSection, command.CableColor, command.ConductorCount) : null;
 
         var depth = command.DepthMm is not null
-            ? new Depth(command.DepthMm.Value) : null;
+            ? Depth.From(command.DepthMm.Value) : null;
 
         var manufacturer = command.Manufacturer is not null
-            ? new Manufacturer(command.Manufacturer) : null;
+            ? Manufacturer.From(command.Manufacturer) : null;
 
         var modelName = command.ModelName is not null
-            ? new ModelName(command.ModelName) : null;
+            ? ModelName.From(command.ModelName) : null;
 
         var serialNumber = command.SerialNumber is not null
-            ? new SerialNumber(command.SerialNumber) : null;
+            ? SerialNumber.From(command.SerialNumber) : null;
 
         var installation = Installation.Create(
             installationId,
-            command.ProjectId,
-            command.ZoneId,
-            new InstallationType(command.Type),
+            projectId,
+            zoneId,
+            InstallationType.From(command.Type),
             position,
             description,
             cableSpec,
@@ -68,8 +72,8 @@ public sealed class DocumentInstallationCommandHandler
             modelName,
             serialNumber);
 
-        await _installationRepository.AddAsync(installation, cancellationToken);
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        await installationRepository.AddAsync(installation, cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         DocumentationMetrics.InstallationsDocumented.Add(1);
         DocumentationMetrics.GpsHorizontalAccuracy.Record(command.HorizontalAccuracy);

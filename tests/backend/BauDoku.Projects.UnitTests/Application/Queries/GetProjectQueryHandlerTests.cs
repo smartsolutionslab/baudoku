@@ -9,28 +9,28 @@ namespace BauDoku.Projects.UnitTests.Application.Queries;
 
 public sealed class GetProjectQueryHandlerTests
 {
-    private readonly IProjectRepository _repository;
-    private readonly GetProjectQueryHandler _handler;
+    private readonly IProjectRepository repository;
+    private readonly GetProjectQueryHandler handler;
 
     public GetProjectQueryHandlerTests()
     {
-        _repository = Substitute.For<IProjectRepository>();
-        _handler = new GetProjectQueryHandler(_repository);
+        repository = Substitute.For<IProjectRepository>();
+        handler = new GetProjectQueryHandler(repository);
     }
 
     [Fact]
     public async Task Handle_WhenProjectExists_ShouldReturnDto()
     {
         var project = Project.Create(
-            ProjectId.New(),
-            new ProjectName("Testprojekt"),
-            new Address("Musterstraße 1", "Berlin", "10115"),
-            new ClientInfo("Max Mustermann", "max@example.com", "+49 30 12345"));
+            ProjectIdentifier.New(),
+            ProjectName.From("Testprojekt"),
+            Address.Create("Musterstraße 1", "Berlin", "10115"),
+            ClientInfo.Create("Max Mustermann", "max@example.com", "+49 30 12345"));
 
-        _repository.GetByIdAsync(Arg.Any<ProjectId>(), Arg.Any<CancellationToken>())
+        repository.GetByIdReadOnlyAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(project);
 
-        var result = await _handler.Handle(new GetProjectQuery(project.Id.Value));
+        var result = await handler.Handle(new GetProjectQuery(project.Id.Value));
 
         result.Should().NotBeNull();
         result!.Name.Should().Be("Testprojekt");
@@ -43,10 +43,10 @@ public sealed class GetProjectQueryHandlerTests
     [Fact]
     public async Task Handle_WhenProjectNotFound_ShouldReturnNull()
     {
-        _repository.GetByIdAsync(Arg.Any<ProjectId>(), Arg.Any<CancellationToken>())
+        repository.GetByIdReadOnlyAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>())
             .Returns((Project?)null);
 
-        var result = await _handler.Handle(new GetProjectQuery(Guid.NewGuid()));
+        var result = await handler.Handle(new GetProjectQuery(Guid.NewGuid()));
 
         result.Should().BeNull();
     }
@@ -55,17 +55,17 @@ public sealed class GetProjectQueryHandlerTests
     public async Task Handle_WhenProjectHasZones_ShouldMapZones()
     {
         var project = Project.Create(
-            ProjectId.New(),
-            new ProjectName("Testprojekt"),
-            new Address("Musterstraße 1", "Berlin", "10115"),
-            new ClientInfo("Max Mustermann"));
+            ProjectIdentifier.New(),
+            ProjectName.From("Testprojekt"),
+            Address.Create("Musterstraße 1", "Berlin", "10115"),
+            ClientInfo.Create("Max Mustermann"));
 
-        project.AddZone(ZoneId.New(), new ZoneName("Erdgeschoss"), ZoneType.Floor);
+        project.AddZone(ZoneIdentifier.New(), ZoneName.From("Erdgeschoss"), ZoneType.Floor);
 
-        _repository.GetByIdAsync(Arg.Any<ProjectId>(), Arg.Any<CancellationToken>())
+        repository.GetByIdReadOnlyAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(project);
 
-        var result = await _handler.Handle(new GetProjectQuery(project.Id.Value));
+        var result = await handler.Handle(new GetProjectQuery(project.Id.Value));
 
         result.Should().NotBeNull();
         result!.Zones.Should().ContainSingle();

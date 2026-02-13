@@ -9,7 +9,7 @@ public sealed class EntityReferenceTests
     public void Create_WithValidValues_ShouldSucceed()
     {
         var entityId = Guid.NewGuid();
-        var entityRef = new EntityReference(EntityType.Project, entityId);
+        var entityRef = EntityReference.Create(EntityType.Project, entityId);
 
         entityRef.EntityType.Should().Be(EntityType.Project);
         entityRef.EntityId.Should().Be(entityId);
@@ -18,14 +18,14 @@ public sealed class EntityReferenceTests
     [Fact]
     public void Create_WithNullEntityType_ShouldThrow()
     {
-        var act = () => new EntityReference(null!, Guid.NewGuid());
+        var act = () => EntityReference.Create(null!, Guid.NewGuid());
         act.Should().Throw<ArgumentNullException>();
     }
 
     [Fact]
     public void Create_WithEmptyEntityId_ShouldThrow()
     {
-        var act = () => new EntityReference(EntityType.Project, Guid.Empty);
+        var act = () => EntityReference.Create(EntityType.Project, Guid.Empty);
         act.Should().Throw<ArgumentException>();
     }
 }

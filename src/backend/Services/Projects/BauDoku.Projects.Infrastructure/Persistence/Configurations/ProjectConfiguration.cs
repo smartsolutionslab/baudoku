@@ -15,17 +15,17 @@ public sealed class ProjectConfiguration : IEntityTypeConfiguration<Project>
 
         builder.Property(p => p.Id)
             .HasColumnName("id")
-            .HasConversion(id => id.Value, value => new ProjectId(value));
+            .HasConversion(id => id.Value, value => ProjectIdentifier.From(value));
 
         builder.Property(p => p.Name)
             .HasColumnName("name")
             .HasMaxLength(ProjectName.MaxLength)
-            .HasConversion(n => n.Value, value => new ProjectName(value));
+            .HasConversion(n => n.Value, value => ProjectName.From(value));
 
         builder.Property(p => p.Status)
             .HasColumnName("status")
             .HasMaxLength(20)
-            .HasConversion(s => s.Value, value => new ProjectStatus(value));
+            .HasConversion(s => s.Value, value => ProjectStatus.From(value));
 
         builder.Property(p => p.CreatedAt)
             .HasColumnName("created_at");
@@ -70,5 +70,9 @@ public sealed class ProjectConfiguration : IEntityTypeConfiguration<Project>
             .UsePropertyAccessMode(PropertyAccessMode.Field);
 
         builder.Ignore(p => p.DomainEvents);
+
+        // Indexes
+        builder.HasIndex(p => p.Name).HasDatabaseName("ix_projects_name");
+        builder.HasIndex(p => p.Status).HasDatabaseName("ix_projects_status");
     }
 }

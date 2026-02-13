@@ -6,13 +6,15 @@ import { useUpdateInstallation } from "../../../../src/hooks/useOfflineData";
 import { InstallationForm } from "../../../../src/components/installations/InstallationForm";
 import type { InstallationFormData } from "../../../../src/validation/schemas";
 import type { GpsPosition, GpsSource, GpsCorrService, GpsRtkStatus } from "../../../../src/hooks/useGpsCapture";
+import { installationId } from "../../../../src/types/branded";
 
 export default function EditInstallationScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id: rawId } = useLocalSearchParams<{ id: string }>();
+  const id = installationId(rawId!);
   const router = useRouter();
   const { data: installation } = useQuery({
     queryKey: ["installation", id],
-    queryFn: () => installationRepo.getById(id!),
+    queryFn: () => installationRepo.getById(id),
     enabled: !!id,
   });
   const updateInstallation = useUpdateInstallation();
@@ -59,7 +61,7 @@ export default function EditInstallationScreen() {
     gps: GpsPosition | null
   ) => {
     await updateInstallation.mutateAsync({
-      id: id!,
+      id,
       data: {
         type: data.type,
         status: data.status,

@@ -1,5 +1,6 @@
 using BauDoku.BuildingBlocks.Application;
 using BauDoku.BuildingBlocks.Infrastructure.Auth;
+using BauDoku.BuildingBlocks.Infrastructure.Serialization;
 using BauDoku.ServiceDefaults;
 using BauDoku.Sync.Api.Endpoints;
 using BauDoku.Sync.Infrastructure;
@@ -15,9 +16,12 @@ builder.AddServiceDefaults(health =>
     health.AddNpgSql(connectionString, name: "postgresql", tags: ["ready"]);
 });
 
+builder.Services.ConfigureHttpJsonOptions(options =>
+    options.SerializerOptions.Converters.Add(new ValueObjectJsonConverterFactory()));
+
 builder.Services.AddOpenApi();
 
-builder.Services.AddBauDokuAuthentication(builder.Configuration);
+builder.Services.AddBauDokuAuthentication(builder.Configuration, builder.Environment);
 
 builder.Services.AddApplication(BauDoku.Sync.Application.DependencyInjection.Assembly);
 builder.Services.AddSyncInfrastructure(connectionString);

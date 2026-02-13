@@ -12,7 +12,7 @@ public sealed class GpsQualityGradeTests
     [InlineData("d")]
     public void Create_WithValidValue_ShouldSucceed(string value)
     {
-        var grade = new GpsQualityGrade(value);
+        var grade = GpsQualityGrade.From(value);
         grade.Value.Should().Be(value);
     }
 
@@ -31,7 +31,7 @@ public sealed class GpsQualityGradeTests
     [InlineData("   ")]
     public void Create_WithEmptyValue_ShouldThrow(string? value)
     {
-        var act = () => new GpsQualityGrade(value!);
+        var act = () => GpsQualityGrade.From(value!);
         act.Should().Throw<ArgumentException>();
     }
 
@@ -41,7 +41,7 @@ public sealed class GpsQualityGradeTests
     [InlineData("grade_a")]
     public void Create_WithInvalidValue_ShouldThrow(string value)
     {
-        var act = () => new GpsQualityGrade(value);
+        var act = () => GpsQualityGrade.From(value);
         act.Should().Throw<ArgumentException>();
     }
 }

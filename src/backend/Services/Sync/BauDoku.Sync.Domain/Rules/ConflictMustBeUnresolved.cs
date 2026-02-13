@@ -5,15 +5,15 @@ namespace BauDoku.Sync.Domain.Rules;
 
 public sealed class ConflictMustBeUnresolved : IBusinessRule
 {
-    private readonly ConflictStatus _currentStatus;
+    private readonly ConflictStatus currentStatus;
 
     public ConflictMustBeUnresolved(ConflictStatus currentStatus)
     {
-        _currentStatus = currentStatus;
+        this.currentStatus = currentStatus;
     }
 
     public bool IsBroken() =>
-        _currentStatus != ConflictStatus.Unresolved;
+        currentStatus != ConflictStatus.Unresolved;
 
     public string Message => "Nur ungeloeste Konflikte koennen aufgeloest werden.";
 }

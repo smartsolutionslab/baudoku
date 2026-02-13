@@ -10,15 +10,15 @@ public sealed class ActiveProjectCountService : BackgroundService
 {
     private static readonly TimeSpan Interval = TimeSpan.FromSeconds(60);
 
-    private readonly IServiceScopeFactory _scopeFactory;
-    private readonly ILogger<ActiveProjectCountService> _logger;
+    private readonly IServiceScopeFactory scopeFactory;
+    private readonly ILogger<ActiveProjectCountService> logger;
 
     public ActiveProjectCountService(
         IServiceScopeFactory scopeFactory,
         ILogger<ActiveProjectCountService> logger)
     {
-        _scopeFactory = scopeFactory;
-        _logger = logger;
+        this.scopeFactory = scopeFactory;
+        this.logger = logger;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -27,14 +27,14 @@ public sealed class ActiveProjectCountService : BackgroundService
         {
             try
             {
-                using var scope = _scopeFactory.CreateScope();
+                using var scope = scopeFactory.CreateScope();
                 var provider = scope.ServiceProvider.GetRequiredService<IProjectCountProvider>();
                 var count = await provider.GetActiveCountAsync(stoppingToken);
                 ProjectsMetrics.SetActiveProjectCount(count);
             }
             catch (Exception ex) when (ex is not OperationCanceledException)
             {
-                _logger.LogWarning(ex, "Failed to update active project count metric");
+                logger.LogWarning(ex, "Failed to update active project count metric");
             }
 
             await Task.Delay(Interval, stoppingToken);

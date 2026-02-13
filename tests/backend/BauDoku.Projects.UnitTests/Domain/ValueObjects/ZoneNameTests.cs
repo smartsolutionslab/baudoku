@@ -6,9 +6,9 @@ namespace BauDoku.Projects.UnitTests.Domain.ValueObjects;
 public sealed class ZoneNameTests
 {
     [Fact]
-    public void Create_WithValidName_ShouldSucceed()
+    public void From_WithValidName_ShouldSucceed()
     {
-        var name = new ZoneName("Erdgeschoss");
+        var name = ZoneName.From("Erdgeschoss");
 
         name.Value.Should().Be("Erdgeschoss");
     }
@@ -17,29 +17,29 @@ public sealed class ZoneNameTests
     [InlineData(null)]
     [InlineData("")]
     [InlineData("   ")]
-    public void Create_WithEmptyName_ShouldThrow(string? value)
+    public void From_WithEmptyName_ShouldThrow(string? value)
     {
-        var act = () => new ZoneName(value!);
+        var act = () => ZoneName.From(value!);
 
         act.Should().Throw<ArgumentException>();
     }
 
     [Fact]
-    public void Create_WithTooLongName_ShouldThrow()
+    public void From_WithTooLongName_ShouldThrow()
     {
         var longName = new string('a', ZoneName.MaxLength + 1);
 
-        var act = () => new ZoneName(longName);
+        var act = () => ZoneName.From(longName);
 
         act.Should().Throw<ArgumentException>();
     }
 
     [Fact]
-    public void Create_WithMaxLengthName_ShouldSucceed()
+    public void From_WithMaxLengthName_ShouldSucceed()
     {
         var maxName = new string('a', ZoneName.MaxLength);
 
-        var name = new ZoneName(maxName);
+        var name = ZoneName.From(maxName);
 
         name.Value.Should().HaveLength(ZoneName.MaxLength);
     }

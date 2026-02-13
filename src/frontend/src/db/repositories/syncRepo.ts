@@ -34,7 +34,7 @@ export async function getPendingEntries(): Promise<SyncOutboxEntry[]> {
         eq(syncOutbox.status, "pending"),
       )
     )
-    .all();
+    .all() as unknown as SyncOutboxEntry[];
 }
 
 export async function getFailedEntries(): Promise<SyncOutboxEntry[]> {
@@ -42,7 +42,7 @@ export async function getFailedEntries(): Promise<SyncOutboxEntry[]> {
     .select()
     .from(syncOutbox)
     .where(eq(syncOutbox.status, "failed"))
-    .all();
+    .all() as unknown as SyncOutboxEntry[];
 }
 
 export async function getUnsyncedCount(): Promise<number> {

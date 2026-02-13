@@ -10,22 +10,31 @@ import type {
   NewPhoto,
   NewMeasurement,
 } from "../db/repositories/types";
+import {
+  type ProjectId,
+  type ZoneId,
+  type InstallationId,
+  type PhotoId,
+  type MeasurementId,
+  zoneId as toZoneId,
+  installationId as toInstallationId,
+} from "../types/branded";
 
-interface InstallationState {
+type InstallationState = {
   installations: Installation[];
   photos: Photo[];
   measurements: Measurement[];
   loading: boolean;
 
-  loadByZone: (zoneId: string) => Promise<void>;
-  loadByProject: (projectId: string) => Promise<void>;
-  loadDetails: (installationId: string) => Promise<void>;
+  loadByZone: (zoneId: ZoneId) => Promise<void>;
+  loadByProject: (projectId: ProjectId) => Promise<void>;
+  loadDetails: (installationId: InstallationId) => Promise<void>;
 
   createInstallation: (
     data: Omit<NewInstallation, "id" | "createdAt" | "updatedAt" | "version">
   ) => Promise<Installation>;
   updateInstallation: (
-    id: string,
+    id: InstallationId,
     data: Partial<
       Omit<
         NewInstallation,
@@ -33,22 +42,22 @@ interface InstallationState {
       >
     >
   ) => Promise<Installation | undefined>;
-  deleteInstallation: (id: string) => Promise<void>;
+  deleteInstallation: (id: InstallationId) => Promise<void>;
 
   addPhoto: (data: Omit<NewPhoto, "id" | "version">) => Promise<Photo>;
-  deletePhoto: (id: string) => Promise<void>;
+  deletePhoto: (id: PhotoId) => Promise<void>;
 
   addMeasurement: (
     data: Omit<NewMeasurement, "id" | "version" | "result">
   ) => Promise<Measurement>;
   updateMeasurement: (
-    id: string,
+    id: MeasurementId,
     data: Partial<
       Omit<NewMeasurement, "id" | "version" | "installationId" | "result">
     >
   ) => Promise<Measurement | undefined>;
-  deleteMeasurement: (id: string) => Promise<void>;
-}
+  deleteMeasurement: (id: MeasurementId) => Promise<void>;
+};
 
 export const useInstallationStore = create<InstallationState>((set) => ({
   installations: [],
@@ -78,7 +87,7 @@ export const useInstallationStore = create<InstallationState>((set) => ({
 
   createInstallation: async (data) => {
     const installation = await installationRepo.create(data);
-    const installations = await installationRepo.getByZoneId(data.zoneId);
+    const installations = await installationRepo.getByZoneId(toZoneId(data.zoneId));
     set({ installations });
     return installation;
   },
@@ -107,7 +116,7 @@ export const useInstallationStore = create<InstallationState>((set) => ({
 
   addPhoto: async (data) => {
     const photo = await photoRepo.create(data);
-    const photos = await photoRepo.getByInstallationId(data.installationId);
+    const photos = await photoRepo.getByInstallationId(toInstallationId(data.installationId));
     set({ photos });
     return photo;
   },
@@ -126,7 +135,7 @@ export const useInstallationStore = create<InstallationState>((set) => ({
   addMeasurement: async (data) => {
     const measurement = await measurementRepo.create(data);
     const measurements = await measurementRepo.getByInstallationId(
-      data.installationId
+      toInstallationId(data.installationId)
     );
     set({ measurements });
     return measurement;

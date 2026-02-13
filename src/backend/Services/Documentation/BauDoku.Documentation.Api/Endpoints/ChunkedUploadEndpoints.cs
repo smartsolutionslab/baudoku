@@ -20,7 +20,11 @@ public static class ChunkedUploadEndpoints
         {
             var sessionId = await dispatcher.Send(command, ct);
             return Results.Ok(new { sessionId });
-        });
+        })
+        .WithName("InitChunkedUpload")
+        .WithSummary("Chunked-Upload-Sitzung initialisieren")
+        .Produces<object>(StatusCodes.Status200OK)
+        .ProducesValidationProblem();
 
         group.MapPost("/{sessionId:guid}/chunks/{index:int}", async (
             Guid sessionId,
@@ -32,7 +36,11 @@ public static class ChunkedUploadEndpoints
             var command = new UploadChunkCommand(sessionId, index, httpRequest.Body);
             await dispatcher.Send(command, ct);
             return Results.NoContent();
-        }).DisableAntiforgery();
+        })
+        .DisableAntiforgery()
+        .WithName("UploadChunk")
+        .WithSummary("Einen Chunk hochladen")
+        .Produces(StatusCodes.Status204NoContent);
 
         group.MapPost("/{sessionId:guid}/complete", async (
             Guid sessionId,
@@ -42,6 +50,9 @@ public static class ChunkedUploadEndpoints
             var command = new CompleteChunkedUploadCommand(sessionId);
             var photoId = await dispatcher.Send(command, ct);
             return Results.Created($"/api/documentation/photos/{photoId}", new { id = photoId });
-        });
+        })
+        .WithName("CompleteChunkedUpload")
+        .WithSummary("Chunked-Upload abschliessen und Foto erstellen")
+        .Produces<object>(StatusCodes.Status201Created);
     }
 }

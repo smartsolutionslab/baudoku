@@ -6,45 +6,45 @@ namespace BauDoku.Documentation.UnitTests.Domain.ValueObjects;
 public sealed class DescriptionTests
 {
     [Fact]
-    public void Create_WithValidDescription_ShouldSucceed()
+    public void From_WithValidDescription_ShouldSucceed()
     {
-        var description = new Description("Kabeltrasse im Erdgeschoss");
+        var description = Description.From("Kabeltrasse im Erdgeschoss");
 
         description.Value.Should().Be("Kabeltrasse im Erdgeschoss");
     }
 
     [Fact]
-    public void Create_WithEmptyString_ShouldSucceed()
+    public void From_WithEmptyString_ShouldSucceed()
     {
-        var description = new Description("");
+        var description = Description.From("");
 
         description.Value.Should().BeEmpty();
     }
 
     [Fact]
-    public void Create_WithNull_ShouldThrow()
+    public void From_WithNull_ShouldThrow()
     {
-        var act = () => new Description(null!);
+        var act = () => Description.From(null!);
 
         act.Should().Throw<ArgumentNullException>();
     }
 
     [Fact]
-    public void Create_WithTooLongDescription_ShouldThrow()
+    public void From_WithTooLongDescription_ShouldThrow()
     {
         var longDescription = new string('a', Description.MaxLength + 1);
 
-        var act = () => new Description(longDescription);
+        var act = () => Description.From(longDescription);
 
         act.Should().Throw<ArgumentException>();
     }
 
     [Fact]
-    public void Create_WithMaxLengthDescription_ShouldSucceed()
+    public void From_WithMaxLengthDescription_ShouldSucceed()
     {
         var maxDescription = new string('a', Description.MaxLength);
 
-        var description = new Description(maxDescription);
+        var description = Description.From(maxDescription);
 
         description.Value.Should().HaveLength(Description.MaxLength);
     }

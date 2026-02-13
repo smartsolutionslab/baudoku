@@ -2,6 +2,7 @@ using BauDoku.BuildingBlocks.Application.Dispatcher;
 using BauDoku.Documentation.Application.Commands.AddPhoto;
 using BauDoku.Documentation.Application.Commands.RemovePhoto;
 using BauDoku.Documentation.Application.Contracts;
+using BauDoku.Documentation.Application.Queries.Dtos;
 using BauDoku.Documentation.Application.Queries.GetPhoto;
 
 namespace BauDoku.Documentation.Api.Endpoints;
@@ -26,7 +27,8 @@ public static class PhotoEndpoints
             double? longitude,
             double? altitude,
             double? horizontalAccuracy,
-            string? gpsSource) =>
+            string? gpsSource,
+            DateTime? takenAt) =>
         {
             await using var stream = file.OpenReadStream();
 
@@ -43,11 +45,17 @@ public static class PhotoEndpoints
                 altitude,
                 horizontalAccuracy,
                 gpsSource,
-                stream);
+                stream,
+                takenAt);
 
             var photoId = await dispatcher.Send(command, ct);
             return Results.Created($"/api/documentation/photos/{photoId}", new { id = photoId });
-        }).DisableAntiforgery();
+        })
+        .DisableAntiforgery()
+        .WithName("AddPhoto")
+        .WithSummary("Foto zu einer Installation hinzufuegen")
+        .Produces<object>(StatusCodes.Status201Created)
+        .ProducesValidationProblem();
 
         group.MapGet("/installations/{installationId:guid}/photos", async (
             Guid installationId,
@@ -56,7 +64,10 @@ public static class PhotoEndpoints
         {
             var photos = await photoReadRepository.ListByInstallationIdAsync(installationId, ct);
             return Results.Ok(photos);
-        });
+        })
+        .WithName("ListPhotos")
+        .WithSummary("Fotos einer Installation auflisten")
+        .Produces<IReadOnlyList<PhotoDto>>(StatusCodes.Status200OK);
 
         group.MapGet("/photos/{photoId:guid}", async (
             Guid photoId,
@@ -66,9 +77,13 @@ public static class PhotoEndpoints
             var query = new GetPhotoQuery(photoId);
             var result = await dispatcher.Query(query, ct);
             return result is not null ? Results.Ok(result) : Results.NotFound();
-        });
+        })
+        .WithName("GetPhoto")
+        .WithSummary("Foto nach ID abrufen")
+        .Produces<PhotoDto>(StatusCodes.Status200OK)
+        .Produces(StatusCodes.Status404NotFound);
 
-        group.MapDelete("/photos/{photoId:guid}", async (
+        group.MapDelete("/installations/{installationId:guid}/photos/{photoId:guid}", async (
             Guid photoId,
             Guid installationId,
             IDispatcher dispatcher,
@@ -77,6 +92,10 @@ public static class PhotoEndpoints
             var command = new RemovePhotoCommand(installationId, photoId);
             await dispatcher.Send(command, ct);
             return Results.NoContent();
-        });
+        })
+        .WithName("RemovePhoto")
+        .WithSummary("Foto von einer Installation entfernen")
+        .Produces(StatusCodes.Status204NoContent)
+        .Produces(StatusCodes.Status404NotFound);
     }
 }

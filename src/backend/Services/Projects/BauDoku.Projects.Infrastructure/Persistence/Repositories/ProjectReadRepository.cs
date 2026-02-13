@@ -7,17 +7,17 @@ namespace BauDoku.Projects.Infrastructure.Persistence.Repositories;
 
 public sealed class ProjectReadRepository : IProjectReadRepository
 {
-    private readonly ProjectsDbContext _context;
+    private readonly ProjectsDbContext context;
 
     public ProjectReadRepository(ProjectsDbContext context)
     {
-        _context = context;
+        this.context = context;
     }
 
     public async Task<PagedResult<ProjectListItemDto>> ListAsync(
         string? search, int page, int pageSize, CancellationToken cancellationToken = default)
     {
-        var query = _context.Projects.AsNoTracking();
+        var query = context.Projects.AsNoTracking();
 
         if (!string.IsNullOrWhiteSpace(search))
         {

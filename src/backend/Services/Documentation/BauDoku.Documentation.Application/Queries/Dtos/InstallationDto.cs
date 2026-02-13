@@ -19,7 +19,7 @@ public sealed record InstallationDto(
     string QualityGrade,
     string? Description,
     string? CableType,
-    int? CrossSection,
+    decimal? CrossSection,
     string? CableColor,
     int? ConductorCount,
     int? DepthMm,

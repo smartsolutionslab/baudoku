@@ -4,14 +4,14 @@ namespace BauDoku.Projects.Domain.Rules;
 
 public sealed class ProjectMustHaveUniqueName : IBusinessRule
 {
-    private readonly bool _nameAlreadyExists;
+    private readonly bool nameAlreadyExists;
 
     public ProjectMustHaveUniqueName(bool nameAlreadyExists)
     {
-        _nameAlreadyExists = nameAlreadyExists;
+        this.nameAlreadyExists = nameAlreadyExists;
     }
 
-    public bool IsBroken() => _nameAlreadyExists;
+    public bool IsBroken() => nameAlreadyExists;
 
     public string Message => "Ein Projekt mit diesem Namen existiert bereits.";
 }

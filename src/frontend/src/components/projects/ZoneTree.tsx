@@ -2,11 +2,12 @@ import React, { useState, useCallback } from "react";
 import { View } from "react-native";
 import { ZoneCard } from "./ZoneCard";
 import type { ZoneNode } from "../../hooks/useZoneTree";
+import type { ZoneId } from "../../types/branded";
 
-interface ZoneTreeProps {
+type ZoneTreeProps = {
   nodes: ZoneNode[];
-  onZonePress: (zoneId: string) => void;
-}
+  onZonePress: (zoneId: ZoneId) => void;
+};
 
 export function ZoneTree({ nodes, onZonePress }: ZoneTreeProps) {
   const [collapsed, setCollapsed] = useState<Set<string>>(new Set());

@@ -4,7 +4,7 @@ using BauDoku.Documentation.Domain.ValueObjects;
 namespace BauDoku.Documentation.Domain.Events;
 
 public sealed record InstallationDocumented(
-    InstallationId InstallationId,
-    Guid ProjectId,
+    InstallationIdentifier InstallationIdentifier,
+    ProjectIdentifier ProjectIdentifier,
     InstallationType Type,
     DateTime OccurredOn) : IDomainEvent;

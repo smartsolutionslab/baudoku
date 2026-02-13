@@ -6,7 +6,7 @@ namespace BauDoku.Sync.Application.Contracts;
 public interface ISyncBatchReadRepository
 {
     Task<List<ConflictDto>> GetConflictsAsync(
-        DeviceId? deviceId,
+        DeviceIdentifier? deviceId,
         ConflictStatus? status,
         CancellationToken cancellationToken = default);
 }

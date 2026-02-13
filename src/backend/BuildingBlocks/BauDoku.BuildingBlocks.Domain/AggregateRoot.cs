@@ -2,13 +2,13 @@ namespace BauDoku.BuildingBlocks.Domain;
 
 public abstract class AggregateRoot<TId> : Entity<TId>, IAggregateRoot where TId : ValueObject
 {
-    private readonly List<IDomainEvent> _domainEvents = [];
+    private readonly List<IDomainEvent> domainEvents = [];
 
-    public IReadOnlyList<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
+    public IReadOnlyList<IDomainEvent> DomainEvents => domainEvents.AsReadOnly();
 
-    protected void AddDomainEvent(IDomainEvent domainEvent) => _domainEvents.Add(domainEvent);
+    protected void AddDomainEvent(IDomainEvent domainEvent) => domainEvents.Add(domainEvent);
 
-    public void ClearDomainEvents() => _domainEvents.Clear();
+    public void ClearDomainEvents() => domainEvents.Clear();
 
     protected static void CheckRule(IBusinessRule rule)
     {

@@ -6,21 +6,21 @@ namespace BauDoku.Documentation.Application.Commands.InitChunkedUpload;
 
 public sealed class InitChunkedUploadCommandHandler : ICommandHandler<InitChunkedUploadCommand, Guid>
 {
-    private readonly IInstallationRepository _installationRepository;
-    private readonly IChunkedUploadStorage _chunkedUploadStorage;
+    private readonly IInstallationRepository installationRepository;
+    private readonly IChunkedUploadStorage chunkedUploadStorage;
 
     public InitChunkedUploadCommandHandler(
         IInstallationRepository installationRepository,
         IChunkedUploadStorage chunkedUploadStorage)
     {
-        _installationRepository = installationRepository;
-        _chunkedUploadStorage = chunkedUploadStorage;
+        this.installationRepository = installationRepository;
+        this.chunkedUploadStorage = chunkedUploadStorage;
     }
 
     public async Task<Guid> Handle(InitChunkedUploadCommand command, CancellationToken cancellationToken)
     {
-        var installationId = new InstallationId(command.InstallationId);
-        _ = await _installationRepository.GetByIdAsync(installationId, cancellationToken)
+        var installationId = InstallationIdentifier.From(command.InstallationId);
+        _ = await installationRepository.GetByIdAsync(installationId, cancellationToken)
             ?? throw new InvalidOperationException($"Installation mit ID {command.InstallationId} nicht gefunden.");
 
         var session = new ChunkedUploadSession(
@@ -40,7 +40,7 @@ public sealed class InitChunkedUploadCommandHandler : ICommandHandler<InitChunke
             GpsSource: command.GpsSource,
             CreatedAt: DateTime.UtcNow);
 
-        var sessionId = await _chunkedUploadStorage.InitSessionAsync(session, cancellationToken);
+        var sessionId = await chunkedUploadStorage.InitSessionAsync(session, cancellationToken);
         return sessionId;
     }
 }

@@ -10,9 +10,9 @@ public sealed class ZoneTypeTests
     [InlineData("floor")]
     [InlineData("room")]
     [InlineData("trench")]
-    public void Create_WithValidType_ShouldSucceed(string value)
+    public void From_WithValidType_ShouldSucceed(string value)
     {
-        var type = new ZoneType(value);
+        var type = ZoneType.From(value);
 
         type.Value.Should().Be(value);
     }
@@ -21,17 +21,17 @@ public sealed class ZoneTypeTests
     [InlineData(null)]
     [InlineData("")]
     [InlineData("   ")]
-    public void Create_WithEmptyType_ShouldThrow(string? value)
+    public void From_WithEmptyType_ShouldThrow(string? value)
     {
-        var act = () => new ZoneType(value!);
+        var act = () => ZoneType.From(value!);
 
         act.Should().Throw<ArgumentException>();
     }
 
     [Fact]
-    public void Create_WithInvalidType_ShouldThrow()
+    public void From_WithInvalidType_ShouldThrow()
     {
-        var act = () => new ZoneType("invalid");
+        var act = () => ZoneType.From("invalid");
 
         act.Should().Throw<ArgumentException>();
     }

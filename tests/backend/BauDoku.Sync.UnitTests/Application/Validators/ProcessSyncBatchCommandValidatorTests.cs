@@ -7,7 +7,7 @@ namespace BauDoku.Sync.UnitTests.Application.Validators;
 
 public sealed class ProcessSyncBatchCommandValidatorTests
 {
-    private readonly ProcessSyncBatchCommandValidator _validator = new();
+    private readonly ProcessSyncBatchCommandValidator validator = new();
 
     private static SyncDeltaDto CreateValidDelta() =>
         new("project", Guid.NewGuid(), "create", 0, """{"name":"Test"}""", DateTime.UtcNow);
@@ -18,7 +18,7 @@ public sealed class ProcessSyncBatchCommandValidatorTests
     [Fact]
     public void ValidCommand_ShouldHaveNoErrors()
     {
-        var result = _validator.TestValidate(CreateValidCommand());
+        var result = validator.TestValidate(CreateValidCommand());
         result.ShouldNotHaveAnyValidationErrors();
     }
 
@@ -29,21 +29,21 @@ public sealed class ProcessSyncBatchCommandValidatorTests
     public void DeviceId_WhenEmpty_ShouldHaveError(string? deviceId)
     {
         var cmd = CreateValidCommand() with { DeviceId = deviceId! };
-        _validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.DeviceId);
+        validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.DeviceId);
     }
 
     [Fact]
     public void DeviceId_WhenTooLong_ShouldHaveError()
     {
-        var cmd = CreateValidCommand() with { DeviceId = new string('a', DeviceId.MaxLength + 1) };
-        _validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.DeviceId);
+        var cmd = CreateValidCommand() with { DeviceId = new string('a', DeviceIdentifier.MaxLength + 1) };
+        validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.DeviceId);
     }
 
     [Fact]
     public void Deltas_WhenEmpty_ShouldHaveError()
     {
         var cmd = CreateValidCommand() with { Deltas = [] };
-        _validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.Deltas);
+        validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.Deltas);
     }
 
     [Fact]
@@ -51,7 +51,7 @@ public sealed class ProcessSyncBatchCommandValidatorTests
     {
         var delta = CreateValidDelta() with { EntityType = "" };
         var cmd = CreateValidCommand() with { Deltas = [delta] };
-        var result = _validator.TestValidate(cmd);
+        var result = validator.TestValidate(cmd);
         result.ShouldHaveValidationErrorFor("Deltas[0].EntityType");
     }
 
@@ -60,7 +60,7 @@ public sealed class ProcessSyncBatchCommandValidatorTests
     {
         var delta = CreateValidDelta() with { EntityId = Guid.Empty };
         var cmd = CreateValidCommand() with { Deltas = [delta] };
-        var result = _validator.TestValidate(cmd);
+        var result = validator.TestValidate(cmd);
         result.ShouldHaveValidationErrorFor("Deltas[0].EntityId");
     }
 
@@ -69,7 +69,7 @@ public sealed class ProcessSyncBatchCommandValidatorTests
     {
         var delta = CreateValidDelta() with { Operation = "" };
         var cmd = CreateValidCommand() with { Deltas = [delta] };
-        var result = _validator.TestValidate(cmd);
+        var result = validator.TestValidate(cmd);
         result.ShouldHaveValidationErrorFor("Deltas[0].Operation");
     }
 
@@ -78,7 +78,7 @@ public sealed class ProcessSyncBatchCommandValidatorTests
     {
         var delta = CreateValidDelta() with { BaseVersion = -1 };
         var cmd = CreateValidCommand() with { Deltas = [delta] };
-        var result = _validator.TestValidate(cmd);
+        var result = validator.TestValidate(cmd);
         result.ShouldHaveValidationErrorFor("Deltas[0].BaseVersion");
     }
 
@@ -87,7 +87,7 @@ public sealed class ProcessSyncBatchCommandValidatorTests
     {
         var delta = CreateValidDelta() with { Payload = "" };
         var cmd = CreateValidCommand() with { Deltas = [delta] };
-        var result = _validator.TestValidate(cmd);
+        var result = validator.TestValidate(cmd);
         result.ShouldHaveValidationErrorFor("Deltas[0].Payload");
     }
 
@@ -96,7 +96,7 @@ public sealed class ProcessSyncBatchCommandValidatorTests
     {
         var delta = CreateValidDelta() with { Payload = new string('x', DeltaPayload.MaxLength + 1) };
         var cmd = CreateValidCommand() with { Deltas = [delta] };
-        var result = _validator.TestValidate(cmd);
+        var result = validator.TestValidate(cmd);
         result.ShouldHaveValidationErrorFor("Deltas[0].Payload");
     }
 }

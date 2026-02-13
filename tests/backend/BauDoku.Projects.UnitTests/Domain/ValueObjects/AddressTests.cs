@@ -8,7 +8,7 @@ public sealed class AddressTests
     [Fact]
     public void Create_WithValidData_ShouldSucceed()
     {
-        var address = new Address("Musterstraße 1", "Berlin", "10115");
+        var address = Address.Create("Musterstraße 1", "Berlin", "10115");
 
         address.Street.Should().Be("Musterstraße 1");
         address.City.Should().Be("Berlin");
@@ -21,7 +21,7 @@ public sealed class AddressTests
     [InlineData("   ")]
     public void Create_WithEmptyStreet_ShouldThrow(string? street)
     {
-        var act = () => new Address(street!, "Berlin", "10115");
+        var act = () => Address.Create(street!, "Berlin", "10115");
 
         act.Should().Throw<ArgumentException>();
     }
@@ -32,7 +32,7 @@ public sealed class AddressTests
     [InlineData("   ")]
     public void Create_WithEmptyCity_ShouldThrow(string? city)
     {
-        var act = () => new Address("Musterstraße 1", city!, "10115");
+        var act = () => Address.Create("Musterstraße 1", city!, "10115");
 
         act.Should().Throw<ArgumentException>();
     }
@@ -43,7 +43,7 @@ public sealed class AddressTests
     [InlineData("   ")]
     public void Create_WithEmptyZipCode_ShouldThrow(string? zipCode)
     {
-        var act = () => new Address("Musterstraße 1", "Berlin", zipCode!);
+        var act = () => Address.Create("Musterstraße 1", "Berlin", zipCode!);
 
         act.Should().Throw<ArgumentException>();
     }
@@ -53,7 +53,7 @@ public sealed class AddressTests
     {
         var longStreet = new string('a', Address.MaxStreetLength + 1);
 
-        var act = () => new Address(longStreet, "Berlin", "10115");
+        var act = () => Address.Create(longStreet, "Berlin", "10115");
 
         act.Should().Throw<ArgumentException>();
     }
@@ -63,7 +63,7 @@ public sealed class AddressTests
     {
         var longCity = new string('a', Address.MaxCityLength + 1);
 
-        var act = () => new Address("Musterstraße 1", longCity, "10115");
+        var act = () => Address.Create("Musterstraße 1", longCity, "10115");
 
         act.Should().Throw<ArgumentException>();
     }
@@ -73,7 +73,7 @@ public sealed class AddressTests
     {
         var longZip = new string('1', Address.MaxZipCodeLength + 1);
 
-        var act = () => new Address("Musterstraße 1", "Berlin", longZip);
+        var act = () => Address.Create("Musterstraße 1", "Berlin", longZip);
 
         act.Should().Throw<ArgumentException>();
     }
@@ -85,7 +85,7 @@ public sealed class AddressTests
         var city = new string('b', Address.MaxCityLength);
         var zip = new string('1', Address.MaxZipCodeLength);
 
-        var address = new Address(street, city, zip);
+        var address = Address.Create(street, city, zip);
 
         address.Street.Should().HaveLength(Address.MaxStreetLength);
         address.City.Should().HaveLength(Address.MaxCityLength);

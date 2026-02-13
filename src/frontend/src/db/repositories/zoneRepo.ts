@@ -1,41 +1,42 @@
-import { eq, and } from "drizzle-orm";
+import { eq, and, isNull } from "drizzle-orm";
 import { db } from "../client";
 import { zones } from "../schema";
 import { generateId } from "../../utils/uuid";
 import { createOutboxEntry } from "./syncRepo";
 import type { Zone, NewZone } from "./types";
+import type { ProjectId, ZoneId } from "../../types/branded";
 
-export async function getByProjectId(projectId: string): Promise<Zone[]> {
+export async function getByProjectId(projectId: ProjectId): Promise<Zone[]> {
   return db
     .select()
     .from(zones)
     .where(eq(zones.projectId, projectId))
-    .all();
+    .all() as unknown as Zone[];
 }
 
-export async function getById(id: string): Promise<Zone | undefined> {
-  return db.select().from(zones).where(eq(zones.id, id)).get();
+export async function getById(id: ZoneId): Promise<Zone | undefined> {
+  return db.select().from(zones).where(eq(zones.id, id)).get() as unknown as Zone | undefined;
 }
 
-export async function getChildren(parentZoneId: string): Promise<Zone[]> {
+export async function getChildren(parentZoneId: ZoneId): Promise<Zone[]> {
   return db
     .select()
     .from(zones)
     .where(eq(zones.parentZoneId, parentZoneId))
-    .all();
+    .all() as unknown as Zone[];
 }
 
-export async function getRootZones(projectId: string): Promise<Zone[]> {
+export async function getRootZones(projectId: ProjectId): Promise<Zone[]> {
   return db
     .select()
     .from(zones)
     .where(
       and(
         eq(zones.projectId, projectId),
-        eq(zones.parentZoneId, ""),
+        isNull(zones.parentZoneId),
       )
     )
-    .all();
+    .all() as unknown as Zone[];
 }
 
 export async function create(
@@ -50,11 +51,11 @@ export async function create(
   await db.insert(zones).values(zone);
   await createOutboxEntry("zone", zone.id, "create", zone);
 
-  return zone as Zone;
+  return zone as unknown as Zone;
 }
 
 export async function update(
-  id: string,
+  id: ZoneId,
   data: Partial<Omit<NewZone, "id" | "version" | "projectId">>
 ): Promise<Zone | undefined> {
   const existing = await getById(id);
@@ -71,7 +72,7 @@ export async function update(
   return { ...existing, ...updated } as Zone;
 }
 
-export async function remove(id: string): Promise<void> {
+export async function remove(id: ZoneId): Promise<void> {
   await db.delete(zones).where(eq(zones.id, id));
   await createOutboxEntry("zone", id, "delete", { id });
 }

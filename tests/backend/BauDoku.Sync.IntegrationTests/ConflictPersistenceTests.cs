@@ -9,26 +9,26 @@ namespace BauDoku.Sync.IntegrationTests;
 [Collection(PostgreSqlCollection.Name)]
 public sealed class ConflictPersistenceTests
 {
-    private readonly PostgreSqlFixture _fixture;
+    private readonly PostgreSqlFixture fixture;
 
     public ConflictPersistenceTests(PostgreSqlFixture fixture)
     {
-        _fixture = fixture;
+        this.fixture = fixture;
     }
 
-    private static SyncBatch CreateBatchWithConflict(out ConflictRecordId conflictId)
+    private static SyncBatch CreateBatchWithConflict(out ConflictRecordIdentifier conflictId)
     {
-        var batch = SyncBatch.Create(SyncBatchId.New(), new DeviceId("device-conflict-test"), DateTime.UtcNow);
-        conflictId = ConflictRecordId.New();
-        var entityRef = new EntityReference(EntityType.Project, Guid.NewGuid());
+        var batch = SyncBatch.Create(SyncBatchIdentifier.New(), DeviceIdentifier.From("device-conflict-test"), DateTime.UtcNow);
+        conflictId = ConflictRecordIdentifier.New();
+        var entityRef = EntityReference.Create(EntityType.Project, Guid.NewGuid());
 
         batch.AddConflict(
             conflictId,
             entityRef,
-            new DeltaPayload("""{"client":"data"}"""),
-            new DeltaPayload("""{"server":"data"}"""),
-            new SyncVersion(1),
-            new SyncVersion(5));
+            DeltaPayload.From("""{"client":"data"}"""),
+            DeltaPayload.From("""{"server":"data"}"""),
+            SyncVersion.From(1),
+            SyncVersion.From(5));
 
         return batch;
     }
@@ -38,13 +38,13 @@ public sealed class ConflictPersistenceTests
     {
         var batch = CreateBatchWithConflict(out var conflictId);
 
-        await using (var writeContext = _fixture.CreateContext())
+        await using (var writeContext = fixture.CreateContext())
         {
             writeContext.SyncBatches.Add(batch);
             await writeContext.SaveChangesAsync();
         }
 
-        await using (var readContext = _fixture.CreateContext())
+        await using (var readContext = fixture.CreateContext())
         {
             var loaded = await readContext.SyncBatches
                 .Include(b => b.Conflicts)
@@ -67,24 +67,23 @@ public sealed class ConflictPersistenceTests
     {
         var batch = CreateBatchWithConflict(out var conflictId);
 
-        await using (var writeContext = _fixture.CreateContext())
+        await using (var writeContext = fixture.CreateContext())
         {
             writeContext.SyncBatches.Add(batch);
             await writeContext.SaveChangesAsync();
         }
 
-        await using (var updateContext = _fixture.CreateContext())
+        await using (var updateContext = fixture.CreateContext())
         {
             var loaded = await updateContext.SyncBatches
                 .Include(b => b.Conflicts)
                 .FirstAsync(b => b.Id == batch.Id);
 
-            var conflict = loaded.Conflicts.First(c => c.Id == conflictId);
-            conflict.Resolve(ConflictResolutionStrategy.ClientWins);
+            loaded.ResolveConflict(conflictId, ConflictResolutionStrategy.ClientWins);
             await updateContext.SaveChangesAsync();
         }
 
-        await using (var readContext = _fixture.CreateContext())
+        await using (var readContext = fixture.CreateContext())
         {
             var loaded = await readContext.SyncBatches
                 .Include(b => b.Conflicts)
@@ -100,27 +99,27 @@ public sealed class ConflictPersistenceTests
     public async Task FilterByDeviceId_ShouldReturnOnlyMatchingBatches()
     {
         var deviceId = $"device-filter-{Guid.NewGuid():N}";
-        var batch = SyncBatch.Create(SyncBatchId.New(), new DeviceId(deviceId), DateTime.UtcNow);
+        var batch = SyncBatch.Create(SyncBatchIdentifier.New(), DeviceIdentifier.From(deviceId), DateTime.UtcNow);
 
         batch.AddConflict(
-            ConflictRecordId.New(),
-            new EntityReference(EntityType.Installation, Guid.NewGuid()),
-            new DeltaPayload("""{"c":"1"}"""),
-            new DeltaPayload("""{"s":"2"}"""),
-            new SyncVersion(0),
-            new SyncVersion(1));
+            ConflictRecordIdentifier.New(),
+            EntityReference.Create(EntityType.Installation, Guid.NewGuid()),
+            DeltaPayload.From("""{"c":"1"}"""),
+            DeltaPayload.From("""{"s":"2"}"""),
+            SyncVersion.From(0),
+            SyncVersion.From(1));
 
-        await using (var writeContext = _fixture.CreateContext())
+        await using (var writeContext = fixture.CreateContext())
         {
             writeContext.SyncBatches.Add(batch);
             await writeContext.SaveChangesAsync();
         }
 
-        await using (var readContext = _fixture.CreateContext())
+        await using (var readContext = fixture.CreateContext())
         {
             var batches = await readContext.SyncBatches
                 .Include(b => b.Conflicts)
-                .Where(b => b.DeviceId == new DeviceId(deviceId))
+                .Where(b => b.DeviceId == DeviceIdentifier.From(deviceId))
                 .ToListAsync();
 
             batches.Should().ContainSingle();
@@ -134,26 +133,25 @@ public sealed class ConflictPersistenceTests
         var batch = CreateBatchWithConflict(out var conflictId);
 
         // Add second conflict that will remain unresolved
-        var conflictId2 = ConflictRecordId.New();
+        var conflictId2 = ConflictRecordIdentifier.New();
         batch.AddConflict(
             conflictId2,
-            new EntityReference(EntityType.Zone, Guid.NewGuid()),
-            new DeltaPayload("""{"c":"x"}"""),
-            new DeltaPayload("""{"s":"y"}"""),
-            new SyncVersion(0),
-            new SyncVersion(2));
+            EntityReference.Create(EntityType.Zone, Guid.NewGuid()),
+            DeltaPayload.From("""{"c":"x"}"""),
+            DeltaPayload.From("""{"s":"y"}"""),
+            SyncVersion.From(0),
+            SyncVersion.From(2));
 
         // Resolve the first conflict
-        var conflict1 = batch.Conflicts.First(c => c.Id == conflictId);
-        conflict1.Resolve(ConflictResolutionStrategy.ServerWins);
+        batch.ResolveConflict(conflictId, ConflictResolutionStrategy.ServerWins);
 
-        await using (var writeContext = _fixture.CreateContext())
+        await using (var writeContext = fixture.CreateContext())
         {
             writeContext.SyncBatches.Add(batch);
             await writeContext.SaveChangesAsync();
         }
 
-        await using (var readContext = _fixture.CreateContext())
+        await using (var readContext = fixture.CreateContext())
         {
             var loaded = await readContext.SyncBatches
                 .Include(b => b.Conflicts)

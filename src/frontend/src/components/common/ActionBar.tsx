@@ -3,16 +3,16 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { Colors, Spacing, FontSize } from "../../styles/tokens";
 
-export interface ActionBarItem {
+export type ActionBarItem = {
   icon: React.ComponentProps<typeof FontAwesome>["name"];
   label: string;
   onPress: () => void;
   color?: string;
-}
+};
 
-interface ActionBarProps {
+type ActionBarProps = {
   actions: ActionBarItem[];
-}
+};
 
 export function ActionBar({ actions }: ActionBarProps) {
   return (

@@ -39,5 +39,8 @@ public sealed class EntityVersionEntryConfiguration : IEntityTypeConfiguration<E
 
         builder.HasIndex(e => e.LastModified)
             .HasDatabaseName("ix_entity_versions_last_modified");
+
+        builder.Property(e => e.RowVersion)
+            .IsRowVersion();
     }
 }

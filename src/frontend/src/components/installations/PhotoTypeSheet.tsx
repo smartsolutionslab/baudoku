@@ -18,11 +18,11 @@ const PHOTO_TYPES = [
 
 export type PhotoType = (typeof PHOTO_TYPES)[number]["value"];
 
-interface PhotoTypeSheetProps {
+type PhotoTypeSheetProps = {
   visible: boolean;
   onSelect: (type: PhotoType) => void;
   onClose: () => void;
-}
+};
 
 export function PhotoTypeSheet({
   visible,

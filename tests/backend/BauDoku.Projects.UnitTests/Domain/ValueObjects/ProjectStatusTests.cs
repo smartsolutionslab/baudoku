@@ -10,9 +10,9 @@ public sealed class ProjectStatusTests
     [InlineData("active")]
     [InlineData("completed")]
     [InlineData("archived")]
-    public void Create_WithValidStatus_ShouldSucceed(string value)
+    public void From_WithValidStatus_ShouldSucceed(string value)
     {
-        var status = new ProjectStatus(value);
+        var status = ProjectStatus.From(value);
 
         status.Value.Should().Be(value);
     }
@@ -21,17 +21,17 @@ public sealed class ProjectStatusTests
     [InlineData(null)]
     [InlineData("")]
     [InlineData("   ")]
-    public void Create_WithEmptyStatus_ShouldThrow(string? value)
+    public void From_WithEmptyStatus_ShouldThrow(string? value)
     {
-        var act = () => new ProjectStatus(value!);
+        var act = () => ProjectStatus.From(value!);
 
         act.Should().Throw<ArgumentException>();
     }
 
     [Fact]
-    public void Create_WithInvalidStatus_ShouldThrow()
+    public void From_WithInvalidStatus_ShouldThrow()
     {
-        var act = () => new ProjectStatus("invalid");
+        var act = () => ProjectStatus.From("invalid");
 
         act.Should().Throw<ArgumentException>();
     }

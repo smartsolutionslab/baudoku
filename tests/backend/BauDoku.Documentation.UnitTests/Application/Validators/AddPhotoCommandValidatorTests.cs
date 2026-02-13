@@ -6,7 +6,7 @@ namespace BauDoku.Documentation.UnitTests.Application.Validators;
 
 public sealed class AddPhotoCommandValidatorTests
 {
-    private readonly AddPhotoCommandValidator _validator = new();
+    private readonly AddPhotoCommandValidator validator = new();
 
     private static AddPhotoCommand CreateValidCommand() =>
         new(Guid.NewGuid(), "photo.jpg", "image/jpeg", 1024 * 100, "before",
@@ -15,7 +15,7 @@ public sealed class AddPhotoCommandValidatorTests
     [Fact]
     public void ValidCommand_ShouldHaveNoErrors()
     {
-        var result = _validator.TestValidate(CreateValidCommand());
+        var result = validator.TestValidate(CreateValidCommand());
         result.ShouldNotHaveAnyValidationErrors();
     }
 
@@ -23,7 +23,7 @@ public sealed class AddPhotoCommandValidatorTests
     public void InstallationId_WhenEmpty_ShouldHaveError()
     {
         var cmd = CreateValidCommand() with { InstallationId = Guid.Empty };
-        _validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.InstallationId);
+        validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.InstallationId);
     }
 
     [Theory]
@@ -32,28 +32,28 @@ public sealed class AddPhotoCommandValidatorTests
     public void FileName_WhenEmpty_ShouldHaveError(string? fileName)
     {
         var cmd = CreateValidCommand() with { FileName = fileName! };
-        _validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.FileName);
+        validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.FileName);
     }
 
     [Fact]
     public void FileName_WhenTooLong_ShouldHaveError()
     {
         var cmd = CreateValidCommand() with { FileName = new string('a', 256) };
-        _validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.FileName);
+        validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.FileName);
     }
 
     [Fact]
     public void ContentType_WhenEmpty_ShouldHaveError()
     {
         var cmd = CreateValidCommand() with { ContentType = "" };
-        _validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.ContentType);
+        validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.ContentType);
     }
 
     [Fact]
     public void ContentType_WhenNotAllowed_ShouldHaveError()
     {
         var cmd = CreateValidCommand() with { ContentType = "image/gif" };
-        _validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.ContentType);
+        validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.ContentType);
     }
 
     [Theory]
@@ -63,41 +63,41 @@ public sealed class AddPhotoCommandValidatorTests
     public void ContentType_WhenAllowed_ShouldNotHaveError(string contentType)
     {
         var cmd = CreateValidCommand() with { ContentType = contentType };
-        _validator.TestValidate(cmd).ShouldNotHaveValidationErrorFor(x => x.ContentType);
+        validator.TestValidate(cmd).ShouldNotHaveValidationErrorFor(x => x.ContentType);
     }
 
     [Fact]
     public void FileSize_WhenZero_ShouldHaveError()
     {
         var cmd = CreateValidCommand() with { FileSize = 0 };
-        _validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.FileSize);
+        validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.FileSize);
     }
 
     [Fact]
     public void FileSize_WhenExceeds50MB_ShouldHaveError()
     {
         var cmd = CreateValidCommand() with { FileSize = 50 * 1024 * 1024 + 1 };
-        _validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.FileSize);
+        validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.FileSize);
     }
 
     [Fact]
     public void PhotoType_WhenEmpty_ShouldHaveError()
     {
         var cmd = CreateValidCommand() with { PhotoType = "" };
-        _validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.PhotoType);
+        validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.PhotoType);
     }
 
     [Fact]
     public void Caption_WhenTooLong_ShouldHaveError()
     {
         var cmd = CreateValidCommand() with { Caption = new string('a', Caption.MaxLength + 1) };
-        _validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.Caption);
+        validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.Caption);
     }
 
     [Fact]
     public void Stream_WhenNull_ShouldHaveError()
     {
         var cmd = CreateValidCommand() with { Stream = null! };
-        _validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.Stream);
+        validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.Stream);
     }
 }

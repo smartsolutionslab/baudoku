@@ -7,7 +7,7 @@ public interface IEntityVersionReadStore
 {
     Task<List<ServerDeltaDto>> GetChangedSinceAsync(
         DateTime? since,
-        DeviceId? excludeDeviceId,
+        DeviceIdentifier? excludeDeviceId,
         int limit,
         CancellationToken cancellationToken = default);
 }

@@ -7,7 +7,7 @@ public sealed class ProcessSyncBatchCommandValidator : AbstractValidator<Process
 {
     public ProcessSyncBatchCommandValidator()
     {
-        RuleFor(x => x.DeviceId).NotEmpty().MaximumLength(DeviceId.MaxLength);
+        RuleFor(x => x.DeviceId).NotEmpty().MaximumLength(DeviceIdentifier.MaxLength);
         RuleFor(x => x.Deltas).NotEmpty();
 
         RuleForEach(x => x.Deltas).ChildRules(delta =>

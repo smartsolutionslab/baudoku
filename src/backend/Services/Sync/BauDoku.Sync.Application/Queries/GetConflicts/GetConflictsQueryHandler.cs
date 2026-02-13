@@ -7,20 +7,20 @@ namespace BauDoku.Sync.Application.Queries.GetConflicts;
 
 public sealed class GetConflictsQueryHandler : IQueryHandler<GetConflictsQuery, List<ConflictDto>>
 {
-    private readonly ISyncBatchReadRepository _readRepository;
+    private readonly ISyncBatchReadRepository readRepository;
 
     public GetConflictsQueryHandler(ISyncBatchReadRepository readRepository)
     {
-        _readRepository = readRepository;
+        this.readRepository = readRepository;
     }
 
     public async Task<List<ConflictDto>> Handle(
         GetConflictsQuery query,
         CancellationToken cancellationToken = default)
     {
-        var deviceId = query.DeviceId is not null ? new DeviceId(query.DeviceId) : null;
-        var status = query.Status is not null ? new ConflictStatus(query.Status) : null;
+        var deviceId = query.DeviceId is not null ? DeviceIdentifier.From(query.DeviceId) : null;
+        var status = query.Status is not null ? ConflictStatus.From(query.Status) : null;
 
-        return await _readRepository.GetConflictsAsync(deviceId, status, cancellationToken);
+        return await readRepository.GetConflictsAsync(deviceId, status, cancellationToken);
     }
 }

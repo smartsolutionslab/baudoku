@@ -6,9 +6,9 @@ namespace BauDoku.Documentation.UnitTests.Domain.ValueObjects;
 public sealed class SerialNumberTests
 {
     [Fact]
-    public void Create_WithValidNumber_ShouldSucceed()
+    public void From_WithValidNumber_ShouldSucceed()
     {
-        var serial = new SerialNumber("SN-12345");
+        var serial = SerialNumber.From("SN-12345");
 
         serial.Value.Should().Be("SN-12345");
     }
@@ -17,29 +17,29 @@ public sealed class SerialNumberTests
     [InlineData(null)]
     [InlineData("")]
     [InlineData("   ")]
-    public void Create_WithEmptyNumber_ShouldThrow(string? value)
+    public void From_WithEmptyNumber_ShouldThrow(string? value)
     {
-        var act = () => new SerialNumber(value!);
+        var act = () => SerialNumber.From(value!);
 
         act.Should().Throw<ArgumentException>();
     }
 
     [Fact]
-    public void Create_WithTooLongNumber_ShouldThrow()
+    public void From_WithTooLongNumber_ShouldThrow()
     {
         var longNumber = new string('1', SerialNumber.MaxLength + 1);
 
-        var act = () => new SerialNumber(longNumber);
+        var act = () => SerialNumber.From(longNumber);
 
         act.Should().Throw<ArgumentException>();
     }
 
     [Fact]
-    public void Create_WithMaxLengthNumber_ShouldSucceed()
+    public void From_WithMaxLengthNumber_ShouldSucceed()
     {
         var maxNumber = new string('1', SerialNumber.MaxLength);
 
-        var serial = new SerialNumber(maxNumber);
+        var serial = SerialNumber.From(maxNumber);
 
         serial.Value.Should().HaveLength(SerialNumber.MaxLength);
     }

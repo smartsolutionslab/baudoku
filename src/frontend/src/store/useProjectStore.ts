@@ -2,31 +2,32 @@ import { create } from "zustand";
 import * as projectRepo from "../db/repositories/projectRepo";
 import * as zoneRepo from "../db/repositories/zoneRepo";
 import type { Project, Zone, NewProject, NewZone } from "../db/repositories/types";
+import { type ProjectId, type ZoneId, projectId as toProjectId } from "../types/branded";
 
-interface ProjectState {
+type ProjectState = {
   projects: Project[];
   zones: Zone[];
   loading: boolean;
 
   loadProjects: () => Promise<void>;
-  loadZonesByProject: (projectId: string) => Promise<void>;
+  loadZonesByProject: (projectId: ProjectId) => Promise<void>;
 
   createProject: (
     data: Omit<NewProject, "id" | "createdAt" | "updatedAt" | "version">
   ) => Promise<Project>;
   updateProject: (
-    id: string,
+    id: ProjectId,
     data: Partial<Omit<NewProject, "id" | "createdAt" | "updatedAt" | "version" | "createdBy">>
   ) => Promise<Project | undefined>;
-  deleteProject: (id: string) => Promise<void>;
+  deleteProject: (id: ProjectId) => Promise<void>;
 
   createZone: (data: Omit<NewZone, "id" | "version">) => Promise<Zone>;
   updateZone: (
-    id: string,
+    id: ZoneId,
     data: Partial<Omit<NewZone, "id" | "version" | "projectId">>
   ) => Promise<Zone | undefined>;
-  deleteZone: (id: string) => Promise<void>;
-}
+  deleteZone: (id: ZoneId) => Promise<void>;
+};
 
 export const useProjectStore = create<ProjectState>((set) => ({
   projects: [],
@@ -66,7 +67,7 @@ export const useProjectStore = create<ProjectState>((set) => ({
 
   createZone: async (data) => {
     const zone = await zoneRepo.create(data);
-    const zones = await zoneRepo.getByProjectId(data.projectId);
+    const zones = await zoneRepo.getByProjectId(toProjectId(data.projectId));
     set({ zones });
     return zone;
   },

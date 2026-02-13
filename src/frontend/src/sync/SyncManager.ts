@@ -7,14 +7,16 @@ import { uploadPhotoChunked } from "./chunkedUpload";
 import { useUploadStore } from "../store/useUploadStore";
 import type { SyncDeltaDto, ProcessSyncBatchResult, ChangeSetResult } from "./syncApi";
 
-export interface SyncResult {
+export type SyncResult = {
   pushed: number;
   pulled: number;
   conflicts: number;
   errors: string[];
-}
+};
 
 export class SyncManager {
+  private syncing = false;
+
   async push(): Promise<{
     appliedCount: number;
     conflictCount: number;
@@ -145,19 +147,28 @@ export class SyncManager {
   }
 
   async sync(): Promise<SyncResult> {
-    const pushResult = await this.push();
-    const photoResult = await this.pushPhotos();
-    const pullResult = await this.pull();
+    if (this.syncing) {
+      return { pushed: 0, pulled: 0, conflicts: 0, errors: [] };
+    }
 
-    return {
-      pushed: pushResult.appliedCount + photoResult.uploaded,
-      pulled: pullResult.pulled,
-      conflicts: pushResult.conflictCount,
-      errors: [
-        ...pushResult.errors,
-        ...photoResult.errors,
-        ...pullResult.errors,
-      ],
-    };
+    this.syncing = true;
+    try {
+      const pushResult = await this.push();
+      const photoResult = await this.pushPhotos();
+      const pullResult = await this.pull();
+
+      return {
+        pushed: pushResult.appliedCount + photoResult.uploaded,
+        pulled: pullResult.pulled,
+        conflicts: pushResult.conflictCount,
+        errors: [
+          ...pushResult.errors,
+          ...photoResult.errors,
+          ...pullResult.errors,
+        ],
+      };
+    } finally {
+      this.syncing = false;
+    }
   }
 }

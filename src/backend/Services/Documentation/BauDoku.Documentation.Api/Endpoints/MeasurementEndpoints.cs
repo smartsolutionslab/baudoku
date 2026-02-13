@@ -1,6 +1,7 @@
 using BauDoku.BuildingBlocks.Application.Dispatcher;
 using BauDoku.Documentation.Application.Commands.RecordMeasurement;
 using BauDoku.Documentation.Application.Commands.RemoveMeasurement;
+using BauDoku.Documentation.Application.Queries.Dtos;
 using BauDoku.Documentation.Application.Queries.GetMeasurements;
 
 namespace BauDoku.Documentation.Api.Endpoints;
@@ -31,7 +32,11 @@ public static class MeasurementEndpoints
             var measurementId = await dispatcher.Send(command, ct);
             return Results.Created(
                 $"/api/documentation/installations/{installationId}/measurements", new { id = measurementId });
-        });
+        })
+        .WithName("RecordMeasurement")
+        .WithSummary("Messung zu einer Installation hinzufuegen")
+        .Produces<object>(StatusCodes.Status201Created)
+        .ProducesValidationProblem();
 
         group.MapGet("/installations/{installationId:guid}/measurements", async (
             Guid installationId,
@@ -41,9 +46,12 @@ public static class MeasurementEndpoints
             var query = new GetMeasurementsQuery(installationId);
             var result = await dispatcher.Query(query, ct);
             return Results.Ok(result);
-        });
+        })
+        .WithName("GetMeasurements")
+        .WithSummary("Messungen einer Installation auflisten")
+        .Produces<IReadOnlyList<MeasurementDto>>(StatusCodes.Status200OK);
 
-        group.MapDelete("/measurements/{measurementId:guid}", async (
+        group.MapDelete("/installations/{installationId:guid}/measurements/{measurementId:guid}", async (
             Guid measurementId,
             Guid installationId,
             IDispatcher dispatcher,
@@ -52,7 +60,11 @@ public static class MeasurementEndpoints
             var command = new RemoveMeasurementCommand(installationId, measurementId);
             await dispatcher.Send(command, ct);
             return Results.NoContent();
-        });
+        })
+        .WithName("RemoveMeasurement")
+        .WithSummary("Messung von einer Installation entfernen")
+        .Produces(StatusCodes.Status204NoContent)
+        .Produces(StatusCodes.Status404NotFound);
     }
 }
 

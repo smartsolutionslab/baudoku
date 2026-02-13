@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import type { Photo } from "../../db/repositories/types";
+import type { PhotoId } from "../../types/branded";
 import { StatusBadge } from "../common/StatusBadge";
 import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
 
@@ -23,13 +24,13 @@ const photoTypeLabels: Record<string, string> = {
   overview: "Übersicht",
 };
 
-interface PhotoViewerProps {
+type PhotoViewerProps = {
   photo: Photo | null;
   visible: boolean;
   onClose: () => void;
   onDelete: (photo: Photo) => void;
-  onSaveAnnotation?: (photoId: string, annotation: string) => void;
-}
+  onSaveAnnotation?: (photoId: PhotoId, annotation: string) => void;
+};
 
 export function PhotoViewer({
   photo,

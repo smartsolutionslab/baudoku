@@ -1,20 +1,17 @@
-import React, { useState, useCallback } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
   ScrollView,
   TouchableOpacity,
   StyleSheet,
-  Alert,
 } from "react-native";
 import { FormField } from "../common/FormField";
 import { FormPicker } from "../common/FormPicker";
 import { GpsButton } from "./GpsButton";
 import { useGpsCapture, type GpsPosition } from "../../hooks/useGpsCapture";
-import {
-  installationSchema,
-  type InstallationFormData,
-} from "../../validation/schemas";
+import { useInstallationForm } from "../../hooks/useInstallationForm";
+import type { InstallationFormData } from "../../validation/schemas";
 import { Colors, Spacing, FontSize } from "../../styles/tokens";
 
 const statusOptions = [
@@ -32,13 +29,13 @@ const phaseOptions = [
   { label: "PE", value: "PE" },
 ];
 
-interface InstallationFormProps {
+type InstallationFormProps = {
   onSubmit: (data: InstallationFormData, gps: GpsPosition | null) => Promise<void>;
   submitting?: boolean;
   initialValues?: Partial<InstallationFormData>;
   initialGps?: GpsPosition | null;
   submitLabel?: string;
-}
+};
 
 function CollapsibleSection({
   title,
@@ -57,7 +54,7 @@ function CollapsibleSection({
         onPress={() => setOpen(!open)}
       >
         <Text style={sectionStyles.title}>{title}</Text>
-        <Text style={sectionStyles.chevron}>{open ? "∨" : "›"}</Text>
+        <Text style={sectionStyles.chevron}>{open ? "\u2228" : "\u203A"}</Text>
       </TouchableOpacity>
       {open && <View style={sectionStyles.body}>{children}</View>}
     </View>
@@ -71,72 +68,21 @@ export function InstallationForm({
   initialGps,
   submitLabel,
 }: InstallationFormProps) {
-  const [form, setForm] = useState<Record<string, unknown>>({
-    status: "in_progress",
-    ...initialValues,
-  });
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const {
+    form,
+    errors,
+    set,
+    str,
+    handleSubmit,
+    hasComponentValues,
+    hasCableValues,
+    hasElectricalValues,
+  } = useInstallationForm({ initialValues, onSubmit });
+
   const gps = useGpsCapture();
 
   // Use initialGps if provided and no new capture has been done
   const currentGps = gps.position ?? initialGps ?? null;
-
-  const hasComponentValues =
-    !!initialValues?.manufacturer ||
-    !!initialValues?.model ||
-    !!initialValues?.serialNumber;
-  const hasCableValues =
-    !!initialValues?.cableType ||
-    initialValues?.crossSectionMm2 != null ||
-    initialValues?.lengthM != null;
-  const hasElectricalValues =
-    !!initialValues?.circuitId ||
-    !!initialValues?.fuseType ||
-    initialValues?.fuseRatingA != null ||
-    initialValues?.voltageV != null ||
-    initialValues?.phase != null;
-
-  const set = useCallback((key: string, value: unknown) => {
-    setForm((prev) => ({ ...prev, [key]: value }));
-    setErrors((prev) => {
-      const next = { ...prev };
-      delete next[key];
-      return next;
-    });
-  }, []);
-
-  const str = (key: string) => {
-    const val = form[key];
-    if (val == null) return "";
-    return String(val);
-  };
-
-  const handleSubmit = useCallback(async () => {
-    // Strip empty strings before validation
-    const cleaned: Record<string, unknown> = {};
-    for (const [k, v] of Object.entries(form)) {
-      if (typeof v === "string" && v.trim() === "") continue;
-      cleaned[k] = v;
-    }
-
-    const result = installationSchema.safeParse(cleaned);
-    if (!result.success) {
-      const fieldErrors: Record<string, string> = {};
-      for (const issue of result.error.issues) {
-        const key = issue.path[0]?.toString();
-        if (key && !fieldErrors[key]) {
-          fieldErrors[key] = issue.message;
-        }
-      }
-      setErrors(fieldErrors);
-      return;
-    }
-    try {
-      await onSubmit(result.data, currentGps);
-    } catch {
-      Alert.alert("Fehler", "Installation konnte nicht gespeichert werden.");
-    }
-  }, [form, onSubmit, currentGps]);
 
   return (
     <ScrollView
@@ -191,14 +137,14 @@ export function InstallationForm({
           placeholder="z.B. NYY-J 5x16"
         />
         <FormField
-          label="Querschnitt (mm²)"
+          label="Querschnitt (mm\u00B2)"
           value={str("crossSectionMm2")}
           onChangeText={(v) => set("crossSectionMm2", v)}
           keyboardType="decimal-pad"
           placeholder="16"
         />
         <FormField
-          label="Länge (m)"
+          label="L\u00E4nge (m)"
           value={str("lengthM")}
           onChangeText={(v) => set("lengthM", v)}
           keyboardType="decimal-pad"
@@ -238,7 +184,7 @@ export function InstallationForm({
           options={phaseOptions}
           value={(form.phase as string) ?? null}
           onValueChange={(v) => set("phase", v)}
-          placeholder="Phase wählen..."
+          placeholder="Phase w\u00E4hlen..."
         />
       </CollapsibleSection>
 
@@ -254,7 +200,7 @@ export function InstallationForm({
         label="Notizen"
         value={str("notes")}
         onChangeText={(v) => set("notes", v)}
-        placeholder="Zusätzliche Informationen..."
+        placeholder="Zus\u00E4tzliche Informationen..."
         multiline
         numberOfLines={3}
         style={{ minHeight: 80, textAlignVertical: "top" }}
@@ -270,7 +216,7 @@ export function InstallationForm({
 
       <TouchableOpacity
         style={[styles.button, submitting && styles.buttonDisabled]}
-        onPress={() => void handleSubmit()}
+        onPress={() => void handleSubmit(currentGps)}
         disabled={submitting}
       >
         <Text style={styles.buttonText}>

@@ -9,39 +9,39 @@ namespace BauDoku.Documentation.UnitTests.Application.Queries;
 
 public sealed class GetInstallationQueryHandlerTests
 {
-    private readonly IInstallationRepository _repository;
-    private readonly GetInstallationQueryHandler _handler;
+    private readonly IInstallationRepository repository;
+    private readonly GetInstallationQueryHandler handler;
 
     public GetInstallationQueryHandlerTests()
     {
-        _repository = Substitute.For<IInstallationRepository>();
-        _handler = new GetInstallationQueryHandler(_repository);
+        repository = Substitute.For<IInstallationRepository>();
+        handler = new GetInstallationQueryHandler(repository);
     }
 
     [Fact]
     public async Task Handle_WhenInstallationExists_ShouldReturnDtoWithPhotosAndMeasurements()
     {
         var installation = Installation.Create(
-            InstallationId.New(),
-            Guid.NewGuid(),
+            InstallationIdentifier.New(),
+            ProjectIdentifier.New(),
             null,
             InstallationType.CableTray,
-            new GpsPosition(48.137154, 11.576124, 520.0, 3.5, "gps"),
-            new Description("Testbeschreibung"));
+            GpsPosition.Create(48.137154, 11.576124, 520.0, 3.5, "gps"),
+            Description.From("Testbeschreibung"));
 
         installation.AddPhoto(
-            PhotoId.New(), "photo.jpg", "https://blob/photo.jpg", "image/jpeg", 1024,
-            PhotoType.Before, new Caption("Vorher"));
+            PhotoIdentifier.New(), "photo.jpg", "https://blob/photo.jpg", "image/jpeg", 1024,
+            PhotoType.Before, Caption.From("Vorher"));
 
         installation.RecordMeasurement(
-            MeasurementId.New(),
+            MeasurementIdentifier.New(),
             MeasurementType.InsulationResistance,
-            new MeasurementValue(500.0, "MΩ", 1.0, null));
+            MeasurementValue.Create(500.0, "MΩ", 1.0, null));
 
-        _repository.GetByIdAsync(Arg.Any<InstallationId>(), Arg.Any<CancellationToken>())
+        repository.GetByIdReadOnlyAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
 
-        var result = await _handler.Handle(new GetInstallationQuery(installation.Id.Value), CancellationToken.None);
+        var result = await handler.Handle(new GetInstallationQuery(installation.Id.Value), CancellationToken.None);
 
         result.Should().NotBeNull();
         result!.Type.Should().Be("cable_tray");
@@ -56,10 +56,10 @@ public sealed class GetInstallationQueryHandlerTests
     [Fact]
     public async Task Handle_WhenNotFound_ShouldReturnNull()
     {
-        _repository.GetByIdAsync(Arg.Any<InstallationId>(), Arg.Any<CancellationToken>())
+        repository.GetByIdReadOnlyAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns((Installation?)null);
 
-        var result = await _handler.Handle(new GetInstallationQuery(Guid.NewGuid()), CancellationToken.None);
+        var result = await handler.Handle(new GetInstallationQuery(Guid.NewGuid()), CancellationToken.None);
 
         result.Should().BeNull();
     }
@@ -68,16 +68,16 @@ public sealed class GetInstallationQueryHandlerTests
     public async Task Handle_ShouldMapAllGpsFields()
     {
         var installation = Installation.Create(
-            InstallationId.New(),
-            Guid.NewGuid(),
-            Guid.NewGuid(),
+            InstallationIdentifier.New(),
+            ProjectIdentifier.New(),
+            ZoneIdentifier.New(),
             InstallationType.JunctionBox,
-            new GpsPosition(48.0, 11.0, 500.0, 2.5, "dgnss", "SAPOS-EPS", "fix", 12, 0.8, 1.5));
+            GpsPosition.Create(48.0, 11.0, 500.0, 2.5, "dgnss", "SAPOS-EPS", "fix", 12, 0.8, 1.5));
 
-        _repository.GetByIdAsync(Arg.Any<InstallationId>(), Arg.Any<CancellationToken>())
+        repository.GetByIdReadOnlyAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
 
-        var result = await _handler.Handle(new GetInstallationQuery(installation.Id.Value), CancellationToken.None);
+        var result = await handler.Handle(new GetInstallationQuery(installation.Id.Value), CancellationToken.None);
 
         result.Should().NotBeNull();
         result!.GpsSource.Should().Be("dgnss");

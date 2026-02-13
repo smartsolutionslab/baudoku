@@ -4,6 +4,6 @@ using BauDoku.Documentation.Domain.ValueObjects;
 namespace BauDoku.Documentation.Domain.Events;
 
 public sealed record MeasurementRecorded(
-    InstallationId InstallationId,
-    MeasurementId MeasurementId,
+    InstallationIdentifier InstallationIdentifier,
+    MeasurementIdentifier MeasurementIdentifier,
     DateTime OccurredOn) : IDomainEvent;

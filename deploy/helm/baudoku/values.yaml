@@ -87,3 +87,30 @@ ingress:
   annotations: {}
   host: baudoku.example.com
   tls: []
+
+dashboard:
+  enabled: false
+  image:
+    repository: mcr.microsoft.com/dotnet/aspire-dashboard
+    tag: "9.2"
+    pullPolicy: IfNotPresent
+  auth:
+    browserToken: false
+    secretName: baudoku-dashboard-auth
+    secretKey: browser-token
+  ingress:
+    enabled: false
+    host: monitoring.baudoku.example.com
+    annotations: {}
+    tls: []
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+otel:
+  enabled: false
+  endpoint: ""

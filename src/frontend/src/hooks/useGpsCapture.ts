@@ -7,7 +7,7 @@ export type GpsSource = "internal_gps" | "external_dgnss" | "external_rtk";
 export type GpsCorrService = "none" | "sapos_eps" | "sapos_heps" | "sapos_gpps";
 export type GpsRtkStatus = "no_fix" | "autonomous" | "dgps" | "rtk_float" | "rtk_fixed";
 
-export interface GpsPosition {
+export type GpsPosition = {
   gpsLat: number;
   gpsLng: number;
   gpsAltitude: number | null;
@@ -19,15 +19,15 @@ export interface GpsPosition {
   gpsHdop: number | null;
   gpsCorrAge: number | null;
   isMocked: boolean;
-}
+};
 
-export interface UseGpsCaptureReturn {
+export type UseGpsCaptureReturn = {
   position: GpsPosition | null;
   capturing: boolean;
   error: string | null;
   capturePosition: () => Promise<GpsPosition | null>;
   clearPosition: () => void;
-}
+};
 
 export function useGpsCapture(): UseGpsCaptureReturn {
   const [position, setPosition] = useState<GpsPosition | null>(null);

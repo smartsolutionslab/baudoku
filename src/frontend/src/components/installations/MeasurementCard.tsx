@@ -3,12 +3,13 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import type { Measurement } from "../../db/repositories/types";
 import { StatusBadge } from "../common/StatusBadge";
+import { Card, Body, Caption } from "../core";
 import { Colors, Spacing, FontSize } from "../../styles/tokens";
 
-interface MeasurementCardProps {
+type MeasurementCardProps = {
   measurement: Measurement;
   onDelete?: (measurement: Measurement) => void;
-}
+};
 
 export function MeasurementCard({ measurement, onDelete }: MeasurementCardProps) {
   const m = measurement;
@@ -23,9 +24,9 @@ export function MeasurementCard({ measurement, onDelete }: MeasurementCardProps)
       : null;
 
   return (
-    <View style={styles.card}>
+    <Card style={styles.card}>
       <View style={styles.header}>
-        <Text style={styles.type}>{m.type}</Text>
+        <Body style={styles.type}>{m.type}</Body>
         <View style={styles.headerRight}>
           {m.result && <StatusBadge status={m.result} />}
           {onDelete && (
@@ -41,15 +42,14 @@ export function MeasurementCard({ measurement, onDelete }: MeasurementCardProps)
       <Text style={styles.value}>
         {m.value} {m.unit}
       </Text>
-      {thresholds && <Text style={styles.threshold}>{thresholds}</Text>}
-      {m.notes ? <Text style={styles.notes}>{m.notes}</Text> : null}
-    </View>
+      {thresholds && <Caption style={styles.threshold}>{thresholds}</Caption>}
+      {m.notes ? <Caption style={styles.notes}>{m.notes}</Caption> : null}
+    </Card>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: Colors.card,
     borderRadius: 10,
     padding: Spacing.md,
     marginBottom: Spacing.sm,
@@ -66,9 +66,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   type: {
-    fontSize: FontSize.body,
     fontWeight: "600",
-    color: Colors.textPrimary,
     flex: 1,
     marginRight: Spacing.sm,
   },
@@ -83,10 +81,8 @@ const styles = StyleSheet.create({
   },
   threshold: {
     fontSize: FontSize.footnote,
-    color: Colors.textTertiary,
   },
   notes: {
-    fontSize: FontSize.caption,
     color: Colors.textSecondary,
     marginTop: Spacing.xs,
   },

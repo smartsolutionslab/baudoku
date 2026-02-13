@@ -7,7 +7,7 @@ namespace BauDoku.Documentation.Infrastructure.Storage;
 
 public sealed class AzureBlobPhotoStorage : IPhotoStorage
 {
-    private readonly BlobContainerClient _containerClient;
+    private readonly BlobContainerClient containerClient;
 
     public AzureBlobPhotoStorage(IConfiguration configuration)
     {
@@ -15,14 +15,14 @@ public sealed class AzureBlobPhotoStorage : IPhotoStorage
             ?? throw new InvalidOperationException("PhotoStorage:AzureConnectionString is not configured.");
         var containerName = configuration["PhotoStorage:AzureContainerName"] ?? "photos";
 
-        _containerClient = new BlobContainerClient(connectionString, containerName);
-        _containerClient.CreateIfNotExists();
+        containerClient = new BlobContainerClient(connectionString, containerName);
+        containerClient.CreateIfNotExists();
     }
 
     public async Task<string> UploadAsync(Stream stream, string fileName, string contentType, CancellationToken ct = default)
     {
         var blobName = $"{Guid.NewGuid()}{Path.GetExtension(fileName)}";
-        var blobClient = _containerClient.GetBlobClient(blobName);
+        var blobClient = containerClient.GetBlobClient(blobName);
 
         var headers = new BlobHttpHeaders { ContentType = contentType };
         await blobClient.UploadAsync(stream, new BlobUploadOptions { HttpHeaders = headers }, ct);
@@ -33,7 +33,7 @@ public sealed class AzureBlobPhotoStorage : IPhotoStorage
     public async Task<Stream> DownloadAsync(string blobUrl, CancellationToken ct = default)
     {
         var blobName = new Uri(blobUrl).Segments[^1];
-        var blobClient = _containerClient.GetBlobClient(blobName);
+        var blobClient = containerClient.GetBlobClient(blobName);
 
         var response = await blobClient.DownloadStreamingAsync(cancellationToken: ct);
         return response.Value.Content;
@@ -42,7 +42,7 @@ public sealed class AzureBlobPhotoStorage : IPhotoStorage
     public async Task DeleteAsync(string blobUrl, CancellationToken ct = default)
     {
         var blobName = new Uri(blobUrl).Segments[^1];
-        var blobClient = _containerClient.GetBlobClient(blobName);
+        var blobClient = containerClient.GetBlobClient(blobName);
 
         await blobClient.DeleteIfExistsAsync(cancellationToken: ct);
     }

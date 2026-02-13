@@ -1,4 +1,5 @@
 using BauDoku.BuildingBlocks.Domain;
+using BauDoku.BuildingBlocks.Domain.Guards;
 
 namespace BauDoku.Sync.Domain.ValueObjects;
 
@@ -15,12 +16,13 @@ public sealed record EntityType : ValueObject
 
     public string Value { get; }
 
-    public EntityType(string value)
+    private EntityType(string value) => Value = value;
+
+    public static EntityType From(string value)
     {
-        if (string.IsNullOrWhiteSpace(value))
-            throw new ArgumentException("Entity-Typ darf nicht leer sein.", nameof(value));
-        if (!ValidValues.Contains(value))
-            throw new ArgumentException($"Ungueltiger Entity-Typ: {value}.", nameof(value));
-        Value = value;
+        Ensure.That(value)
+            .IsNotNullOrWhiteSpace("Entity-Typ darf nicht leer sein.")
+            .IsOneOf(ValidValues, $"Ungueltiger Entity-Typ: {value}.");
+        return new EntityType(value);
     }
 }
