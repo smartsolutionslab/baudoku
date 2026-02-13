@@ -3,6 +3,8 @@ import * as photoRepo from "../db/repositories/photoRepo";
 import * as syncApi from "./syncApi";
 import { applyServerDelta } from "./applyServerDelta";
 import { getDeviceId } from "../utils/deviceId";
+import { uploadPhotoChunked } from "./chunkedUpload";
+import { useUploadStore } from "../store/useUploadStore";
 import type { SyncDeltaDto, ProcessSyncBatchResult, ChangeSetResult } from "./syncApi";
 
 export interface SyncResult {
@@ -96,31 +98,49 @@ export class SyncManager {
       return { uploaded: 0, errors: [] };
     }
 
+    const store = useUploadStore.getState();
+    store.setProcessing(true);
+
     let uploaded = 0;
     const errors: string[] = [];
 
     for (const photo of photos) {
+      store.enqueue(photo.id);
+    }
+
+    for (const photo of photos) {
       try {
         await photoRepo.updateUploadStatus(photo.id, "uploading");
+        store.updateProgress(photo.id, 0);
 
         const fileName = photo.localPath.split("/").pop() ?? `photo_${photo.id}.jpg`;
-        const result = await syncApi.uploadPhoto(
+
+        const remoteId = await uploadPhotoChunked(
+          photo.id,
           photo.installationId,
           photo.localPath,
           fileName,
-          "image/jpeg"
+          "image/jpeg",
+          photo.type ?? "other",
+          undefined,
+          (progress) => {
+            store.updateProgress(photo.id, progress.percentage);
+          }
         );
 
-        await photoRepo.updateUploadStatus(photo.id, "uploaded", result.id);
+        await photoRepo.updateUploadStatus(photo.id, "uploaded", remoteId);
+        store.markCompleted(photo.id);
         uploaded++;
       } catch (error) {
         await photoRepo.updateUploadStatus(photo.id, "failed");
         const message =
           error instanceof Error ? error.message : "Foto-Upload fehlgeschlagen";
+        store.markFailed(photo.id, message);
         errors.push(message);
       }
     }
 
+    store.setProcessing(false);
     return { uploaded, errors };
   }
 

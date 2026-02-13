@@ -31,6 +31,9 @@ public static class DependencyInjection
                 : new LocalFilePhotoStorage(config);
         });
 
+        services.AddSingleton<IChunkedUploadStorage, LocalChunkedUploadStorage>();
+        services.AddHostedService<ChunkedUploadCleanupService>();
+
         return services;
     }
 }

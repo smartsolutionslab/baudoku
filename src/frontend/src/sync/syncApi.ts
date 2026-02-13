@@ -1,4 +1,4 @@
-import { apiGet, apiPost, apiUpload } from "./apiClient";
+import { apiGet, apiPost, apiUpload, apiRawUpload } from "./apiClient";
 
 export interface SyncDeltaDto {
   entityType: string;
@@ -99,6 +99,46 @@ export async function uploadPhoto(
   return apiUpload<PhotoUploadResult>(
     `/api/documentation/installations/${installationId}/photos`,
     formData
+  );
+}
+
+export interface ChunkedUploadInitResult {
+  sessionId: string;
+}
+
+export async function initChunkedUpload(
+  installationId: string,
+  fileName: string,
+  contentType: string,
+  totalSize: number,
+  totalChunks: number,
+  photoType: string,
+  caption?: string
+): Promise<ChunkedUploadInitResult> {
+  return apiPost<ChunkedUploadInitResult>(
+    "/api/documentation/uploads/init",
+    { installationId, fileName, contentType, totalSize, totalChunks, photoType, caption }
+  );
+}
+
+export async function uploadChunk(
+  sessionId: string,
+  chunkIndex: number,
+  chunkBlob: Blob | ArrayBuffer
+): Promise<void> {
+  await apiRawUpload(
+    `/api/documentation/uploads/${sessionId}/chunks/${chunkIndex}`,
+    chunkBlob,
+    { "Content-Type": "application/octet-stream" }
+  );
+}
+
+export async function completeChunkedUpload(
+  sessionId: string
+): Promise<PhotoUploadResult> {
+  return apiPost<PhotoUploadResult>(
+    `/api/documentation/uploads/${sessionId}/complete`,
+    {}
   );
 }
 

@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Dimensions,
+  ActivityIndicator,
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import type { Photo } from "../../db/repositories/types";
@@ -59,6 +60,21 @@ export function PhotoGallery({
               label={photoTypeLabels[photo.type] ?? photo.type}
             />
           </View>
+          {photo.uploadStatus === "uploading" && (
+            <View style={styles.uploadOverlay}>
+              <ActivityIndicator size="small" color={Colors.card} />
+            </View>
+          )}
+          {photo.uploadStatus === "failed" && (
+            <View style={styles.uploadOverlay}>
+              <FontAwesome name="warning" size={18} color={Colors.danger} />
+            </View>
+          )}
+          {photo.uploadStatus === "pending" && (
+            <View style={styles.uploadOverlay}>
+              <FontAwesome name="clock-o" size={16} color={Colors.card} />
+            </View>
+          )}
         </TouchableOpacity>
       ))}
 
@@ -110,5 +126,16 @@ const styles = StyleSheet.create({
     fontSize: FontSize.footnote,
     color: Colors.textTertiary,
     marginTop: Spacing.xs,
+  },
+  uploadOverlay: {
+    position: "absolute",
+    bottom: 4,
+    right: 4,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    borderRadius: 12,
+    width: 24,
+    height: 24,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
