@@ -41,7 +41,19 @@ public static class Extensions
 
     public static WebApplication MapDefaultEndpoints(this WebApplication app)
     {
-        app.UseSerilogRequestLogging();
+        app.UseSerilogRequestLogging(options =>
+        {
+            options.EnrichDiagnosticContext = static (diagnosticContext, httpContext) =>
+            {
+                diagnosticContext.Set("ClientIP", httpContext.Connection.RemoteIpAddress?.ToString() ?? "-");
+                diagnosticContext.Set("UserAgent", httpContext.Request.Headers.UserAgent.ToString());
+            };
+            options.GetLevel = static (httpContext, _, _) =>
+                httpContext.Request.Path.StartsWithSegments("/health") ||
+                httpContext.Request.Path.StartsWithSegments("/alive")
+                    ? Serilog.Events.LogEventLevel.Verbose
+                    : Serilog.Events.LogEventLevel.Information;
+        });
 
         app.MapHealthChecks("/health", new HealthCheckOptions
         {
@@ -66,6 +78,8 @@ public static class Extensions
             .Enrich.FromLogContext()
             .Enrich.WithProperty("ServiceName", serviceName)
             .Enrich.WithMachineName()
+            .Enrich.WithEnvironmentName()
+            .Enrich.WithThreadId()
             .Enrich.WithSpan();
 
         if (builder.Environment.IsDevelopment())
