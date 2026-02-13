@@ -3,21 +3,13 @@ using BauDoku.BuildingBlocks.Domain;
 using BauDoku.Documentation.Domain.Aggregates;
 using BauDoku.Documentation.Domain.Events;
 using BauDoku.Documentation.Domain.ValueObjects;
+using BauDoku.Documentation.UnitTests.Builders;
 
 namespace BauDoku.Documentation.UnitTests.Domain.Aggregates;
 
 public sealed class InstallationPhotoTests
 {
-    private static Installation CreateValidInstallation()
-    {
-        return Installation.Create(
-            InstallationIdentifier.New(),
-            ProjectIdentifier.New(),
-            ZoneIdentifier.New(),
-            InstallationType.CableTray,
-            GpsPosition.Create(48.1351, 11.5820, 520.0, 3.5, "internal_gps"),
-            Description.From("Kabeltrasse im Erdgeschoss"));
-    }
+    private static Installation CreateValidInstallation() => new InstallationBuilder().Build();
 
     [Fact]
     public void AddPhoto_ShouldAddPhotoToCollection()

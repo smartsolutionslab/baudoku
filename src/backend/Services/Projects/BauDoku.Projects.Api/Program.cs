@@ -41,3 +41,5 @@ app.MapDefaultEndpoints();
 app.MapProjectEndpoints();
 
 app.Run();
+
+public partial class Program { }

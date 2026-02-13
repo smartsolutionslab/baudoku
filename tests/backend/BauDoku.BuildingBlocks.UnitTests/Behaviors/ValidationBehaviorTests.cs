@@ -2,7 +2,6 @@ using AwesomeAssertions;
 using BauDoku.BuildingBlocks.Application.Behaviors;
 using BauDoku.BuildingBlocks.Application.Commands;
 using FluentValidation;
-using FluentValidation.Results;
 using NSubstitute;
 
 namespace BauDoku.BuildingBlocks.UnitTests.Behaviors;

@@ -3,18 +3,13 @@ using BauDoku.BuildingBlocks.Domain;
 using BauDoku.Sync.Domain.Aggregates;
 using BauDoku.Sync.Domain.Events;
 using BauDoku.Sync.Domain.ValueObjects;
+using BauDoku.Sync.UnitTests.Builders;
 
 namespace BauDoku.Sync.UnitTests.Domain.Aggregates;
 
 public sealed class SyncBatchTests
 {
-    private static SyncBatch CreateValidBatch()
-    {
-        return SyncBatch.Create(
-            SyncBatchIdentifier.New(),
-            DeviceIdentifier.From("device-001"),
-            DateTime.UtcNow);
-    }
+    private static SyncBatch CreateValidBatch() => new SyncBatchBuilder().Build();
 
     [Fact]
     public void Create_ShouldSetProperties()

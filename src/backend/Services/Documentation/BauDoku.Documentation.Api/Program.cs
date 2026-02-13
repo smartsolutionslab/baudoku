@@ -46,3 +46,5 @@ app.MapMeasurementEndpoints();
 app.MapChunkedUploadEndpoints();
 
 app.Run();
+
+public partial class Program { }

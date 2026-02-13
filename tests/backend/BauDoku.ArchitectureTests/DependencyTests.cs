@@ -89,6 +89,50 @@ public sealed class DependencyTests
     }
 
     [Theory]
+    [InlineData("BauDoku.Projects.Application", "Documentation", "Sync")]
+    [InlineData("BauDoku.Documentation.Application", "Projects", "Sync")]
+    [InlineData("BauDoku.Sync.Application", "Projects", "Documentation")]
+    public void ServiceApplication_ShouldNotReferenceCrossBoundedContext(
+        string assemblyName, string otherBc1, string otherBc2)
+    {
+        var assembly = LoadAssembly(assemblyName);
+
+        var refs = assembly.GetReferencedAssemblies().Select(a => a.Name!).ToList();
+        refs.Should().NotContain(
+            name => name.Contains($".{otherBc1}.") || name.Contains($".{otherBc2}."),
+            $"Application must not reference other bounded contexts ({otherBc1}, {otherBc2})");
+    }
+
+    [Theory]
+    [InlineData("BauDoku.Projects.Domain")]
+    [InlineData("BauDoku.Documentation.Domain")]
+    [InlineData("BauDoku.Sync.Domain")]
+    public void ServiceDomain_ShouldNotReferenceEntityFramework(string assemblyName)
+    {
+        var assembly = LoadAssembly(assemblyName);
+
+        var refs = assembly.GetReferencedAssemblies().Select(a => a.Name!).ToList();
+        refs.Should().NotContain(
+            name => name.Contains("EntityFramework"),
+            "Domain must not reference Entity Framework");
+    }
+
+    [Theory]
+    [InlineData("BauDoku.Projects.Api", "Documentation", "Sync")]
+    [InlineData("BauDoku.Documentation.Api", "Projects", "Sync")]
+    [InlineData("BauDoku.Sync.Api", "Projects", "Documentation")]
+    public void ServiceApi_ShouldNotReferenceCrossBoundedContextApi(
+        string assemblyName, string otherBc1, string otherBc2)
+    {
+        var assembly = LoadAssembly(assemblyName);
+
+        var refs = assembly.GetReferencedAssemblies().Select(a => a.Name!).ToList();
+        refs.Should().NotContain(
+            name => name.Contains($"{otherBc1}.Api") || name.Contains($"{otherBc2}.Api"),
+            $"Api must not reference other Api projects ({otherBc1}, {otherBc2})");
+    }
+
+    [Theory]
     [InlineData("BauDoku.Projects.Domain")]
     [InlineData("BauDoku.Documentation.Domain")]
     [InlineData("BauDoku.Sync.Domain")]

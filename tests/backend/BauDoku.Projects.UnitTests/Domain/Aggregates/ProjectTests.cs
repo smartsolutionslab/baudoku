@@ -3,19 +3,13 @@ using BauDoku.BuildingBlocks.Domain;
 using BauDoku.Projects.Domain.Aggregates;
 using BauDoku.Projects.Domain.Events;
 using BauDoku.Projects.Domain.ValueObjects;
+using BauDoku.Projects.UnitTests.Builders;
 
 namespace BauDoku.Projects.UnitTests.Domain.Aggregates;
 
 public sealed class ProjectTests
 {
-    private static Project CreateValidProject()
-    {
-        return Project.Create(
-            ProjectIdentifier.New(),
-            ProjectName.From("Testprojekt"),
-            Address.Create("Musterstraße 1", "Berlin", "10115"),
-            ClientInfo.Create("Max Mustermann", "max@example.com", "+49 30 12345"));
-    }
+    private static Project CreateValidProject() => new ProjectBuilder().Build();
 
     [Fact]
     public void Create_ShouldSetProperties()
