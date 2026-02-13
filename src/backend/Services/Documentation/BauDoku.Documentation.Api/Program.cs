@@ -39,5 +39,6 @@ app.MapDefaultEndpoints();
 app.MapInstallationEndpoints();
 app.MapPhotoEndpoints();
 app.MapMeasurementEndpoints();
+app.MapChunkedUploadEndpoints();
 
 app.Run();

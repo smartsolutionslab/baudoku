@@ -3,6 +3,7 @@ import { SyncManager } from "../sync/SyncManager";
 import { SyncScheduler } from "../sync/SyncScheduler";
 import { setOnReconnect } from "../sync/ConnectivityMonitor";
 import { useSyncStore } from "../store/useSyncStore";
+import { UploadProgressBar } from "../components/sync/UploadProgressBar";
 
 interface SyncContextValue {
   syncManager: SyncManager;
@@ -58,6 +59,7 @@ export function SyncProvider({ children }: { children: React.ReactNode }) {
   return (
     <SyncContext.Provider value={value}>
       {children}
+      <UploadProgressBar />
     </SyncContext.Provider>
   );
 }
