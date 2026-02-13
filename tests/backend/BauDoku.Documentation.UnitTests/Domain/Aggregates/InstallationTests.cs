@@ -12,12 +12,12 @@ public sealed class InstallationTests
     {
         return Installation.Create(
             InstallationIdentifier.New(),
-            Guid.NewGuid(),
-            Guid.NewGuid(),
+            ProjectIdentifier.New(),
+            ZoneIdentifier.New(),
             InstallationType.CableTray,
             GpsPosition.Create(48.1351, 11.5820, 520.0, 3.5, "internal_gps"),
             Description.From("Kabeltrasse im Erdgeschoss"),
-            CableSpec.Create("NYM-J 5x2.5", 25),
+            CableSpec.Create("NYM-J 5x2.5", 25m),
             Depth.From(600),
             Manufacturer.From("Hager"),
             ModelName.From("VZ312N"),
@@ -30,7 +30,7 @@ public sealed class InstallationTests
         var installation = CreateValidInstallation();
 
         installation.Id.Should().NotBeNull();
-        installation.ProjectId.Should().NotBe(Guid.Empty);
+        installation.ProjectId.Should().NotBeNull();
         installation.ZoneId.Should().NotBeNull();
         installation.Type.Should().Be(InstallationType.CableTray);
         installation.Position.Latitude.Should().Be(48.1351);
@@ -70,7 +70,7 @@ public sealed class InstallationTests
     {
         var act = () => Installation.Create(
             InstallationIdentifier.New(),
-            Guid.NewGuid(),
+            ProjectIdentifier.New(),
             null,
             InstallationType.JunctionBox,
             GpsPosition.Create(48.0, 11.0, null, 150.0, "internal_gps"));
@@ -83,7 +83,7 @@ public sealed class InstallationTests
     {
         var installation = Installation.Create(
             InstallationIdentifier.New(),
-            Guid.NewGuid(),
+            ProjectIdentifier.New(),
             null,
             InstallationType.Grounding,
             GpsPosition.Create(48.0, 11.0, null, 5.0, "internal_gps"));
@@ -126,7 +126,7 @@ public sealed class InstallationTests
     {
         var installation = Installation.Create(
             InstallationIdentifier.New(),
-            Guid.NewGuid(),
+            ProjectIdentifier.New(),
             null,
             InstallationType.JunctionBox,
             GpsPosition.Create(48.0, 11.0, null, 50.0, "internal_gps"));

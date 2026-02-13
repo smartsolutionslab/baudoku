@@ -29,7 +29,7 @@ public sealed class CompleteChunkedUploadCommandHandlerTests
     private static Installation CreateValidInstallation() =>
         Installation.Create(
             InstallationIdentifier.New(),
-            Guid.NewGuid(),
+            ProjectIdentifier.New(),
             null,
             InstallationType.CableTray,
             GpsPosition.Create(48.137154, 11.576124, null, 3.5, "gps"));

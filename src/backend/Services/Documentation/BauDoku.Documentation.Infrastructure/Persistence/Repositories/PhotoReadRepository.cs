@@ -30,6 +30,14 @@ public sealed class PhotoReadRepository : IPhotoReadRepository
                 p.Description != null ? p.Description.Value : null,
                 p.Position != null ? p.Position.Latitude : null,
                 p.Position != null ? p.Position.Longitude : null,
+                p.Position != null ? p.Position.Altitude : null,
+                p.Position != null ? (double?)p.Position.HorizontalAccuracy : null,
+                p.Position != null ? p.Position.Source : null,
+                p.Position != null ? p.Position.CorrectionService : null,
+                p.Position != null ? p.Position.RtkFixStatus : null,
+                p.Position != null ? p.Position.SatelliteCount : null,
+                p.Position != null ? p.Position.Hdop : null,
+                p.Position != null ? p.Position.CorrectionAge : null,
                 p.TakenAt))
             .FirstOrDefaultAsync(cancellationToken);
     }
@@ -52,6 +60,14 @@ public sealed class PhotoReadRepository : IPhotoReadRepository
                 p.Description != null ? p.Description.Value : null,
                 p.Position != null ? p.Position.Latitude : null,
                 p.Position != null ? p.Position.Longitude : null,
+                p.Position != null ? p.Position.Altitude : null,
+                p.Position != null ? (double?)p.Position.HorizontalAccuracy : null,
+                p.Position != null ? p.Position.Source : null,
+                p.Position != null ? p.Position.CorrectionService : null,
+                p.Position != null ? p.Position.RtkFixStatus : null,
+                p.Position != null ? p.Position.SatelliteCount : null,
+                p.Position != null ? p.Position.Hdop : null,
+                p.Position != null ? p.Position.CorrectionAge : null,
                 p.TakenAt))
             .ToListAsync(cancellationToken);
     }

@@ -7,7 +7,7 @@ import { UploadProgressBar } from "../components/sync/UploadProgressBar";
 
 type SyncContextValue = {
   syncManager: SyncManager;
-  syncScheduler: SyncScheduler;
+  syncScheduler: SyncScheduler | null;
 };
 
 const SyncContext = createContext<SyncContextValue | null>(null);
@@ -53,7 +53,7 @@ export function SyncProvider({ children }: { children: React.ReactNode }) {
 
   const value: SyncContextValue = {
     syncManager: managerRef.current,
-    syncScheduler: schedulerRef.current!,
+    syncScheduler: schedulerRef.current,
   };
 
   return (

@@ -97,4 +97,31 @@ public sealed class ProjectTests
         project.Zones.Should().HaveCount(2);
         project.Zones[1].ParentZoneIdentifier.Should().Be(parentId);
     }
+
+    [Fact]
+    public void AddZone_WithSameNameUnderDifferentParents_ShouldSucceed()
+    {
+        var project = CreateValidProject();
+        var parent1 = ZoneIdentifier.New();
+        var parent2 = ZoneIdentifier.New();
+        project.AddZone(parent1, ZoneName.From("Gebäude A"), ZoneType.Building);
+        project.AddZone(parent2, ZoneName.From("Gebäude B"), ZoneType.Building);
+
+        var zoneName = ZoneName.From("Erdgeschoss");
+        project.AddZone(ZoneIdentifier.New(), zoneName, ZoneType.Floor, parent1);
+        project.AddZone(ZoneIdentifier.New(), zoneName, ZoneType.Floor, parent2);
+
+        project.Zones.Should().HaveCount(4);
+    }
+
+    [Fact]
+    public void AddZone_WithInvalidParentZoneId_ShouldThrow()
+    {
+        var project = CreateValidProject();
+        var invalidParent = ZoneIdentifier.New();
+
+        var act = () => project.AddZone(ZoneIdentifier.New(), ZoneName.From("Raum 1"), ZoneType.Room, invalidParent);
+
+        act.Should().Throw<InvalidOperationException>();
+    }
 }

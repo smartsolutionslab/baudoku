@@ -3,8 +3,6 @@ using BauDoku.Documentation.Domain.ValueObjects;
 
 namespace BauDoku.Documentation.Domain.Events;
 
-public sealed record InstallationDocumented(
+public sealed record InstallationUpdated(
     InstallationIdentifier InstallationIdentifier,
-    ProjectIdentifier ProjectIdentifier,
-    InstallationType Type,
     DateTime OccurredOn) : IDomainEvent;

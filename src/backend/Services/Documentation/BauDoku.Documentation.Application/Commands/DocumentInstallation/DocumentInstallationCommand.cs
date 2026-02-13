@@ -18,7 +18,7 @@ public sealed record DocumentInstallationCommand(
     double? CorrectionAge,
     string? Description,
     string? CableType,
-    int? CrossSection,
+    decimal? CrossSection,
     string? CableColor,
     int? ConductorCount,
     int? DepthMm,

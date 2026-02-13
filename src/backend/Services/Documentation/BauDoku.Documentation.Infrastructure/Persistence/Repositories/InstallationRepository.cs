@@ -22,6 +22,15 @@ public sealed class InstallationRepository : IInstallationRepository
             .FirstOrDefaultAsync(i => i.Id == id, cancellationToken);
     }
 
+    public async Task<Installation?> GetByIdReadOnlyAsync(InstallationIdentifier id, CancellationToken cancellationToken = default)
+    {
+        return await context.Installations
+            .AsNoTracking()
+            .Include(i => i.Photos)
+            .Include(i => i.Measurements)
+            .FirstOrDefaultAsync(i => i.Id == id, cancellationToken);
+    }
+
     public async Task AddAsync(Installation aggregate, CancellationToken cancellationToken = default)
     {
         await context.Installations.AddAsync(aggregate, cancellationToken);

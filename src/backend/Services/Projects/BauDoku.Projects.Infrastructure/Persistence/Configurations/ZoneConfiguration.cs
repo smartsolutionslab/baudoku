@@ -36,5 +36,8 @@ public sealed class ZoneConfiguration : IEntityTypeConfiguration<Zone>
         builder.Property<ProjectIdentifier>("ProjectId")
             .HasColumnName("project_id")
             .HasConversion(id => id.Value, value => ProjectIdentifier.From(value));
+
+        // Indexes
+        builder.HasIndex("ProjectId").HasDatabaseName("ix_zones_project_id");
     }
 }

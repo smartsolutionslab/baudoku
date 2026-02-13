@@ -19,8 +19,8 @@ public sealed class InstallationPersistenceTests
     [Fact]
     public async Task CreateInstallation_ShouldPersistAndLoad()
     {
-        var projectId = Guid.NewGuid();
-        var zoneId = Guid.NewGuid();
+        var projectId = ProjectIdentifier.New();
+        var zoneId = ZoneIdentifier.New();
         var installation = Installation.Create(
             InstallationIdentifier.New(),
             projectId,
@@ -28,7 +28,7 @@ public sealed class InstallationPersistenceTests
             InstallationType.CableTray,
             GpsPosition.Create(48.1351, 11.5820, 520.0, 3.5, "internal_gps"),
             Description.From("Test installation"),
-            CableSpec.Create("NYM-J 5x2.5", 25, "grey", 5),
+            CableSpec.Create("NYM-J 5x2.5", 25m, "grey", 5),
             Depth.From(600),
             Manufacturer.From("Hager"),
             ModelName.From("VZ312N"),
@@ -76,7 +76,7 @@ public sealed class InstallationPersistenceTests
     {
         var installation = Installation.Create(
             InstallationIdentifier.New(),
-            Guid.NewGuid(),
+            ProjectIdentifier.New(),
             null,
             InstallationType.Grounding,
             GpsPosition.Create(48.0, 11.0, null, 5.0, "internal_gps"));
@@ -109,7 +109,7 @@ public sealed class InstallationPersistenceTests
     {
         var installation = Installation.Create(
             InstallationIdentifier.New(),
-            Guid.NewGuid(),
+            ProjectIdentifier.New(),
             null,
             InstallationType.CablePull,
             GpsPosition.Create(

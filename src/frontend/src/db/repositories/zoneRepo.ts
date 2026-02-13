@@ -1,4 +1,4 @@
-import { eq, and } from "drizzle-orm";
+import { eq, and, isNull } from "drizzle-orm";
 import { db } from "../client";
 import { zones } from "../schema";
 import { generateId } from "../../utils/uuid";
@@ -33,7 +33,7 @@ export async function getRootZones(projectId: ProjectId): Promise<Zone[]> {
     .where(
       and(
         eq(zones.projectId, projectId),
-        eq(zones.parentZoneId, ""),
+        isNull(zones.parentZoneId),
       )
     )
     .all() as unknown as Zone[];

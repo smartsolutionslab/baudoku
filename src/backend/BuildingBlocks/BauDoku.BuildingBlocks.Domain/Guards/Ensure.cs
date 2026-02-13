@@ -44,6 +44,16 @@ public static class Ensure
         [CallerArgumentExpression(nameof(value))] string? paramName = null)
         => new(value, paramName ?? "value");
 
+    public static NumericGuard<decimal> That(
+        decimal value,
+        [CallerArgumentExpression(nameof(value))] string? paramName = null)
+        => new(value, paramName ?? "value");
+
+    public static NullableNumericGuard<decimal> That(
+        decimal? value,
+        [CallerArgumentExpression(nameof(value))] string? paramName = null)
+        => new(value, paramName ?? "value");
+
     public static ReferenceGuard<T> That<T>(
         T? value,
         [CallerArgumentExpression(nameof(value))] string? paramName = null) where T : class

@@ -50,7 +50,7 @@ public sealed class AddPhotoCommandHandler : ICommandHandler<AddPhotoCommand, Gu
 
         installation.AddPhoto(
             photoId, command.FileName, blobUrl, command.ContentType, command.FileSize,
-            photoType, caption, description, position);
+            photoType, caption, description, position, command.TakenAt);
 
         try
         {

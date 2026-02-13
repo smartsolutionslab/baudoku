@@ -27,10 +27,10 @@ public sealed class InstallationReadRepository : IInstallationReadRepository
         var query = context.Installations.AsNoTracking();
 
         if (projectId.HasValue)
-            query = query.Where(i => i.ProjectId == projectId.Value);
+            query = query.Where(i => i.ProjectId.Value == projectId.Value);
 
         if (zoneId.HasValue)
-            query = query.Where(i => i.ZoneId == zoneId.Value);
+            query = query.Where(i => i.ZoneId != null && i.ZoneId.Value == zoneId.Value);
 
         if (!string.IsNullOrWhiteSpace(type))
             query = query.Where(i => EF.Functions.ILike(i.Type.Value, type));
@@ -50,7 +50,7 @@ public sealed class InstallationReadRepository : IInstallationReadRepository
             .Take(pageSize)
             .Select(i => new InstallationListItemDto(
                 i.Id.Value,
-                i.ProjectId,
+                i.ProjectId.Value,
                 i.Type.Value,
                 i.Status.Value,
                 i.QualityGrade.Value,
@@ -134,7 +134,7 @@ public sealed class InstallationReadRepository : IInstallationReadRepository
             .AsNoTracking();
 
         if (projectId.HasValue)
-            query = query.Where(i => i.ProjectId == projectId.Value);
+            query = query.Where(i => i.ProjectId.Value == projectId.Value);
 
         var totalCount = await query.CountAsync(cancellationToken);
 
@@ -144,7 +144,7 @@ public sealed class InstallationReadRepository : IInstallationReadRepository
             .Take(pageSize)
             .Select(i => new InstallationListItemDto(
                 i.Id.Value,
-                i.ProjectId,
+                i.ProjectId.Value,
                 i.Type.Value,
                 i.Status.Value,
                 i.QualityGrade.Value,

@@ -25,6 +25,10 @@ public sealed class DocumentInstallationCommandHandler
     {
         var installationId = InstallationIdentifier.New();
 
+        var projectId = ProjectIdentifier.From(command.ProjectId);
+        var zoneId = command.ZoneId is not null
+            ? ZoneIdentifier.From(command.ZoneId.Value) : null;
+
         var position = GpsPosition.Create(
             command.Latitude,
             command.Longitude,
@@ -57,8 +61,8 @@ public sealed class DocumentInstallationCommandHandler
 
         var installation = Installation.Create(
             installationId,
-            command.ProjectId,
-            command.ZoneId,
+            projectId,
+            zoneId,
             InstallationType.From(command.Type),
             position,
             description,

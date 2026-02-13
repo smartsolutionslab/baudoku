@@ -70,5 +70,9 @@ public sealed class ProjectConfiguration : IEntityTypeConfiguration<Project>
             .UsePropertyAccessMode(PropertyAccessMode.Field);
 
         builder.Ignore(p => p.DomainEvents);
+
+        // Indexes
+        builder.HasIndex(p => p.Name).HasDatabaseName("ix_projects_name");
+        builder.HasIndex(p => p.Status).HasDatabaseName("ix_projects_status");
     }
 }

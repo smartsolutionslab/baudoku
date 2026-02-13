@@ -26,7 +26,8 @@ public sealed class Photo : Entity<PhotoIdentifier>
         PhotoType photoType,
         Caption? caption,
         Description? description,
-        GpsPosition? position)
+        GpsPosition? position,
+        DateTime? takenAt = null)
     {
         return new Photo
         {
@@ -38,7 +39,7 @@ public sealed class Photo : Entity<PhotoIdentifier>
             PhotoType = photoType,
             Caption = caption,
             Description = description,
-            TakenAt = DateTime.UtcNow,
+            TakenAt = takenAt ?? DateTime.UtcNow,
             Position = position
         };
     }
