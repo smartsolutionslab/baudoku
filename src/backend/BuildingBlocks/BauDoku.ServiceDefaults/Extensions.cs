@@ -2,9 +2,11 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
+using RabbitMQ.Client;
 using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
@@ -146,6 +148,24 @@ public static class Extensions
             .AddCheck("self", () => HealthCheckResult.Healthy(), ["live"]);
 
         configureHealthChecks?.Invoke(healthChecks);
+
+        var rabbitConnection = builder.Configuration.GetConnectionString("rabbitmq");
+        if (!string.IsNullOrWhiteSpace(rabbitConnection))
+        {
+            var rabbitUri = new Uri(rabbitConnection);
+            var lazyConnection = new Lazy<Task<IConnection>>(() =>
+                new ConnectionFactory { Uri = rabbitUri }.CreateConnectionAsync());
+
+            healthChecks.AddRabbitMQ(sp => lazyConnection.Value,
+                name: "rabbitmq", failureStatus: HealthStatus.Degraded, tags: ["ready"]);
+        }
+
+        var redisConnection = builder.Configuration.GetConnectionString("redis");
+        if (!string.IsNullOrWhiteSpace(redisConnection))
+        {
+            healthChecks.AddRedis(redisConnection, name: "redis",
+                failureStatus: HealthStatus.Degraded, tags: ["ready"]);
+        }
 
         return builder;
     }
