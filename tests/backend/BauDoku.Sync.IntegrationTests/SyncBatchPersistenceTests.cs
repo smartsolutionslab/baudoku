@@ -9,26 +9,26 @@ namespace BauDoku.Sync.IntegrationTests;
 [Collection(PostgreSqlCollection.Name)]
 public sealed class SyncBatchPersistenceTests
 {
-    private readonly PostgreSqlFixture _fixture;
+    private readonly PostgreSqlFixture fixture;
 
     public SyncBatchPersistenceTests(PostgreSqlFixture fixture)
     {
-        _fixture = fixture;
+        this.fixture = fixture;
     }
 
     [Fact]
     public async Task CreateBatch_ShouldPersistAndLoad()
     {
-        var batchId = SyncBatchId.New();
-        var batch = SyncBatch.Create(batchId, new DeviceId("device-persist"), DateTime.UtcNow);
+        var batchId = SyncBatchIdentifier.New();
+        var batch = SyncBatch.Create(batchId, DeviceIdentifier.From("device-persist"), DateTime.UtcNow);
 
-        await using (var writeContext = _fixture.CreateContext())
+        await using (var writeContext = fixture.CreateContext())
         {
             writeContext.SyncBatches.Add(batch);
             await writeContext.SaveChangesAsync();
         }
 
-        await using (var readContext = _fixture.CreateContext())
+        await using (var readContext = fixture.CreateContext())
         {
             var loaded = await readContext.SyncBatches
                 .Include(b => b.Deltas)
@@ -46,26 +46,26 @@ public sealed class SyncBatchPersistenceTests
     [Fact]
     public async Task AddDelta_ShouldPersistWithBatch()
     {
-        var batchId = SyncBatchId.New();
-        var batch = SyncBatch.Create(batchId, new DeviceId("device-delta"), DateTime.UtcNow);
+        var batchId = SyncBatchIdentifier.New();
+        var batch = SyncBatch.Create(batchId, DeviceIdentifier.From("device-delta"), DateTime.UtcNow);
 
-        var entityRef = new EntityReference(EntityType.Project, Guid.NewGuid());
+        var entityRef = EntityReference.Create(EntityType.Project, Guid.NewGuid());
         batch.AddDelta(
-            SyncDeltaId.New(),
+            SyncDeltaIdentifier.New(),
             entityRef,
             DeltaOperation.Create,
             SyncVersion.Initial,
-            new SyncVersion(1),
-            new DeltaPayload("""{"name":"Test"}"""),
+            SyncVersion.From(1),
+            DeltaPayload.From("""{"name":"Test"}"""),
             DateTime.UtcNow);
 
-        await using (var writeContext = _fixture.CreateContext())
+        await using (var writeContext = fixture.CreateContext())
         {
             writeContext.SyncBatches.Add(batch);
             await writeContext.SaveChangesAsync();
         }
 
-        await using (var readContext = _fixture.CreateContext())
+        await using (var readContext = fixture.CreateContext())
         {
             var loaded = await readContext.SyncBatches
                 .Include(b => b.Deltas)
@@ -81,25 +81,25 @@ public sealed class SyncBatchPersistenceTests
     [Fact]
     public async Task AddConflict_ShouldPersistWithBatch()
     {
-        var batchId = SyncBatchId.New();
-        var batch = SyncBatch.Create(batchId, new DeviceId("device-conflict"), DateTime.UtcNow);
+        var batchId = SyncBatchIdentifier.New();
+        var batch = SyncBatch.Create(batchId, DeviceIdentifier.From("device-conflict"), DateTime.UtcNow);
 
-        var entityRef = new EntityReference(EntityType.Installation, Guid.NewGuid());
+        var entityRef = EntityReference.Create(EntityType.Installation, Guid.NewGuid());
         batch.AddConflict(
-            ConflictRecordId.New(),
+            ConflictRecordIdentifier.New(),
             entityRef,
-            new DeltaPayload("""{"client":"v1"}"""),
-            new DeltaPayload("""{"server":"v2"}"""),
-            new SyncVersion(1),
-            new SyncVersion(3));
+            DeltaPayload.From("""{"client":"v1"}"""),
+            DeltaPayload.From("""{"server":"v2"}"""),
+            SyncVersion.From(1),
+            SyncVersion.From(3));
 
-        await using (var writeContext = _fixture.CreateContext())
+        await using (var writeContext = fixture.CreateContext())
         {
             writeContext.SyncBatches.Add(batch);
             await writeContext.SaveChangesAsync();
         }
 
-        await using (var readContext = _fixture.CreateContext())
+        await using (var readContext = fixture.CreateContext())
         {
             var loaded = await readContext.SyncBatches
                 .Include(b => b.Conflicts)
@@ -116,26 +116,26 @@ public sealed class SyncBatchPersistenceTests
     [Fact]
     public async Task GetByConflictId_ShouldReturnBatchContainingConflict()
     {
-        var batchId = SyncBatchId.New();
-        var batch = SyncBatch.Create(batchId, new DeviceId("device-getby"), DateTime.UtcNow);
-        var conflictId = ConflictRecordId.New();
-        var entityRef = new EntityReference(EntityType.Project, Guid.NewGuid());
+        var batchId = SyncBatchIdentifier.New();
+        var batch = SyncBatch.Create(batchId, DeviceIdentifier.From("device-getby"), DateTime.UtcNow);
+        var conflictId = ConflictRecordIdentifier.New();
+        var entityRef = EntityReference.Create(EntityType.Project, Guid.NewGuid());
 
         batch.AddConflict(
             conflictId,
             entityRef,
-            new DeltaPayload("""{"c":"1"}"""),
-            new DeltaPayload("""{"s":"2"}"""),
-            new SyncVersion(0),
-            new SyncVersion(1));
+            DeltaPayload.From("""{"c":"1"}"""),
+            DeltaPayload.From("""{"s":"2"}"""),
+            SyncVersion.From(0),
+            SyncVersion.From(1));
 
-        await using (var writeContext = _fixture.CreateContext())
+        await using (var writeContext = fixture.CreateContext())
         {
             writeContext.SyncBatches.Add(batch);
             await writeContext.SaveChangesAsync();
         }
 
-        await using (var readContext = _fixture.CreateContext())
+        await using (var readContext = fixture.CreateContext())
         {
             var loaded = await readContext.SyncBatches
                 .Include(b => b.Deltas)

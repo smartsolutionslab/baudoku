@@ -13,7 +13,7 @@ public sealed class MeasurementTypeMustMatchInstallationTypeTests
     public void RcdTripTime_OnElectricalInstallation_ShouldNotBeBroken(string installationType)
     {
         var rule = new MeasurementTypeMustMatchInstallationType(
-            new InstallationType(installationType),
+            InstallationType.From(installationType),
             MeasurementType.RcdTripTime);
 
         rule.IsBroken().Should().BeFalse();
@@ -29,7 +29,7 @@ public sealed class MeasurementTypeMustMatchInstallationTypeTests
     public void RcdTripTime_OnNonElectricalInstallation_ShouldBeBroken(string installationType)
     {
         var rule = new MeasurementTypeMustMatchInstallationType(
-            new InstallationType(installationType),
+            InstallationType.From(installationType),
             MeasurementType.RcdTripTime);
 
         rule.IsBroken().Should().BeTrue();
@@ -42,7 +42,7 @@ public sealed class MeasurementTypeMustMatchInstallationTypeTests
     public void RcdTripCurrent_OnElectricalInstallation_ShouldNotBeBroken(string installationType)
     {
         var rule = new MeasurementTypeMustMatchInstallationType(
-            new InstallationType(installationType),
+            InstallationType.From(installationType),
             MeasurementType.RcdTripCurrent);
 
         rule.IsBroken().Should().BeFalse();
@@ -54,7 +54,7 @@ public sealed class MeasurementTypeMustMatchInstallationTypeTests
     public void RcdTripCurrent_OnNonElectricalInstallation_ShouldBeBroken(string installationType)
     {
         var rule = new MeasurementTypeMustMatchInstallationType(
-            new InstallationType(installationType),
+            InstallationType.From(installationType),
             MeasurementType.RcdTripCurrent);
 
         rule.IsBroken().Should().BeTrue();
@@ -69,7 +69,7 @@ public sealed class MeasurementTypeMustMatchInstallationTypeTests
     public void LoopImpedance_OnAllowedInstallation_ShouldNotBeBroken(string installationType)
     {
         var rule = new MeasurementTypeMustMatchInstallationType(
-            new InstallationType(installationType),
+            InstallationType.From(installationType),
             MeasurementType.LoopImpedance);
 
         rule.IsBroken().Should().BeFalse();
@@ -83,7 +83,7 @@ public sealed class MeasurementTypeMustMatchInstallationTypeTests
     public void LoopImpedance_OnNonAllowedInstallation_ShouldBeBroken(string installationType)
     {
         var rule = new MeasurementTypeMustMatchInstallationType(
-            new InstallationType(installationType),
+            InstallationType.From(installationType),
             MeasurementType.LoopImpedance);
 
         rule.IsBroken().Should().BeTrue();
@@ -99,7 +99,7 @@ public sealed class MeasurementTypeMustMatchInstallationTypeTests
     public void Voltage_OnAnyInstallation_ShouldNotBeBroken(string installationType)
     {
         var rule = new MeasurementTypeMustMatchInstallationType(
-            new InstallationType(installationType),
+            InstallationType.From(installationType),
             MeasurementType.Voltage);
 
         rule.IsBroken().Should().BeFalse();
@@ -113,7 +113,7 @@ public sealed class MeasurementTypeMustMatchInstallationTypeTests
     public void InsulationResistance_OnAnyInstallation_ShouldNotBeBroken(string installationType)
     {
         var rule = new MeasurementTypeMustMatchInstallationType(
-            new InstallationType(installationType),
+            InstallationType.From(installationType),
             MeasurementType.InsulationResistance);
 
         rule.IsBroken().Should().BeFalse();
@@ -126,7 +126,7 @@ public sealed class MeasurementTypeMustMatchInstallationTypeTests
     public void Continuity_OnAnyInstallation_ShouldNotBeBroken(string installationType)
     {
         var rule = new MeasurementTypeMustMatchInstallationType(
-            new InstallationType(installationType),
+            InstallationType.From(installationType),
             MeasurementType.Continuity);
 
         rule.IsBroken().Should().BeFalse();

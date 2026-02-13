@@ -11,26 +11,26 @@ namespace BauDoku.Sync.Application.Commands.ProcessSyncBatch;
 public sealed class ProcessSyncBatchCommandHandler
     : ICommandHandler<ProcessSyncBatchCommand, ProcessSyncBatchResult>
 {
-    private readonly ISyncBatchRepository _syncBatchRepository;
-    private readonly IEntityVersionStore _entityVersionStore;
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly ISyncBatchRepository syncBatchRepository;
+    private readonly IEntityVersionStore entityVersionStore;
+    private readonly IUnitOfWork unitOfWork;
 
     public ProcessSyncBatchCommandHandler(
         ISyncBatchRepository syncBatchRepository,
         IEntityVersionStore entityVersionStore,
         IUnitOfWork unitOfWork)
     {
-        _syncBatchRepository = syncBatchRepository;
-        _entityVersionStore = entityVersionStore;
-        _unitOfWork = unitOfWork;
+        this.syncBatchRepository = syncBatchRepository;
+        this.entityVersionStore = entityVersionStore;
+        this.unitOfWork = unitOfWork;
     }
 
     public async Task<ProcessSyncBatchResult> Handle(
         ProcessSyncBatchCommand command,
         CancellationToken cancellationToken = default)
     {
-        var batchId = SyncBatchId.New();
-        var deviceId = new DeviceId(command.DeviceId);
+        var batchId = SyncBatchIdentifier.New();
+        var deviceId = DeviceIdentifier.From(command.DeviceId);
         var batch = SyncBatch.Create(batchId, deviceId, DateTime.UtcNow);
 
         var appliedCount = 0;
@@ -40,13 +40,13 @@ public sealed class ProcessSyncBatchCommandHandler
         {
             SyncMetrics.DeltaPayloadSize.Record(deltaDto.Payload.Length);
 
-            var entityType = new EntityType(deltaDto.EntityType);
-            var entityRef = new EntityReference(entityType, deltaDto.EntityId);
-            var operation = new DeltaOperation(deltaDto.Operation);
-            var clientBaseVersion = new SyncVersion(deltaDto.BaseVersion);
-            var payload = new DeltaPayload(deltaDto.Payload);
+            var entityType = EntityType.From(deltaDto.EntityType);
+            var entityRef = EntityReference.Create(entityType, deltaDto.EntityId);
+            var operation = DeltaOperation.From(deltaDto.Operation);
+            var clientBaseVersion = SyncVersion.From(deltaDto.BaseVersion);
+            var payload = DeltaPayload.From(deltaDto.Payload);
 
-            var currentServerVersion = await _entityVersionStore.GetCurrentVersionAsync(
+            var currentServerVersion = await entityVersionStore.GetCurrentVersionAsync(
                 entityType, deltaDto.EntityId, cancellationToken);
 
             if (clientBaseVersion.Value == currentServerVersion.Value)
@@ -54,7 +54,7 @@ public sealed class ProcessSyncBatchCommandHandler
                 var newVersion = currentServerVersion.Increment();
 
                 batch.AddDelta(
-                    SyncDeltaId.New(),
+                    SyncDeltaIdentifier.New(),
                     entityRef,
                     operation,
                     clientBaseVersion,
@@ -62,7 +62,7 @@ public sealed class ProcessSyncBatchCommandHandler
                     payload,
                     deltaDto.Timestamp);
 
-                await _entityVersionStore.SetVersionAsync(
+                await entityVersionStore.SetVersionAsync(
                     entityType, deltaDto.EntityId, newVersion,
                     deltaDto.Payload, deviceId, cancellationToken);
 
@@ -70,12 +70,12 @@ public sealed class ProcessSyncBatchCommandHandler
             }
             else
             {
-                var serverPayloadJson = await _entityVersionStore.GetCurrentPayloadAsync(
+                var serverPayloadJson = await entityVersionStore.GetCurrentPayloadAsync(
                     entityType, deltaDto.EntityId, cancellationToken);
-                var serverPayload = new DeltaPayload(serverPayloadJson ?? "{}");
+                var serverPayload = DeltaPayload.From(serverPayloadJson ?? "{}");
 
                 var conflict = batch.AddConflict(
-                    ConflictRecordId.New(),
+                    ConflictRecordIdentifier.New(),
                     entityRef,
                     payload,
                     serverPayload,
@@ -102,8 +102,8 @@ public sealed class ProcessSyncBatchCommandHandler
         else
             batch.MarkFailed();
 
-        await _syncBatchRepository.AddAsync(batch, cancellationToken);
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        await syncBatchRepository.AddAsync(batch, cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         SyncMetrics.BatchesProcessed.Add(1);
         SyncMetrics.DeltasApplied.Add(appliedCount);

@@ -8,35 +8,35 @@ namespace BauDoku.Documentation.Infrastructure.Storage;
 
 public sealed class ChunkedUploadCleanupService : BackgroundService
 {
-    private readonly string _basePath;
-    private readonly ILogger<ChunkedUploadCleanupService> _logger;
-    private readonly TimeSpan _interval = TimeSpan.FromMinutes(15);
-    private readonly TimeSpan _maxAge = TimeSpan.FromHours(1);
+    private readonly string basePath;
+    private readonly ILogger<ChunkedUploadCleanupService> logger;
+    private readonly TimeSpan interval = TimeSpan.FromMinutes(15);
+    private readonly TimeSpan maxAge = TimeSpan.FromHours(1);
 
     public ChunkedUploadCleanupService(
         IConfiguration configuration,
         ILogger<ChunkedUploadCleanupService> logger)
     {
-        _basePath = configuration["PhotoStorage:ChunkedPath"]
+        basePath = configuration["PhotoStorage:ChunkedPath"]
             ?? Path.Combine(Directory.GetCurrentDirectory(), "uploads", "chunks");
-        _logger = logger;
+        this.logger = logger;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         while (!stoppingToken.IsCancellationRequested)
         {
-            await Task.Delay(_interval, stoppingToken);
+            await Task.Delay(interval, stoppingToken);
             CleanupExpiredSessions();
         }
     }
 
     private void CleanupExpiredSessions()
     {
-        if (!Directory.Exists(_basePath))
+        if (!Directory.Exists(basePath))
             return;
 
-        var sessionDirs = Directory.GetDirectories(_basePath);
+        var sessionDirs = Directory.GetDirectories(basePath);
         var cleaned = 0;
 
         foreach (var sessionDir in sessionDirs)
@@ -53,7 +53,7 @@ public sealed class ChunkedUploadCleanupService : BackgroundService
             {
                 var json = File.ReadAllText(metadataPath);
                 var session = JsonSerializer.Deserialize<ChunkedUploadSession>(json);
-                if (session is null || DateTime.UtcNow - session.CreatedAt > _maxAge)
+                if (session is null || DateTime.UtcNow - session.CreatedAt > maxAge)
                 {
                     TryDeleteDirectory(sessionDir);
                     cleaned++;
@@ -61,14 +61,14 @@ public sealed class ChunkedUploadCleanupService : BackgroundService
             }
             catch (Exception ex)
             {
-                _logger.LogWarning(ex, "Fehler beim Lesen der Session-Metadaten in {SessionDir}", sessionDir);
+                logger.LogWarning(ex, "Fehler beim Lesen der Session-Metadaten in {SessionDir}", sessionDir);
                 TryDeleteDirectory(sessionDir);
                 cleaned++;
             }
         }
 
         if (cleaned > 0)
-            _logger.LogInformation("Chunked-Upload-Cleanup: {Count} abgelaufene Sessions entfernt", cleaned);
+            logger.LogInformation("Chunked-Upload-Cleanup: {Count} abgelaufene Sessions entfernt", cleaned);
     }
 
     private void TryDeleteDirectory(string path)
@@ -79,7 +79,7 @@ public sealed class ChunkedUploadCleanupService : BackgroundService
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "Fehler beim Löschen des Session-Verzeichnisses {Path}", path);
+            logger.LogWarning(ex, "Fehler beim Löschen des Session-Verzeichnisses {Path}", path);
         }
     }
 }

@@ -4,4 +4,4 @@ using BauDoku.Documentation.Domain.ValueObjects;
 
 namespace BauDoku.Documentation.Application.Contracts;
 
-public interface IInstallationRepository : IRepository<Installation, InstallationId>;
+public interface IInstallationRepository : IRepository<Installation, InstallationIdentifier>;

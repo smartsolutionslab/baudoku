@@ -1,4 +1,5 @@
 using BauDoku.BuildingBlocks.Domain;
+using BauDoku.BuildingBlocks.Domain.Guards;
 
 namespace BauDoku.Documentation.Domain.ValueObjects;
 
@@ -12,22 +13,21 @@ public sealed record CableSpec : ValueObject
     public string? Color { get; }
     public int? ConductorCount { get; }
 
-    public CableSpec(string cableType, int? crossSection = null, string? color = null, int? conductorCount = null)
+    private CableSpec(string cableType, int? crossSection, string? color, int? conductorCount)
     {
-        if (string.IsNullOrWhiteSpace(cableType))
-            throw new ArgumentException("Kabeltyp darf nicht leer sein.", nameof(cableType));
-        if (cableType.Length > MaxCableTypeLength)
-            throw new ArgumentException($"Kabeltyp darf max. {MaxCableTypeLength} Zeichen lang sein.", nameof(cableType));
-        if (crossSection is <= 0)
-            throw new ArgumentOutOfRangeException(nameof(crossSection), "Querschnitt muss groesser als 0 sein.");
-        if (color is { Length: > MaxColorLength })
-            throw new ArgumentException($"Farbe darf max. {MaxColorLength} Zeichen lang sein.", nameof(color));
-        if (conductorCount is <= 0)
-            throw new ArgumentOutOfRangeException(nameof(conductorCount), "Leiteranzahl muss groesser als 0 sein.");
-
         CableType = cableType;
         CrossSection = crossSection;
         Color = color;
         ConductorCount = conductorCount;
+    }
+
+    public static CableSpec Create(string cableType, int? crossSection = null, string? color = null, int? conductorCount = null)
+    {
+        Ensure.That(cableType).IsNotNullOrWhiteSpace("Kabeltyp darf nicht leer sein.")
+            .MaxLengthIs(MaxCableTypeLength, $"Kabeltyp darf max. {MaxCableTypeLength} Zeichen lang sein.");
+        Ensure.That(crossSection).IsPositive("Querschnitt muss groesser als 0 sein.");
+        Ensure.That(color).MaxLengthIs(MaxColorLength, $"Farbe darf max. {MaxColorLength} Zeichen lang sein.");
+        Ensure.That(conductorCount).IsPositive("Leiteranzahl muss groesser als 0 sein.");
+        return new CableSpec(cableType, crossSection, color, conductorCount);
     }
 }

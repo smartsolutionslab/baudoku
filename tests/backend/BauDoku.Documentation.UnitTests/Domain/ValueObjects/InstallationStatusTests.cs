@@ -11,14 +11,14 @@ public sealed class InstallationStatusTests
     [InlineData("inspected")]
     public void Create_WithValidStatus_ShouldSucceed(string value)
     {
-        var status = new InstallationStatus(value);
+        var status = InstallationStatus.From(value);
         status.Value.Should().Be(value);
     }
 
     [Fact]
     public void Create_WithInvalidStatus_ShouldThrow()
     {
-        var act = () => new InstallationStatus("invalid");
+        var act = () => InstallationStatus.From("invalid");
         act.Should().Throw<ArgumentException>();
     }
 

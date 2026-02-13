@@ -14,7 +14,7 @@ public sealed class PhotoConfiguration : IEntityTypeConfiguration<Photo>
         builder.HasKey(p => p.Id);
         builder.Property(p => p.Id)
             .HasColumnName("id")
-            .HasConversion(id => id.Value, value => new PhotoId(value));
+            .HasConversion(id => id.Value, value => PhotoIdentifier.From(value));
 
         builder.Property(p => p.FileName)
             .HasColumnName("file_name")
@@ -39,7 +39,7 @@ public sealed class PhotoConfiguration : IEntityTypeConfiguration<Photo>
             .HasColumnName("photo_type")
             .HasMaxLength(20)
             .IsRequired()
-            .HasConversion(pt => pt.Value, value => new PhotoType(value));
+            .HasConversion(pt => pt.Value, value => PhotoType.From(value));
 
         builder.OwnsOne(p => p.Caption, cap =>
         {
@@ -69,8 +69,8 @@ public sealed class PhotoConfiguration : IEntityTypeConfiguration<Photo>
             pos.Property(p => p.CorrectionAge).HasColumnName("gps_correction_age");
         });
 
-        builder.Property<InstallationId>("InstallationId")
+        builder.Property<InstallationIdentifier>("InstallationId")
             .HasColumnName("installation_id")
-            .HasConversion(id => id.Value, value => new InstallationId(value));
+            .HasConversion(id => id.Value, value => InstallationIdentifier.From(value));
     }
 }

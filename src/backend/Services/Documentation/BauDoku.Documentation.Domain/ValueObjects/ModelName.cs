@@ -1,4 +1,5 @@
 using BauDoku.BuildingBlocks.Domain;
+using BauDoku.BuildingBlocks.Domain.Guards;
 
 namespace BauDoku.Documentation.Domain.ValueObjects;
 
@@ -8,12 +9,12 @@ public sealed record ModelName : ValueObject
 
     public string Value { get; }
 
-    public ModelName(string value)
+    private ModelName(string value) => Value = value;
+
+    public static ModelName From(string value)
     {
-        if (string.IsNullOrWhiteSpace(value))
-            throw new ArgumentException("Modellname darf nicht leer sein.", nameof(value));
-        if (value.Length > MaxLength)
-            throw new ArgumentException($"Modellname darf max. {MaxLength} Zeichen lang sein.", nameof(value));
-        Value = value;
+        Ensure.That(value).IsNotNullOrWhiteSpace("Modellname darf nicht leer sein.")
+            .MaxLengthIs(MaxLength, $"Modellname darf max. {MaxLength} Zeichen lang sein.");
+        return new ModelName(value);
     }
 }

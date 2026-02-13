@@ -1,4 +1,5 @@
 using BauDoku.BuildingBlocks.Domain;
+using BauDoku.BuildingBlocks.Domain.Guards;
 
 namespace BauDoku.Documentation.Domain.ValueObjects;
 
@@ -8,13 +9,13 @@ public sealed record Caption : ValueObject
 
     public string Value { get; }
 
-    public Caption(string value)
+    private Caption(string value) => Value = value;
+
+    public static Caption From(string value)
     {
-        ArgumentNullException.ThrowIfNull(value);
-        if (string.IsNullOrWhiteSpace(value))
-            throw new ArgumentException("Bildunterschrift darf nicht leer sein.", nameof(value));
-        if (value.Length > MaxLength)
-            throw new ArgumentException($"Bildunterschrift darf max. {MaxLength} Zeichen lang sein.", nameof(value));
-        Value = value;
+        Ensure.That<string>(value).IsNotNull("Bildunterschrift darf nicht null sein.");
+        Ensure.That(value).IsNotNullOrWhiteSpace("Bildunterschrift darf nicht leer sein.")
+            .MaxLengthIs(MaxLength, $"Bildunterschrift darf max. {MaxLength} Zeichen lang sein.");
+        return new Caption(value);
     }
 }

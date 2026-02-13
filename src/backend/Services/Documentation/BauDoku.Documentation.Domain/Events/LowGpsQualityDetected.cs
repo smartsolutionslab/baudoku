@@ -4,6 +4,6 @@ using BauDoku.Documentation.Domain.ValueObjects;
 namespace BauDoku.Documentation.Domain.Events;
 
 public sealed record LowGpsQualityDetected(
-    InstallationId InstallationId,
+    InstallationIdentifier InstallationIdentifier,
     GpsQualityGrade QualityGrade,
     DateTime OccurredOn) : IDomainEvent;

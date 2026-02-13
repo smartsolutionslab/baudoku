@@ -14,13 +14,13 @@ public sealed class MeasurementConfiguration : IEntityTypeConfiguration<Measurem
         builder.HasKey(m => m.Id);
         builder.Property(m => m.Id)
             .HasColumnName("id")
-            .HasConversion(id => id.Value, value => new MeasurementId(value));
+            .HasConversion(id => id.Value, value => MeasurementIdentifier.From(value));
 
         builder.Property(m => m.Type)
             .HasColumnName("type")
             .HasMaxLength(30)
             .IsRequired()
-            .HasConversion(t => t.Value, value => new MeasurementType(value));
+            .HasConversion(t => t.Value, value => MeasurementType.From(value));
 
         builder.OwnsOne(m => m.Value, val =>
         {
@@ -36,7 +36,7 @@ public sealed class MeasurementConfiguration : IEntityTypeConfiguration<Measurem
             .HasColumnName("result")
             .HasMaxLength(20)
             .IsRequired()
-            .HasConversion(r => r.Value, value => new MeasurementResult(value));
+            .HasConversion(r => r.Value, value => MeasurementResult.From(value));
 
         builder.Property(m => m.MeasuredAt)
             .HasColumnName("measured_at")
@@ -46,8 +46,8 @@ public sealed class MeasurementConfiguration : IEntityTypeConfiguration<Measurem
             .HasColumnName("notes")
             .HasMaxLength(500);
 
-        builder.Property<InstallationId>("InstallationId")
+        builder.Property<InstallationIdentifier>("InstallationId")
             .HasColumnName("installation_id")
-            .HasConversion(id => id.Value, value => new InstallationId(value));
+            .HasConversion(id => id.Value, value => InstallationIdentifier.From(value));
     }
 }

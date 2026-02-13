@@ -9,24 +9,24 @@ namespace BauDoku.Documentation.IntegrationTests;
 [Collection(PostgreSqlCollection.Name)]
 public sealed class InstallationPhotoPersistenceTests
 {
-    private readonly PostgreSqlFixture _fixture;
+    private readonly PostgreSqlFixture fixture;
 
     public InstallationPhotoPersistenceTests(PostgreSqlFixture fixture)
     {
-        _fixture = fixture;
+        this.fixture = fixture;
     }
 
     [Fact]
     public async Task AddPhoto_ShouldPersistAndLoad()
     {
         var installation = Installation.Create(
-            InstallationId.New(),
+            InstallationIdentifier.New(),
             Guid.NewGuid(),
             null,
             InstallationType.CableTray,
-            new GpsPosition(48.1351, 11.5820, 520.0, 3.5, "internal_gps"));
+            GpsPosition.Create(48.1351, 11.5820, 520.0, 3.5, "internal_gps"));
 
-        var photoId = PhotoId.New();
+        var photoId = PhotoIdentifier.New();
         installation.AddPhoto(
             photoId,
             "test-photo.jpg",
@@ -34,17 +34,17 @@ public sealed class InstallationPhotoPersistenceTests
             "image/jpeg",
             2048,
             PhotoType.Before,
-            new Caption("Vorher-Bild"),
-            new Description("Detailansicht der Kabeltrasse"),
-            new GpsPosition(48.1351, 11.5820, 520.0, 3.5, "internal_gps"));
+            Caption.From("Vorher-Bild"),
+            Description.From("Detailansicht der Kabeltrasse"),
+            GpsPosition.Create(48.1351, 11.5820, 520.0, 3.5, "internal_gps"));
 
-        await using (var writeContext = _fixture.CreateContext())
+        await using (var writeContext = fixture.CreateContext())
         {
             writeContext.Installations.Add(installation);
             await writeContext.SaveChangesAsync();
         }
 
-        await using (var readContext = _fixture.CreateContext())
+        await using (var readContext = fixture.CreateContext())
         {
             var loaded = await readContext.Installations
                 .Include(i => i.Photos)
@@ -72,27 +72,27 @@ public sealed class InstallationPhotoPersistenceTests
     public async Task AddPhoto_WithOptionalFieldsNull_ShouldPersist()
     {
         var installation = Installation.Create(
-            InstallationId.New(),
+            InstallationIdentifier.New(),
             Guid.NewGuid(),
             null,
             InstallationType.JunctionBox,
-            new GpsPosition(48.0, 11.0, null, 5.0, "internal_gps"));
+            GpsPosition.Create(48.0, 11.0, null, 5.0, "internal_gps"));
 
         installation.AddPhoto(
-            PhotoId.New(),
+            PhotoIdentifier.New(),
             "minimal.png",
             "uploads/min.png",
             "image/png",
             512,
             PhotoType.Other);
 
-        await using (var writeContext = _fixture.CreateContext())
+        await using (var writeContext = fixture.CreateContext())
         {
             writeContext.Installations.Add(installation);
             await writeContext.SaveChangesAsync();
         }
 
-        await using (var readContext = _fixture.CreateContext())
+        await using (var readContext = fixture.CreateContext())
         {
             var loaded = await readContext.Installations
                 .Include(i => i.Photos)
@@ -111,23 +111,23 @@ public sealed class InstallationPhotoPersistenceTests
     public async Task AddMultiplePhotos_ShouldPersistAll()
     {
         var installation = Installation.Create(
-            InstallationId.New(),
+            InstallationIdentifier.New(),
             Guid.NewGuid(),
             null,
             InstallationType.Grounding,
-            new GpsPosition(48.0, 11.0, null, 5.0, "internal_gps"));
+            GpsPosition.Create(48.0, 11.0, null, 5.0, "internal_gps"));
 
-        installation.AddPhoto(PhotoId.New(), "before.jpg", "url1", "image/jpeg", 1024, PhotoType.Before);
-        installation.AddPhoto(PhotoId.New(), "after.jpg", "url2", "image/jpeg", 2048, PhotoType.After);
-        installation.AddPhoto(PhotoId.New(), "detail.png", "url3", "image/png", 4096, PhotoType.Detail);
+        installation.AddPhoto(PhotoIdentifier.New(), "before.jpg", "url1", "image/jpeg", 1024, PhotoType.Before);
+        installation.AddPhoto(PhotoIdentifier.New(), "after.jpg", "url2", "image/jpeg", 2048, PhotoType.After);
+        installation.AddPhoto(PhotoIdentifier.New(), "detail.png", "url3", "image/png", 4096, PhotoType.Detail);
 
-        await using (var writeContext = _fixture.CreateContext())
+        await using (var writeContext = fixture.CreateContext())
         {
             writeContext.Installations.Add(installation);
             await writeContext.SaveChangesAsync();
         }
 
-        await using (var readContext = _fixture.CreateContext())
+        await using (var readContext = fixture.CreateContext())
         {
             var loaded = await readContext.Installations
                 .Include(i => i.Photos)

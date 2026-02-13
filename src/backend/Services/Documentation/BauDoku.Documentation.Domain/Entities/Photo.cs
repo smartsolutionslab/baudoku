@@ -3,7 +3,7 @@ using BauDoku.Documentation.Domain.ValueObjects;
 
 namespace BauDoku.Documentation.Domain.Entities;
 
-public sealed class Photo : Entity<PhotoId>
+public sealed class Photo : Entity<PhotoIdentifier>
 {
     public string FileName { get; private set; } = default!;
     public string BlobUrl { get; private set; } = default!;
@@ -18,7 +18,7 @@ public sealed class Photo : Entity<PhotoId>
     private Photo() { }
 
     internal static Photo Create(
-        PhotoId id,
+        PhotoIdentifier id,
         string fileName,
         string blobUrl,
         string contentType,

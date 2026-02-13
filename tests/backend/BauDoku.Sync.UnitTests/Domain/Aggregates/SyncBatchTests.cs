@@ -11,16 +11,16 @@ public sealed class SyncBatchTests
     private static SyncBatch CreateValidBatch()
     {
         return SyncBatch.Create(
-            SyncBatchId.New(),
-            new DeviceId("device-001"),
+            SyncBatchIdentifier.New(),
+            DeviceIdentifier.From("device-001"),
             DateTime.UtcNow);
     }
 
     [Fact]
     public void Create_ShouldSetProperties()
     {
-        var id = SyncBatchId.New();
-        var deviceId = new DeviceId("device-test");
+        var id = SyncBatchIdentifier.New();
+        var deviceId = DeviceIdentifier.From("device-test");
         var now = DateTime.UtcNow;
 
         var batch = SyncBatch.Create(id, deviceId, now);
@@ -46,15 +46,15 @@ public sealed class SyncBatchTests
     public void AddDelta_ShouldAddDeltaToBatch()
     {
         var batch = CreateValidBatch();
-        var entityRef = new EntityReference(EntityType.Project, Guid.NewGuid());
+        var entityRef = EntityReference.Create(EntityType.Project, Guid.NewGuid());
 
         batch.AddDelta(
-            SyncDeltaId.New(),
+            SyncDeltaIdentifier.New(),
             entityRef,
             DeltaOperation.Create,
             SyncVersion.Initial,
-            new SyncVersion(1),
-            new DeltaPayload("""{"name":"Test"}"""),
+            SyncVersion.From(1),
+            DeltaPayload.From("""{"name":"Test"}"""),
             DateTime.UtcNow);
 
         batch.Deltas.Should().ContainSingle();
@@ -64,15 +64,15 @@ public sealed class SyncBatchTests
     public void AddConflict_ShouldAddConflictToBatch()
     {
         var batch = CreateValidBatch();
-        var entityRef = new EntityReference(EntityType.Installation, Guid.NewGuid());
+        var entityRef = EntityReference.Create(EntityType.Installation, Guid.NewGuid());
 
         var conflict = batch.AddConflict(
-            ConflictRecordId.New(),
+            ConflictRecordIdentifier.New(),
             entityRef,
-            new DeltaPayload("""{"client":"data"}"""),
-            new DeltaPayload("""{"server":"data"}"""),
-            new SyncVersion(1),
-            new SyncVersion(2));
+            DeltaPayload.From("""{"client":"data"}"""),
+            DeltaPayload.From("""{"server":"data"}"""),
+            SyncVersion.From(1),
+            SyncVersion.From(2));
 
         batch.Conflicts.Should().ContainSingle();
         conflict.Status.Should().Be(ConflictStatus.Unresolved);
@@ -85,12 +85,12 @@ public sealed class SyncBatchTests
         batch.ClearDomainEvents();
 
         batch.AddConflict(
-            ConflictRecordId.New(),
-            new EntityReference(EntityType.Project, Guid.NewGuid()),
-            new DeltaPayload("""{"a":1}"""),
-            new DeltaPayload("""{"a":2}"""),
-            new SyncVersion(1),
-            new SyncVersion(2));
+            ConflictRecordIdentifier.New(),
+            EntityReference.Create(EntityType.Project, Guid.NewGuid()),
+            DeltaPayload.From("""{"a":1}"""),
+            DeltaPayload.From("""{"a":2}"""),
+            SyncVersion.From(1),
+            SyncVersion.From(2));
 
         batch.DomainEvents.Should().ContainSingle()
             .Which.Should().BeOfType<ConflictDetected>();
@@ -146,12 +146,12 @@ public sealed class SyncBatchTests
         batch.MarkCompleted();
 
         var act = () => batch.AddDelta(
-            SyncDeltaId.New(),
-            new EntityReference(EntityType.Project, Guid.NewGuid()),
+            SyncDeltaIdentifier.New(),
+            EntityReference.Create(EntityType.Project, Guid.NewGuid()),
             DeltaOperation.Create,
             SyncVersion.Initial,
-            new SyncVersion(1),
-            new DeltaPayload("""{"x":1}"""),
+            SyncVersion.From(1),
+            DeltaPayload.From("""{"x":1}"""),
             DateTime.UtcNow);
 
         act.Should().Throw<BusinessRuleException>();

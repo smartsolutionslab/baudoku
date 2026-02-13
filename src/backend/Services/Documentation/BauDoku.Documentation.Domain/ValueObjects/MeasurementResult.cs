@@ -1,4 +1,5 @@
 using BauDoku.BuildingBlocks.Domain;
+using BauDoku.BuildingBlocks.Domain.Guards;
 
 namespace BauDoku.Documentation.Domain.ValueObjects;
 
@@ -15,12 +16,12 @@ public sealed record MeasurementResult : ValueObject
 
     public string Value { get; }
 
-    public MeasurementResult(string value)
+    private MeasurementResult(string value) => Value = value;
+
+    public static MeasurementResult From(string value)
     {
-        if (string.IsNullOrWhiteSpace(value))
-            throw new ArgumentException("Messergebnis darf nicht leer sein.", nameof(value));
-        if (!ValidValues.Contains(value))
-            throw new ArgumentException($"Ungueltiges Messergebnis: {value}.", nameof(value));
-        Value = value;
+        Ensure.That(value).IsNotNullOrWhiteSpace("Messergebnis darf nicht leer sein.")
+            .IsOneOf(ValidValues, $"Ungueltiges Messergebnis: {value}.");
+        return new MeasurementResult(value);
     }
 }

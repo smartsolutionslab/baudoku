@@ -9,7 +9,7 @@ public sealed class MeasurementValueMustBePositiveTests
     [Fact]
     public void IsBroken_WithPositiveValue_ShouldReturnFalse()
     {
-        var value = new MeasurementValue(5.0, "V");
+        var value = MeasurementValue.Create(5.0, "V");
         var rule = new MeasurementValueMustBePositive(value);
 
         rule.IsBroken().Should().BeFalse();
@@ -18,7 +18,7 @@ public sealed class MeasurementValueMustBePositiveTests
     [Fact]
     public void IsBroken_WithZeroValue_ShouldReturnTrue()
     {
-        var value = new MeasurementValue(0.0, "V");
+        var value = MeasurementValue.Create(0.0, "V");
         var rule = new MeasurementValueMustBePositive(value);
 
         rule.IsBroken().Should().BeTrue();
@@ -27,7 +27,7 @@ public sealed class MeasurementValueMustBePositiveTests
     [Fact]
     public void IsBroken_WithNegativeValue_ShouldReturnTrue()
     {
-        var value = new MeasurementValue(-1.0, "V");
+        var value = MeasurementValue.Create(-1.0, "V");
         var rule = new MeasurementValueMustBePositive(value);
 
         rule.IsBroken().Should().BeTrue();

@@ -17,14 +17,14 @@ public sealed class InstallationTypeTests
     [InlineData("other")]
     public void Create_WithValidType_ShouldSucceed(string value)
     {
-        var type = new InstallationType(value);
+        var type = InstallationType.From(value);
         type.Value.Should().Be(value);
     }
 
     [Fact]
     public void Create_WithInvalidType_ShouldThrow()
     {
-        var act = () => new InstallationType("invalid");
+        var act = () => InstallationType.From("invalid");
         act.Should().Throw<ArgumentException>();
     }
 
@@ -34,7 +34,7 @@ public sealed class InstallationTypeTests
     [InlineData("   ")]
     public void Create_WithEmptyType_ShouldThrow(string? value)
     {
-        var act = () => new InstallationType(value!);
+        var act = () => InstallationType.From(value!);
         act.Should().Throw<ArgumentException>();
     }
 }

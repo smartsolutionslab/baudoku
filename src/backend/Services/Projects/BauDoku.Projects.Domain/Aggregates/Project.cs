@@ -6,20 +6,20 @@ using BauDoku.Projects.Domain.ValueObjects;
 
 namespace BauDoku.Projects.Domain.Aggregates;
 
-public sealed class Project : AggregateRoot<ProjectId>
+public sealed class Project : AggregateRoot<ProjectIdentifier>
 {
-    private readonly List<Zone> _zones = [];
+    private readonly List<Zone> zones = [];
 
     public ProjectName Name { get; private set; } = default!;
     public ProjectStatus Status { get; private set; } = default!;
     public Address Address { get; private set; } = default!;
     public ClientInfo Client { get; private set; } = default!;
     public DateTime CreatedAt { get; private set; }
-    public IReadOnlyList<Zone> Zones => _zones.AsReadOnly();
+    public IReadOnlyList<Zone> Zones => zones.AsReadOnly();
 
     private Project() { } // EF Core
 
-    public static Project Create(ProjectId id, ProjectName name, Address address, ClientInfo client)
+    public static Project Create(ProjectIdentifier id, ProjectName name, Address address, ClientInfo client)
     {
         var project = new Project
         {
@@ -35,12 +35,12 @@ public sealed class Project : AggregateRoot<ProjectId>
         return project;
     }
 
-    public void AddZone(ZoneId zoneId, ZoneName name, ZoneType type, ZoneId? parentZoneId = null)
+    public void AddZone(ZoneIdentifier zoneId, ZoneName name, ZoneType type, ZoneIdentifier? parentZoneIdentifier = null)
     {
-        CheckRule(new ZoneNameMustBeUniqueWithinProject(_zones, name));
+        CheckRule(new ZoneNameMustBeUniqueWithinProject(zones, name));
 
-        var zone = Zone.Create(zoneId, name, type, parentZoneId);
-        _zones.Add(zone);
+        var zone = Zone.Create(zoneId, name, type, parentZoneIdentifier);
+        zones.Add(zone);
 
         AddDomainEvent(new ZoneAdded(Id, zoneId, name, type, DateTime.UtcNow));
     }

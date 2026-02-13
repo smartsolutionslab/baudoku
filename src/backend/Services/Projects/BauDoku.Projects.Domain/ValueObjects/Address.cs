@@ -1,4 +1,5 @@
 using BauDoku.BuildingBlocks.Domain;
+using BauDoku.BuildingBlocks.Domain.Guards;
 
 namespace BauDoku.Projects.Domain.ValueObjects;
 
@@ -12,23 +13,25 @@ public sealed record Address : ValueObject
     public string City { get; }
     public string ZipCode { get; }
 
-    public Address(string street, string city, string zipCode)
+    private Address(string street, string city, string zipCode)
     {
-        if (string.IsNullOrWhiteSpace(street))
-            throw new ArgumentException("Straße darf nicht leer sein.", nameof(street));
-        if (street.Length > MaxStreetLength)
-            throw new ArgumentException($"Straße darf max. {MaxStreetLength} Zeichen lang sein.", nameof(street));
-        if (string.IsNullOrWhiteSpace(city))
-            throw new ArgumentException("Stadt darf nicht leer sein.", nameof(city));
-        if (city.Length > MaxCityLength)
-            throw new ArgumentException($"Stadt darf max. {MaxCityLength} Zeichen lang sein.", nameof(city));
-        if (string.IsNullOrWhiteSpace(zipCode))
-            throw new ArgumentException("PLZ darf nicht leer sein.", nameof(zipCode));
-        if (zipCode.Length > MaxZipCodeLength)
-            throw new ArgumentException($"PLZ darf max. {MaxZipCodeLength} Zeichen lang sein.", nameof(zipCode));
-
         Street = street;
         City = city;
         ZipCode = zipCode;
+    }
+
+    public static Address Create(string street, string city, string zipCode)
+    {
+        Ensure.That(street)
+            .IsNotNullOrWhiteSpace("Strasse darf nicht leer sein.")
+            .MaxLengthIs(MaxStreetLength, $"Strasse darf max. {MaxStreetLength} Zeichen lang sein.");
+        Ensure.That(city)
+            .IsNotNullOrWhiteSpace("Stadt darf nicht leer sein.")
+            .MaxLengthIs(MaxCityLength, $"Stadt darf max. {MaxCityLength} Zeichen lang sein.");
+        Ensure.That(zipCode)
+            .IsNotNullOrWhiteSpace("PLZ darf nicht leer sein.")
+            .MaxLengthIs(MaxZipCodeLength, $"PLZ darf max. {MaxZipCodeLength} Zeichen lang sein.");
+
+        return new Address(street, city, zipCode);
     }
 }

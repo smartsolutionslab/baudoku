@@ -5,18 +5,18 @@ namespace BauDoku.Documentation.Infrastructure.Storage;
 
 public sealed class LocalFilePhotoStorage : IPhotoStorage
 {
-    private readonly string _basePath;
+    private readonly string basePath;
 
     public LocalFilePhotoStorage(IConfiguration configuration)
     {
-        _basePath = configuration["PhotoStorage:LocalPath"] ?? Path.Combine(Directory.GetCurrentDirectory(), "uploads", "photos");
-        Directory.CreateDirectory(_basePath);
+        basePath = configuration["PhotoStorage:LocalPath"] ?? Path.Combine(Directory.GetCurrentDirectory(), "uploads", "photos");
+        Directory.CreateDirectory(basePath);
     }
 
     public async Task<string> UploadAsync(Stream stream, string fileName, string contentType, CancellationToken ct = default)
     {
         var uniqueName = $"{Guid.NewGuid()}{Path.GetExtension(fileName)}";
-        var filePath = Path.Combine(_basePath, uniqueName);
+        var filePath = Path.Combine(basePath, uniqueName);
 
         await using var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write);
         await stream.CopyToAsync(fileStream, ct);
@@ -26,7 +26,7 @@ public sealed class LocalFilePhotoStorage : IPhotoStorage
 
     public Task<Stream> DownloadAsync(string blobUrl, CancellationToken ct = default)
     {
-        var filePath = Path.Combine(_basePath, blobUrl);
+        var filePath = Path.Combine(basePath, blobUrl);
         if (!File.Exists(filePath))
             throw new FileNotFoundException($"Foto nicht gefunden: {blobUrl}");
 
@@ -36,7 +36,7 @@ public sealed class LocalFilePhotoStorage : IPhotoStorage
 
     public Task DeleteAsync(string blobUrl, CancellationToken ct = default)
     {
-        var filePath = Path.Combine(_basePath, blobUrl);
+        var filePath = Path.Combine(basePath, blobUrl);
         if (File.Exists(filePath))
             File.Delete(filePath);
 

@@ -1,4 +1,5 @@
 using BauDoku.BuildingBlocks.Domain;
+using BauDoku.BuildingBlocks.Domain.Guards;
 
 namespace BauDoku.Documentation.Domain.ValueObjects;
 
@@ -18,12 +19,12 @@ public sealed record PhotoType : ValueObject
 
     public string Value { get; }
 
-    public PhotoType(string value)
+    private PhotoType(string value) => Value = value;
+
+    public static PhotoType From(string value)
     {
-        if (string.IsNullOrWhiteSpace(value))
-            throw new ArgumentException("Fototyp darf nicht leer sein.", nameof(value));
-        if (!ValidValues.Contains(value))
-            throw new ArgumentException($"Ungueltiger Fototyp: {value}.", nameof(value));
-        Value = value;
+        Ensure.That(value).IsNotNullOrWhiteSpace("Fototyp darf nicht leer sein.")
+            .IsOneOf(ValidValues, $"Ungueltiger Fototyp: {value}.");
+        return new PhotoType(value);
     }
 }

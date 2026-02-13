@@ -6,18 +6,18 @@ namespace BauDoku.Documentation.Infrastructure.Storage;
 
 public sealed class LocalChunkedUploadStorage : IChunkedUploadStorage
 {
-    private readonly string _basePath;
+    private readonly string basePath;
 
     public LocalChunkedUploadStorage(IConfiguration configuration)
     {
-        _basePath = configuration["PhotoStorage:ChunkedPath"]
+        basePath = configuration["PhotoStorage:ChunkedPath"]
             ?? Path.Combine(Directory.GetCurrentDirectory(), "uploads", "chunks");
-        Directory.CreateDirectory(_basePath);
+        Directory.CreateDirectory(basePath);
     }
 
     public Task<Guid> InitSessionAsync(ChunkedUploadSession session, CancellationToken ct = default)
     {
-        var sessionDir = Path.Combine(_basePath, session.SessionId.ToString());
+        var sessionDir = Path.Combine(basePath, session.SessionId.ToString());
         Directory.CreateDirectory(sessionDir);
 
         var metadataPath = Path.Combine(sessionDir, "metadata.json");
@@ -29,7 +29,7 @@ public sealed class LocalChunkedUploadStorage : IChunkedUploadStorage
 
     public async Task StoreChunkAsync(Guid sessionId, int chunkIndex, Stream data, CancellationToken ct = default)
     {
-        var sessionDir = Path.Combine(_basePath, sessionId.ToString());
+        var sessionDir = Path.Combine(basePath, sessionId.ToString());
         if (!Directory.Exists(sessionDir))
             throw new InvalidOperationException($"Upload-Session {sessionId} nicht gefunden.");
 
@@ -40,7 +40,7 @@ public sealed class LocalChunkedUploadStorage : IChunkedUploadStorage
 
     public Task<ChunkedUploadSession?> GetSessionAsync(Guid sessionId, CancellationToken ct = default)
     {
-        var metadataPath = Path.Combine(_basePath, sessionId.ToString(), "metadata.json");
+        var metadataPath = Path.Combine(basePath, sessionId.ToString(), "metadata.json");
         if (!File.Exists(metadataPath))
             return Task.FromResult<ChunkedUploadSession?>(null);
 
@@ -51,7 +51,7 @@ public sealed class LocalChunkedUploadStorage : IChunkedUploadStorage
 
     public Task<int> GetUploadedChunkCountAsync(Guid sessionId, CancellationToken ct = default)
     {
-        var sessionDir = Path.Combine(_basePath, sessionId.ToString());
+        var sessionDir = Path.Combine(basePath, sessionId.ToString());
         if (!Directory.Exists(sessionDir))
             return Task.FromResult(0);
 
@@ -61,7 +61,7 @@ public sealed class LocalChunkedUploadStorage : IChunkedUploadStorage
 
     public async Task<Stream> AssembleAsync(Guid sessionId, CancellationToken ct = default)
     {
-        var sessionDir = Path.Combine(_basePath, sessionId.ToString());
+        var sessionDir = Path.Combine(basePath, sessionId.ToString());
         var metadataPath = Path.Combine(sessionDir, "metadata.json");
         var json = File.ReadAllText(metadataPath);
         var session = JsonSerializer.Deserialize<ChunkedUploadSession>(json)
@@ -87,7 +87,7 @@ public sealed class LocalChunkedUploadStorage : IChunkedUploadStorage
 
     public Task CleanupSessionAsync(Guid sessionId, CancellationToken ct = default)
     {
-        var sessionDir = Path.Combine(_basePath, sessionId.ToString());
+        var sessionDir = Path.Combine(basePath, sessionId.ToString());
         if (Directory.Exists(sessionDir))
             Directory.Delete(sessionDir, recursive: true);
 

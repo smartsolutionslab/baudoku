@@ -11,19 +11,19 @@ public sealed class ProjectTests
     private static Project CreateValidProject()
     {
         return Project.Create(
-            ProjectId.New(),
-            new ProjectName("Testprojekt"),
-            new Address("Musterstraße 1", "Berlin", "10115"),
-            new ClientInfo("Max Mustermann", "max@example.com", "+49 30 12345"));
+            ProjectIdentifier.New(),
+            ProjectName.From("Testprojekt"),
+            Address.Create("Musterstraße 1", "Berlin", "10115"),
+            ClientInfo.Create("Max Mustermann", "max@example.com", "+49 30 12345"));
     }
 
     [Fact]
     public void Create_ShouldSetProperties()
     {
-        var id = ProjectId.New();
-        var name = new ProjectName("Neues Projekt");
-        var address = new Address("Hauptstraße 5", "München", "80331");
-        var client = new ClientInfo("Firma GmbH");
+        var id = ProjectIdentifier.New();
+        var name = ProjectName.From("Neues Projekt");
+        var address = Address.Create("Hauptstraße 5", "München", "80331");
+        var client = ClientInfo.Create("Firma GmbH");
 
         var project = Project.Create(id, name, address, client);
 
@@ -48,8 +48,8 @@ public sealed class ProjectTests
     public void AddZone_ShouldAddZoneToProject()
     {
         var project = CreateValidProject();
-        var zoneId = ZoneId.New();
-        var zoneName = new ZoneName("Erdgeschoss");
+        var zoneId = ZoneIdentifier.New();
+        var zoneName = ZoneName.From("Erdgeschoss");
         var zoneType = ZoneType.Floor;
 
         project.AddZone(zoneId, zoneName, zoneType);
@@ -65,7 +65,7 @@ public sealed class ProjectTests
         var project = CreateValidProject();
         project.ClearDomainEvents();
 
-        project.AddZone(ZoneId.New(), new ZoneName("Keller"), ZoneType.Floor);
+        project.AddZone(ZoneIdentifier.New(), ZoneName.From("Keller"), ZoneType.Floor);
 
         project.DomainEvents.Should().ContainSingle()
             .Which.Should().BeOfType<ZoneAdded>();
@@ -75,26 +75,26 @@ public sealed class ProjectTests
     public void AddZone_WithDuplicateName_ShouldThrowBusinessRuleException()
     {
         var project = CreateValidProject();
-        var zoneName = new ZoneName("Erdgeschoss");
+        var zoneName = ZoneName.From("Erdgeschoss");
 
-        project.AddZone(ZoneId.New(), zoneName, ZoneType.Floor);
+        project.AddZone(ZoneIdentifier.New(), zoneName, ZoneType.Floor);
 
-        var act = () => project.AddZone(ZoneId.New(), zoneName, ZoneType.Room);
+        var act = () => project.AddZone(ZoneIdentifier.New(), zoneName, ZoneType.Room);
 
         act.Should().Throw<BusinessRuleException>();
     }
 
     [Fact]
-    public void AddZone_WithParentZoneId_ShouldSetParent()
+    public void AddZone_WithParentZoneIdentifier_ShouldSetParent()
     {
         var project = CreateValidProject();
-        var parentId = ZoneId.New();
-        project.AddZone(parentId, new ZoneName("Gebäude A"), ZoneType.Building);
+        var parentId = ZoneIdentifier.New();
+        project.AddZone(parentId, ZoneName.From("Gebäude A"), ZoneType.Building);
 
-        var childId = ZoneId.New();
-        project.AddZone(childId, new ZoneName("Erdgeschoss"), ZoneType.Floor, parentId);
+        var childId = ZoneIdentifier.New();
+        project.AddZone(childId, ZoneName.From("Erdgeschoss"), ZoneType.Floor, parentId);
 
         project.Zones.Should().HaveCount(2);
-        project.Zones[1].ParentZoneId.Should().Be(parentId);
+        project.Zones[1].ParentZoneIdentifier.Should().Be(parentId);
     }
 }

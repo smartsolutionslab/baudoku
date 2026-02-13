@@ -4,7 +4,7 @@ using BauDoku.Sync.Domain.ValueObjects;
 namespace BauDoku.Sync.Domain.Events;
 
 public sealed record SyncBatchSubmitted(
-    SyncBatchId BatchId,
-    DeviceId DeviceId,
+    SyncBatchIdentifier BatchId,
+    DeviceIdentifier DeviceId,
     int DeltaCount,
     DateTime OccurredOn) : IDomainEvent;

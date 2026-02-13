@@ -1,4 +1,5 @@
 using BauDoku.BuildingBlocks.Domain;
+using BauDoku.BuildingBlocks.Domain.Guards;
 
 namespace BauDoku.Documentation.Domain.ValueObjects;
 
@@ -20,12 +21,12 @@ public sealed record MeasurementType : ValueObject
 
     public string Value { get; }
 
-    public MeasurementType(string value)
+    private MeasurementType(string value) => Value = value;
+
+    public static MeasurementType From(string value)
     {
-        if (string.IsNullOrWhiteSpace(value))
-            throw new ArgumentException("Messungstyp darf nicht leer sein.", nameof(value));
-        if (!ValidValues.Contains(value))
-            throw new ArgumentException($"Ungueltiger Messungstyp: {value}.", nameof(value));
-        Value = value;
+        Ensure.That(value).IsNotNullOrWhiteSpace("Messungstyp darf nicht leer sein.")
+            .IsOneOf(ValidValues, $"Ungueltiger Messungstyp: {value}.");
+        return new MeasurementType(value);
     }
 }

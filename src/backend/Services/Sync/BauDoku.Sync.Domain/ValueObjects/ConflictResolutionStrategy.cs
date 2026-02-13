@@ -1,4 +1,5 @@
 using BauDoku.BuildingBlocks.Domain;
+using BauDoku.BuildingBlocks.Domain.Guards;
 
 namespace BauDoku.Sync.Domain.ValueObjects;
 
@@ -13,12 +14,13 @@ public sealed record ConflictResolutionStrategy : ValueObject
 
     public string Value { get; }
 
-    public ConflictResolutionStrategy(string value)
+    private ConflictResolutionStrategy(string value) => Value = value;
+
+    public static ConflictResolutionStrategy From(string value)
     {
-        if (string.IsNullOrWhiteSpace(value))
-            throw new ArgumentException("Konflikt-Auflösungsstrategie darf nicht leer sein.", nameof(value));
-        if (!ValidValues.Contains(value))
-            throw new ArgumentException($"Ungueltige Konflikt-Auflösungsstrategie: {value}.", nameof(value));
-        Value = value;
+        Ensure.That(value)
+            .IsNotNullOrWhiteSpace("Konflikt-Auflösungsstrategie darf nicht leer sein.")
+            .IsOneOf(ValidValues, $"Ungueltige Konflikt-Auflösungsstrategie: {value}.");
+        return new ConflictResolutionStrategy(value);
     }
 }
