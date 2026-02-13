@@ -67,8 +67,11 @@ public sealed class SyncSchedulerService : BackgroundService
         {
             try
             {
+                // TODO: BD-706 — Implement actual batch processing (delta application, conflict detection, version store updates)
+                logger.LogWarning(
+                    "SyncScheduler: Batch {BatchId} als abgeschlossen markiert (Platzhalter — keine Delta-Verarbeitung)",
+                    batch.Id.Value);
                 batch.MarkCompleted();
-                logger.LogInformation("SyncScheduler: Batch {BatchId} verarbeitet", batch.Id.Value);
             }
             catch (Exception ex)
             {
