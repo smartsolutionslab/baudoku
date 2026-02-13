@@ -13,12 +13,6 @@ var connectionString = builder.Configuration.GetConnectionString("SyncDb")
 builder.AddServiceDefaults(health =>
 {
     health.AddNpgSql(connectionString, name: "postgresql", tags: ["ready"]);
-
-    var redisConnection = builder.Configuration.GetConnectionString("redis");
-    if (!string.IsNullOrWhiteSpace(redisConnection))
-    {
-        health.AddRedis(redisConnection, name: "redis", tags: ["ready"]);
-    }
 });
 
 builder.Services.AddOpenApi();
