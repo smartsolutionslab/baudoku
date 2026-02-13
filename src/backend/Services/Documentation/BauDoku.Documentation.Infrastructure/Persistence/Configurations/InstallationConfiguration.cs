@@ -20,10 +20,14 @@ public sealed class InstallationConfiguration : IEntityTypeConfiguration<Install
 
         builder.Property(i => i.ProjectId)
             .HasColumnName("project_id")
-            .IsRequired();
+            .IsRequired()
+            .HasConversion(id => id.Value, value => ProjectIdentifier.From(value));
 
         builder.Property(i => i.ZoneId)
-            .HasColumnName("zone_id");
+            .HasColumnName("zone_id")
+            .HasConversion(
+                id => id != null ? id.Value : (Guid?)null,
+                value => value.HasValue ? ZoneIdentifier.From(value.Value) : null);
 
         builder.Property(i => i.Type)
             .HasColumnName("type")
@@ -77,7 +81,7 @@ public sealed class InstallationConfiguration : IEntityTypeConfiguration<Install
         builder.OwnsOne(i => i.CableSpec, cable =>
         {
             cable.Property(c => c.CableType).HasColumnName("cable_type").HasMaxLength(CableSpec.MaxCableTypeLength);
-            cable.Property(c => c.CrossSection).HasColumnName("cable_cross_section");
+            cable.Property(c => c.CrossSection).HasColumnName("cable_cross_section").HasColumnType("decimal(5,2)");
             cable.Property(c => c.Color).HasColumnName("cable_color").HasMaxLength(CableSpec.MaxColorLength);
             cable.Property(c => c.ConductorCount).HasColumnName("cable_conductor_count");
         });
@@ -131,5 +135,10 @@ public sealed class InstallationConfiguration : IEntityTypeConfiguration<Install
             .SetPropertyAccessMode(PropertyAccessMode.Field);
 
         builder.Ignore(i => i.DomainEvents);
+
+        // Indexes
+        builder.HasIndex(i => i.ProjectId).HasDatabaseName("ix_installations_project_id");
+        builder.HasIndex(i => i.ZoneId).HasDatabaseName("ix_installations_zone_id");
+        builder.HasIndex(i => i.Status).HasDatabaseName("ix_installations_status");
     }
 }

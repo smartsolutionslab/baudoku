@@ -12,8 +12,8 @@ public sealed class InstallationPhotoTests
     {
         return Installation.Create(
             InstallationIdentifier.New(),
-            Guid.NewGuid(),
-            Guid.NewGuid(),
+            ProjectIdentifier.New(),
+            ZoneIdentifier.New(),
             InstallationType.CableTray,
             GpsPosition.Create(48.1351, 11.5820, 520.0, 3.5, "internal_gps"),
             Description.From("Kabeltrasse im Erdgeschoss"));

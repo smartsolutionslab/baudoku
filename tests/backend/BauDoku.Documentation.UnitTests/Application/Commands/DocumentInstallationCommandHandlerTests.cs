@@ -25,7 +25,7 @@ public sealed class DocumentInstallationCommandHandlerTests
         new(Guid.NewGuid(), null, "cable_tray",
             48.137154, 11.576124, 520.0, 3.5, "gps",
             null, null, null, null, null,
-            "Testbeschreibung", "NYM", 4, "grau", 5, 600, "Siemens", "Model X", "SN-123");
+            "Testbeschreibung", "NYM", 4m, "grau", 5, 600, "Siemens", "Model X", "SN-123");
 
     [Fact]
     public async Task Handle_WithFullCommand_ShouldCreateAndReturnId()

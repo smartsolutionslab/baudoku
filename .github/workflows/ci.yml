@@ -367,20 +367,20 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Trivy vulnerability scan
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@0.28.0
         with:
           image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}-${{ matrix.service.name }}:${{ needs.version.outputs.semver }}
           format: table
-          exit-code: '0'
+          exit-code: '1'
           severity: CRITICAL,HIGH
         if: github.event_name != 'pull_request'
 
       - name: Trivy scan (PR - build only)
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@0.28.0
         with:
           scan-type: fs
           scan-ref: ${{ matrix.service.dockerfile }}
           format: table
-          exit-code: '0'
+          exit-code: '1'
           severity: CRITICAL,HIGH
         if: github.event_name == 'pull_request'

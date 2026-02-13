@@ -11,8 +11,8 @@ public sealed class Installation : AggregateRoot<InstallationIdentifier>
     private readonly List<Photo> photos = [];
     private readonly List<Measurement> measurements = [];
 
-    public Guid ProjectId { get; private set; }
-    public Guid? ZoneId { get; private set; }
+    public ProjectIdentifier ProjectId { get; private set; } = default!;
+    public ZoneIdentifier? ZoneId { get; private set; }
     public InstallationType Type { get; private set; } = default!;
     public InstallationStatus Status { get; private set; } = default!;
     public GpsPosition Position { get; private set; } = default!;
@@ -32,8 +32,8 @@ public sealed class Installation : AggregateRoot<InstallationIdentifier>
 
     public static Installation Create(
         InstallationIdentifier id,
-        Guid projectId,
-        Guid? zoneId,
+        ProjectIdentifier projectId,
+        ZoneIdentifier? zoneId,
         InstallationType type,
         GpsPosition position,
         Description? description = null,
@@ -83,13 +83,14 @@ public sealed class Installation : AggregateRoot<InstallationIdentifier>
         PhotoType photoType,
         Caption? caption = null,
         Description? description = null,
-        GpsPosition? position = null)
+        GpsPosition? position = null,
+        DateTime? takenAt = null)
     {
         CheckRule(new CompletedInstallationCannotBeModified(Status));
 
         var photo = Photo.Create(
             photoId, fileName, blobUrl, contentType, fileSize,
-            photoType, caption, description, position);
+            photoType, caption, description, position, takenAt);
 
         photos.Add(photo);
 
@@ -115,7 +116,7 @@ public sealed class Installation : AggregateRoot<InstallationIdentifier>
         string? notes = null)
     {
         CheckRule(new CompletedInstallationCannotBeModified(Status));
-        CheckRule(new MeasurementValueMustBePositive(value));
+        CheckRule(new MeasurementValueMustBeNonNegative(value));
         CheckRule(new MeasurementTypeMustMatchInstallationType(Type, type));
 
         var measurement = Measurement.Create(measurementId, type, value, notes);
@@ -134,6 +135,44 @@ public sealed class Installation : AggregateRoot<InstallationIdentifier>
         measurements.Remove(measurement);
 
         AddDomainEvent(new MeasurementRemoved(Id, measurementId, DateTime.UtcNow));
+    }
+
+    public void UpdatePosition(GpsPosition position)
+    {
+        CheckRule(new CompletedInstallationCannotBeModified(Status));
+        CheckRule(new InstallationMustHaveValidGpsPosition(position));
+
+        Position = position;
+        QualityGrade = position.CalculateQualityGrade();
+
+        AddDomainEvent(new InstallationUpdated(Id, DateTime.UtcNow));
+    }
+
+    public void UpdateDescription(Description? description)
+    {
+        CheckRule(new CompletedInstallationCannotBeModified(Status));
+
+        Description = description;
+
+        AddDomainEvent(new InstallationUpdated(Id, DateTime.UtcNow));
+    }
+
+    public void UpdateCableSpec(CableSpec? cableSpec)
+    {
+        CheckRule(new CompletedInstallationCannotBeModified(Status));
+
+        CableSpec = cableSpec;
+
+        AddDomainEvent(new InstallationUpdated(Id, DateTime.UtcNow));
+    }
+
+    public void UpdateDepth(Depth? depth)
+    {
+        CheckRule(new CompletedInstallationCannotBeModified(Status));
+
+        Depth = depth;
+
+        AddDomainEvent(new InstallationUpdated(Id, DateTime.UtcNow));
     }
 
     public void MarkAsCompleted()

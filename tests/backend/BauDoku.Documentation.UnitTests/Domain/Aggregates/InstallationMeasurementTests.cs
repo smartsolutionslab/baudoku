@@ -12,8 +12,8 @@ public sealed class InstallationMeasurementTests
     {
         return Installation.Create(
             InstallationIdentifier.New(),
-            Guid.NewGuid(),
-            Guid.NewGuid(),
+            ProjectIdentifier.New(),
+            ZoneIdentifier.New(),
             InstallationType.CableTray,
             GpsPosition.Create(48.1351, 11.5820, 520.0, 3.5, "internal_gps"),
             Description.From("Kabeltrasse im Erdgeschoss"));
@@ -203,16 +203,16 @@ public sealed class InstallationMeasurementTests
     }
 
     [Fact]
-    public void RecordMeasurement_WithZeroValue_ShouldThrowBusinessRuleException()
+    public void RecordMeasurement_WithZeroValue_ShouldSucceed()
     {
         var installation = CreateValidInstallation();
 
-        var act = () => installation.RecordMeasurement(
+        installation.RecordMeasurement(
             MeasurementIdentifier.New(),
             MeasurementType.Voltage,
             MeasurementValue.Create(0.0, "V"));
 
-        act.Should().Throw<BusinessRuleException>();
+        installation.Measurements.Should().ContainSingle();
     }
 
     [Fact]
@@ -361,8 +361,8 @@ public sealed class InstallationMeasurementTests
     {
         return Installation.Create(
             InstallationIdentifier.New(),
-            Guid.NewGuid(),
-            Guid.NewGuid(),
+            ProjectIdentifier.New(),
+            ZoneIdentifier.New(),
             InstallationType.Switchgear,
             GpsPosition.Create(48.1351, 11.5820, 520.0, 3.5, "internal_gps"),
             Description.From("Schaltanlage im Keller"));

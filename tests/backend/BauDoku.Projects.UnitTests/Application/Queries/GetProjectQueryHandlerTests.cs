@@ -27,7 +27,7 @@ public sealed class GetProjectQueryHandlerTests
             Address.Create("Musterstraße 1", "Berlin", "10115"),
             ClientInfo.Create("Max Mustermann", "max@example.com", "+49 30 12345"));
 
-        repository.GetByIdAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>())
+        repository.GetByIdReadOnlyAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(project);
 
         var result = await handler.Handle(new GetProjectQuery(project.Id.Value));
@@ -43,7 +43,7 @@ public sealed class GetProjectQueryHandlerTests
     [Fact]
     public async Task Handle_WhenProjectNotFound_ShouldReturnNull()
     {
-        repository.GetByIdAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>())
+        repository.GetByIdReadOnlyAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>())
             .Returns((Project?)null);
 
         var result = await handler.Handle(new GetProjectQuery(Guid.NewGuid()));
@@ -62,7 +62,7 @@ public sealed class GetProjectQueryHandlerTests
 
         project.AddZone(ZoneIdentifier.New(), ZoneName.From("Erdgeschoss"), ZoneType.Floor);
 
-        repository.GetByIdAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>())
+        repository.GetByIdReadOnlyAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(project);
 
         var result = await handler.Handle(new GetProjectQuery(project.Id.Value));

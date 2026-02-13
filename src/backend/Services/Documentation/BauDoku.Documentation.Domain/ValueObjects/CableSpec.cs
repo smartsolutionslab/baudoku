@@ -9,11 +9,11 @@ public sealed record CableSpec : ValueObject
     public const int MaxColorLength = 50;
 
     public string CableType { get; }
-    public int? CrossSection { get; }
+    public decimal? CrossSection { get; }
     public string? Color { get; }
     public int? ConductorCount { get; }
 
-    private CableSpec(string cableType, int? crossSection, string? color, int? conductorCount)
+    private CableSpec(string cableType, decimal? crossSection, string? color, int? conductorCount)
     {
         CableType = cableType;
         CrossSection = crossSection;
@@ -21,7 +21,7 @@ public sealed record CableSpec : ValueObject
         ConductorCount = conductorCount;
     }
 
-    public static CableSpec Create(string cableType, int? crossSection = null, string? color = null, int? conductorCount = null)
+    public static CableSpec Create(string cableType, decimal? crossSection = null, string? color = null, int? conductorCount = null)
     {
         Ensure.That(cableType).IsNotNullOrWhiteSpace("Kabeltyp darf nicht leer sein.")
             .MaxLengthIs(MaxCableTypeLength, $"Kabeltyp darf max. {MaxCableTypeLength} Zeichen lang sein.");

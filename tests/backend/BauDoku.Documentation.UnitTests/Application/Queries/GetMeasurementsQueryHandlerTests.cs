@@ -23,7 +23,7 @@ public sealed class GetMeasurementsQueryHandlerTests
     {
         var installation = Installation.Create(
             InstallationIdentifier.New(),
-            Guid.NewGuid(),
+            ProjectIdentifier.New(),
             null,
             InstallationType.CableTray,
             GpsPosition.Create(48.0, 11.0, null, 3.5, "gps"));

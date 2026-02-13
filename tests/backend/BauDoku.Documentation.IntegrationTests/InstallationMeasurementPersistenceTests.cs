@@ -21,7 +21,7 @@ public sealed class InstallationMeasurementPersistenceTests
     {
         var installation = Installation.Create(
             InstallationIdentifier.New(),
-            Guid.NewGuid(),
+            ProjectIdentifier.New(),
             null,
             InstallationType.CableTray,
             GpsPosition.Create(48.1351, 11.5820, 520.0, 3.5, "internal_gps"));
@@ -66,7 +66,7 @@ public sealed class InstallationMeasurementPersistenceTests
     {
         var installation = Installation.Create(
             InstallationIdentifier.New(),
-            Guid.NewGuid(),
+            ProjectIdentifier.New(),
             null,
             InstallationType.JunctionBox,
             GpsPosition.Create(48.0, 11.0, null, 5.0, "internal_gps"));
@@ -102,7 +102,7 @@ public sealed class InstallationMeasurementPersistenceTests
     {
         var installation = Installation.Create(
             InstallationIdentifier.New(),
-            Guid.NewGuid(),
+            ProjectIdentifier.New(),
             null,
             InstallationType.Grounding,
             GpsPosition.Create(48.0, 11.0, null, 5.0, "internal_gps"));
@@ -134,7 +134,7 @@ public sealed class InstallationMeasurementPersistenceTests
     {
         var installation = Installation.Create(
             InstallationIdentifier.New(),
-            Guid.NewGuid(),
+            ProjectIdentifier.New(),
             null,
             InstallationType.Switchgear,
             GpsPosition.Create(48.0, 11.0, null, 5.0, "internal_gps"));

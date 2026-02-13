@@ -12,6 +12,8 @@ public sealed record PagedResult<T>
 
     public PagedResult(IReadOnlyList<T> items, int totalCount, int page, int pageSize)
     {
+        ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(pageSize, 0);
+
         Items = items;
         TotalCount = totalCount;
         Page = page;
