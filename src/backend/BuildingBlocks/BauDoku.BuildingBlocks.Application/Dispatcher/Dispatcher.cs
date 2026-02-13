@@ -41,6 +41,8 @@ public sealed class Dispatcher : IDispatcher
 
     public async Task Publish(IDomainEvent domainEvent, CancellationToken cancellationToken = default)
     {
+        logger.LogInformation("Domain-Event veröffentlicht: {EventType}", domainEvent.GetType().Name);
+
         var handlerType = typeof(IDomainEventHandler<>).MakeGenericType(domainEvent.GetType());
         var handlers = serviceProvider.GetServices(handlerType);
 

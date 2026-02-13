@@ -68,6 +68,24 @@ public sealed class DispatcherPublishTests
 
         await dispatcher.Publish(new DispatcherTestEvent("test"));
 
+        // 2 log calls: 1x LogInformation (event published) + 1x LogError (handler failed)
+        logger.ReceivedWithAnyArgs(2).Log(
+            default, default, default(object), default, default!);
+    }
+
+    [Fact]
+    public async Task Publish_ShouldLogEventType()
+    {
+        var logger = Substitute.For<ILogger<Application.Dispatcher.Dispatcher>>();
+
+        var services = new ServiceCollection();
+        services.AddSingleton(logger);
+        var provider = services.BuildServiceProvider();
+
+        var dispatcher = new Application.Dispatcher.Dispatcher(provider, logger);
+
+        await dispatcher.Publish(new DispatcherTestEvent("test"));
+
         logger.ReceivedWithAnyArgs(1).Log(
             default, default, default(object), default, default!);
     }
