@@ -26,7 +26,7 @@ public sealed class LocalFilePhotoStorage : IPhotoStorage
 
     public Task<Stream> DownloadAsync(string blobUrl, CancellationToken ct = default)
     {
-        var filePath = Path.Combine(basePath, blobUrl);
+        var filePath = SafeResolvePath(blobUrl);
         if (!File.Exists(filePath))
             throw new FileNotFoundException($"Foto nicht gefunden: {blobUrl}");
 
@@ -36,10 +36,19 @@ public sealed class LocalFilePhotoStorage : IPhotoStorage
 
     public Task DeleteAsync(string blobUrl, CancellationToken ct = default)
     {
-        var filePath = Path.Combine(basePath, blobUrl);
+        var filePath = SafeResolvePath(blobUrl);
         if (File.Exists(filePath))
             File.Delete(filePath);
 
         return Task.CompletedTask;
+    }
+
+    private string SafeResolvePath(string blobUrl)
+    {
+        var filePath = Path.Combine(basePath, blobUrl);
+        var fullPath = Path.GetFullPath(filePath);
+        if (!fullPath.StartsWith(Path.GetFullPath(basePath), StringComparison.OrdinalIgnoreCase))
+            throw new UnauthorizedAccessException($"Zugriff verweigert: {blobUrl}");
+        return fullPath;
     }
 }

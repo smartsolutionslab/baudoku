@@ -28,6 +28,9 @@ public static class Extensions
 
         builder.AddDefaultHealthChecks(configureHealthChecks);
 
+        builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+        builder.Services.AddProblemDetails();
+
         builder.Services.AddServiceDiscovery();
 
         builder.Services.ConfigureHttpClientDefaults(http =>
@@ -41,6 +44,8 @@ public static class Extensions
 
     public static WebApplication MapDefaultEndpoints(this WebApplication app)
     {
+        app.UseExceptionHandler();
+
         app.UseSerilogRequestLogging(options =>
         {
             options.EnrichDiagnosticContext = static (diagnosticContext, httpContext) =>

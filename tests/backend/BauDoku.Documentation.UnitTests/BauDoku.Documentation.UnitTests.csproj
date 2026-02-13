@@ -23,6 +23,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\backend\Services\Documentation\BauDoku.Documentation.Domain\BauDoku.Documentation.Domain.csproj" />
     <ProjectReference Include="..\..\..\src\backend\Services\Documentation\BauDoku.Documentation.Application\BauDoku.Documentation.Application.csproj" />
+    <ProjectReference Include="..\..\..\src\backend\Services\Documentation\BauDoku.Documentation.Infrastructure\BauDoku.Documentation.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

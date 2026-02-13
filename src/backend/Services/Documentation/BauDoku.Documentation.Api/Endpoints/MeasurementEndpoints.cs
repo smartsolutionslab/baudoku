@@ -43,7 +43,7 @@ public static class MeasurementEndpoints
             return Results.Ok(result);
         });
 
-        group.MapDelete("/measurements/{measurementId:guid}", async (
+        group.MapDelete("/installations/{installationId:guid}/measurements/{measurementId:guid}", async (
             Guid measurementId,
             Guid installationId,
             IDispatcher dispatcher,
