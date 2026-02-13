@@ -38,6 +38,8 @@ public sealed class ProcessSyncBatchCommandHandler
 
         foreach (var deltaDto in command.Deltas)
         {
+            SyncMetrics.DeltaPayloadSize.Record(deltaDto.Payload.Length);
+
             var entityType = new EntityType(deltaDto.EntityType);
             var entityRef = new EntityReference(entityType, deltaDto.EntityId);
             var operation = new DeltaOperation(deltaDto.Operation);
@@ -106,6 +108,7 @@ public sealed class ProcessSyncBatchCommandHandler
         SyncMetrics.BatchesProcessed.Add(1);
         SyncMetrics.DeltasApplied.Add(appliedCount);
         SyncMetrics.ConflictsDetected.Add(conflicts.Count);
+        SyncMetrics.DeltasPerBatch.Record(command.Deltas.Count);
 
         return new ProcessSyncBatchResult(
             batchId.Value,

@@ -68,6 +68,7 @@ public sealed class CompleteChunkedUploadCommandHandler : ICommandHandler<Comple
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         DocumentationMetrics.PhotosAdded.Add(1);
+        DocumentationMetrics.PhotoFileSize.Record(session.TotalSize);
 
         await _chunkedUploadStorage.CleanupSessionAsync(command.SessionId, cancellationToken);
 

@@ -2,6 +2,7 @@ using BauDoku.BuildingBlocks.Application.Persistence;
 using BauDoku.Projects.Application.Contracts;
 using BauDoku.Projects.Infrastructure.Persistence;
 using BauDoku.Projects.Infrastructure.Persistence.Repositories;
+using BauDoku.Projects.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -19,6 +20,8 @@ public static class DependencyInjection
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<ProjectsDbContext>());
         services.AddScoped<IProjectRepository, ProjectRepository>();
         services.AddScoped<IProjectReadRepository, ProjectReadRepository>();
+        services.AddScoped<IProjectCountProvider, ProjectCountProvider>();
+        services.AddHostedService<ActiveProjectCountService>();
 
         return services;
     }

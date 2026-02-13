@@ -20,4 +20,10 @@ public static class DocumentationMetrics
 
     public static readonly Counter<long> MeasurementsRemoved =
         Meter.CreateCounter<long>("baudoku.documentation.measurements_removed", description: "Number of measurements removed");
+
+    public static readonly Histogram<double> GpsHorizontalAccuracy =
+        Meter.CreateHistogram<double>("baudoku.documentation.gps_horizontal_accuracy_meters", unit: "m", description: "GPS horizontal accuracy in meters");
+
+    public static readonly Histogram<long> PhotoFileSize =
+        Meter.CreateHistogram<long>("baudoku.documentation.photo_file_size_bytes", unit: "By", description: "Photo file size in bytes");
 }
