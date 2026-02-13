@@ -20,5 +20,6 @@ public interface IEntityVersionStore
         SyncVersion version,
         string payload,
         DeviceIdentifier deviceId,
+        DeltaOperation operation,
         CancellationToken cancellationToken = default);
 }

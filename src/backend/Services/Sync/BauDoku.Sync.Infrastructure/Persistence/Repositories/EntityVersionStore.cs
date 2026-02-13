@@ -42,6 +42,7 @@ public sealed class EntityVersionStore : IEntityVersionStore, IEntityVersionRead
         SyncVersion version,
         string payload,
         DeviceIdentifier deviceId,
+        DeltaOperation operation,
         CancellationToken cancellationToken = default)
     {
         var entry = await context.EntityVersionEntries
@@ -53,6 +54,7 @@ public sealed class EntityVersionStore : IEntityVersionStore, IEntityVersionRead
             entry.Payload = payload;
             entry.LastModified = DateTime.UtcNow;
             entry.LastDeviceId = deviceId.Value;
+            entry.Operation = operation.Value;
         }
         else
         {
@@ -63,7 +65,8 @@ public sealed class EntityVersionStore : IEntityVersionStore, IEntityVersionRead
                 Version = version.Value,
                 Payload = payload,
                 LastModified = DateTime.UtcNow,
-                LastDeviceId = deviceId.Value
+                LastDeviceId = deviceId.Value,
+                Operation = operation.Value
             };
             await context.EntityVersionEntries.AddAsync(entry, cancellationToken);
         }
@@ -89,7 +92,7 @@ public sealed class EntityVersionStore : IEntityVersionStore, IEntityVersionRead
             .Select(e => new ServerDeltaDto(
                 e.EntityType,
                 e.EntityId,
-                "update",
+                e.Operation,
                 e.Version,
                 e.Payload,
                 e.LastModified))

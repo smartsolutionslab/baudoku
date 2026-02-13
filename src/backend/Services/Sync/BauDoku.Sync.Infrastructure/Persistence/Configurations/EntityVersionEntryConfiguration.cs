@@ -37,6 +37,12 @@ public sealed class EntityVersionEntryConfiguration : IEntityTypeConfiguration<E
             .HasMaxLength(200)
             .IsRequired();
 
+        builder.Property(e => e.Operation)
+            .HasColumnName("operation")
+            .HasMaxLength(10)
+            .IsRequired()
+            .HasDefaultValue("update");
+
         builder.HasIndex(e => e.LastModified)
             .HasDatabaseName("ix_entity_versions_last_modified");
 

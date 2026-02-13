@@ -8,5 +8,6 @@ public sealed class EntityVersionEntry
     public string Payload { get; set; } = default!;
     public DateTime LastModified { get; set; }
     public string LastDeviceId { get; set; } = default!;
+    public string Operation { get; set; } = "update";
     public uint RowVersion { get; set; }
 }

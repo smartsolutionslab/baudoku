@@ -42,7 +42,7 @@ public sealed class ProcessSyncBatchCommandHandlerTests
         result.ConflictCount.Should().Be(0);
         result.BatchId.Should().NotBe(Guid.Empty);
         await entityVersionStore.Received(1).SetVersionAsync(
-            Arg.Any<EntityType>(), entityId, Arg.Any<SyncVersion>(), Arg.Any<string>(), Arg.Any<DeviceIdentifier>(), Arg.Any<CancellationToken>());
+            Arg.Any<EntityType>(), entityId, Arg.Any<SyncVersion>(), Arg.Any<string>(), Arg.Any<DeviceIdentifier>(), Arg.Any<DeltaOperation>(), Arg.Any<CancellationToken>());
         await syncBatchRepository.Received(1).AddAsync(Arg.Any<SyncBatch>(), Arg.Any<CancellationToken>());
         await unitOfWork.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
@@ -129,7 +129,7 @@ public sealed class ProcessSyncBatchCommandHandlerTests
         result.AppliedCount.Should().Be(2);
         result.ConflictCount.Should().Be(0);
         await entityVersionStore.Received(2).SetVersionAsync(
-            Arg.Any<EntityType>(), Arg.Any<Guid>(), Arg.Any<SyncVersion>(), Arg.Any<string>(), Arg.Any<DeviceIdentifier>(), Arg.Any<CancellationToken>());
+            Arg.Any<EntityType>(), Arg.Any<Guid>(), Arg.Any<SyncVersion>(), Arg.Any<string>(), Arg.Any<DeviceIdentifier>(), Arg.Any<DeltaOperation>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]

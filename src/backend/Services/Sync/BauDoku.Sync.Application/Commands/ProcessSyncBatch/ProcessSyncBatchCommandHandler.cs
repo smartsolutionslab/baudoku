@@ -64,7 +64,7 @@ public sealed class ProcessSyncBatchCommandHandler
 
                 await entityVersionStore.SetVersionAsync(
                     entityType, deltaDto.EntityId, newVersion,
-                    deltaDto.Payload, deviceId, cancellationToken);
+                    deltaDto.Payload, deviceId, operation, cancellationToken);
 
                 appliedCount++;
             }

@@ -24,7 +24,7 @@ public sealed class EntityVersionStorePersistenceTests
         await using (var context = fixture.CreateContext())
         {
             var store = new EntityVersionStore(context);
-            await store.SetVersionAsync(EntityType.Project, entityId, SyncVersion.From(1), """{"name":"Test"}""", DeviceIdentifier.From("device-001"));
+            await store.SetVersionAsync(EntityType.Project, entityId, SyncVersion.From(1), """{"name":"Test"}""", DeviceIdentifier.From("device-001"), DeltaOperation.Create);
             await context.SaveChangesAsync();
         }
 
@@ -44,14 +44,14 @@ public sealed class EntityVersionStorePersistenceTests
         await using (var context = fixture.CreateContext())
         {
             var store = new EntityVersionStore(context);
-            await store.SetVersionAsync(EntityType.Project, entityId, SyncVersion.From(1), """{"v":1}""", DeviceIdentifier.From("device-001"));
+            await store.SetVersionAsync(EntityType.Project, entityId, SyncVersion.From(1), """{"v":1}""", DeviceIdentifier.From("device-001"), DeltaOperation.Create);
             await context.SaveChangesAsync();
         }
 
         await using (var context = fixture.CreateContext())
         {
             var store = new EntityVersionStore(context);
-            await store.SetVersionAsync(EntityType.Project, entityId, SyncVersion.From(2), """{"v":2}""", DeviceIdentifier.From("device-002"));
+            await store.SetVersionAsync(EntityType.Project, entityId, SyncVersion.From(2), """{"v":2}""", DeviceIdentifier.From("device-002"), DeltaOperation.Update);
             await context.SaveChangesAsync();
         }
 
@@ -97,7 +97,7 @@ public sealed class EntityVersionStorePersistenceTests
         await using (var context = fixture.CreateContext())
         {
             var store = new EntityVersionStore(context);
-            await store.SetVersionAsync(EntityType.Installation, entityId, SyncVersion.From(1), """{"data":"value"}""", DeviceIdentifier.From("device-001"));
+            await store.SetVersionAsync(EntityType.Installation, entityId, SyncVersion.From(1), """{"data":"value"}""", DeviceIdentifier.From("device-001"), DeltaOperation.Create);
             await context.SaveChangesAsync();
         }
 
@@ -117,7 +117,7 @@ public sealed class EntityVersionStorePersistenceTests
         await using (var context = fixture.CreateContext())
         {
             var store = new EntityVersionStore(context);
-            await store.SetVersionAsync(EntityType.Project, entityId, SyncVersion.From(1), """{"name":"Recent"}""", DeviceIdentifier.From("device-recent"));
+            await store.SetVersionAsync(EntityType.Project, entityId, SyncVersion.From(1), """{"name":"Recent"}""", DeviceIdentifier.From("device-recent"), DeltaOperation.Create);
             await context.SaveChangesAsync();
         }
 
@@ -127,6 +127,33 @@ public sealed class EntityVersionStorePersistenceTests
             var changes = await store.GetChangedSinceAsync(DateTime.UtcNow.AddMinutes(-5), null, 100);
 
             changes.Should().Contain(c => c.EntityId == entityId);
+        }
+    }
+
+    [Fact]
+    public async Task GetChangedSince_ShouldReturnCorrectOperation()
+    {
+        var createEntityId = Guid.NewGuid();
+        var updateEntityId = Guid.NewGuid();
+
+        await using (var context = fixture.CreateContext())
+        {
+            var store = new EntityVersionStore(context);
+            await store.SetVersionAsync(EntityType.Project, createEntityId, SyncVersion.From(1), """{"op":"create"}""", DeviceIdentifier.From("device-001"), DeltaOperation.Create);
+            await store.SetVersionAsync(EntityType.Project, updateEntityId, SyncVersion.From(2), """{"op":"update"}""", DeviceIdentifier.From("device-001"), DeltaOperation.Update);
+            await context.SaveChangesAsync();
+        }
+
+        await using (var context = fixture.CreateContext())
+        {
+            var store = new EntityVersionStore(context);
+            var changes = await store.GetChangedSinceAsync(DateTime.UtcNow.AddMinutes(-5), null, 100);
+
+            var createChange = changes.First(c => c.EntityId == createEntityId);
+            createChange.Operation.Should().Be("create");
+
+            var updateChange = changes.First(c => c.EntityId == updateEntityId);
+            updateChange.Operation.Should().Be("update");
         }
     }
 }

@@ -50,6 +50,7 @@ public sealed class ResolveConflictCommandHandler : ICommandHandler<ResolveConfl
                 newVersion,
                 resolvedPayload.Value,
                 batch.DeviceId,
+                DeltaOperation.Update,
                 cancellationToken);
         }
 
