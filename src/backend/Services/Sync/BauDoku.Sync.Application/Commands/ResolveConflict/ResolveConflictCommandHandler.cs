@@ -28,14 +28,13 @@ public sealed class ResolveConflictCommandHandler : ICommandHandler<ResolveConfl
         var batch = await syncBatchRepository.GetByConflictIdAsync(conflictId, cancellationToken)
             ?? throw new InvalidOperationException($"Batch fuer Konflikt {command.ConflictId} nicht gefunden.");
 
-        var conflict = batch.Conflicts.FirstOrDefault(c => c.Id == conflictId)
-            ?? throw new InvalidOperationException($"Konflikt {command.ConflictId} nicht gefunden.");
-
         var strategy = ConflictResolutionStrategy.From(command.Strategy);
         var mergedPayload = command.MergedPayload is not null
             ? DeltaPayload.From(command.MergedPayload) : null;
 
-        conflict.Resolve(strategy, mergedPayload);
+        batch.ResolveConflict(conflictId, strategy, mergedPayload);
+
+        var conflict = batch.Conflicts.First(c => c.Id == conflictId);
 
         if (strategy == ConflictResolutionStrategy.ClientWins ||
             strategy == ConflictResolutionStrategy.ManualMerge)

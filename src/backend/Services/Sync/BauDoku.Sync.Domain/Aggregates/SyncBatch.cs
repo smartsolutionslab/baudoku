@@ -30,7 +30,7 @@ public sealed class SyncBatch : AggregateRoot<SyncBatchIdentifier>
             SubmittedAt = submittedAt
         };
 
-        batch.AddDomainEvent(new SyncBatchSubmitted(id, deviceId, 0, DateTime.UtcNow));
+        batch.AddDomainEvent(new SyncBatchSubmitted(id, deviceId, DateTime.UtcNow));
         return batch;
     }
 
@@ -86,11 +86,25 @@ public sealed class SyncBatch : AggregateRoot<SyncBatchIdentifier>
         AddDomainEvent(new SyncBatchProcessed(Id, deltas.Count, conflicts.Count, DateTime.UtcNow));
     }
 
+    public void ResolveConflict(
+        ConflictRecordIdentifier conflictId,
+        ConflictResolutionStrategy strategy,
+        DeltaPayload? mergedPayload = null)
+    {
+        var conflict = conflicts.FirstOrDefault(c => c.Id == conflictId)
+            ?? throw new InvalidOperationException($"Konflikt {conflictId.Value} nicht gefunden.");
+
+        conflict.Resolve(strategy, mergedPayload);
+        AddDomainEvent(new ConflictResolved(conflictId, strategy, DateTime.UtcNow));
+    }
+
     public void MarkFailed()
     {
         CheckRule(new BatchMustNotBeAlreadyProcessed(Status));
 
         Status = BatchStatus.Failed;
         ProcessedAt = DateTime.UtcNow;
+
+        AddDomainEvent(new SyncBatchProcessed(Id, deltas.Count, conflicts.Count, DateTime.UtcNow));
     }
 }

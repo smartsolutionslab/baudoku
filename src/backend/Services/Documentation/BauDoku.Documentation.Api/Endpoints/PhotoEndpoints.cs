@@ -68,7 +68,7 @@ public static class PhotoEndpoints
             return result is not null ? Results.Ok(result) : Results.NotFound();
         });
 
-        group.MapDelete("/photos/{photoId:guid}", async (
+        group.MapDelete("/installations/{installationId:guid}/photos/{photoId:guid}", async (
             Guid photoId,
             Guid installationId,
             IDispatcher dispatcher,

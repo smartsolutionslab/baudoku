@@ -52,7 +52,15 @@ public sealed class AddPhotoCommandHandler : ICommandHandler<AddPhotoCommand, Gu
             photoId, command.FileName, blobUrl, command.ContentType, command.FileSize,
             photoType, caption, description, position);
 
-        await unitOfWork.SaveChangesAsync(cancellationToken);
+        try
+        {
+            await unitOfWork.SaveChangesAsync(cancellationToken);
+        }
+        catch
+        {
+            await photoStorage.DeleteAsync(blobUrl, cancellationToken);
+            throw;
+        }
 
         DocumentationMetrics.PhotosAdded.Add(1);
         DocumentationMetrics.PhotoFileSize.Record(command.FileSize);

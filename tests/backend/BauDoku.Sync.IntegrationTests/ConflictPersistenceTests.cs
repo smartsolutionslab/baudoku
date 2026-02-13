@@ -79,8 +79,7 @@ public sealed class ConflictPersistenceTests
                 .Include(b => b.Conflicts)
                 .FirstAsync(b => b.Id == batch.Id);
 
-            var conflict = loaded.Conflicts.First(c => c.Id == conflictId);
-            conflict.Resolve(ConflictResolutionStrategy.ClientWins);
+            loaded.ResolveConflict(conflictId, ConflictResolutionStrategy.ClientWins);
             await updateContext.SaveChangesAsync();
         }
 
@@ -144,8 +143,7 @@ public sealed class ConflictPersistenceTests
             SyncVersion.From(2));
 
         // Resolve the first conflict
-        var conflict1 = batch.Conflicts.First(c => c.Id == conflictId);
-        conflict1.Resolve(ConflictResolutionStrategy.ServerWins);
+        batch.ResolveConflict(conflictId, ConflictResolutionStrategy.ServerWins);
 
         await using (var writeContext = fixture.CreateContext())
         {

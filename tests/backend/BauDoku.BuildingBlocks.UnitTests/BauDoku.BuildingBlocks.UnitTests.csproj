@@ -8,11 +8,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.4" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
     <PackageReference Include="xunit" Version="2.9.3" />
     <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5" />
     <PackageReference Include="AwesomeAssertions" Version="9.3.0" />
+    <PackageReference Include="NSubstitute" Version="5.3.0" />
+    <PackageReference Include="FluentValidation" Version="12.1.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -21,7 +27,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\backend\BuildingBlocks\BauDoku.BuildingBlocks.Domain\BauDoku.BuildingBlocks.Domain.csproj" />
+    <ProjectReference Include="..\..\..\src\backend\BuildingBlocks\BauDoku.BuildingBlocks.Application\BauDoku.BuildingBlocks.Application.csproj" />
     <ProjectReference Include="..\..\..\src\backend\BuildingBlocks\BauDoku.BuildingBlocks.Infrastructure\BauDoku.BuildingBlocks.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\src\backend\BuildingBlocks\BauDoku.ServiceDefaults\BauDoku.ServiceDefaults.csproj" />
   </ItemGroup>
 
 </Project>

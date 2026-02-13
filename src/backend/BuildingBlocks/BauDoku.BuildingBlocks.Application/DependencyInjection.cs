@@ -1,4 +1,5 @@
 using System.Reflection;
+using BauDoku.BuildingBlocks.Application.Behaviors;
 using BauDoku.BuildingBlocks.Application.Commands;
 using BauDoku.BuildingBlocks.Application.Events;
 using BauDoku.BuildingBlocks.Application.Queries;
@@ -38,6 +39,11 @@ public static class DependencyInjection
             .AddClasses(classes => classes.AssignableTo(typeof(IDomainEventHandler<>)))
             .AsImplementedInterfaces()
             .WithScopedLifetime());
+
+        services.Decorate(typeof(ICommandHandler<,>), typeof(ValidationBehavior<,>));
+        services.Decorate(typeof(ICommandHandler<>), typeof(ValidationBehaviorVoid<>));
+        services.Decorate(typeof(ICommandHandler<,>), typeof(LoggingBehavior<,>));
+        services.Decorate(typeof(ICommandHandler<>), typeof(LoggingBehaviorVoid<>));
 
         return services;
     }

@@ -3,16 +3,19 @@ using BauDoku.BuildingBlocks.Application.Events;
 using BauDoku.BuildingBlocks.Application.Queries;
 using BauDoku.BuildingBlocks.Domain;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace BauDoku.BuildingBlocks.Application.Dispatcher;
 
 public sealed class Dispatcher : IDispatcher
 {
     private readonly IServiceProvider serviceProvider;
+    private readonly ILogger<Dispatcher> logger;
 
-    public Dispatcher(IServiceProvider serviceProvider)
+    public Dispatcher(IServiceProvider serviceProvider, ILogger<Dispatcher> logger)
     {
         this.serviceProvider = serviceProvider;
+        this.logger = logger;
     }
 
     public async Task<TResult> Send<TResult>(ICommand<TResult> command, CancellationToken cancellationToken = default)
@@ -43,7 +46,15 @@ public sealed class Dispatcher : IDispatcher
 
         foreach (var handler in handlers)
         {
-            await ((dynamic)handler!).Handle((dynamic)domainEvent, cancellationToken);
+            try
+            {
+                await ((dynamic)handler!).Handle((dynamic)domainEvent, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Fehler im DomainEventHandler {HandlerType} für {EventType}",
+                    handler!.GetType().Name, domainEvent.GetType().Name);
+            }
         }
     }
 }
