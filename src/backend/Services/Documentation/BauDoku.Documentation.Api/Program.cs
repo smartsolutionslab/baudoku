@@ -13,6 +13,8 @@ var connectionString = builder.Configuration.GetConnectionString("DocumentationD
 builder.AddServiceDefaults(health =>
 {
     health.AddNpgSql(connectionString, name: "postgresql", tags: ["ready"]);
+    health.AddNpgSql(connectionString, healthQuery: "SELECT PostGIS_Version()",
+        name: "postgis", tags: ["ready"]);
 });
 
 builder.Services.AddOpenApi();
@@ -37,5 +39,6 @@ app.MapDefaultEndpoints();
 app.MapInstallationEndpoints();
 app.MapPhotoEndpoints();
 app.MapMeasurementEndpoints();
+app.MapChunkedUploadEndpoints();
 
 app.Run();

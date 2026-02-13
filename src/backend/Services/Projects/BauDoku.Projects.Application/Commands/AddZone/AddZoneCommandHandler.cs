@@ -33,5 +33,6 @@ public sealed class AddZoneCommandHandler : ICommandHandler<AddZoneCommand>
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         ProjectsMetrics.ZonesAdded.Add(1);
+        ProjectsMetrics.ZonesPerProject.Record(project.Zones.Count);
     }
 }

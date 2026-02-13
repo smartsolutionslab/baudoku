@@ -55,6 +55,7 @@ public sealed class AddPhotoCommandHandler : ICommandHandler<AddPhotoCommand, Gu
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         DocumentationMetrics.PhotosAdded.Add(1);
+        DocumentationMetrics.PhotoFileSize.Record(command.FileSize);
 
         return photoId.Value;
     }

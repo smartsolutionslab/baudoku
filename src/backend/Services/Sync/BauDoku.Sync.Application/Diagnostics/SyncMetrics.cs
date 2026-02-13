@@ -17,4 +17,10 @@ public static class SyncMetrics
 
     public static readonly Counter<long> ConflictsResolved =
         Meter.CreateCounter<long>("baudoku.sync.conflicts_resolved", description: "Number of sync conflicts resolved");
+
+    public static readonly Histogram<long> DeltaPayloadSize =
+        Meter.CreateHistogram<long>("baudoku.sync.delta_payload_size_bytes", unit: "By", description: "Size of individual sync delta payloads in bytes");
+
+    public static readonly Histogram<int> DeltasPerBatch =
+        Meter.CreateHistogram<int>("baudoku.sync.deltas_per_batch", description: "Number of deltas per sync batch");
 }

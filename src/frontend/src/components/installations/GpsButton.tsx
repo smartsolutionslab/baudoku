@@ -51,6 +51,12 @@ export function GpsButton({
           <Text style={[styles.successTitle, { color: quality.color }]}>
             GPS-Position erfasst
           </Text>
+          {position.isMocked && (
+            <View style={styles.externalBadge}>
+              <FontAwesome name="bluetooth-b" size={12} color={Colors.primary} />
+              <Text style={styles.externalBadgeText}>Extern</Text>
+            </View>
+          )}
           <View style={styles.headerActions}>
             <TouchableOpacity
               style={styles.recaptureButton}
@@ -176,6 +182,21 @@ const styles = StyleSheet.create({
     fontSize: FontSize.caption,
     color: Colors.textSecondary,
     fontFamily: "SpaceMono",
+  },
+  externalBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 122, 255, 0.1)",
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+    marginRight: Spacing.sm,
+  },
+  externalBadgeText: {
+    fontSize: FontSize.footnote,
+    color: Colors.primary,
+    fontWeight: "600",
+    marginLeft: 4,
   },
   errorText: {
     fontSize: FontSize.caption,

@@ -72,6 +72,7 @@ public sealed class DocumentInstallationCommandHandler
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         DocumentationMetrics.InstallationsDocumented.Add(1);
+        DocumentationMetrics.GpsHorizontalAccuracy.Record(command.HorizontalAccuracy);
 
         return installationId.Value;
     }
