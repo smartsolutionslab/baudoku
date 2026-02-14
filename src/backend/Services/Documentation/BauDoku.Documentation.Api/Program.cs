@@ -38,6 +38,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseAuthAuditLogging();
 
 app.MapDefaultEndpoints();
 app.MapInstallationEndpoints();

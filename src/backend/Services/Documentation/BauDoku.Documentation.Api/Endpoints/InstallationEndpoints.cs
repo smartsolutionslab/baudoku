@@ -1,4 +1,5 @@
 using BauDoku.BuildingBlocks.Application.Dispatcher;
+using BauDoku.BuildingBlocks.Infrastructure.Auth;
 using BauDoku.Documentation.Application.Commands.DocumentInstallation;
 using BauDoku.Documentation.Application.Commands.UpdateInstallation;
 using BauDoku.Documentation.Application.Queries.Dtos;
@@ -14,8 +15,7 @@ public static class InstallationEndpoints
     public static void MapInstallationEndpoints(this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("/api/documentation/installations")
-            .WithTags("Installations")
-            .RequireAuthorization();
+            .WithTags("Installations");
 
         group.MapPost("/", async (
             DocumentInstallationCommand command,
@@ -25,6 +25,7 @@ public static class InstallationEndpoints
             var id = await dispatcher.Send(command, ct);
             return Results.Created($"/api/documentation/installations/{id}", new { id });
         })
+        .RequireAuthorization(AuthPolicies.RequireUser)
         .WithName("DocumentInstallation")
         .WithSummary("Neue Installation dokumentieren")
         .Produces<object>(StatusCodes.Status201Created)
@@ -47,6 +48,7 @@ public static class InstallationEndpoints
             var result = await dispatcher.Query(query, ct);
             return Results.Ok(result);
         })
+        .RequireAuthorization()
         .WithName("ListInstallations")
         .WithSummary("Installationen auflisten und filtern")
         .Produces<object>(StatusCodes.Status200OK);
@@ -66,6 +68,7 @@ public static class InstallationEndpoints
                 page ?? 1, pageSize ?? 20);
             return Results.Ok(await dispatcher.Query(query, ct));
         })
+        .RequireAuthorization()
         .WithName("GetInstallationsNearby")
         .WithSummary("Installationen im Umkreis suchen")
         .Produces<object>(StatusCodes.Status200OK);
@@ -86,6 +89,7 @@ public static class InstallationEndpoints
                 projectId, page ?? 1, pageSize ?? 20);
             return Results.Ok(await dispatcher.Query(query, ct));
         })
+        .RequireAuthorization()
         .WithName("GetInstallationsInArea")
         .WithSummary("Installationen in einem Gebiet suchen")
         .Produces<object>(StatusCodes.Status200OK);
@@ -99,6 +103,7 @@ public static class InstallationEndpoints
             var result = await dispatcher.Query(query, ct);
             return result is not null ? Results.Ok(result) : Results.NotFound();
         })
+        .RequireAuthorization()
         .WithName("GetInstallation")
         .WithSummary("Installation nach ID abrufen")
         .Produces<InstallationDto>(StatusCodes.Status200OK)
@@ -132,6 +137,7 @@ public static class InstallationEndpoints
             await dispatcher.Send(command, ct);
             return Results.NoContent();
         })
+        .RequireAuthorization(AuthPolicies.RequireUser)
         .WithName("UpdateInstallation")
         .WithSummary("Installation aktualisieren")
         .Produces(StatusCodes.Status204NoContent)

@@ -1,4 +1,5 @@
 using BauDoku.BuildingBlocks.Application.Dispatcher;
+using BauDoku.BuildingBlocks.Infrastructure.Auth;
 using BauDoku.Documentation.Application.Commands.RecordMeasurement;
 using BauDoku.Documentation.Application.Commands.RemoveMeasurement;
 using BauDoku.Documentation.Application.Queries.Dtos;
@@ -11,8 +12,7 @@ public static class MeasurementEndpoints
     public static void MapMeasurementEndpoints(this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("/api/documentation")
-            .WithTags("Measurements")
-            .RequireAuthorization();
+            .WithTags("Measurements");
 
         group.MapPost("/installations/{installationId:guid}/measurements", async (
             Guid installationId,
@@ -33,6 +33,7 @@ public static class MeasurementEndpoints
             return Results.Created(
                 $"/api/documentation/installations/{installationId}/measurements", new { id = measurementId });
         })
+        .RequireAuthorization(AuthPolicies.RequireUser)
         .WithName("RecordMeasurement")
         .WithSummary("Messung zu einer Installation hinzufuegen")
         .Produces<object>(StatusCodes.Status201Created)
@@ -47,6 +48,7 @@ public static class MeasurementEndpoints
             var result = await dispatcher.Query(query, ct);
             return Results.Ok(result);
         })
+        .RequireAuthorization()
         .WithName("GetMeasurements")
         .WithSummary("Messungen einer Installation auflisten")
         .Produces<IReadOnlyList<MeasurementDto>>(StatusCodes.Status200OK);
@@ -61,6 +63,7 @@ public static class MeasurementEndpoints
             await dispatcher.Send(command, ct);
             return Results.NoContent();
         })
+        .RequireAuthorization(AuthPolicies.RequireAdmin)
         .WithName("RemoveMeasurement")
         .WithSummary("Messung von einer Installation entfernen")
         .Produces(StatusCodes.Status204NoContent)

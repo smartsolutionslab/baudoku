@@ -1,4 +1,5 @@
 using BauDoku.BuildingBlocks.Application.Dispatcher;
+using BauDoku.BuildingBlocks.Infrastructure.Auth;
 using BauDoku.Documentation.Application.Commands.AddPhoto;
 using BauDoku.Documentation.Application.Commands.RemovePhoto;
 using BauDoku.Documentation.Application.Contracts;
@@ -12,8 +13,7 @@ public static class PhotoEndpoints
     public static void MapPhotoEndpoints(this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("/api/documentation")
-            .WithTags("Photos")
-            .RequireAuthorization();
+            .WithTags("Photos");
 
         group.MapPost("/installations/{installationId:guid}/photos", async (
             Guid installationId,
@@ -51,6 +51,7 @@ public static class PhotoEndpoints
             var photoId = await dispatcher.Send(command, ct);
             return Results.Created($"/api/documentation/photos/{photoId}", new { id = photoId });
         })
+        .RequireAuthorization(AuthPolicies.RequireUser)
         .DisableAntiforgery()
         .WithName("AddPhoto")
         .WithSummary("Foto zu einer Installation hinzufuegen")
@@ -65,6 +66,7 @@ public static class PhotoEndpoints
             var photos = await photoReadRepository.ListByInstallationIdAsync(installationId, ct);
             return Results.Ok(photos);
         })
+        .RequireAuthorization()
         .WithName("ListPhotos")
         .WithSummary("Fotos einer Installation auflisten")
         .Produces<IReadOnlyList<PhotoDto>>(StatusCodes.Status200OK);
@@ -78,6 +80,7 @@ public static class PhotoEndpoints
             var result = await dispatcher.Query(query, ct);
             return result is not null ? Results.Ok(result) : Results.NotFound();
         })
+        .RequireAuthorization()
         .WithName("GetPhoto")
         .WithSummary("Foto nach ID abrufen")
         .Produces<PhotoDto>(StatusCodes.Status200OK)
@@ -93,6 +96,7 @@ public static class PhotoEndpoints
             await dispatcher.Send(command, ct);
             return Results.NoContent();
         })
+        .RequireAuthorization(AuthPolicies.RequireAdmin)
         .WithName("RemovePhoto")
         .WithSummary("Foto von einer Installation entfernen")
         .Produces(StatusCodes.Status204NoContent)

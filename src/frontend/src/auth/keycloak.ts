@@ -101,6 +101,10 @@ export function parseUserFromToken(idToken: string): AuthUser {
 
   const payload = JSON.parse(atob(parts[1]));
 
+  if (typeof payload.exp === "number" && payload.exp * 1000 < Date.now()) {
+    throw new Error("Token ist abgelaufen");
+  }
+
   return {
     id: payload.sub ?? "",
     email: payload.email ?? "",

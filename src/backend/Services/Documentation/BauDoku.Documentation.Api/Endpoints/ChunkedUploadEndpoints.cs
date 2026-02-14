@@ -1,4 +1,5 @@
 using BauDoku.BuildingBlocks.Application.Dispatcher;
+using BauDoku.BuildingBlocks.Infrastructure.Auth;
 using BauDoku.Documentation.Application.Commands.CompleteChunkedUpload;
 using BauDoku.Documentation.Application.Commands.InitChunkedUpload;
 using BauDoku.Documentation.Application.Commands.UploadChunk;
@@ -10,8 +11,7 @@ public static class ChunkedUploadEndpoints
     public static void MapChunkedUploadEndpoints(this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("/api/documentation/uploads")
-            .WithTags("Chunked Upload")
-            .RequireAuthorization();
+            .WithTags("Chunked Upload");
 
         group.MapPost("/init", async (
             InitChunkedUploadCommand command,
@@ -21,6 +21,7 @@ public static class ChunkedUploadEndpoints
             var sessionId = await dispatcher.Send(command, ct);
             return Results.Ok(new { sessionId });
         })
+        .RequireAuthorization(AuthPolicies.RequireUser)
         .WithName("InitChunkedUpload")
         .WithSummary("Chunked-Upload-Sitzung initialisieren")
         .Produces<object>(StatusCodes.Status200OK)
@@ -37,6 +38,7 @@ public static class ChunkedUploadEndpoints
             await dispatcher.Send(command, ct);
             return Results.NoContent();
         })
+        .RequireAuthorization(AuthPolicies.RequireUser)
         .DisableAntiforgery()
         .WithName("UploadChunk")
         .WithSummary("Einen Chunk hochladen")
@@ -51,6 +53,7 @@ public static class ChunkedUploadEndpoints
             var photoId = await dispatcher.Send(command, ct);
             return Results.Created($"/api/documentation/photos/{photoId}", new { id = photoId });
         })
+        .RequireAuthorization(AuthPolicies.RequireUser)
         .WithName("CompleteChunkedUpload")
         .WithSummary("Chunked-Upload abschliessen und Foto erstellen")
         .Produces<object>(StatusCodes.Status201Created);
