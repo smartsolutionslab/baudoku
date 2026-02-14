@@ -7,15 +7,17 @@ type FloatingActionButtonProps = {
   icon?: React.ComponentProps<typeof FontAwesome>["name"];
   label?: string;
   onPress: () => void;
+  testID?: string;
 };
 
 export function FloatingActionButton({
   icon = "plus",
   label,
   onPress,
+  testID,
 }: FloatingActionButtonProps) {
   return (
-    <TouchableOpacity style={styles.fab} onPress={onPress} activeOpacity={0.8}>
+    <TouchableOpacity style={styles.fab} onPress={onPress} activeOpacity={0.8} testID={testID}>
       <FontAwesome name={icon} size={20} color="#fff" />
       {label ? <Text style={styles.label}>{label}</Text> : null}
     </TouchableOpacity>

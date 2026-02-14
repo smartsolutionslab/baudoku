@@ -3,18 +3,55 @@ name: E2E Tests
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 4 * * 1-5' # Weekdays at 4 AM UTC
+    - cron: '0 3 * * *' # Daily at 3 AM UTC
 
 permissions:
   contents: read
 
 jobs:
+  check-changes:
+    name: Check for Recent Changes
+    runs-on: ubuntu-latest
+    outputs:
+      has_changes: ${{ steps.check.outputs.has_changes }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: development
+          fetch-depth: 0
+
+      - name: Check for commits in last 24h
+        id: check
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+          else
+            RECENT=$(git log --since="24 hours ago" --oneline | head -1)
+            if [ -n "$RECENT" ]; then
+              echo "has_changes=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "has_changes=false" >> "$GITHUB_OUTPUT"
+              echo "No commits in the last 24 hours — skipping E2E."
+            fi
+          fi
+
   e2e-android:
     name: E2E Tests (Android)
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    needs: check-changes
+    if: needs.check-changes.outputs.has_changes == 'true'
+    timeout-minutes: 45
+    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: development
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -27,15 +64,28 @@ jobs:
         working-directory: src
         run: npm ci
 
+      - name: Expo prebuild
+        working-directory: src/frontend
+        run: npx expo prebuild --platform android --no-install
+
       - name: Install Maestro
         run: |
           curl -Ls "https://get.maestro.mobile.dev" | bash
           echo "$HOME/.maestro/bin" >> $GITHUB_PATH
 
+      - name: Build debug APK
+        working-directory: src/frontend/android
+        run: ./gradlew assembleDebug --no-daemon
+
       - name: Run Maestro flows
-        run: |
-          echo "E2E tests are placeholder — real flows will be added as app UI stabilizes"
-          maestro test e2e/flows/ || true
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          arch: x86_64
+          emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect
+          script: |
+            adb install src/frontend/android/app/build/outputs/apk/debug/app-debug.apk
+            maestro test e2e/flows/
 
       - name: Upload test results
         uses: actions/upload-artifact@v4

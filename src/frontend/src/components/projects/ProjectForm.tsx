@@ -49,6 +49,7 @@ export function ProjectForm({
         onChangeText={(v) => set("name", v)}
         error={errors.name}
         placeholder="Projektname"
+        testID="project-name-input"
       />
       <FormPicker
         label="Status"
@@ -104,6 +105,7 @@ export function ProjectForm({
         onPress={() => void handleSubmit()}
         loading={submitting}
         style={styles.button}
+        testID="submit-button"
       />
     </ScrollView>
   );
