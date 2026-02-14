@@ -134,9 +134,9 @@ export class SyncManager {
         store.markCompleted(photo.id);
         uploaded++;
       } catch (error) {
-        await photoRepo.updateUploadStatus(photo.id, "failed");
         const message =
           error instanceof Error ? error.message : "Foto-Upload fehlgeschlagen";
+        await photoRepo.markUploadFailed(photo.id, message);
         store.markFailed(photo.id, message);
         errors.push(message);
       }

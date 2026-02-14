@@ -4,6 +4,7 @@ import { SyncScheduler } from "../sync/SyncScheduler";
 import { setOnReconnect } from "../sync/ConnectivityMonitor";
 import { useSyncStore } from "../store/useSyncStore";
 import { UploadProgressBar } from "../components/sync/UploadProgressBar";
+import * as photoRepo from "../db/repositories/photoRepo";
 
 type SyncContextValue = {
   syncManager: SyncManager;
@@ -25,6 +26,8 @@ export function SyncProvider({ children }: { children: React.ReactNode }) {
   const schedulerRef = useRef<SyncScheduler | null>(null);
 
   useEffect(() => {
+    void photoRepo.resetStuckUploads();
+
     const store = useSyncStore.getState();
 
     const scheduler = new SyncScheduler(managerRef.current, {
