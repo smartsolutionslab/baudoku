@@ -76,6 +76,47 @@ public sealed class InstallationEndpointTests : IDisposable
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
+    [Fact]
+    public async Task UpdateInstallation_WithValidData_ShouldReturn204()
+    {
+        // Create first
+        var createCommand = new
+        {
+            ProjectId = Guid.NewGuid(),
+            Type = "cable_tray",
+            Latitude = 48.0,
+            Longitude = 11.0,
+            HorizontalAccuracy = 5.0,
+            GpsSource = "internal_gps"
+        };
+        var createResponse = await _client.PostAsJsonAsync("/api/documentation/installations", createCommand);
+        var created = await createResponse.Content.ReadFromJsonAsync<IdResponse>();
+
+        // Update
+        var updateRequest = new
+        {
+            Description = "Aktualisierte Beschreibung",
+            DepthMm = 450
+        };
+        var response = await _client.PutAsJsonAsync(
+            $"/api/documentation/installations/{created!.Id}", updateRequest);
+
+        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+    }
+
+    [Fact]
+    public async Task UpdateInstallation_WithNonExistentId_ShouldReturn500()
+    {
+        var updateRequest = new
+        {
+            Description = "Test"
+        };
+        var response = await _client.PutAsJsonAsync(
+            $"/api/documentation/installations/{Guid.NewGuid()}", updateRequest);
+
+        response.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
+    }
+
     public void Dispose()
     {
         _client.Dispose();
