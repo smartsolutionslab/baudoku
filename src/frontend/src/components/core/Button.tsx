@@ -18,6 +18,7 @@ type ButtonProps = {
   disabled?: boolean;
   loading?: boolean;
   style?: ViewStyle;
+  testID?: string;
 };
 
 const variantStyles: Record<ButtonVariant, { container: ViewStyle; text: TextStyle }> = {
@@ -42,6 +43,7 @@ export function Button({
   disabled = false,
   loading = false,
   style,
+  testID,
 }: ButtonProps) {
   const v = variantStyles[variant];
   const isDisabled = disabled || loading;
@@ -57,6 +59,7 @@ export function Button({
       onPress={onPress}
       disabled={isDisabled}
       activeOpacity={0.7}
+      testID={testID}
     >
       {loading ? (
         <ActivityIndicator
