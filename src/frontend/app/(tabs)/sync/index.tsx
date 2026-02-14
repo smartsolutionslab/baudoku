@@ -11,6 +11,7 @@ import { useRouter } from "expo-router";
 import { useSyncStore } from "../../../src/store/useSyncStore";
 import { useSyncStatus } from "../../../src/hooks/useSyncStatus";
 import { useSyncManager } from "../../../src/hooks/useSyncManager";
+import { UploadQueueCard } from "../../../src/components/sync/UploadQueueCard";
 import type { SyncOutboxEntry } from "../../../src/db/repositories/types";
 
 function formatTimestamp(date: Date): string {
@@ -137,6 +138,8 @@ export default function SyncScreen() {
           <Text style={styles.syncError}>{syncError}</Text>
         )}
       </View>
+
+      <UploadQueueCard />
 
       {conflicts.length > 0 && (
         <TouchableOpacity
