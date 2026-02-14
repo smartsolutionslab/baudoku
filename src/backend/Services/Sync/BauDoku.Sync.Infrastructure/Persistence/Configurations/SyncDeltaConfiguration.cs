@@ -15,7 +15,7 @@ public sealed class SyncDeltaConfiguration : IEntityTypeConfiguration<SyncDelta>
 
         builder.Property(d => d.Id)
             .HasColumnName("id")
-            .HasConversion(id => id.Value, value => new SyncDeltaId(value));
+            .HasConversion(id => id.Value, value => SyncDeltaIdentifier.From(value));
 
         builder.OwnsOne(d => d.EntityRef, entityRef =>
         {
@@ -23,7 +23,7 @@ public sealed class SyncDeltaConfiguration : IEntityTypeConfiguration<SyncDelta>
                 .HasColumnName("entity_type")
                 .HasMaxLength(30)
                 .IsRequired()
-                .HasConversion(t => t.Value, value => new EntityType(value));
+                .HasConversion(t => t.Value, value => EntityType.From(value));
 
             entityRef.Property(e => e.EntityId)
                 .HasColumnName("entity_id")
@@ -36,22 +36,22 @@ public sealed class SyncDeltaConfiguration : IEntityTypeConfiguration<SyncDelta>
             .HasColumnName("operation")
             .HasMaxLength(10)
             .IsRequired()
-            .HasConversion(o => o.Value, value => new DeltaOperation(value));
+            .HasConversion(o => o.Value, value => DeltaOperation.From(value));
 
         builder.Property(d => d.BaseVersion)
             .HasColumnName("base_version")
             .IsRequired()
-            .HasConversion(v => v.Value, value => new SyncVersion(value));
+            .HasConversion(v => v.Value, value => SyncVersion.From(value));
 
         builder.Property(d => d.ServerVersion)
             .HasColumnName("server_version")
             .IsRequired()
-            .HasConversion(v => v.Value, value => new SyncVersion(value));
+            .HasConversion(v => v.Value, value => SyncVersion.From(value));
 
         builder.Property(d => d.Payload)
             .HasColumnName("payload")
             .IsRequired()
-            .HasConversion(p => p.Value, value => new DeltaPayload(value));
+            .HasConversion(p => p.Value, value => DeltaPayload.From(value));
 
         builder.Property(d => d.Timestamp)
             .HasColumnName("timestamp")

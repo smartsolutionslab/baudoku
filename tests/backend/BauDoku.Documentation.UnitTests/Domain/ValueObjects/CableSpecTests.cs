@@ -8,7 +8,7 @@ public sealed class CableSpecTests
     [Fact]
     public void Create_WithValidCableSpec_ShouldSucceed()
     {
-        var spec = new CableSpec("NYM-J 5x2.5", 25, "grey", 5);
+        var spec = CableSpec.Create("NYM-J 5x2.5", 25, "grey", 5);
         spec.CableType.Should().Be("NYM-J 5x2.5");
         spec.CrossSection.Should().Be(25);
         spec.Color.Should().Be("grey");
@@ -18,7 +18,7 @@ public sealed class CableSpecTests
     [Fact]
     public void Create_WithOnlyRequiredFields_ShouldSucceed()
     {
-        var spec = new CableSpec("NYY-J 3x1.5");
+        var spec = CableSpec.Create("NYY-J 3x1.5");
         spec.CrossSection.Should().BeNull();
         spec.Color.Should().BeNull();
         spec.ConductorCount.Should().BeNull();
@@ -30,14 +30,14 @@ public sealed class CableSpecTests
     [InlineData("   ")]
     public void Create_WithEmptyCableType_ShouldThrow(string? cableType)
     {
-        var act = () => new CableSpec(cableType!);
+        var act = () => CableSpec.Create(cableType!);
         act.Should().Throw<ArgumentException>();
     }
 
     [Fact]
     public void Create_WithInvalidCrossSection_ShouldThrow()
     {
-        var act = () => new CableSpec("NYM-J", crossSection: 0);
+        var act = () => CableSpec.Create("NYM-J", crossSection: 0);
         act.Should().Throw<ArgumentOutOfRangeException>();
     }
 }

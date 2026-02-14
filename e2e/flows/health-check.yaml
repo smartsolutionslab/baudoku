@@ -1,10 +1,7 @@
 appId: com.baudoku.app
 ---
 # Health Check Flow - Verifies the app launches and home screen loads
-# This is a placeholder flow. Real E2E tests will be added as UI stabilizes.
 
 - launchApp
 
-- assertVisible:
-    text: ".*"
-    optional: true
+- assertVisible: "Projekte"

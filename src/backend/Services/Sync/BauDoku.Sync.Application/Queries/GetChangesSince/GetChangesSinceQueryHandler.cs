@@ -6,22 +6,22 @@ namespace BauDoku.Sync.Application.Queries.GetChangesSince;
 
 public sealed class GetChangesSinceQueryHandler : IQueryHandler<GetChangesSinceQuery, ChangeSetResult>
 {
-    private readonly IEntityVersionReadStore _entityVersionReadStore;
+    private readonly IEntityVersionReadStore entityVersionReadStore;
 
     public GetChangesSinceQueryHandler(IEntityVersionReadStore entityVersionReadStore)
     {
-        _entityVersionReadStore = entityVersionReadStore;
+        this.entityVersionReadStore = entityVersionReadStore;
     }
 
     public async Task<ChangeSetResult> Handle(
         GetChangesSinceQuery query,
         CancellationToken cancellationToken = default)
     {
-        var deviceId = new DeviceId(query.DeviceId);
+        var deviceId = DeviceIdentifier.From(query.DeviceId);
         var limit = query.Limit ?? 100;
         var requestedLimit = limit + 1;
 
-        var changes = await _entityVersionReadStore.GetChangedSinceAsync(
+        var changes = await entityVersionReadStore.GetChangedSinceAsync(
             query.Since, deviceId, requestedLimit, cancellationToken);
 
         var hasMore = changes.Count > limit;

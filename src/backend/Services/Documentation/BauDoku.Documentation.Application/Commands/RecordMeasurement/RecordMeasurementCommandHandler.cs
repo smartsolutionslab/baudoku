@@ -8,30 +8,30 @@ namespace BauDoku.Documentation.Application.Commands.RecordMeasurement;
 
 public sealed class RecordMeasurementCommandHandler : ICommandHandler<RecordMeasurementCommand, Guid>
 {
-    private readonly IInstallationRepository _installationRepository;
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IInstallationRepository installationRepository;
+    private readonly IUnitOfWork unitOfWork;
 
     public RecordMeasurementCommandHandler(
         IInstallationRepository installationRepository,
         IUnitOfWork unitOfWork)
     {
-        _installationRepository = installationRepository;
-        _unitOfWork = unitOfWork;
+        this.installationRepository = installationRepository;
+        this.unitOfWork = unitOfWork;
     }
 
     public async Task<Guid> Handle(RecordMeasurementCommand command, CancellationToken cancellationToken)
     {
-        var installationId = new InstallationId(command.InstallationId);
-        var installation = await _installationRepository.GetByIdAsync(installationId, cancellationToken)
+        var installationId = InstallationIdentifier.From(command.InstallationId);
+        var installation = await installationRepository.GetByIdAsync(installationId, cancellationToken)
             ?? throw new InvalidOperationException($"Installation mit ID {command.InstallationId} nicht gefunden.");
 
-        var measurementId = MeasurementId.New();
-        var type = new MeasurementType(command.Type);
-        var value = new MeasurementValue(command.Value, command.Unit, command.MinThreshold, command.MaxThreshold);
+        var measurementId = MeasurementIdentifier.New();
+        var type = MeasurementType.From(command.Type);
+        var value = MeasurementValue.Create(command.Value, command.Unit, command.MinThreshold, command.MaxThreshold);
 
         installation.RecordMeasurement(measurementId, type, value, command.Notes);
 
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         DocumentationMetrics.MeasurementsRecorded.Add(1);
 

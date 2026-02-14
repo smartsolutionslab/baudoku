@@ -1,5 +1,6 @@
 using BauDoku.BuildingBlocks.Application;
 using BauDoku.BuildingBlocks.Infrastructure.Auth;
+using BauDoku.BuildingBlocks.Infrastructure.Serialization;
 using BauDoku.Documentation.Api.Endpoints;
 using BauDoku.Documentation.Infrastructure;
 using BauDoku.ServiceDefaults;
@@ -17,9 +18,12 @@ builder.AddServiceDefaults(health =>
         name: "postgis", tags: ["ready"]);
 });
 
+builder.Services.ConfigureHttpJsonOptions(options =>
+    options.SerializerOptions.Converters.Add(new ValueObjectJsonConverterFactory()));
+
 builder.Services.AddOpenApi();
 
-builder.Services.AddBauDokuAuthentication(builder.Configuration);
+builder.Services.AddBauDokuAuthentication(builder.Configuration, builder.Environment);
 
 builder.Services.AddApplication(BauDoku.Documentation.Application.DependencyInjection.Assembly);
 builder.Services.AddDocumentationInfrastructure(connectionString);
@@ -34,6 +38,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseAuthAuditLogging();
 
 app.MapDefaultEndpoints();
 app.MapInstallationEndpoints();
@@ -42,3 +47,5 @@ app.MapMeasurementEndpoints();
 app.MapChunkedUploadEndpoints();
 
 app.Run();
+
+public partial class Program { }

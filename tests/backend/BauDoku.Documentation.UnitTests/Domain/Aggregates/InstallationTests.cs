@@ -3,26 +3,13 @@ using BauDoku.BuildingBlocks.Domain;
 using BauDoku.Documentation.Domain.Aggregates;
 using BauDoku.Documentation.Domain.Events;
 using BauDoku.Documentation.Domain.ValueObjects;
+using BauDoku.Documentation.UnitTests.Builders;
 
 namespace BauDoku.Documentation.UnitTests.Domain.Aggregates;
 
 public sealed class InstallationTests
 {
-    private static Installation CreateValidInstallation()
-    {
-        return Installation.Create(
-            InstallationId.New(),
-            Guid.NewGuid(),
-            Guid.NewGuid(),
-            InstallationType.CableTray,
-            new GpsPosition(48.1351, 11.5820, 520.0, 3.5, "internal_gps"),
-            new Description("Kabeltrasse im Erdgeschoss"),
-            new CableSpec("NYM-J 5x2.5", 25),
-            new Depth(600),
-            new Manufacturer("Hager"),
-            new ModelName("VZ312N"),
-            new SerialNumber("SN-12345"));
-    }
+    private static Installation CreateValidInstallation() => new InstallationBuilder().Build();
 
     [Fact]
     public void Create_ShouldSetProperties()
@@ -30,7 +17,7 @@ public sealed class InstallationTests
         var installation = CreateValidInstallation();
 
         installation.Id.Should().NotBeNull();
-        installation.ProjectId.Should().NotBe(Guid.Empty);
+        installation.ProjectId.Should().NotBeNull();
         installation.ZoneId.Should().NotBeNull();
         installation.Type.Should().Be(InstallationType.CableTray);
         installation.Position.Latitude.Should().Be(48.1351);
@@ -69,11 +56,11 @@ public sealed class InstallationTests
     public void Create_WithInvalidGpsAccuracy_ShouldThrowBusinessRuleException()
     {
         var act = () => Installation.Create(
-            InstallationId.New(),
-            Guid.NewGuid(),
+            InstallationIdentifier.New(),
+            ProjectIdentifier.New(),
             null,
             InstallationType.JunctionBox,
-            new GpsPosition(48.0, 11.0, null, 150.0, "internal_gps"));
+            GpsPosition.Create(48.0, 11.0, null, 150.0, "internal_gps"));
 
         act.Should().Throw<BusinessRuleException>();
     }
@@ -82,11 +69,11 @@ public sealed class InstallationTests
     public void Create_WithOptionalFieldsNull_ShouldSucceed()
     {
         var installation = Installation.Create(
-            InstallationId.New(),
-            Guid.NewGuid(),
+            InstallationIdentifier.New(),
+            ProjectIdentifier.New(),
             null,
             InstallationType.Grounding,
-            new GpsPosition(48.0, 11.0, null, 5.0, "internal_gps"));
+            GpsPosition.Create(48.0, 11.0, null, 5.0, "internal_gps"));
 
         installation.Description.Should().BeNull();
         installation.CableSpec.Should().BeNull();
@@ -125,11 +112,11 @@ public sealed class InstallationTests
     public void Create_WithLowQualityGps_ShouldRaiseLowGpsQualityDetectedEvent()
     {
         var installation = Installation.Create(
-            InstallationId.New(),
-            Guid.NewGuid(),
+            InstallationIdentifier.New(),
+            ProjectIdentifier.New(),
             null,
             InstallationType.JunctionBox,
-            new GpsPosition(48.0, 11.0, null, 50.0, "internal_gps"));
+            GpsPosition.Create(48.0, 11.0, null, 50.0, "internal_gps"));
 
         installation.QualityGrade.Should().Be(GpsQualityGrade.D);
         installation.DomainEvents.Should().HaveCount(2);

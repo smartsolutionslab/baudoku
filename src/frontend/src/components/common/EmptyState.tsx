@@ -3,13 +3,13 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Colors, Spacing, FontSize } from "../../styles/tokens";
 
-interface EmptyStateProps {
+type EmptyStateProps = {
   icon?: React.ComponentProps<typeof FontAwesome>["name"];
   title: string;
   subtitle?: string;
   actionLabel?: string;
   onAction?: () => void;
-}
+};
 
 export function EmptyState({
   icon,

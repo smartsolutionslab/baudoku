@@ -15,4 +15,5 @@ public sealed record AddPhotoCommand(
     double? Altitude,
     double? HorizontalAccuracy,
     string? GpsSource,
-    Stream Stream) : ICommand<Guid>;
+    Stream Stream,
+    DateTime? TakenAt = null) : ICommand<Guid>;

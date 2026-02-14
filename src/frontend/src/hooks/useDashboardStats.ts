@@ -5,14 +5,14 @@ import * as photoRepo from "../db/repositories/photoRepo";
 import * as measurementRepo from "../db/repositories/measurementRepo";
 import * as syncRepo from "../db/repositories/syncRepo";
 
-export interface DashboardStats {
+export type DashboardStats = {
   projectCount: number;
   installationCount: number;
   installationsByStatus: Record<string, number>;
   photoCount: number;
   measurementsByResult: Record<string, number>;
   unsyncedCount: number;
-}
+};
 
 export function useDashboardStats() {
   return useQuery({

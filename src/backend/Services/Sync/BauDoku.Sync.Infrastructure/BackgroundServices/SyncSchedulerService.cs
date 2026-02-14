@@ -9,25 +9,25 @@ namespace BauDoku.Sync.Infrastructure.BackgroundServices;
 
 public sealed class SyncSchedulerService : BackgroundService
 {
-    private readonly IServiceScopeFactory _scopeFactory;
-    private readonly ILogger<SyncSchedulerService> _logger;
-    private readonly TimeSpan _interval;
+    private readonly IServiceScopeFactory scopeFactory;
+    private readonly ILogger<SyncSchedulerService> logger;
+    private readonly TimeSpan interval;
 
     public SyncSchedulerService(
         IServiceScopeFactory scopeFactory,
         ILogger<SyncSchedulerService> logger,
         IConfiguration configuration)
     {
-        _scopeFactory = scopeFactory;
-        _logger = logger;
+        this.scopeFactory = scopeFactory;
+        this.logger = logger;
 
         var seconds = configuration.GetValue("Sync:SchedulerIntervalSeconds", 30);
-        _interval = TimeSpan.FromSeconds(seconds);
+        interval = TimeSpan.FromSeconds(seconds);
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _logger.LogInformation("SyncScheduler gestartet. Intervall: {Interval}s", _interval.TotalSeconds);
+        logger.LogInformation("SyncScheduler gestartet. Intervall: {Interval}s", interval.TotalSeconds);
 
         while (!stoppingToken.IsCancellationRequested)
         {
@@ -41,18 +41,18 @@ public sealed class SyncSchedulerService : BackgroundService
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Fehler im SyncScheduler-Zyklus");
+                logger.LogError(ex, "Fehler im SyncScheduler-Zyklus");
             }
 
-            await Task.Delay(_interval, stoppingToken);
+            await Task.Delay(interval, stoppingToken);
         }
 
-        _logger.LogInformation("SyncScheduler beendet");
+        logger.LogInformation("SyncScheduler beendet");
     }
 
     private async Task ProcessPendingBatchesAsync(CancellationToken ct)
     {
-        await using var scope = _scopeFactory.CreateAsyncScope();
+        await using var scope = scopeFactory.CreateAsyncScope();
         var repository = scope.ServiceProvider.GetRequiredService<ISyncBatchRepository>();
         var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
 
@@ -61,18 +61,21 @@ public sealed class SyncSchedulerService : BackgroundService
         if (pendingBatches.Count == 0)
             return;
 
-        _logger.LogInformation("SyncScheduler: {Count} ausstehende Batches gefunden", pendingBatches.Count);
+        logger.LogInformation("SyncScheduler: {Count} ausstehende Batches gefunden", pendingBatches.Count);
 
         foreach (var batch in pendingBatches)
         {
             try
             {
+                // TODO: BD-706 — Implement actual batch processing (delta application, conflict detection, version store updates)
+                logger.LogWarning(
+                    "SyncScheduler: Batch {BatchId} als abgeschlossen markiert (Platzhalter — keine Delta-Verarbeitung)",
+                    batch.Id.Value);
                 batch.MarkCompleted();
-                _logger.LogInformation("SyncScheduler: Batch {BatchId} verarbeitet", batch.Id.Value);
             }
             catch (Exception ex)
             {
-                _logger.LogWarning(ex, "SyncScheduler: Fehler bei Batch {BatchId}", batch.Id.Value);
+                logger.LogWarning(ex, "SyncScheduler: Fehler bei Batch {BatchId}", batch.Id.Value);
                 batch.MarkFailed();
             }
         }

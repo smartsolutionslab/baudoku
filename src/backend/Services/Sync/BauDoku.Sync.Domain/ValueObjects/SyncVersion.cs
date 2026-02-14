@@ -1,4 +1,5 @@
 using BauDoku.BuildingBlocks.Domain;
+using BauDoku.BuildingBlocks.Domain.Guards;
 
 namespace BauDoku.Sync.Domain.ValueObjects;
 
@@ -6,11 +7,12 @@ public sealed record SyncVersion : ValueObject
 {
     public long Value { get; }
 
-    public SyncVersion(long value)
+    private SyncVersion(long value) => Value = value;
+
+    public static SyncVersion From(long value)
     {
-        if (value < 0)
-            throw new ArgumentException("Sync-Version darf nicht negativ sein.", nameof(value));
-        Value = value;
+        Ensure.That(value).IsNotNegative("Sync-Version darf nicht negativ sein.");
+        return new SyncVersion(value);
     }
 
     public static SyncVersion Initial => new(0);

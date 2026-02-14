@@ -9,38 +9,38 @@ namespace BauDoku.Documentation.IntegrationTests;
 [Collection(PostgreSqlCollection.Name)]
 public sealed class InstallationPersistenceTests
 {
-    private readonly PostgreSqlFixture _fixture;
+    private readonly PostgreSqlFixture fixture;
 
     public InstallationPersistenceTests(PostgreSqlFixture fixture)
     {
-        _fixture = fixture;
+        this.fixture = fixture;
     }
 
     [Fact]
     public async Task CreateInstallation_ShouldPersistAndLoad()
     {
-        var projectId = Guid.NewGuid();
-        var zoneId = Guid.NewGuid();
+        var projectId = ProjectIdentifier.New();
+        var zoneId = ZoneIdentifier.New();
         var installation = Installation.Create(
-            InstallationId.New(),
+            InstallationIdentifier.New(),
             projectId,
             zoneId,
             InstallationType.CableTray,
-            new GpsPosition(48.1351, 11.5820, 520.0, 3.5, "internal_gps"),
-            new Description("Test installation"),
-            new CableSpec("NYM-J 5x2.5", 25, "grey", 5),
-            new Depth(600),
-            new Manufacturer("Hager"),
-            new ModelName("VZ312N"),
-            new SerialNumber("SN-12345"));
+            GpsPosition.Create(48.1351, 11.5820, 520.0, 3.5, "internal_gps"),
+            Description.From("Test installation"),
+            CableSpec.Create("NYM-J 5x2.5", 25m, "grey", 5),
+            Depth.From(600),
+            Manufacturer.From("Hager"),
+            ModelName.From("VZ312N"),
+            SerialNumber.From("SN-12345"));
 
-        await using (var writeContext = _fixture.CreateContext())
+        await using (var writeContext = fixture.CreateContext())
         {
             writeContext.Installations.Add(installation);
             await writeContext.SaveChangesAsync();
         }
 
-        await using (var readContext = _fixture.CreateContext())
+        await using (var readContext = fixture.CreateContext())
         {
             var loaded = await readContext.Installations
                 .Include(i => i.Photos)
@@ -75,19 +75,19 @@ public sealed class InstallationPersistenceTests
     public async Task CreateInstallation_WithOptionalFieldsNull_ShouldPersist()
     {
         var installation = Installation.Create(
-            InstallationId.New(),
-            Guid.NewGuid(),
+            InstallationIdentifier.New(),
+            ProjectIdentifier.New(),
             null,
             InstallationType.Grounding,
-            new GpsPosition(48.0, 11.0, null, 5.0, "internal_gps"));
+            GpsPosition.Create(48.0, 11.0, null, 5.0, "internal_gps"));
 
-        await using (var writeContext = _fixture.CreateContext())
+        await using (var writeContext = fixture.CreateContext())
         {
             writeContext.Installations.Add(installation);
             await writeContext.SaveChangesAsync();
         }
 
-        await using (var readContext = _fixture.CreateContext())
+        await using (var readContext = fixture.CreateContext())
         {
             var loaded = await readContext.Installations
                 .FirstOrDefaultAsync(i => i.Id == installation.Id);
@@ -108,21 +108,21 @@ public sealed class InstallationPersistenceTests
     public async Task CreateInstallation_WithGpsPosition_ShouldPersistAllFields()
     {
         var installation = Installation.Create(
-            InstallationId.New(),
-            Guid.NewGuid(),
+            InstallationIdentifier.New(),
+            ProjectIdentifier.New(),
             null,
             InstallationType.CablePull,
-            new GpsPosition(
+            GpsPosition.Create(
                 48.1351, 11.5820, 520.0, 0.03, "rtk",
                 "sapos_heps", "fix", 14, 0.8, 1.2));
 
-        await using (var writeContext = _fixture.CreateContext())
+        await using (var writeContext = fixture.CreateContext())
         {
             writeContext.Installations.Add(installation);
             await writeContext.SaveChangesAsync();
         }
 
-        await using (var readContext = _fixture.CreateContext())
+        await using (var readContext = fixture.CreateContext())
         {
             var loaded = await readContext.Installations
                 .FirstOrDefaultAsync(i => i.Id == installation.Id);

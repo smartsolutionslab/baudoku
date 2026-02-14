@@ -100,6 +100,28 @@ jobs:
           path: coverage/**/coverage.cobertura.xml
           retention-days: 14
 
+  e2e-backend:
+    name: Backend E2E Smoke Test
+    runs-on: ubuntu-latest
+    needs: backend
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Run E2E smoke tests
+        env:
+          TESTCONTAINERS_RYUK_DISABLED: true
+        run: |
+          dotnet test tests/backend/BauDoku.E2E.SmokeTests/ \
+            --configuration Release \
+            --verbosity normal \
+            --logger "console;verbosity=detailed"
+
   frontend:
     name: Frontend Build & Typecheck
     runs-on: ubuntu-latest
@@ -367,20 +389,20 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Trivy vulnerability scan
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@0.28.0
         with:
           image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}-${{ matrix.service.name }}:${{ needs.version.outputs.semver }}
           format: table
-          exit-code: '0'
+          exit-code: '1'
           severity: CRITICAL,HIGH
         if: github.event_name != 'pull_request'
 
       - name: Trivy scan (PR - build only)
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@0.28.0
         with:
           scan-type: fs
           scan-ref: ${{ matrix.service.dockerfile }}
           format: table
-          exit-code: '0'
+          exit-code: '1'
           severity: CRITICAL,HIGH
         if: github.event_name == 'pull_request'

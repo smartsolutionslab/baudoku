@@ -9,35 +9,35 @@ namespace BauDoku.Documentation.UnitTests.Application.Queries;
 
 public sealed class GetMeasurementsQueryHandlerTests
 {
-    private readonly IInstallationRepository _repository;
-    private readonly GetMeasurementsQueryHandler _handler;
+    private readonly IInstallationRepository repository;
+    private readonly GetMeasurementsQueryHandler handler;
 
     public GetMeasurementsQueryHandlerTests()
     {
-        _repository = Substitute.For<IInstallationRepository>();
-        _handler = new GetMeasurementsQueryHandler(_repository);
+        repository = Substitute.For<IInstallationRepository>();
+        handler = new GetMeasurementsQueryHandler(repository);
     }
 
     [Fact]
     public async Task Handle_WhenInstallationHasMeasurements_ShouldReturnMappedDtos()
     {
         var installation = Installation.Create(
-            InstallationId.New(),
-            Guid.NewGuid(),
+            InstallationIdentifier.New(),
+            ProjectIdentifier.New(),
             null,
             InstallationType.CableTray,
-            new GpsPosition(48.0, 11.0, null, 3.5, "gps"));
+            GpsPosition.Create(48.0, 11.0, null, 3.5, "gps"));
 
         installation.RecordMeasurement(
-            MeasurementId.New(),
+            MeasurementIdentifier.New(),
             MeasurementType.InsulationResistance,
-            new MeasurementValue(500.0, "MΩ", 1.0, null),
+            MeasurementValue.Create(500.0, "MΩ", 1.0, null),
             "Notiz");
 
-        _repository.GetByIdAsync(Arg.Any<InstallationId>(), Arg.Any<CancellationToken>())
+        repository.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
 
-        var result = await _handler.Handle(new GetMeasurementsQuery(installation.Id.Value), CancellationToken.None);
+        var result = await handler.Handle(new GetMeasurementsQuery(installation.Id.Value), CancellationToken.None);
 
         result.Should().ContainSingle();
         result[0].Type.Should().Be("insulation_resistance");
@@ -49,10 +49,10 @@ public sealed class GetMeasurementsQueryHandlerTests
     [Fact]
     public async Task Handle_WhenInstallationNotFound_ShouldThrow()
     {
-        _repository.GetByIdAsync(Arg.Any<InstallationId>(), Arg.Any<CancellationToken>())
+        repository.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns((Installation?)null);
 
-        var act = () => _handler.Handle(new GetMeasurementsQuery(Guid.NewGuid()), CancellationToken.None);
+        var act = () => handler.Handle(new GetMeasurementsQuery(Guid.NewGuid()), CancellationToken.None);
 
         await act.Should().ThrowAsync<InvalidOperationException>();
     }

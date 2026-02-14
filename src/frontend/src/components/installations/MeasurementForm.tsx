@@ -8,6 +8,7 @@ import {
   ScrollView,
 } from "react-native";
 import { FormField } from "../common/FormField";
+import { Button, Headline } from "../core";
 import {
   MEASUREMENT_TYPES,
   type MeasurementTypePreset,
@@ -18,11 +19,11 @@ import {
 } from "../../validation/schemas";
 import { Colors, Spacing, FontSize } from "../../styles/tokens";
 
-interface MeasurementFormProps {
+type MeasurementFormProps = {
   onSubmit: (data: MeasurementFormData) => Promise<void>;
   onCancel: () => void;
   submitting?: boolean;
-}
+};
 
 export function MeasurementForm({
   onSubmit,
@@ -92,7 +93,7 @@ export function MeasurementForm({
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Neue Messung</Text>
+      <Headline style={styles.title}>Neue Messung</Headline>
 
       <View>
         <FormField
@@ -187,18 +188,18 @@ export function MeasurementForm({
       />
 
       <View style={styles.actions}>
-        <TouchableOpacity style={styles.cancelButton} onPress={onCancel}>
-          <Text style={styles.cancelText}>Abbrechen</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.submitButton, submitting && styles.buttonDisabled]}
+        <Button
+          title="Abbrechen"
+          variant="secondary"
+          onPress={onCancel}
+          style={styles.actionButton}
+        />
+        <Button
+          title="Speichern"
           onPress={() => void handleSubmit()}
-          disabled={submitting}
-        >
-          <Text style={styles.submitText}>
-            {submitting ? "Speichert..." : "Speichern"}
-          </Text>
-        </TouchableOpacity>
+          loading={submitting}
+          style={styles.actionButton}
+        />
       </View>
     </View>
   );
@@ -211,9 +212,6 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
   },
   title: {
-    fontSize: FontSize.headline,
-    fontWeight: "600",
-    color: Colors.textPrimary,
     marginBottom: Spacing.md,
   },
   suggestions: {
@@ -248,31 +246,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
     marginTop: Spacing.md,
   },
-  cancelButton: {
+  actionButton: {
     flex: 1,
-    paddingVertical: 12,
-    borderRadius: 10,
-    alignItems: "center",
-    backgroundColor: Colors.background,
-  },
-  cancelText: {
-    fontSize: FontSize.body,
-    fontWeight: "600",
-    color: Colors.textTertiary,
-  },
-  submitButton: {
-    flex: 1,
-    paddingVertical: 12,
-    borderRadius: 10,
-    alignItems: "center",
-    backgroundColor: Colors.primary,
-  },
-  buttonDisabled: {
-    backgroundColor: Colors.disabled,
-  },
-  submitText: {
-    fontSize: FontSize.body,
-    fontWeight: "600",
-    color: "#fff",
   },
 });

@@ -1,11 +1,11 @@
 import { useMemo } from "react";
 import type { Zone } from "../db/repositories/types";
 
-export interface ZoneNode {
+export type ZoneNode = {
   zone: Zone;
   children: ZoneNode[];
   level: number;
-}
+};
 
 function buildTree(zones: Zone[]): ZoneNode[] {
   const byParent = new Map<string | null, Zone[]>();

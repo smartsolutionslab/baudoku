@@ -1,20 +1,21 @@
 import { useState, useCallback, useRef } from "react";
 import { decodeZoneQr } from "../utils/qrCode";
 import type { BarcodeScanningResult } from "expo-camera";
+import type { ProjectId, ZoneId } from "../types/branded";
 
-export interface QrScanResult {
+export type QrScanResult = {
   type: "zone";
-  projectId: string;
-  zoneId: string;
-}
+  projectId: ProjectId;
+  zoneId: ZoneId;
+};
 
-export interface UseQrScannerReturn {
+export type UseQrScannerReturn = {
   scanned: boolean;
   scanResult: QrScanResult | null;
   error: string | null;
   onBarcodeScanned: (result: BarcodeScanningResult) => void;
   resetScanner: () => void;
-}
+};
 
 const DEBOUNCE_MS = 1000;
 
@@ -42,8 +43,8 @@ export function useQrScanner(): UseQrScannerReturn {
 
       setScanResult({
         type: "zone",
-        projectId: decoded.projectId,
-        zoneId: decoded.zoneId,
+        projectId: decoded.projectId as ProjectId,
+        zoneId: decoded.zoneId as ZoneId,
       });
       setScanned(true);
       setError(null);

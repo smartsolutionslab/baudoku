@@ -1,13 +1,14 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import * as installationRepo from "../db/repositories/installationRepo";
 import type { SearchResult } from "../db/repositories/installationRepo";
+import type { ProjectId } from "../types/branded";
 
-interface SearchFilters {
+type SearchFilters = {
   status?: string[];
-  projectId?: string;
-}
+  projectId?: ProjectId;
+};
 
-interface UseInstallationSearchReturn {
+type UseInstallationSearchReturn = {
   query: string;
   setQuery: (q: string) => void;
   filters: SearchFilters;
@@ -15,7 +16,7 @@ interface UseInstallationSearchReturn {
   toggleStatus: (status: string) => void;
   results: SearchResult[];
   searching: boolean;
-}
+};
 
 const DEBOUNCE_MS = 300;
 

@@ -13,14 +13,14 @@ public sealed class EntityTypeTests
     [InlineData("measurement")]
     public void Create_WithValidValue_ShouldSucceed(string value)
     {
-        var type = new EntityType(value);
+        var type = EntityType.From(value);
         type.Value.Should().Be(value);
     }
 
     [Fact]
     public void Create_WithInvalidValue_ShouldThrow()
     {
-        var act = () => new EntityType("unknown");
+        var act = () => EntityType.From("unknown");
         act.Should().Throw<ArgumentException>();
     }
 
@@ -30,7 +30,7 @@ public sealed class EntityTypeTests
     [InlineData("   ")]
     public void Create_WithEmptyValue_ShouldThrow(string? value)
     {
-        var act = () => new EntityType(value!);
+        var act = () => EntityType.From(value!);
         act.Should().Throw<ArgumentException>();
     }
 

@@ -8,14 +8,14 @@ import {
 } from "../../utils/gpsQuality";
 import { Colors, Spacing, FontSize } from "../../styles/tokens";
 
-interface QualityIndicatorProps {
+type QualityIndicatorProps = {
   gpsAccuracy: number;
   gpsHdop?: number | null;
   gpsSatCount?: number | null;
   gpsCorrService?: string | null;
   gpsSource?: string | null;
   compact?: boolean;
-}
+};
 
 export function QualityIndicator({
   gpsAccuracy,

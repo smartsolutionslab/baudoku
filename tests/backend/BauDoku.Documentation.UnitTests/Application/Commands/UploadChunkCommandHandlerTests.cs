@@ -7,13 +7,13 @@ namespace BauDoku.Documentation.UnitTests.Application.Commands;
 
 public sealed class UploadChunkCommandHandlerTests
 {
-    private readonly IChunkedUploadStorage _chunkedUploadStorage;
-    private readonly UploadChunkCommandHandler _handler;
+    private readonly IChunkedUploadStorage chunkedUploadStorage;
+    private readonly UploadChunkCommandHandler handler;
 
     public UploadChunkCommandHandlerTests()
     {
-        _chunkedUploadStorage = Substitute.For<IChunkedUploadStorage>();
-        _handler = new UploadChunkCommandHandler(_chunkedUploadStorage);
+        chunkedUploadStorage = Substitute.For<IChunkedUploadStorage>();
+        handler = new UploadChunkCommandHandler(chunkedUploadStorage);
     }
 
     private static ChunkedUploadSession CreateValidSession(Guid sessionId) =>
@@ -26,27 +26,27 @@ public sealed class UploadChunkCommandHandlerTests
     {
         var sessionId = Guid.NewGuid();
         var session = CreateValidSession(sessionId);
-        _chunkedUploadStorage.GetSessionAsync(sessionId, Arg.Any<CancellationToken>())
+        chunkedUploadStorage.GetSessionAsync(sessionId, Arg.Any<CancellationToken>())
             .Returns(session);
 
         var stream = new MemoryStream([1, 2, 3]);
         var command = new UploadChunkCommand(sessionId, 2, stream);
 
-        await _handler.Handle(command, CancellationToken.None);
+        await handler.Handle(command, CancellationToken.None);
 
-        await _chunkedUploadStorage.Received(1)
+        await chunkedUploadStorage.Received(1)
             .StoreChunkAsync(sessionId, 2, stream, Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task Handle_WhenSessionNotFound_ShouldThrow()
     {
-        _chunkedUploadStorage.GetSessionAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
+        chunkedUploadStorage.GetSessionAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
             .Returns((ChunkedUploadSession?)null);
 
         var command = new UploadChunkCommand(Guid.NewGuid(), 0, new MemoryStream([1, 2, 3]));
 
-        var act = () => _handler.Handle(command, CancellationToken.None);
+        var act = () => handler.Handle(command, CancellationToken.None);
 
         await act.Should().ThrowAsync<InvalidOperationException>();
     }
@@ -56,12 +56,12 @@ public sealed class UploadChunkCommandHandlerTests
     {
         var sessionId = Guid.NewGuid();
         var session = CreateValidSession(sessionId);
-        _chunkedUploadStorage.GetSessionAsync(sessionId, Arg.Any<CancellationToken>())
+        chunkedUploadStorage.GetSessionAsync(sessionId, Arg.Any<CancellationToken>())
             .Returns(session);
 
         var command = new UploadChunkCommand(sessionId, 5, new MemoryStream([1, 2, 3]));
 
-        var act = () => _handler.Handle(command, CancellationToken.None);
+        var act = () => handler.Handle(command, CancellationToken.None);
 
         await act.Should().ThrowAsync<InvalidOperationException>();
     }

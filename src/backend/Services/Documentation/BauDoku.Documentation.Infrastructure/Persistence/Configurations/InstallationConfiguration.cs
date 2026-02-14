@@ -16,32 +16,36 @@ public sealed class InstallationConfiguration : IEntityTypeConfiguration<Install
         builder.HasKey(i => i.Id);
         builder.Property(i => i.Id)
             .HasColumnName("id")
-            .HasConversion(id => id.Value, value => new InstallationId(value));
+            .HasConversion(id => id.Value, value => InstallationIdentifier.From(value));
 
         builder.Property(i => i.ProjectId)
             .HasColumnName("project_id")
-            .IsRequired();
+            .IsRequired()
+            .HasConversion(id => id.Value, value => ProjectIdentifier.From(value));
 
         builder.Property(i => i.ZoneId)
-            .HasColumnName("zone_id");
+            .HasColumnName("zone_id")
+            .HasConversion(
+                id => id != null ? id.Value : (Guid?)null,
+                value => value.HasValue ? ZoneIdentifier.From(value.Value) : null);
 
         builder.Property(i => i.Type)
             .HasColumnName("type")
             .HasMaxLength(30)
             .IsRequired()
-            .HasConversion(t => t.Value, value => new InstallationType(value));
+            .HasConversion(t => t.Value, value => InstallationType.From(value));
 
         builder.Property(i => i.Status)
             .HasColumnName("status")
             .HasMaxLength(20)
             .IsRequired()
-            .HasConversion(s => s.Value, value => new InstallationStatus(value));
+            .HasConversion(s => s.Value, value => InstallationStatus.From(value));
 
         builder.Property(i => i.QualityGrade)
             .HasColumnName("gps_quality_grade")
             .HasMaxLength(1)
             .IsRequired()
-            .HasConversion(g => g.Value, value => new GpsQualityGrade(value));
+            .HasConversion(g => g.Value, value => GpsQualityGrade.From(value));
 
         builder.OwnsOne(i => i.Position, pos =>
         {
@@ -77,7 +81,7 @@ public sealed class InstallationConfiguration : IEntityTypeConfiguration<Install
         builder.OwnsOne(i => i.CableSpec, cable =>
         {
             cable.Property(c => c.CableType).HasColumnName("cable_type").HasMaxLength(CableSpec.MaxCableTypeLength);
-            cable.Property(c => c.CrossSection).HasColumnName("cable_cross_section");
+            cable.Property(c => c.CrossSection).HasColumnName("cable_cross_section").HasColumnType("decimal(5,2)");
             cable.Property(c => c.Color).HasColumnName("cable_color").HasMaxLength(CableSpec.MaxColorLength);
             cable.Property(c => c.ConductorCount).HasColumnName("cable_conductor_count");
         });
@@ -86,28 +90,28 @@ public sealed class InstallationConfiguration : IEntityTypeConfiguration<Install
             .HasColumnName("depth_mm")
             .HasConversion(
                 d => d != null ? d.ValueInMillimeters : (int?)null,
-                value => value != null ? new Depth(value.Value) : null);
+                value => value != null ? Depth.From(value.Value) : null);
 
         builder.Property(i => i.Manufacturer)
             .HasColumnName("manufacturer")
             .HasMaxLength(Manufacturer.MaxLength)
             .HasConversion(
                 m => m != null ? m.Value : null,
-                value => value != null ? new Manufacturer(value) : null);
+                value => value != null ? Manufacturer.From(value) : null);
 
         builder.Property(i => i.ModelName)
             .HasColumnName("model_name")
             .HasMaxLength(ModelName.MaxLength)
             .HasConversion(
                 m => m != null ? m.Value : null,
-                value => value != null ? new ModelName(value) : null);
+                value => value != null ? ModelName.From(value) : null);
 
         builder.Property(i => i.SerialNumber)
             .HasColumnName("serial_number")
             .HasMaxLength(SerialNumber.MaxLength)
             .HasConversion(
                 s => s != null ? s.Value : null,
-                value => value != null ? new SerialNumber(value) : null);
+                value => value != null ? SerialNumber.From(value) : null);
 
         builder.Property(i => i.CreatedAt).HasColumnName("created_at").IsRequired();
         builder.Property(i => i.CompletedAt).HasColumnName("completed_at");
@@ -131,5 +135,10 @@ public sealed class InstallationConfiguration : IEntityTypeConfiguration<Install
             .SetPropertyAccessMode(PropertyAccessMode.Field);
 
         builder.Ignore(i => i.DomainEvents);
+
+        // Indexes
+        builder.HasIndex(i => i.ProjectId).HasDatabaseName("ix_installations_project_id");
+        builder.HasIndex(i => i.ZoneId).HasDatabaseName("ix_installations_zone_id");
+        builder.HasIndex(i => i.Status).HasDatabaseName("ix_installations_status");
     }
 }

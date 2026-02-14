@@ -1,4 +1,5 @@
 using BauDoku.BuildingBlocks.Domain;
+using BauDoku.BuildingBlocks.Domain.Guards;
 
 namespace BauDoku.Documentation.Domain.ValueObjects;
 
@@ -8,12 +9,12 @@ public sealed record Manufacturer : ValueObject
 
     public string Value { get; }
 
-    public Manufacturer(string value)
+    private Manufacturer(string value) => Value = value;
+
+    public static Manufacturer From(string value)
     {
-        if (string.IsNullOrWhiteSpace(value))
-            throw new ArgumentException("Hersteller darf nicht leer sein.", nameof(value));
-        if (value.Length > MaxLength)
-            throw new ArgumentException($"Hersteller darf max. {MaxLength} Zeichen lang sein.", nameof(value));
-        Value = value;
+        Ensure.That(value).IsNotNullOrWhiteSpace("Hersteller darf nicht leer sein.")
+            .MaxLengthIs(MaxLength, $"Hersteller darf max. {MaxLength} Zeichen lang sein.");
+        return new Manufacturer(value);
     }
 }

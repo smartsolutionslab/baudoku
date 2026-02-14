@@ -19,11 +19,11 @@ const redirectUri = AuthSession.makeRedirectUri({
   path: "auth/callback",
 });
 
-export interface AuthTokens {
+export type AuthTokens = {
   accessToken: string;
   refreshToken: string;
   idToken: string;
-}
+};
 
 export async function loginWithKeycloak(): Promise<AuthTokens> {
   const request = new AuthSession.AuthRequest({
@@ -100,6 +100,10 @@ export function parseUserFromToken(idToken: string): AuthUser {
   }
 
   const payload = JSON.parse(atob(parts[1]));
+
+  if (typeof payload.exp === "number" && payload.exp * 1000 < Date.now()) {
+    throw new Error("Token ist abgelaufen");
+  }
 
   return {
     id: payload.sub ?? "",

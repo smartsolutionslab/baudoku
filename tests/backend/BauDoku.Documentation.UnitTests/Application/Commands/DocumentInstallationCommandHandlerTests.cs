@@ -10,33 +10,33 @@ namespace BauDoku.Documentation.UnitTests.Application.Commands;
 
 public sealed class DocumentInstallationCommandHandlerTests
 {
-    private readonly IInstallationRepository _repository;
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly DocumentInstallationCommandHandler _handler;
+    private readonly IInstallationRepository repository;
+    private readonly IUnitOfWork unitOfWork;
+    private readonly DocumentInstallationCommandHandler handler;
 
     public DocumentInstallationCommandHandlerTests()
     {
-        _repository = Substitute.For<IInstallationRepository>();
-        _unitOfWork = Substitute.For<IUnitOfWork>();
-        _handler = new DocumentInstallationCommandHandler(_repository, _unitOfWork);
+        repository = Substitute.For<IInstallationRepository>();
+        unitOfWork = Substitute.For<IUnitOfWork>();
+        handler = new DocumentInstallationCommandHandler(repository, unitOfWork);
     }
 
     private static DocumentInstallationCommand CreateValidCommand() =>
         new(Guid.NewGuid(), null, "cable_tray",
             48.137154, 11.576124, 520.0, 3.5, "gps",
             null, null, null, null, null,
-            "Testbeschreibung", "NYM", 4, "grau", 5, 600, "Siemens", "Model X", "SN-123");
+            "Testbeschreibung", "NYM", 4m, "grau", 5, 600, "Siemens", "Model X", "SN-123");
 
     [Fact]
     public async Task Handle_WithFullCommand_ShouldCreateAndReturnId()
     {
         var command = CreateValidCommand();
 
-        var result = await _handler.Handle(command, CancellationToken.None);
+        var result = await handler.Handle(command, CancellationToken.None);
 
         result.Should().NotBe(Guid.Empty);
-        await _repository.Received(1).AddAsync(Arg.Any<Installation>(), Arg.Any<CancellationToken>());
-        await _unitOfWork.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+        await repository.Received(1).AddAsync(Arg.Any<Installation>(), Arg.Any<CancellationToken>());
+        await unitOfWork.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -44,9 +44,9 @@ public sealed class DocumentInstallationCommandHandlerTests
     {
         var command = CreateValidCommand();
         Installation? captured = null;
-        await _repository.AddAsync(Arg.Do<Installation>(i => captured = i), Arg.Any<CancellationToken>());
+        await repository.AddAsync(Arg.Do<Installation>(i => captured = i), Arg.Any<CancellationToken>());
 
-        await _handler.Handle(command, CancellationToken.None);
+        await handler.Handle(command, CancellationToken.None);
 
         captured.Should().NotBeNull();
         captured!.Position.Latitude.Should().Be(48.137154);
@@ -59,9 +59,9 @@ public sealed class DocumentInstallationCommandHandlerTests
     {
         var command = CreateValidCommand();
         Installation? captured = null;
-        await _repository.AddAsync(Arg.Do<Installation>(i => captured = i), Arg.Any<CancellationToken>());
+        await repository.AddAsync(Arg.Do<Installation>(i => captured = i), Arg.Any<CancellationToken>());
 
-        await _handler.Handle(command, CancellationToken.None);
+        await handler.Handle(command, CancellationToken.None);
 
         captured.Should().NotBeNull();
         captured!.Description!.Value.Should().Be("Testbeschreibung");
@@ -80,9 +80,9 @@ public sealed class DocumentInstallationCommandHandlerTests
             null, null, null, null, null, null, null, null, null);
 
         Installation? captured = null;
-        await _repository.AddAsync(Arg.Do<Installation>(i => captured = i), Arg.Any<CancellationToken>());
+        await repository.AddAsync(Arg.Do<Installation>(i => captured = i), Arg.Any<CancellationToken>());
 
-        await _handler.Handle(command, CancellationToken.None);
+        await handler.Handle(command, CancellationToken.None);
 
         captured.Should().NotBeNull();
         captured!.Description.Should().BeNull();

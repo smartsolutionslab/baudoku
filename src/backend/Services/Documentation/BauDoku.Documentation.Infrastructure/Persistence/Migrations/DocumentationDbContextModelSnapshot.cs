@@ -62,6 +62,12 @@ namespace BauDoku.Documentation.Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("project_id");
 
+                    b.Property<string>("QualityGrade")
+                        .IsRequired()
+                        .HasMaxLength(1)
+                        .HasColumnType("character varying(1)")
+                        .HasColumnName("gps_quality_grade");
+
                     b.Property<string>("SerialNumber")
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)")
@@ -88,6 +94,15 @@ namespace BauDoku.Documentation.Infrastructure.Persistence.Migrations
                     b.HasIndex("Location");
 
                     NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Location"), "gist");
+
+                    b.HasIndex("ProjectId")
+                        .HasDatabaseName("ix_installations_project_id");
+
+                    b.HasIndex("Status")
+                        .HasDatabaseName("ix_installations_status");
+
+                    b.HasIndex("ZoneId")
+                        .HasDatabaseName("ix_installations_zone_id");
 
                     b.ToTable("installations", (string)null);
                 });
@@ -277,8 +292,8 @@ namespace BauDoku.Documentation.Infrastructure.Persistence.Migrations
                                 .HasColumnType("integer")
                                 .HasColumnName("cable_conductor_count");
 
-                            b1.Property<int?>("CrossSection")
-                                .HasColumnType("integer")
+                            b1.Property<decimal?>("CrossSection")
+                                .HasColumnType("decimal(5,2)")
                                 .HasColumnName("cable_cross_section");
 
                             b1.HasKey("InstallationId");

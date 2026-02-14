@@ -1,13 +1,14 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
-import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
+import { Text, StyleSheet } from "react-native";
+import { Card, Caption } from "../core";
+import { Colors, Spacing } from "../../styles/tokens";
 
-interface DashboardCardProps {
+type DashboardCardProps = {
   title: string;
   value: number;
   subtitle?: string;
   color?: string;
-}
+};
 
 export function DashboardCard({
   title,
@@ -16,24 +17,19 @@ export function DashboardCard({
   color = Colors.primary,
 }: DashboardCardProps) {
   return (
-    <View style={styles.card}>
-      <Text style={styles.title}>{title}</Text>
+    <Card style={styles.card}>
+      <Caption style={styles.title}>{title}</Caption>
       <Text style={[styles.value, { color }]}>{value}</Text>
-      {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
-    </View>
+      {subtitle ? <Caption style={styles.subtitle}>{subtitle}</Caption> : null}
+    </Card>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: Colors.card,
-    borderRadius: Radius.lg,
-    padding: Spacing.lg,
     flex: 1,
   },
   title: {
-    fontSize: FontSize.caption,
-    color: Colors.textTertiary,
     fontWeight: "500",
     marginBottom: Spacing.xs,
   },
@@ -42,8 +38,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   subtitle: {
-    fontSize: FontSize.footnote,
-    color: Colors.textTertiary,
+    fontSize: 12,
     marginTop: Spacing.xs,
   },
 });

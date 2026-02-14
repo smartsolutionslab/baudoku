@@ -41,6 +41,8 @@ import { MeasurementForm } from "../../../../src/components/installations/Measur
 import { Colors, Spacing, FontSize } from "../../../../src/styles/tokens";
 import type { Photo } from "../../../../src/db/repositories/types";
 import type { MeasurementFormData } from "../../../../src/validation/schemas";
+import { installationId } from "../../../../src/types/branded";
+import type { MeasurementId } from "../../../../src/types/branded";
 
 function uploadStatusColor(status: string): string {
   switch (status) {
@@ -61,17 +63,18 @@ function uploadStatusLabel(status: string): string {
 }
 
 export default function InstallationDetailScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id: rawId } = useLocalSearchParams<{ id: string }>();
+  const id = installationId(rawId!);
   const router = useRouter();
   const queryClient = useQueryClient();
 
   const { data: installation } = useQuery({
     queryKey: ["installation", id],
-    queryFn: () => installationRepo.getById(id!),
+    queryFn: () => installationRepo.getById(id),
     enabled: !!id,
   });
-  const { data: photos } = usePhotosByInstallation(id!);
-  const { data: measurements } = useMeasurementsByInstallation(id!);
+  const { data: photos } = usePhotosByInstallation(id);
+  const { data: measurements } = useMeasurementsByInstallation(id);
 
   const addPhoto = useAddPhoto();
   const deletePhoto = useDeletePhoto();
@@ -127,7 +130,7 @@ export default function InstallationDetailScreen() {
     setShowCaptionModal(false);
     if (!pendingPhoto || !pendingPhotoType) return;
     await addPhoto.mutateAsync({
-      installationId: id!,
+      installationId: id,
       localPath: pendingPhoto.localPath,
       type: pendingPhotoType,
       caption: captionText.trim() || null,
@@ -159,7 +162,7 @@ export default function InstallationDetailScreen() {
   );
 
   const handleDeleteMeasurement = useCallback(
-    (m: { id: string }) => {
+    (m: { id: MeasurementId }) => {
       confirmDelete({
         title: "Messung löschen",
         message: "Diese Messung wirklich löschen?",
@@ -174,7 +177,7 @@ export default function InstallationDetailScreen() {
   const handleAddMeasurement = useCallback(
     async (data: MeasurementFormData) => {
       await addMeasurement.mutateAsync({
-        installationId: id!,
+        installationId: id,
         type: data.type,
         value: data.value,
         unit: data.unit,
@@ -195,7 +198,7 @@ export default function InstallationDetailScreen() {
       message:
         "Diese Installation und alle zugehörigen Daten wirklich löschen?",
       onConfirm: async () => {
-        await deleteInstallation.mutateAsync(id!);
+        await deleteInstallation.mutateAsync(id);
         router.back();
       },
     });

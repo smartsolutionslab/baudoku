@@ -12,4 +12,12 @@ public sealed record PhotoDto(
     string? Description,
     double? Latitude,
     double? Longitude,
+    double? Altitude,
+    double? HorizontalAccuracy,
+    string? GpsSource,
+    string? CorrectionService,
+    string? RtkFixStatus,
+    int? SatelliteCount,
+    double? Hdop,
+    double? CorrectionAge,
     DateTime TakenAt);

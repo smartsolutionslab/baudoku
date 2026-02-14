@@ -1,0 +1,24 @@
+appId: com.baudoku.app
+---
+# Smoke Test Flow - Tests the core offline project creation path
+
+- launchApp
+
+- assertVisible: "Projekte"
+
+- tapOn: "Projekte"
+
+- assertVisible:
+    id: "fab-button"
+
+- tapOn:
+    id: "fab-button"
+
+- tapOn:
+    id: "project-name-input"
+- inputText: "E2E Testprojekt"
+
+- tapOn:
+    id: "submit-button"
+
+- assertVisible: "E2E Testprojekt"

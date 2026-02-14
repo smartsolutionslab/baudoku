@@ -9,12 +9,12 @@ import {
 } from "react-native";
 import { Colors, Spacing, FontSize } from "../../styles/tokens";
 
-interface PickerOption {
+type PickerOption = {
   label: string;
   value: string;
-}
+};
 
-interface FormPickerProps {
+type FormPickerProps = {
   label: string;
   options: PickerOption[];
   value: string | null | undefined;
@@ -22,7 +22,7 @@ interface FormPickerProps {
   error?: string;
   required?: boolean;
   placeholder?: string;
-}
+};
 
 export function FormPicker({
   label,

@@ -8,44 +8,43 @@ namespace BauDoku.Sync.Application.Commands.ResolveConflict;
 
 public sealed class ResolveConflictCommandHandler : ICommandHandler<ResolveConflictCommand>
 {
-    private readonly ISyncBatchRepository _syncBatchRepository;
-    private readonly IEntityVersionStore _entityVersionStore;
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly ISyncBatchRepository syncBatchRepository;
+    private readonly IEntityVersionStore entityVersionStore;
+    private readonly IUnitOfWork unitOfWork;
 
     public ResolveConflictCommandHandler(
         ISyncBatchRepository syncBatchRepository,
         IEntityVersionStore entityVersionStore,
         IUnitOfWork unitOfWork)
     {
-        _syncBatchRepository = syncBatchRepository;
-        _entityVersionStore = entityVersionStore;
-        _unitOfWork = unitOfWork;
+        this.syncBatchRepository = syncBatchRepository;
+        this.entityVersionStore = entityVersionStore;
+        this.unitOfWork = unitOfWork;
     }
 
     public async Task Handle(ResolveConflictCommand command, CancellationToken cancellationToken = default)
     {
-        var conflictId = new ConflictRecordId(command.ConflictId);
-        var batch = await _syncBatchRepository.GetByConflictIdAsync(conflictId, cancellationToken)
+        var conflictId = ConflictRecordIdentifier.From(command.ConflictId);
+        var batch = await syncBatchRepository.GetByConflictIdAsync(conflictId, cancellationToken)
             ?? throw new InvalidOperationException($"Batch fuer Konflikt {command.ConflictId} nicht gefunden.");
 
-        var conflict = batch.Conflicts.FirstOrDefault(c => c.Id == conflictId)
-            ?? throw new InvalidOperationException($"Konflikt {command.ConflictId} nicht gefunden.");
-
-        var strategy = new ConflictResolutionStrategy(command.Strategy);
+        var strategy = ConflictResolutionStrategy.From(command.Strategy);
         var mergedPayload = command.MergedPayload is not null
-            ? new DeltaPayload(command.MergedPayload) : null;
+            ? DeltaPayload.From(command.MergedPayload) : null;
 
-        conflict.Resolve(strategy, mergedPayload);
+        batch.ResolveConflict(conflictId, strategy, mergedPayload);
+
+        var conflict = batch.Conflicts.First(c => c.Id == conflictId);
 
         if (strategy == ConflictResolutionStrategy.ClientWins ||
             strategy == ConflictResolutionStrategy.ManualMerge)
         {
             var resolvedPayload = conflict.ResolvedPayload!;
-            var currentVersion = await _entityVersionStore.GetCurrentVersionAsync(
+            var currentVersion = await entityVersionStore.GetCurrentVersionAsync(
                 conflict.EntityRef.EntityType, conflict.EntityRef.EntityId, cancellationToken);
             var newVersion = currentVersion.Increment();
 
-            await _entityVersionStore.SetVersionAsync(
+            await entityVersionStore.SetVersionAsync(
                 conflict.EntityRef.EntityType,
                 conflict.EntityRef.EntityId,
                 newVersion,
@@ -54,7 +53,7 @@ public sealed class ResolveConflictCommandHandler : ICommandHandler<ResolveConfl
                 cancellationToken);
         }
 
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         SyncMetrics.ConflictsResolved.Add(1);
     }

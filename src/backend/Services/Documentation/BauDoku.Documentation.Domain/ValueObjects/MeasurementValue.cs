@@ -1,4 +1,5 @@
 using BauDoku.BuildingBlocks.Domain;
+using BauDoku.BuildingBlocks.Domain.Guards;
 
 namespace BauDoku.Documentation.Domain.ValueObjects;
 
@@ -11,15 +12,18 @@ public sealed record MeasurementValue : ValueObject
     public double? MinThreshold { get; }
     public double? MaxThreshold { get; }
 
-    public MeasurementValue(double value, string unit, double? minThreshold = null, double? maxThreshold = null)
+    private MeasurementValue(double value, string unit, double? minThreshold, double? maxThreshold)
     {
-        if (string.IsNullOrWhiteSpace(unit))
-            throw new ArgumentException("Einheit darf nicht leer sein.", nameof(unit));
-        if (unit.Length > MaxUnitLength)
-            throw new ArgumentException($"Einheit darf max. {MaxUnitLength} Zeichen lang sein.", nameof(unit));
         Value = value;
         Unit = unit;
         MinThreshold = minThreshold;
         MaxThreshold = maxThreshold;
+    }
+
+    public static MeasurementValue Create(double value, string unit, double? minThreshold = null, double? maxThreshold = null)
+    {
+        Ensure.That(unit).IsNotNullOrWhiteSpace("Einheit darf nicht leer sein.")
+            .MaxLengthIs(MaxUnitLength, $"Einheit darf max. {MaxUnitLength} Zeichen lang sein.");
+        return new MeasurementValue(value, unit, minThreshold, maxThreshold);
     }
 }

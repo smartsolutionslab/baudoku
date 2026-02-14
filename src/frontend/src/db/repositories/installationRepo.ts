@@ -1,36 +1,37 @@
-import { eq, like, or, inArray, sql, count } from "drizzle-orm";
+import { and, eq, like, or, inArray, sql, count } from "drizzle-orm";
 import { db } from "../client";
 import { installations, zones, projects } from "../schema";
 import { generateId } from "../../utils/uuid";
 import { createOutboxEntry } from "./syncRepo";
 import type { Installation, NewInstallation } from "./types";
+import type { InstallationId, ProjectId, ZoneId, ProjectName, ZoneName } from "../../types/branded";
 
-export async function getByZoneId(zoneId: string): Promise<Installation[]> {
+export async function getByZoneId(zoneId: ZoneId): Promise<Installation[]> {
   return db
     .select()
     .from(installations)
     .where(eq(installations.zoneId, zoneId))
-    .all();
+    .all() as unknown as Installation[];
 }
 
 export async function getByProjectId(
-  projectId: string
+  projectId: ProjectId
 ): Promise<Installation[]> {
   return db
     .select()
     .from(installations)
     .where(eq(installations.projectId, projectId))
-    .all();
+    .all() as unknown as Installation[];
 }
 
 export async function getById(
-  id: string
+  id: InstallationId
 ): Promise<Installation | undefined> {
   return db
     .select()
     .from(installations)
     .where(eq(installations.id, id))
-    .get();
+    .get() as unknown as Installation | undefined;
 }
 
 export async function create(
@@ -53,11 +54,11 @@ export async function create(
     installation
   );
 
-  return installation as Installation;
+  return installation as unknown as Installation;
 }
 
 export async function update(
-  id: string,
+  id: InstallationId,
   data: Partial<
     Omit<
       NewInstallation,
@@ -86,19 +87,19 @@ export async function update(
   return { ...existing, ...updated } as Installation;
 }
 
-export async function remove(id: string): Promise<void> {
+export async function remove(id: InstallationId): Promise<void> {
   await db.delete(installations).where(eq(installations.id, id));
   await createOutboxEntry("installation", id, "delete", { id });
 }
 
-export interface SearchResult extends Installation {
-  zoneName: string;
-  projectName: string;
-}
+export type SearchResult = Installation & {
+  zoneName: ZoneName;
+  projectName: ProjectName;
+};
 
 export async function search(
   query: string,
-  filters?: { status?: string[]; projectId?: string }
+  filters?: { status?: string[]; projectId?: ProjectId }
 ): Promise<SearchResult[]> {
   const pattern = `%${query}%`;
 
@@ -141,16 +142,14 @@ export async function search(
   }
 
   if (conditions.length > 0) {
-    for (const cond of conditions) {
-      if (cond) q = q.where(cond);
-    }
+    q = q.where(and(...conditions));
   }
 
   const rows = await q.all();
   return rows.map((r) => ({
-    ...r.installation,
-    zoneName: r.zoneName,
-    projectName: r.projectName,
+    ...(r.installation as unknown as Installation),
+    zoneName: r.zoneName as ZoneName,
+    projectName: r.projectName as ProjectName,
   }));
 }
 
@@ -172,5 +171,5 @@ export async function getCountByStatus(): Promise<Record<string, number>> {
 }
 
 export async function getAll(): Promise<Installation[]> {
-  return db.select().from(installations).all();
+  return db.select().from(installations).all() as unknown as Installation[];
 }

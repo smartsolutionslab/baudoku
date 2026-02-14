@@ -1,4 +1,5 @@
 using BauDoku.BuildingBlocks.Domain;
+using BauDoku.BuildingBlocks.Domain.Guards;
 
 namespace BauDoku.Documentation.Domain.ValueObjects;
 
@@ -8,11 +9,12 @@ public sealed record Description : ValueObject
 
     public string Value { get; }
 
-    public Description(string value)
+    private Description(string value) => Value = value;
+
+    public static Description From(string value)
     {
-        ArgumentNullException.ThrowIfNull(value);
-        if (value.Length > MaxLength)
-            throw new ArgumentException($"Beschreibung darf max. {MaxLength} Zeichen lang sein.", nameof(value));
-        Value = value;
+        Ensure.That<string>(value).IsNotNull("Beschreibung darf nicht null sein.");
+        Ensure.That(value).MaxLengthIs(MaxLength, $"Beschreibung darf max. {MaxLength} Zeichen lang sein.");
+        return new Description(value);
     }
 }

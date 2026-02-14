@@ -4,7 +4,7 @@ using BauDoku.Sync.Domain.ValueObjects;
 
 namespace BauDoku.Sync.Domain.Entities;
 
-public sealed class ConflictRecord : Entity<ConflictRecordId>
+public sealed class ConflictRecord : Entity<ConflictRecordIdentifier>
 {
     public EntityReference EntityRef { get; private set; } = default!;
     public DeltaPayload ClientPayload { get; private set; } = default!;
@@ -19,7 +19,7 @@ public sealed class ConflictRecord : Entity<ConflictRecordId>
     private ConflictRecord() { }
 
     internal static ConflictRecord Create(
-        ConflictRecordId id,
+        ConflictRecordIdentifier id,
         EntityReference entityRef,
         DeltaPayload clientPayload,
         DeltaPayload serverPayload,

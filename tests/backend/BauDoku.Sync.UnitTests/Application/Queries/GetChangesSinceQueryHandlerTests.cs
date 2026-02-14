@@ -9,13 +9,13 @@ namespace BauDoku.Sync.UnitTests.Application.Queries;
 
 public sealed class GetChangesSinceQueryHandlerTests
 {
-    private readonly IEntityVersionReadStore _readStore;
-    private readonly GetChangesSinceQueryHandler _handler;
+    private readonly IEntityVersionReadStore readStore;
+    private readonly GetChangesSinceQueryHandler handler;
 
     public GetChangesSinceQueryHandlerTests()
     {
-        _readStore = Substitute.For<IEntityVersionReadStore>();
-        _handler = new GetChangesSinceQueryHandler(_readStore);
+        readStore = Substitute.For<IEntityVersionReadStore>();
+        handler = new GetChangesSinceQueryHandler(readStore);
     }
 
     private static ServerDeltaDto CreateDelta(int i = 1) =>
@@ -25,12 +25,12 @@ public sealed class GetChangesSinceQueryHandlerTests
     public async Task Handle_ShouldReturnChanges()
     {
         var changes = new List<ServerDeltaDto> { CreateDelta() };
-        _readStore.GetChangedSinceAsync(Arg.Any<DateTime?>(), Arg.Any<DeviceId>(), Arg.Any<int>(), Arg.Any<CancellationToken>())
+        readStore.GetChangedSinceAsync(Arg.Any<DateTime?>(), Arg.Any<DeviceIdentifier>(), Arg.Any<int>(), Arg.Any<CancellationToken>())
             .Returns(changes);
 
         var query = new GetChangesSinceQuery("device-001", DateTime.UtcNow.AddHours(-1), 100);
 
-        var result = await _handler.Handle(query);
+        var result = await handler.Handle(query);
 
         result.Changes.Should().ContainSingle();
         result.HasMore.Should().BeFalse();
@@ -41,12 +41,12 @@ public sealed class GetChangesSinceQueryHandlerTests
     {
         // Request limit=2, handler requests 3 (limit+1), returns 3 → hasMore=true, trims to 2
         var changes = new List<ServerDeltaDto> { CreateDelta(1), CreateDelta(2), CreateDelta(3) };
-        _readStore.GetChangedSinceAsync(Arg.Any<DateTime?>(), Arg.Any<DeviceId>(), 3, Arg.Any<CancellationToken>())
+        readStore.GetChangedSinceAsync(Arg.Any<DateTime?>(), Arg.Any<DeviceIdentifier>(), 3, Arg.Any<CancellationToken>())
             .Returns(changes);
 
         var query = new GetChangesSinceQuery("device-001", null, 2);
 
-        var result = await _handler.Handle(query);
+        var result = await handler.Handle(query);
 
         result.Changes.Should().HaveCount(2);
         result.HasMore.Should().BeTrue();
@@ -55,27 +55,27 @@ public sealed class GetChangesSinceQueryHandlerTests
     [Fact]
     public async Task Handle_WithNullLimit_ShouldDefault100()
     {
-        _readStore.GetChangedSinceAsync(Arg.Any<DateTime?>(), Arg.Any<DeviceId>(), 101, Arg.Any<CancellationToken>())
+        readStore.GetChangedSinceAsync(Arg.Any<DateTime?>(), Arg.Any<DeviceIdentifier>(), 101, Arg.Any<CancellationToken>())
             .Returns(new List<ServerDeltaDto>());
 
         var query = new GetChangesSinceQuery("device-001", null, null);
 
-        var result = await _handler.Handle(query);
+        var result = await handler.Handle(query);
 
         result.Changes.Should().BeEmpty();
         result.HasMore.Should().BeFalse();
-        await _readStore.Received(1).GetChangedSinceAsync(
-            Arg.Any<DateTime?>(), Arg.Any<DeviceId>(), 101, Arg.Any<CancellationToken>());
+        await readStore.Received(1).GetChangedSinceAsync(
+            Arg.Any<DateTime?>(), Arg.Any<DeviceIdentifier>(), 101, Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task Handle_ShouldSetServerTimestamp()
     {
-        _readStore.GetChangedSinceAsync(Arg.Any<DateTime?>(), Arg.Any<DeviceId>(), Arg.Any<int>(), Arg.Any<CancellationToken>())
+        readStore.GetChangedSinceAsync(Arg.Any<DateTime?>(), Arg.Any<DeviceIdentifier>(), Arg.Any<int>(), Arg.Any<CancellationToken>())
             .Returns(new List<ServerDeltaDto>());
 
         var before = DateTime.UtcNow;
-        var result = await _handler.Handle(new GetChangesSinceQuery("device-001", null, null));
+        var result = await handler.Handle(new GetChangesSinceQuery("device-001", null, null));
         var after = DateTime.UtcNow;
 
         result.ServerTimestamp.Should().BeOnOrAfter(before);

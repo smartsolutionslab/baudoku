@@ -8,27 +8,27 @@ namespace BauDoku.Documentation.Application.Commands.RemoveMeasurement;
 
 public sealed class RemoveMeasurementCommandHandler : ICommandHandler<RemoveMeasurementCommand>
 {
-    private readonly IInstallationRepository _installationRepository;
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IInstallationRepository installationRepository;
+    private readonly IUnitOfWork unitOfWork;
 
     public RemoveMeasurementCommandHandler(
         IInstallationRepository installationRepository,
         IUnitOfWork unitOfWork)
     {
-        _installationRepository = installationRepository;
-        _unitOfWork = unitOfWork;
+        this.installationRepository = installationRepository;
+        this.unitOfWork = unitOfWork;
     }
 
     public async Task Handle(RemoveMeasurementCommand command, CancellationToken cancellationToken)
     {
-        var installationId = new InstallationId(command.InstallationId);
-        var installation = await _installationRepository.GetByIdAsync(installationId, cancellationToken)
+        var installationId = InstallationIdentifier.From(command.InstallationId);
+        var installation = await installationRepository.GetByIdAsync(installationId, cancellationToken)
             ?? throw new InvalidOperationException($"Installation mit ID {command.InstallationId} nicht gefunden.");
 
-        var measurementId = new MeasurementId(command.MeasurementId);
+        var measurementId = MeasurementIdentifier.From(command.MeasurementId);
         installation.RemoveMeasurement(measurementId);
 
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         DocumentationMetrics.MeasurementsRemoved.Add(1);
     }

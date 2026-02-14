@@ -1,4 +1,5 @@
 using BauDoku.BuildingBlocks.Application.Dispatcher;
+using BauDoku.BuildingBlocks.Infrastructure.Auth;
 using BauDoku.Sync.Application.Commands.ProcessSyncBatch;
 using BauDoku.Sync.Application.Commands.ResolveConflict;
 using BauDoku.Sync.Application.Queries.GetChangesSince;
@@ -10,7 +11,7 @@ public static class SyncEndpoints
 {
     public static void MapSyncEndpoints(this IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/api/sync").WithTags("Sync").RequireAuthorization();
+        var group = app.MapGroup("/api/sync").WithTags("Sync");
 
         group.MapPost("/batch", async (
             ProcessSyncBatchCommand command,
@@ -20,6 +21,7 @@ public static class SyncEndpoints
             var result = await dispatcher.Send<ProcessSyncBatchResult>(command, ct);
             return Results.Ok(result);
         })
+        .RequireAuthorization(AuthPolicies.RequireUser)
         .WithName("ProcessSyncBatch")
         .Produces<ProcessSyncBatchResult>(StatusCodes.Status200OK)
         .ProducesValidationProblem();
@@ -35,6 +37,7 @@ public static class SyncEndpoints
             var result = await dispatcher.Query(query, ct);
             return Results.Ok(result);
         })
+        .RequireAuthorization()
         .WithName("GetChangesSince")
         .Produces(StatusCodes.Status200OK);
 
@@ -48,6 +51,7 @@ public static class SyncEndpoints
             var result = await dispatcher.Query(query, ct);
             return Results.Ok(result);
         })
+        .RequireAuthorization()
         .WithName("GetConflicts")
         .Produces(StatusCodes.Status200OK);
 
@@ -61,6 +65,7 @@ public static class SyncEndpoints
             await dispatcher.Send(command, ct);
             return Results.NoContent();
         })
+        .RequireAuthorization(AuthPolicies.RequireAdmin)
         .WithName("ResolveConflict")
         .Produces(StatusCodes.Status204NoContent)
         .ProducesValidationProblem();

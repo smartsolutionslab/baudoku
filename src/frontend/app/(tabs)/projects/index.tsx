@@ -78,6 +78,7 @@ export default function ProjectsScreen() {
       )}
       <FloatingActionButton
         onPress={() => router.push("/(tabs)/projects/new")}
+        testID="fab-button"
       />
     </View>
   );

@@ -1,3 +1,4 @@
+using BauDoku.ApiGateway.Endpoints;
 using BauDoku.ServiceDefaults;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,6 +9,8 @@ builder.AddServiceDefaults(health =>
     health.AddUrlGroup(new Uri("http://documentation-api/alive"), name: "documentation-api", tags: ["ready"]);
     health.AddUrlGroup(new Uri("http://sync-api/alive"), name: "sync-api", tags: ["ready"]);
 });
+
+builder.Services.AddHttpClient();
 
 builder.Services.AddReverseProxy()
     .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"))
@@ -34,6 +37,7 @@ var app = builder.Build();
 
 app.UseCors();
 app.MapReverseProxy();
+app.MapAuthEndpoints();
 app.MapDefaultEndpoints();
 
 app.Run();

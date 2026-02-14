@@ -7,22 +7,22 @@ namespace BauDoku.BuildingBlocks.Application.Behaviors;
 public sealed class ValidationBehavior<TCommand, TResult> : ICommandHandler<TCommand, TResult>
     where TCommand : ICommand<TResult>
 {
-    private readonly ICommandHandler<TCommand, TResult> _inner;
-    private readonly IEnumerable<IValidator<TCommand>> _validators;
+    private readonly ICommandHandler<TCommand, TResult> inner;
+    private readonly IEnumerable<IValidator<TCommand>> validators;
 
     public ValidationBehavior(ICommandHandler<TCommand, TResult> inner, IEnumerable<IValidator<TCommand>> validators)
     {
-        _inner = inner;
-        _validators = validators;
+        this.inner = inner;
+        this.validators = validators;
     }
 
     public async Task<TResult> Handle(TCommand command, CancellationToken cancellationToken = default)
     {
-        if (_validators.Any())
+        if (validators.Any())
         {
             var context = new ValidationContext<TCommand>(command);
             var validationResults = await Task.WhenAll(
-                _validators.Select(v => v.ValidateAsync(context, cancellationToken)));
+                validators.Select(v => v.ValidateAsync(context, cancellationToken)));
 
             var failures = validationResults
                 .SelectMany(r => r.Errors)
@@ -33,29 +33,29 @@ public sealed class ValidationBehavior<TCommand, TResult> : ICommandHandler<TCom
                 throw new ValidationException(failures);
         }
 
-        return await _inner.Handle(command, cancellationToken);
+        return await inner.Handle(command, cancellationToken);
     }
 }
 
 public sealed class ValidationBehaviorVoid<TCommand> : ICommandHandler<TCommand>
     where TCommand : ICommand
 {
-    private readonly ICommandHandler<TCommand> _inner;
-    private readonly IEnumerable<IValidator<TCommand>> _validators;
+    private readonly ICommandHandler<TCommand> inner;
+    private readonly IEnumerable<IValidator<TCommand>> validators;
 
     public ValidationBehaviorVoid(ICommandHandler<TCommand> inner, IEnumerable<IValidator<TCommand>> validators)
     {
-        _inner = inner;
-        _validators = validators;
+        this.inner = inner;
+        this.validators = validators;
     }
 
     public async Task Handle(TCommand command, CancellationToken cancellationToken = default)
     {
-        if (_validators.Any())
+        if (validators.Any())
         {
             var context = new ValidationContext<TCommand>(command);
             var validationResults = await Task.WhenAll(
-                _validators.Select(v => v.ValidateAsync(context, cancellationToken)));
+                validators.Select(v => v.ValidateAsync(context, cancellationToken)));
 
             var failures = validationResults
                 .SelectMany(r => r.Errors)
@@ -66,6 +66,6 @@ public sealed class ValidationBehaviorVoid<TCommand> : ICommandHandler<TCommand>
                 throw new ValidationException(failures);
         }
 
-        await _inner.Handle(command, cancellationToken);
+        await inner.Handle(command, cancellationToken);
     }
 }

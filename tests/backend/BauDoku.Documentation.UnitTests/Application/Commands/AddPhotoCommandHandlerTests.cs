@@ -10,26 +10,26 @@ namespace BauDoku.Documentation.UnitTests.Application.Commands;
 
 public sealed class AddPhotoCommandHandlerTests
 {
-    private readonly IInstallationRepository _repository;
-    private readonly IPhotoStorage _photoStorage;
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly AddPhotoCommandHandler _handler;
+    private readonly IInstallationRepository repository;
+    private readonly IPhotoStorage photoStorage;
+    private readonly IUnitOfWork unitOfWork;
+    private readonly AddPhotoCommandHandler handler;
 
     public AddPhotoCommandHandlerTests()
     {
-        _repository = Substitute.For<IInstallationRepository>();
-        _photoStorage = Substitute.For<IPhotoStorage>();
-        _unitOfWork = Substitute.For<IUnitOfWork>();
-        _handler = new AddPhotoCommandHandler(_repository, _photoStorage, _unitOfWork);
+        repository = Substitute.For<IInstallationRepository>();
+        photoStorage = Substitute.For<IPhotoStorage>();
+        unitOfWork = Substitute.For<IUnitOfWork>();
+        handler = new AddPhotoCommandHandler(repository, photoStorage, unitOfWork);
     }
 
     private static Installation CreateValidInstallation() =>
         Installation.Create(
-            InstallationId.New(),
-            Guid.NewGuid(),
+            InstallationIdentifier.New(),
+            ProjectIdentifier.New(),
             null,
             InstallationType.CableTray,
-            new GpsPosition(48.137154, 11.576124, null, 3.5, "gps"));
+            GpsPosition.Create(48.137154, 11.576124, null, 3.5, "gps"));
 
     private static AddPhotoCommand CreateValidCommand(Guid installationId) =>
         new(installationId, "photo.jpg", "image/jpeg", 1024 * 100, "before",
@@ -39,30 +39,30 @@ public sealed class AddPhotoCommandHandlerTests
     public async Task Handle_WithValidCommand_ShouldUploadAndAddPhoto()
     {
         var installation = CreateValidInstallation();
-        _repository.GetByIdAsync(Arg.Any<InstallationId>(), Arg.Any<CancellationToken>())
+        repository.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
-        _photoStorage.UploadAsync(Arg.Any<Stream>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
+        photoStorage.UploadAsync(Arg.Any<Stream>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
             .Returns("https://blob.storage/photo.jpg");
 
         var command = CreateValidCommand(installation.Id.Value);
 
-        var result = await _handler.Handle(command, CancellationToken.None);
+        var result = await handler.Handle(command, CancellationToken.None);
 
         result.Should().NotBe(Guid.Empty);
         installation.Photos.Should().ContainSingle();
-        await _photoStorage.Received(1).UploadAsync(Arg.Any<Stream>(), "photo.jpg", "image/jpeg", Arg.Any<CancellationToken>());
-        await _unitOfWork.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+        await photoStorage.Received(1).UploadAsync(Arg.Any<Stream>(), "photo.jpg", "image/jpeg", Arg.Any<CancellationToken>());
+        await unitOfWork.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task Handle_WhenInstallationNotFound_ShouldThrow()
     {
-        _repository.GetByIdAsync(Arg.Any<InstallationId>(), Arg.Any<CancellationToken>())
+        repository.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns((Installation?)null);
 
         var command = CreateValidCommand(Guid.NewGuid());
 
-        var act = () => _handler.Handle(command, CancellationToken.None);
+        var act = () => handler.Handle(command, CancellationToken.None);
 
         await act.Should().ThrowAsync<InvalidOperationException>();
     }
@@ -71,16 +71,16 @@ public sealed class AddPhotoCommandHandlerTests
     public async Task Handle_WithGpsPosition_ShouldSetPhotoPosition()
     {
         var installation = CreateValidInstallation();
-        _repository.GetByIdAsync(Arg.Any<InstallationId>(), Arg.Any<CancellationToken>())
+        repository.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
-        _photoStorage.UploadAsync(Arg.Any<Stream>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
+        photoStorage.UploadAsync(Arg.Any<Stream>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
             .Returns("https://blob.storage/photo.jpg");
 
         var command = new AddPhotoCommand(
             installation.Id.Value, "photo.jpg", "image/jpeg", 1024, "before",
             null, null, 48.0, 11.0, 500.0, 5.0, "gps", new MemoryStream([1, 2, 3]));
 
-        await _handler.Handle(command, CancellationToken.None);
+        await handler.Handle(command, CancellationToken.None);
 
         installation.Photos.Should().ContainSingle();
         installation.Photos[0].Position.Should().NotBeNull();
@@ -91,14 +91,14 @@ public sealed class AddPhotoCommandHandlerTests
     public async Task Handle_WithoutGpsPosition_ShouldNotSetPhotoPosition()
     {
         var installation = CreateValidInstallation();
-        _repository.GetByIdAsync(Arg.Any<InstallationId>(), Arg.Any<CancellationToken>())
+        repository.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
-        _photoStorage.UploadAsync(Arg.Any<Stream>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
+        photoStorage.UploadAsync(Arg.Any<Stream>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
             .Returns("https://blob.storage/photo.jpg");
 
         var command = CreateValidCommand(installation.Id.Value);
 
-        await _handler.Handle(command, CancellationToken.None);
+        await handler.Handle(command, CancellationToken.None);
 
         installation.Photos.Should().ContainSingle();
         installation.Photos[0].Position.Should().BeNull();

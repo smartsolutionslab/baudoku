@@ -6,13 +6,13 @@ using BauDoku.Documentation.Domain.ValueObjects;
 
 namespace BauDoku.Documentation.Domain.Aggregates;
 
-public sealed class Installation : AggregateRoot<InstallationId>
+public sealed class Installation : AggregateRoot<InstallationIdentifier>
 {
-    private readonly List<Photo> _photos = [];
-    private readonly List<Measurement> _measurements = [];
+    private readonly List<Photo> photos = [];
+    private readonly List<Measurement> measurements = [];
 
-    public Guid ProjectId { get; private set; }
-    public Guid? ZoneId { get; private set; }
+    public ProjectIdentifier ProjectId { get; private set; } = default!;
+    public ZoneIdentifier? ZoneId { get; private set; }
     public InstallationType Type { get; private set; } = default!;
     public InstallationStatus Status { get; private set; } = default!;
     public GpsPosition Position { get; private set; } = default!;
@@ -25,15 +25,15 @@ public sealed class Installation : AggregateRoot<InstallationId>
     public GpsQualityGrade QualityGrade { get; private set; } = default!;
     public DateTime CreatedAt { get; private set; }
     public DateTime? CompletedAt { get; private set; }
-    public IReadOnlyList<Photo> Photos => _photos.AsReadOnly();
-    public IReadOnlyList<Measurement> Measurements => _measurements.AsReadOnly();
+    public IReadOnlyList<Photo> Photos => photos.AsReadOnly();
+    public IReadOnlyList<Measurement> Measurements => measurements.AsReadOnly();
 
     private Installation() { }
 
     public static Installation Create(
-        InstallationId id,
-        Guid projectId,
-        Guid? zoneId,
+        InstallationIdentifier id,
+        ProjectIdentifier projectId,
+        ZoneIdentifier? zoneId,
         InstallationType type,
         GpsPosition position,
         Description? description = null,
@@ -75,7 +75,7 @@ public sealed class Installation : AggregateRoot<InstallationId>
     }
 
     public void AddPhoto(
-        PhotoId photoId,
+        PhotoIdentifier photoId,
         string fileName,
         string blobUrl,
         string contentType,
@@ -83,57 +83,96 @@ public sealed class Installation : AggregateRoot<InstallationId>
         PhotoType photoType,
         Caption? caption = null,
         Description? description = null,
-        GpsPosition? position = null)
+        GpsPosition? position = null,
+        DateTime? takenAt = null)
     {
         CheckRule(new CompletedInstallationCannotBeModified(Status));
 
         var photo = Photo.Create(
             photoId, fileName, blobUrl, contentType, fileSize,
-            photoType, caption, description, position);
+            photoType, caption, description, position, takenAt);
 
-        _photos.Add(photo);
+        photos.Add(photo);
 
         AddDomainEvent(new PhotoAdded(Id, photoId, DateTime.UtcNow));
     }
 
-    public void RemovePhoto(PhotoId photoId)
+    public void RemovePhoto(PhotoIdentifier photoId)
     {
         CheckRule(new CompletedInstallationCannotBeModified(Status));
 
-        var photo = _photos.FirstOrDefault(p => p.Id == photoId)
+        var photo = photos.FirstOrDefault(p => p.Id == photoId)
             ?? throw new InvalidOperationException($"Foto mit ID {photoId.Value} nicht gefunden.");
 
-        _photos.Remove(photo);
+        photos.Remove(photo);
 
         AddDomainEvent(new PhotoRemoved(Id, photoId, DateTime.UtcNow));
     }
 
     public void RecordMeasurement(
-        MeasurementId measurementId,
+        MeasurementIdentifier measurementId,
         MeasurementType type,
         MeasurementValue value,
         string? notes = null)
     {
         CheckRule(new CompletedInstallationCannotBeModified(Status));
-        CheckRule(new MeasurementValueMustBePositive(value));
+        CheckRule(new MeasurementValueMustBeNonNegative(value));
         CheckRule(new MeasurementTypeMustMatchInstallationType(Type, type));
 
         var measurement = Measurement.Create(measurementId, type, value, notes);
-        _measurements.Add(measurement);
+        measurements.Add(measurement);
 
         AddDomainEvent(new MeasurementRecorded(Id, measurementId, DateTime.UtcNow));
     }
 
-    public void RemoveMeasurement(MeasurementId measurementId)
+    public void RemoveMeasurement(MeasurementIdentifier measurementId)
     {
         CheckRule(new CompletedInstallationCannotBeModified(Status));
 
-        var measurement = _measurements.FirstOrDefault(m => m.Id == measurementId)
+        var measurement = measurements.FirstOrDefault(m => m.Id == measurementId)
             ?? throw new InvalidOperationException($"Messung mit ID {measurementId.Value} nicht gefunden.");
 
-        _measurements.Remove(measurement);
+        measurements.Remove(measurement);
 
         AddDomainEvent(new MeasurementRemoved(Id, measurementId, DateTime.UtcNow));
+    }
+
+    public void UpdatePosition(GpsPosition position)
+    {
+        CheckRule(new CompletedInstallationCannotBeModified(Status));
+        CheckRule(new InstallationMustHaveValidGpsPosition(position));
+
+        Position = position;
+        QualityGrade = position.CalculateQualityGrade();
+
+        AddDomainEvent(new InstallationUpdated(Id, DateTime.UtcNow));
+    }
+
+    public void UpdateDescription(Description? description)
+    {
+        CheckRule(new CompletedInstallationCannotBeModified(Status));
+
+        Description = description;
+
+        AddDomainEvent(new InstallationUpdated(Id, DateTime.UtcNow));
+    }
+
+    public void UpdateCableSpec(CableSpec? cableSpec)
+    {
+        CheckRule(new CompletedInstallationCannotBeModified(Status));
+
+        CableSpec = cableSpec;
+
+        AddDomainEvent(new InstallationUpdated(Id, DateTime.UtcNow));
+    }
+
+    public void UpdateDepth(Depth? depth)
+    {
+        CheckRule(new CompletedInstallationCannotBeModified(Status));
+
+        Depth = depth;
+
+        AddDomainEvent(new InstallationUpdated(Id, DateTime.UtcNow));
     }
 
     public void MarkAsCompleted()

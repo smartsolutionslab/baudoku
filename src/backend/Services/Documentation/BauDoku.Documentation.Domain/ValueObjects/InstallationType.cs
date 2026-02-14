@@ -1,4 +1,5 @@
 using BauDoku.BuildingBlocks.Domain;
+using BauDoku.BuildingBlocks.Domain.Guards;
 
 namespace BauDoku.Documentation.Domain.ValueObjects;
 
@@ -22,12 +23,12 @@ public sealed record InstallationType : ValueObject
 
     public string Value { get; }
 
-    public InstallationType(string value)
+    private InstallationType(string value) => Value = value;
+
+    public static InstallationType From(string value)
     {
-        if (string.IsNullOrWhiteSpace(value))
-            throw new ArgumentException("Installationstyp darf nicht leer sein.", nameof(value));
-        if (!ValidValues.Contains(value))
-            throw new ArgumentException($"Ungueltiger Installationstyp: {value}.", nameof(value));
-        Value = value;
+        Ensure.That(value).IsNotNullOrWhiteSpace("Installationstyp darf nicht leer sein.")
+            .IsOneOf(ValidValues, $"Ungueltiger Installationstyp: {value}.");
+        return new InstallationType(value);
     }
 }

@@ -1,4 +1,5 @@
 using BauDoku.BuildingBlocks.Domain;
+using BauDoku.BuildingBlocks.Domain.Guards;
 
 namespace BauDoku.Sync.Domain.ValueObjects;
 
@@ -15,12 +16,13 @@ public sealed record BatchStatus : ValueObject
 
     public string Value { get; }
 
-    public BatchStatus(string value)
+    private BatchStatus(string value) => Value = value;
+
+    public static BatchStatus From(string value)
     {
-        if (string.IsNullOrWhiteSpace(value))
-            throw new ArgumentException("Batch-Status darf nicht leer sein.", nameof(value));
-        if (!ValidValues.Contains(value))
-            throw new ArgumentException($"Ungueltiger Batch-Status: {value}.", nameof(value));
-        Value = value;
+        Ensure.That(value)
+            .IsNotNullOrWhiteSpace("Batch-Status darf nicht leer sein.")
+            .IsOneOf(ValidValues, $"Ungueltiger Batch-Status: {value}.");
+        return new BatchStatus(value);
     }
 }

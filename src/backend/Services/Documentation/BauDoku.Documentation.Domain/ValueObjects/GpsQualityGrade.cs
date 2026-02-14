@@ -1,4 +1,5 @@
 using BauDoku.BuildingBlocks.Domain;
+using BauDoku.BuildingBlocks.Domain.Guards;
 
 namespace BauDoku.Documentation.Domain.ValueObjects;
 
@@ -14,12 +15,12 @@ public sealed record GpsQualityGrade : ValueObject
 
     public string Value { get; }
 
-    public GpsQualityGrade(string value)
+    private GpsQualityGrade(string value) => Value = value;
+
+    public static GpsQualityGrade From(string value)
     {
-        if (string.IsNullOrWhiteSpace(value))
-            throw new ArgumentException("GPS-Qualitaetsstufe darf nicht leer sein.", nameof(value));
-        if (!ValidValues.Contains(value))
-            throw new ArgumentException($"Ungueltige GPS-Qualitaetsstufe: {value}.", nameof(value));
-        Value = value;
+        Ensure.That(value).IsNotNullOrWhiteSpace("GPS-Qualitaetsstufe darf nicht leer sein.")
+            .IsOneOf(ValidValues, $"Ungueltige GPS-Qualitaetsstufe: {value}.");
+        return new GpsQualityGrade(value);
     }
 }

@@ -1,4 +1,5 @@
 using BauDoku.BuildingBlocks.Domain;
+using BauDoku.BuildingBlocks.Domain.Guards;
 
 namespace BauDoku.Sync.Domain.ValueObjects;
 
@@ -14,12 +15,13 @@ public sealed record ConflictStatus : ValueObject
 
     public string Value { get; }
 
-    public ConflictStatus(string value)
+    private ConflictStatus(string value) => Value = value;
+
+    public static ConflictStatus From(string value)
     {
-        if (string.IsNullOrWhiteSpace(value))
-            throw new ArgumentException("Konflikt-Status darf nicht leer sein.", nameof(value));
-        if (!ValidValues.Contains(value))
-            throw new ArgumentException($"Ungueltiger Konflikt-Status: {value}.", nameof(value));
-        Value = value;
+        Ensure.That(value)
+            .IsNotNullOrWhiteSpace("Konflikt-Status darf nicht leer sein.")
+            .IsOneOf(ValidValues, $"Ungueltiger Konflikt-Status: {value}.");
+        return new ConflictStatus(value);
     }
 }

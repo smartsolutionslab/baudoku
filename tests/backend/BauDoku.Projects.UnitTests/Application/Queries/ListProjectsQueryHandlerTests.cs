@@ -9,13 +9,13 @@ namespace BauDoku.Projects.UnitTests.Application.Queries;
 
 public sealed class ListProjectsQueryHandlerTests
 {
-    private readonly IProjectReadRepository _readRepository;
-    private readonly ListProjectsQueryHandler _handler;
+    private readonly IProjectReadRepository readRepository;
+    private readonly ListProjectsQueryHandler handler;
 
     public ListProjectsQueryHandlerTests()
     {
-        _readRepository = Substitute.For<IProjectReadRepository>();
-        _handler = new ListProjectsQueryHandler(_readRepository);
+        readRepository = Substitute.For<IProjectReadRepository>();
+        handler = new ListProjectsQueryHandler(readRepository);
     }
 
     [Fact]
@@ -27,10 +27,10 @@ public sealed class ListProjectsQueryHandlerTests
         };
         var expected = new PagedResult<ProjectListItemDto>(items, 1, 1, 20);
 
-        _readRepository.ListAsync("test", 1, 20, Arg.Any<CancellationToken>())
+        readRepository.ListAsync("test", 1, 20, Arg.Any<CancellationToken>())
             .Returns(expected);
 
-        var result = await _handler.Handle(new ListProjectsQuery("test", 1, 20));
+        var result = await handler.Handle(new ListProjectsQuery("test", 1, 20));
 
         result.Should().BeSameAs(expected);
         result.Items.Should().ContainSingle();
@@ -41,10 +41,10 @@ public sealed class ListProjectsQueryHandlerTests
     {
         var expected = new PagedResult<ProjectListItemDto>([], 0, 2, 10);
 
-        _readRepository.ListAsync(null, 2, 10, Arg.Any<CancellationToken>())
+        readRepository.ListAsync(null, 2, 10, Arg.Any<CancellationToken>())
             .Returns(expected);
 
-        var result = await _handler.Handle(new ListProjectsQuery(null, 2, 10));
+        var result = await handler.Handle(new ListProjectsQuery(null, 2, 10));
 
         result.Page.Should().Be(2);
         result.PageSize.Should().Be(10);

@@ -7,11 +7,11 @@ namespace BauDoku.Sync.Infrastructure.Persistence.Repositories;
 
 public sealed class EntityVersionStore : IEntityVersionStore, IEntityVersionReadStore
 {
-    private readonly SyncDbContext _context;
+    private readonly SyncDbContext context;
 
     public EntityVersionStore(SyncDbContext context)
     {
-        _context = context;
+        this.context = context;
     }
 
     public async Task<SyncVersion> GetCurrentVersionAsync(
@@ -19,10 +19,10 @@ public sealed class EntityVersionStore : IEntityVersionStore, IEntityVersionRead
         Guid entityId,
         CancellationToken cancellationToken = default)
     {
-        var entry = await _context.EntityVersionEntries
+        var entry = await context.EntityVersionEntries
             .FirstOrDefaultAsync(e => e.EntityType == entityType.Value && e.EntityId == entityId, cancellationToken);
 
-        return entry is not null ? new SyncVersion(entry.Version) : SyncVersion.Initial;
+        return entry is not null ? SyncVersion.From(entry.Version) : SyncVersion.Initial;
     }
 
     public async Task<string?> GetCurrentPayloadAsync(
@@ -30,7 +30,7 @@ public sealed class EntityVersionStore : IEntityVersionStore, IEntityVersionRead
         Guid entityId,
         CancellationToken cancellationToken = default)
     {
-        var entry = await _context.EntityVersionEntries
+        var entry = await context.EntityVersionEntries
             .FirstOrDefaultAsync(e => e.EntityType == entityType.Value && e.EntityId == entityId, cancellationToken);
 
         return entry?.Payload;
@@ -41,10 +41,10 @@ public sealed class EntityVersionStore : IEntityVersionStore, IEntityVersionRead
         Guid entityId,
         SyncVersion version,
         string payload,
-        DeviceId deviceId,
+        DeviceIdentifier deviceId,
         CancellationToken cancellationToken = default)
     {
-        var entry = await _context.EntityVersionEntries
+        var entry = await context.EntityVersionEntries
             .FirstOrDefaultAsync(e => e.EntityType == entityType.Value && e.EntityId == entityId, cancellationToken);
 
         if (entry is not null)
@@ -65,17 +65,17 @@ public sealed class EntityVersionStore : IEntityVersionStore, IEntityVersionRead
                 LastModified = DateTime.UtcNow,
                 LastDeviceId = deviceId.Value
             };
-            await _context.EntityVersionEntries.AddAsync(entry, cancellationToken);
+            await context.EntityVersionEntries.AddAsync(entry, cancellationToken);
         }
     }
 
     public async Task<List<ServerDeltaDto>> GetChangedSinceAsync(
         DateTime? since,
-        DeviceId? excludeDeviceId,
+        DeviceIdentifier? excludeDeviceId,
         int limit,
         CancellationToken cancellationToken = default)
     {
-        var query = _context.EntityVersionEntries.AsNoTracking().AsQueryable();
+        var query = context.EntityVersionEntries.AsNoTracking().AsQueryable();
 
         if (since is not null)
             query = query.Where(e => e.LastModified > since.Value);

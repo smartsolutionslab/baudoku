@@ -2,24 +2,24 @@ import * as ImagePicker from "expo-image-picker";
 import { useCallback } from "react";
 import { savePhoto } from "../utils/photoStorage";
 
-export interface ExifData {
+export type ExifData = {
   gpsLatitude?: number;
   gpsLongitude?: number;
   dateTime?: string;
   cameraModel?: string;
-}
+};
 
-export interface CapturedPhoto {
+export type CapturedPhoto = {
   localPath: string;
   width: number;
   height: number;
   exif?: ExifData;
-}
+};
 
-export interface UsePhotoCaptureReturn {
+export type UsePhotoCaptureReturn = {
   takePhoto: () => Promise<CapturedPhoto | null>;
   pickFromGallery: () => Promise<CapturedPhoto | null>;
-}
+};
 
 function extractExif(
   exif: Record<string, unknown> | null | undefined

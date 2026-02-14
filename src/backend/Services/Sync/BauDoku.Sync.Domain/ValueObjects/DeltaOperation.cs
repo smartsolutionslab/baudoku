@@ -1,4 +1,5 @@
 using BauDoku.BuildingBlocks.Domain;
+using BauDoku.BuildingBlocks.Domain.Guards;
 
 namespace BauDoku.Sync.Domain.ValueObjects;
 
@@ -13,12 +14,13 @@ public sealed record DeltaOperation : ValueObject
 
     public string Value { get; }
 
-    public DeltaOperation(string value)
+    private DeltaOperation(string value) => Value = value;
+
+    public static DeltaOperation From(string value)
     {
-        if (string.IsNullOrWhiteSpace(value))
-            throw new ArgumentException("Delta-Operation darf nicht leer sein.", nameof(value));
-        if (!ValidValues.Contains(value))
-            throw new ArgumentException($"Ungueltige Delta-Operation: {value}.", nameof(value));
-        Value = value;
+        Ensure.That(value)
+            .IsNotNullOrWhiteSpace("Delta-Operation darf nicht leer sein.")
+            .IsOneOf(ValidValues, $"Ungueltige Delta-Operation: {value}.");
+        return new DeltaOperation(value);
     }
 }

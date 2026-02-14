@@ -14,6 +14,7 @@ import { StatusBadge } from "../../../src/components/common/StatusBadge";
 import { EmptyState } from "../../../src/components/common/EmptyState";
 import { Colors, Spacing, FontSize, Radius } from "../../../src/styles/tokens";
 import type { Installation } from "../../../src/db/repositories/types";
+import { projectId as toProjectId } from "../../../src/types/branded";
 
 const INSTALLATION_TYPES = [
   { value: "", label: "Alle Typen" },
@@ -37,9 +38,10 @@ const STATUS_FILTERS = [
 ];
 
 export default function InstallationsListScreen() {
-  const { projectId } = useLocalSearchParams<{ projectId: string }>();
+  const { projectId: rawProjectId } = useLocalSearchParams<{ projectId: string }>();
+  const projectId = toProjectId(rawProjectId!);
   const router = useRouter();
-  const { data: installations } = useInstallationsByProject(projectId!);
+  const { data: installations } = useInstallationsByProject(projectId);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
