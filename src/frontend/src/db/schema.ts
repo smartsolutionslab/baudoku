@@ -128,6 +128,8 @@ export const photos = sqliteTable("photos", {
   uploadStatus: text("upload_status", {
     enum: ["pending", "uploading", "uploaded", "failed"],
   }).notNull(),
+  retryCount: integer("retry_count").default(0),
+  lastUploadError: text("last_upload_error"),
   version: integer("version").notNull().default(1),
 });
 

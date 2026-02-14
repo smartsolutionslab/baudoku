@@ -1,4 +1,4 @@
-import { eq, and } from "drizzle-orm";
+import { eq, or, sql, count } from "drizzle-orm";
 import { db } from "../client";
 import { photos } from "../schema";
 import { generateId } from "../../utils/uuid";
@@ -84,4 +84,39 @@ export async function updateAnnotation(
 export async function getCount(): Promise<number> {
   const rows = await db.select().from(photos).all();
   return rows.length;
+}
+
+export async function markUploadFailed(
+  id: PhotoId,
+  error: string
+): Promise<void> {
+  await db
+    .update(photos)
+    .set({
+      uploadStatus: "failed",
+      retryCount: sql`COALESCE(${photos.retryCount}, 0) + 1`,
+      lastUploadError: error,
+    })
+    .where(eq(photos.id, id));
+}
+
+export async function resetStuckUploads(): Promise<void> {
+  await db
+    .update(photos)
+    .set({ uploadStatus: "pending" })
+    .where(eq(photos.uploadStatus, "uploading"));
+}
+
+export async function getPendingUploadCount(): Promise<number> {
+  const result = await db
+    .select({ value: count() })
+    .from(photos)
+    .where(
+      or(
+        eq(photos.uploadStatus, "pending"),
+        eq(photos.uploadStatus, "failed")
+      )
+    )
+    .get();
+  return result?.value ?? 0;
 }

@@ -21,7 +21,7 @@ function formatBadge(count: number): string | undefined {
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const { unsyncedCount } = useSyncStatus();
+  const { unsyncedCount, pendingUploads } = useSyncStatus();
 
   return (
     <Tabs
@@ -58,7 +58,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => (
             <TabBarIcon name="refresh" color={color} />
           ),
-          tabBarBadge: formatBadge(unsyncedCount),
+          tabBarBadge: formatBadge(unsyncedCount + pendingUploads),
         }}
       />
       <Tabs.Screen
