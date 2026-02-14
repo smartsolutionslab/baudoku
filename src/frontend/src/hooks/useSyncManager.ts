@@ -62,7 +62,7 @@ export function useSyncManager() {
   }, [syncManager, startSync, setSyncError, loadSyncStatus]);
 
   const triggerNow = useCallback(() => {
-    void syncScheduler.triggerNow();
+    void syncScheduler?.triggerNow();
   }, [syncScheduler]);
 
   return {
