@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 import { useSyncContext } from "../providers/SyncProvider";
 import { useSyncStore } from "../store/useSyncStore";
+import { useToastStore } from "../store/useToastStore";
 import type { SyncResult } from "../sync/SyncManager";
 
 export function useSyncManager() {
@@ -23,11 +24,19 @@ export function useSyncManager() {
       setSyncResult(result);
       void loadSyncStatus();
       void loadPendingEntries();
+      const total = result.pushed + result.pulled;
+      if (total > 0) {
+        useToastStore.getState().show(
+          `${total} Änderung${total !== 1 ? "en" : ""} synchronisiert`,
+          "success",
+        );
+      }
       return result;
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Unbekannter Fehler";
       setSyncError(message);
+      useToastStore.getState().show(`Sync fehlgeschlagen: ${message}`, "error");
       return null;
     }
   }, [syncManager, startSync, setSyncResult, setSyncError, loadSyncStatus, loadPendingEntries]);
