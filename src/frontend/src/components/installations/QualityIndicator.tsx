@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   gradeText: {
-    color: "#fff",
+    color: Colors.white,
     fontSize: FontSize.footnote,
     fontWeight: "700",
   },

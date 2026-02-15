@@ -23,7 +23,7 @@ const statusColors: Record<string, string> = {
   section: "#8E8E93",
 };
 
-const statusLabels: Record<string, string> = {
+export const statusLabels: Record<string, string> = {
   active: "Aktiv",
   completed: "Abgeschlossen",
   archived: "Archiviert",
@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
   },
   text: {
-    color: "#fff",
+    color: Colors.white,
     fontSize: 11,
     fontWeight: "600",
     textTransform: "uppercase",

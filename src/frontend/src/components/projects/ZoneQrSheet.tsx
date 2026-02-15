@@ -1,14 +1,8 @@
 import React from "react";
-import {
-  View,
-  Text,
-  Modal,
-  Pressable,
-  TouchableOpacity,
-  Share,
-  StyleSheet,
-} from "react-native";
+import { View, Text, TouchableOpacity, Share, StyleSheet } from "react-native";
 import QRCode from "react-native-qrcode-svg";
+import { BottomSheet } from "../common/BottomSheet";
+import { statusLabels } from "../common/StatusBadge";
 import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
 
 type ZoneQrSheetProps = {
@@ -17,14 +11,6 @@ type ZoneQrSheetProps = {
   qrValue: string;
   zoneName: string;
   zoneType: string;
-};
-
-const TYPE_LABELS: Record<string, string> = {
-  building: "Gebäude",
-  floor: "Stockwerk",
-  room: "Raum",
-  section: "Abschnitt",
-  trench: "Graben",
 };
 
 export function ZoneQrSheet({
@@ -41,67 +27,42 @@ export function ZoneQrSheet({
   };
 
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="slide"
-      onRequestClose={onClose}
-    >
-      <Pressable style={styles.backdrop} onPress={onClose}>
-        <Pressable style={styles.sheet} onPress={(e) => e.stopPropagation()}>
-          <View style={styles.handle} />
-          <Text style={styles.title}>{zoneName}</Text>
-          <Text style={styles.subtitle}>
-            {TYPE_LABELS[zoneType] ?? zoneType}
-          </Text>
+    <BottomSheet visible={visible} onClose={onClose}>
+      <View style={styles.centered}>
+        <Text style={styles.title}>{zoneName}</Text>
+        <Text style={styles.subtitle}>
+          {statusLabels[zoneType] ?? zoneType}
+        </Text>
 
-          <View style={styles.qrContainer}>
-            <QRCode
-              value={qrValue}
-              size={200}
-              backgroundColor="#fff"
-              color="#000"
-              ecl="M"
-            />
-          </View>
+        <View style={styles.qrContainer}>
+          <QRCode
+            value={qrValue}
+            size={200}
+            backgroundColor={Colors.white}
+            color={Colors.black}
+            ecl="M"
+          />
+        </View>
 
-          <Text style={styles.hint}>
-            QR-Code ausdrucken und an der Zone anbringen.
-          </Text>
+        <Text style={styles.hint}>
+          QR-Code ausdrucken und an der Zone anbringen.
+        </Text>
 
-          <TouchableOpacity style={styles.shareBtn} onPress={handleShare}>
-            <Text style={styles.shareBtnText}>QR-Code teilen</Text>
-          </TouchableOpacity>
+        <TouchableOpacity style={styles.shareBtn} onPress={handleShare}>
+          <Text style={styles.shareBtnText}>QR-Code teilen</Text>
+        </TouchableOpacity>
 
-          <TouchableOpacity style={styles.closeBtn} onPress={onClose}>
-            <Text style={styles.closeBtnText}>Schließen</Text>
-          </TouchableOpacity>
-        </Pressable>
-      </Pressable>
-    </Modal>
+        <TouchableOpacity style={styles.closeBtn} onPress={onClose}>
+          <Text style={styles.closeBtnText}>Schließen</Text>
+        </TouchableOpacity>
+      </View>
+    </BottomSheet>
   );
 }
 
 const styles = StyleSheet.create({
-  backdrop: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.4)",
-    justifyContent: "flex-end",
-  },
-  sheet: {
-    backgroundColor: Colors.card,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    padding: Spacing.xl,
-    paddingBottom: 40,
+  centered: {
     alignItems: "center",
-  },
-  handle: {
-    width: 36,
-    height: 5,
-    borderRadius: 3,
-    backgroundColor: Colors.separator,
-    marginBottom: Spacing.lg,
   },
   title: {
     fontSize: FontSize.headline,
@@ -116,7 +77,7 @@ const styles = StyleSheet.create({
   },
   qrContainer: {
     padding: Spacing.lg,
-    backgroundColor: "#fff",
+    backgroundColor: Colors.white,
     borderRadius: Radius.lg,
     marginBottom: Spacing.lg,
   },
@@ -136,7 +97,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   shareBtnText: {
-    color: "#fff",
+    color: Colors.white,
     fontWeight: "600",
     fontSize: FontSize.body,
   },

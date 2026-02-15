@@ -10,7 +10,7 @@ import { FontAwesome } from "@expo/vector-icons";
 import type { GpsPosition } from "../../hooks/useGpsCapture";
 import { QualityIndicator } from "./QualityIndicator";
 import { calculateGpsQuality } from "../../utils/gpsQuality";
-import { Colors, Spacing, FontSize } from "../../styles/tokens";
+import { Colors, Spacing, FontSize, FontFamily } from "../../styles/tokens";
 
 type GpsButtonProps = {
   position: GpsPosition | null;
@@ -96,7 +96,7 @@ export function GpsButton({
         <FontAwesome
           name="crosshairs"
           size={16}
-          color="#fff"
+          color={Colors.white}
           style={styles.buttonIcon}
         />
         <Text style={styles.buttonText}>GPS-Position erfassen</Text>
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
     marginRight: Spacing.sm,
   },
   buttonText: {
-    color: "#fff",
+    color: Colors.white,
     fontSize: FontSize.body,
     fontWeight: "600",
   },
@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.sm,
     paddingVertical: Spacing.xs,
     borderRadius: 6,
-    backgroundColor: "rgba(0, 122, 255, 0.1)",
+    backgroundColor: Colors.primaryLight,
   },
   recaptureText: {
     fontSize: FontSize.footnote,
@@ -181,12 +181,12 @@ const styles = StyleSheet.create({
   coordText: {
     fontSize: FontSize.caption,
     color: Colors.textSecondary,
-    fontFamily: "SpaceMono",
+    fontFamily: FontFamily.mono,
   },
   externalBadge: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(0, 122, 255, 0.1)",
+    backgroundColor: Colors.primaryLight,
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 4,

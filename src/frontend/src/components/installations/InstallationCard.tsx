@@ -3,21 +3,13 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import type { Installation } from "../../db/repositories/types";
 import { StatusBadge } from "../common/StatusBadge";
 import { calculateGpsQuality } from "../../utils/gpsQuality";
+import { formatDate } from "../../utils/formatDate";
 import { Colors, Spacing, FontSize } from "../../styles/tokens";
 
 type InstallationCardProps = {
   installation: Installation;
   onPress: () => void;
 };
-
-function formatDate(d: Date | null | undefined): string {
-  if (!d) return "";
-  return d.toLocaleDateString("de-DE", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-  });
-}
 
 export function InstallationCard({
   installation,
@@ -94,7 +86,7 @@ const styles = StyleSheet.create({
     marginRight: Spacing.xs,
   },
   gpsBadgeText: {
-    color: "#fff",
+    color: Colors.white,
     fontSize: 10,
     fontWeight: "700",
   },
