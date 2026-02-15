@@ -95,3 +95,18 @@ export const gpsSourceLabels: Record<string, string> = {
   external_dgnss: "Externes DGNSS",
   external_rtk: "Externes RTK",
 };
+
+export const corrServiceLabels: Record<string, string> = {
+  none: "Keine",
+  sapos_eps: "SAPOS-EPS",
+  sapos_heps: "SAPOS-HEPS",
+  sapos_gpps: "SAPOS-GPPS",
+};
+
+export const rtkLabels: Record<string, string> = {
+  no_fix: "Kein Fix",
+  autonomous: "Autonom",
+  dgps: "DGPS",
+  rtk_float: "RTK Float",
+  rtk_fixed: "RTK Fixed",
+};

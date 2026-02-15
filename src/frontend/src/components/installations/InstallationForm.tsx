@@ -1,13 +1,9 @@
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  StyleSheet,
-} from "react-native";
+import React from "react";
+import { Text, ScrollView, StyleSheet } from "react-native";
 import { FormField } from "../common/FormField";
 import { FormPicker } from "../common/FormPicker";
+import { CollapsibleSection } from "../common/CollapsibleSection";
+import { Button } from "../core";
 import { GpsButton } from "./GpsButton";
 import { useGpsCapture, type GpsPosition } from "../../hooks/useGpsCapture";
 import { useInstallationForm } from "../../hooks/useInstallationForm";
@@ -36,30 +32,6 @@ type InstallationFormProps = {
   initialGps?: GpsPosition | null;
   submitLabel?: string;
 };
-
-function CollapsibleSection({
-  title,
-  defaultOpen,
-  children,
-}: {
-  title: string;
-  defaultOpen?: boolean;
-  children: React.ReactNode;
-}) {
-  const [open, setOpen] = useState(defaultOpen ?? false);
-  return (
-    <View style={sectionStyles.container}>
-      <TouchableOpacity
-        style={sectionStyles.header}
-        onPress={() => setOpen(!open)}
-      >
-        <Text style={sectionStyles.title}>{title}</Text>
-        <Text style={sectionStyles.chevron}>{open ? "\u2228" : "\u203A"}</Text>
-      </TouchableOpacity>
-      {open && <View style={sectionStyles.body}>{children}</View>}
-    </View>
-  );
-}
 
 export function InstallationForm({
   onSubmit,
@@ -214,49 +186,15 @@ export function InstallationForm({
         onClear={gps.clearPosition}
       />
 
-      <TouchableOpacity
-        style={[styles.button, submitting && styles.buttonDisabled]}
+      <Button
+        title={submitting ? "Speichert..." : (submitLabel ?? "Speichern")}
         onPress={() => void handleSubmit(currentGps)}
-        disabled={submitting}
-      >
-        <Text style={styles.buttonText}>
-          {submitting
-            ? "Speichert..."
-            : submitLabel ?? "Speichern"}
-        </Text>
-      </TouchableOpacity>
+        loading={submitting}
+        style={styles.button}
+      />
     </ScrollView>
   );
 }
-
-const sectionStyles = StyleSheet.create({
-  container: {
-    marginBottom: Spacing.md,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    backgroundColor: Colors.card,
-    borderRadius: 10,
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.md,
-    marginBottom: Spacing.sm,
-  },
-  title: {
-    fontSize: FontSize.callout,
-    fontWeight: "600",
-    color: Colors.textPrimary,
-  },
-  chevron: {
-    fontSize: 18,
-    color: Colors.textTertiary,
-    fontWeight: "600",
-  },
-  body: {
-    paddingLeft: Spacing.sm,
-  },
-});
 
 const styles = StyleSheet.create({
   scroll: {
@@ -275,18 +213,6 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
   },
   button: {
-    backgroundColor: Colors.primary,
-    paddingVertical: 14,
-    borderRadius: 10,
-    alignItems: "center",
     marginTop: Spacing.md,
-  },
-  buttonDisabled: {
-    backgroundColor: Colors.disabled,
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: FontSize.callout,
-    fontWeight: "600",
   },
 });

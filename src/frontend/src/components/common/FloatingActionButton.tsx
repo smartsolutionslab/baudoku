@@ -18,7 +18,7 @@ export function FloatingActionButton({
 }: FloatingActionButtonProps) {
   return (
     <TouchableOpacity style={styles.fab} onPress={onPress} activeOpacity={0.8} testID={testID}>
-      <FontAwesome name={icon} size={20} color="#fff" />
+      <FontAwesome name={icon} size={20} color={Colors.white} />
       {label ? <Text style={styles.label}>{label}</Text> : null}
     </TouchableOpacity>
   );
@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   label: {
-    color: "#fff",
+    color: Colors.white,
     fontSize: 15,
     fontWeight: "600",
   },

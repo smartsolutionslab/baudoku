@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
   },
   text: {
-    color: "#fff",
+    color: Colors.white,
     fontSize: FontSize.body,
     fontWeight: "500",
   },
