@@ -473,13 +473,13 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   uploadBadgeText: {
-    color: "#fff",
+    color: Colors.white,
     fontSize: FontSize.footnote,
     fontWeight: "600",
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: Colors.overlay,
     justifyContent: "flex-end",
   },
   captionModal: {
@@ -513,7 +513,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   captionSkipText: {
-    color: "#fff",
+    color: Colors.white,
     fontSize: FontSize.body,
     fontWeight: "600",
   },
