@@ -1,11 +1,12 @@
 import React, { useState, useMemo } from "react";
-import { View, TextInput, FlatList, TouchableOpacity, StyleSheet } from "react-native";
+import { View, FlatList, TouchableOpacity, StyleSheet } from "react-native";
 import { useRouter, Stack } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
 import { useProjects } from "../../../src/hooks/useOfflineData";
 import { ProjectCard } from "../../../src/components/projects/ProjectCard";
 import { EmptyState } from "../../../src/components/common/EmptyState";
 import { FloatingActionButton } from "../../../src/components/common/FloatingActionButton";
+import { SearchBar } from "../../../src/components/common/SearchBar";
 import { Colors, Spacing } from "../../../src/styles/tokens";
 
 export default function ProjectsScreen() {
@@ -45,13 +46,11 @@ export default function ProjectsScreen() {
           ),
         }}
       />
-      <TextInput
-        style={styles.search}
-        placeholder="Projekte suchen..."
-        placeholderTextColor={Colors.textTertiary}
+      <SearchBar
         value={search}
         onChangeText={setSearch}
-        clearButtonMode="while-editing"
+        placeholder="Projekte suchen..."
+        autoFocus={false}
       />
       {filtered.length === 0 && !isLoading ? (
         <EmptyState
@@ -88,17 +87,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.background,
-  },
-  search: {
-    backgroundColor: Colors.card,
-    marginHorizontal: Spacing.lg,
-    marginTop: Spacing.lg,
-    marginBottom: Spacing.sm,
-    borderRadius: 10,
-    paddingHorizontal: Spacing.md,
-    paddingVertical: 10,
-    fontSize: 15,
-    color: Colors.textPrimary,
   },
   list: {
     paddingHorizontal: Spacing.lg,
