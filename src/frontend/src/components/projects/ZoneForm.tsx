@@ -1,15 +1,11 @@
 import React from "react";
-import {
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-} from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 import { FormField } from "../common/FormField";
 import { FormPicker } from "../common/FormPicker";
+import { Button } from "../core";
 import { useZoneForm } from "../../hooks/useZoneForm";
 import type { ZoneFormData } from "../../validation/schemas";
-import { Colors, Spacing, FontSize } from "../../styles/tokens";
+import { Colors, Spacing } from "../../styles/tokens";
 import type { Zone } from "../../db/repositories/types";
 
 const typeOptions = [
@@ -89,15 +85,12 @@ export function ZoneForm({
         placeholder="0"
       />
 
-      <TouchableOpacity
-        style={[styles.button, submitting && styles.buttonDisabled]}
+      <Button
+        title={submitting ? "Speichert..." : (submitLabel ?? "Speichern")}
         onPress={() => void handleSubmit()}
-        disabled={submitting}
-      >
-        <Text style={styles.buttonText}>
-          {submitting ? "Speichert..." : (submitLabel ?? "Speichern")}
-        </Text>
-      </TouchableOpacity>
+        loading={submitting}
+        style={styles.button}
+      />
     </ScrollView>
   );
 }
@@ -112,18 +105,6 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   button: {
-    backgroundColor: Colors.primary,
-    paddingVertical: 14,
-    borderRadius: 10,
-    alignItems: "center",
     marginTop: Spacing.xl,
-  },
-  buttonDisabled: {
-    backgroundColor: Colors.disabled,
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: FontSize.callout,
-    fontWeight: "600",
   },
 });

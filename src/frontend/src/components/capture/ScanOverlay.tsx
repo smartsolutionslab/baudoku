@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, Dimensions } from "react-native";
+import { Colors } from "../../styles/tokens";
 
 const { width } = Dimensions.get("window");
 const SCAN_SIZE = width * 0.7;
@@ -34,13 +35,13 @@ const styles = StyleSheet.create({
   },
   topOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.5)",
+    backgroundColor: Colors.overlay,
     justifyContent: "flex-end",
     alignItems: "center",
     paddingBottom: 20,
   },
   hint: {
-    color: "#fff",
+    color: Colors.white,
     fontSize: 16,
     fontWeight: "600",
   },
@@ -50,7 +51,7 @@ const styles = StyleSheet.create({
   },
   sideOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.5)",
+    backgroundColor: Colors.overlay,
   },
   scanWindow: {
     width: SCAN_SIZE,
@@ -59,7 +60,7 @@ const styles = StyleSheet.create({
   },
   bottomOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.5)",
+    backgroundColor: Colors.overlay,
   },
   corner: {
     position: "absolute",
@@ -71,7 +72,7 @@ const styles = StyleSheet.create({
     left: 0,
     borderTopWidth: CORNER_WIDTH,
     borderLeftWidth: CORNER_WIDTH,
-    borderColor: "#fff",
+    borderColor: Colors.white,
     borderTopLeftRadius: 16,
   },
   topRight: {
@@ -79,7 +80,7 @@ const styles = StyleSheet.create({
     right: 0,
     borderTopWidth: CORNER_WIDTH,
     borderRightWidth: CORNER_WIDTH,
-    borderColor: "#fff",
+    borderColor: Colors.white,
     borderTopRightRadius: 16,
   },
   bottomLeft: {
@@ -87,7 +88,7 @@ const styles = StyleSheet.create({
     left: 0,
     borderBottomWidth: CORNER_WIDTH,
     borderLeftWidth: CORNER_WIDTH,
-    borderColor: "#fff",
+    borderColor: Colors.white,
     borderBottomLeftRadius: 16,
   },
   bottomRight: {
@@ -95,7 +96,7 @@ const styles = StyleSheet.create({
     right: 0,
     borderBottomWidth: CORNER_WIDTH,
     borderRightWidth: CORNER_WIDTH,
-    borderColor: "#fff",
+    borderColor: Colors.white,
     borderBottomRightRadius: 16,
   },
 });

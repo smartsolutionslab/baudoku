@@ -7,6 +7,7 @@ import {
   Alert,
   ScrollView,
 } from "react-native";
+import { Colors } from "../../styles/tokens";
 import { ConflictDiffView } from "./ConflictDiffView";
 import type { ConflictDto } from "../../sync/syncApi";
 
@@ -102,7 +103,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     padding: 16,
-    backgroundColor: "#fff",
+    backgroundColor: Colors.white,
     gap: 8,
   },
   badge: {
@@ -112,7 +113,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   badgeText: {
-    color: "#fff",
+    color: Colors.white,
     fontSize: 12,
     fontWeight: "600",
     textTransform: "capitalize",
@@ -126,7 +127,7 @@ const styles = StyleSheet.create({
   versionRow: {
     paddingHorizontal: 16,
     paddingVertical: 8,
-    backgroundColor: "#fff",
+    backgroundColor: Colors.white,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: "#E5E5EA",
   },
@@ -158,7 +159,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#34C759",
   },
   buttonText: {
-    color: "#fff",
+    color: Colors.white,
     fontSize: 16,
     fontWeight: "600",
   },

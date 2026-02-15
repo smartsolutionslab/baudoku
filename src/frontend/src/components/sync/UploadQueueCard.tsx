@@ -102,7 +102,7 @@ export function UploadQueueCard() {
         disabled={uploading}
       >
         {uploading ? (
-          <ActivityIndicator color="#fff" size="small" />
+          <ActivityIndicator color={Colors.white} size="small" />
         ) : (
           <Text style={styles.uploadButtonText}>Fotos hochladen</Text>
         )}
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.xs,
   },
   badgeText: {
-    color: "#fff",
+    color: Colors.white,
     fontSize: FontSize.footnote,
     fontWeight: "700",
   },
@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
     borderRadius: Radius.sm,
   },
   retryButtonText: {
-    color: "#fff",
+    color: Colors.white,
     fontSize: FontSize.caption,
     fontWeight: "600",
   },
@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.disabled,
   },
   uploadButtonText: {
-    color: "#fff",
+    color: Colors.white,
     fontSize: FontSize.callout,
     fontWeight: "600",
   },

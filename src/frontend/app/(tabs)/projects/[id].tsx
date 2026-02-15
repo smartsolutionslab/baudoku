@@ -14,16 +14,8 @@ import { EmptyState } from "../../../src/components/common/EmptyState";
 import { FloatingActionButton } from "../../../src/components/common/FloatingActionButton";
 import { ActionBar } from "../../../src/components/common/ActionBar";
 import { Colors, Spacing, FontSize } from "../../../src/styles/tokens";
+import { formatDate } from "../../../src/utils/formatDate";
 import { projectId } from "../../../src/types/branded";
-
-function formatDate(d: Date | null | undefined): string {
-  if (!d) return "";
-  return d.toLocaleDateString("de-DE", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-  });
-}
 
 export default function ProjectDetailScreen() {
   const { id: rawId } = useLocalSearchParams<{ id: string }>();

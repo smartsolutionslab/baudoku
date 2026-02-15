@@ -7,7 +7,7 @@ import {
   type ViewStyle,
   type TextStyle,
 } from "react-native";
-import { Colors, Spacing, FontSize } from "../../styles/tokens";
+import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
 
 type ButtonVariant = "primary" | "secondary" | "danger";
 
@@ -24,7 +24,7 @@ type ButtonProps = {
 const variantStyles: Record<ButtonVariant, { container: ViewStyle; text: TextStyle }> = {
   primary: {
     container: { backgroundColor: Colors.primary },
-    text: { color: "#fff" },
+    text: { color: Colors.white },
   },
   secondary: {
     container: { backgroundColor: Colors.background },
@@ -32,7 +32,7 @@ const variantStyles: Record<ButtonVariant, { container: ViewStyle; text: TextSty
   },
   danger: {
     container: { backgroundColor: Colors.danger },
-    text: { color: "#fff" },
+    text: { color: Colors.white },
   },
 };
 
@@ -64,7 +64,7 @@ export function Button({
       {loading ? (
         <ActivityIndicator
           size="small"
-          color={variant === "secondary" ? Colors.textTertiary : "#fff"}
+          color={variant === "secondary" ? Colors.textTertiary : Colors.white}
         />
       ) : (
         <Text style={[styles.text, v.text]}>{title}</Text>
@@ -76,7 +76,7 @@ export function Button({
 const styles = StyleSheet.create({
   container: {
     paddingVertical: 14,
-    borderRadius: 10,
+    borderRadius: Radius.md,
     alignItems: "center",
     justifyContent: "center",
     minHeight: 48,

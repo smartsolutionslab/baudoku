@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import type { Installation } from "../../db/repositories/types";
 import { QualityIndicator } from "./QualityIndicator";
+import { gpsSourceLabels, corrServiceLabels, rtkLabels } from "../../utils/gpsQuality";
 import { Colors, Spacing, FontSize } from "../../styles/tokens";
 
 type InstallationDetailsProps = {
@@ -17,27 +18,6 @@ function Row({ label, value }: { label: string; value?: string | number | null }
     </View>
   );
 }
-
-const gpsSourceLabels: Record<string, string> = {
-  internal_gps: "Internes GPS",
-  external_dgnss: "Externes DGNSS",
-  external_rtk: "Externes RTK",
-};
-
-const corrServiceLabels: Record<string, string> = {
-  none: "Keine",
-  sapos_eps: "SAPOS-EPS",
-  sapos_heps: "SAPOS-HEPS",
-  sapos_gpps: "SAPOS-GPPS",
-};
-
-const rtkLabels: Record<string, string> = {
-  no_fix: "Kein Fix",
-  autonomous: "Autonom",
-  dgps: "DGPS",
-  rtk_float: "RTK Float",
-  rtk_fixed: "RTK Fixed",
-};
 
 export function InstallationDetails({ installation }: InstallationDetailsProps) {
   const i = installation;

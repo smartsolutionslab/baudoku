@@ -7,7 +7,7 @@ import {
   Pressable,
   StyleSheet,
 } from "react-native";
-import { Colors, Spacing, FontSize } from "../../styles/tokens";
+import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
 
 type ModalProps = {
   visible: boolean;
@@ -50,7 +50,7 @@ export function Modal({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.4)",
+    backgroundColor: Colors.overlay,
     justifyContent: "flex-end",
   },
   sheet: {
@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     marginTop: Spacing.lg,
     backgroundColor: Colors.background,
-    borderRadius: 10,
+    borderRadius: Radius.md,
   },
   closeText: {
     fontSize: FontSize.callout,

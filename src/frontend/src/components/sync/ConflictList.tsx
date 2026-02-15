@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
+import { Colors } from "../../styles/tokens";
 import type { ConflictDto } from "../../sync/syncApi";
 
 type ConflictListProps = {
@@ -66,7 +67,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   item: {
-    backgroundColor: "#fff",
+    backgroundColor: Colors.white,
     borderRadius: 10,
     padding: 12,
     marginBottom: 8,
@@ -84,7 +85,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   typeBadgeText: {
-    color: "#fff",
+    color: Colors.white,
     fontSize: 11,
     fontWeight: "600",
     textTransform: "capitalize",
@@ -96,7 +97,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   statusBadgeText: {
-    color: "#fff",
+    color: Colors.white,
     fontSize: 11,
     fontWeight: "600",
     textTransform: "capitalize",

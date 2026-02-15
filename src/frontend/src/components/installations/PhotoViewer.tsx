@@ -65,7 +65,7 @@ export function PhotoViewer({
         >
           <View style={styles.header}>
             <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-              <FontAwesome name="close" size={22} color="#fff" />
+              <FontAwesome name="close" size={22} color={Colors.white} />
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => onDelete(photo)}
@@ -118,7 +118,7 @@ export function PhotoViewer({
                   style={styles.saveBtn}
                   onPress={handleSave}
                 >
-                  <FontAwesome name="check" size={16} color="#fff" />
+                  <FontAwesome name="check" size={16} color={Colors.white} />
                 </TouchableOpacity>
               )}
             </View>
@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
     borderRadius: Radius.sm,
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
-    color: "#fff",
+    color: Colors.white,
     fontSize: FontSize.caption,
     maxHeight: 80,
   },
