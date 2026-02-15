@@ -60,37 +60,41 @@ export default function EditInstallationScreen() {
     data: InstallationFormData,
     gps: GpsPosition | null
   ) => {
-    await updateInstallation.mutateAsync({
-      id,
-      data: {
-        type: data.type,
-        status: data.status,
-        manufacturer: data.manufacturer || null,
-        model: data.model || null,
-        serialNumber: data.serialNumber || null,
-        cableType: data.cableType || null,
-        crossSectionMm2: data.crossSectionMm2 ?? null,
-        lengthM: data.lengthM ?? null,
-        circuitId: data.circuitId || null,
-        fuseType: data.fuseType || null,
-        fuseRatingA: data.fuseRatingA ?? null,
-        voltageV: data.voltageV ?? null,
-        phase: data.phase || null,
-        depthMm: data.depthMm ?? null,
-        notes: data.notes || null,
-        gpsLat: gps?.gpsLat ?? null,
-        gpsLng: gps?.gpsLng ?? null,
-        gpsAltitude: gps?.gpsAltitude ?? null,
-        gpsAccuracy: gps?.gpsAccuracy ?? null,
-        gpsSource: gps?.gpsSource ?? null,
-        gpsCorrService: gps?.gpsCorrService ?? null,
-        gpsRtkStatus: gps?.gpsRtkStatus ?? null,
-        gpsSatCount: gps?.gpsSatCount ?? null,
-        gpsHdop: gps?.gpsHdop ?? null,
-        gpsCorrAge: gps?.gpsCorrAge ?? null,
-      },
-    });
-    router.back();
+    try {
+      await updateInstallation.mutateAsync({
+        id,
+        data: {
+          type: data.type,
+          status: data.status,
+          manufacturer: data.manufacturer || null,
+          model: data.model || null,
+          serialNumber: data.serialNumber || null,
+          cableType: data.cableType || null,
+          crossSectionMm2: data.crossSectionMm2 ?? null,
+          lengthM: data.lengthM ?? null,
+          circuitId: data.circuitId || null,
+          fuseType: data.fuseType || null,
+          fuseRatingA: data.fuseRatingA ?? null,
+          voltageV: data.voltageV ?? null,
+          phase: data.phase || null,
+          depthMm: data.depthMm ?? null,
+          notes: data.notes || null,
+          gpsLat: gps?.gpsLat ?? null,
+          gpsLng: gps?.gpsLng ?? null,
+          gpsAltitude: gps?.gpsAltitude ?? null,
+          gpsAccuracy: gps?.gpsAccuracy ?? null,
+          gpsSource: gps?.gpsSource ?? null,
+          gpsCorrService: gps?.gpsCorrService ?? null,
+          gpsRtkStatus: gps?.gpsRtkStatus ?? null,
+          gpsSatCount: gps?.gpsSatCount ?? null,
+          gpsHdop: gps?.gpsHdop ?? null,
+          gpsCorrAge: gps?.gpsCorrAge ?? null,
+        },
+      });
+      router.back();
+    } catch {
+      // Global MutationCache.onError shows toast
+    }
   };
 
   return (

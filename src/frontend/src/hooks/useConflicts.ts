@@ -33,6 +33,7 @@ export function useResolveConflict() {
     }) => {
       await syncApi.resolveConflict(conflictId, strategy, mergedPayload);
     },
+    meta: { errorMessage: "Konflikt konnte nicht aufgelöst werden" },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["conflicts"] });
       queryClient.invalidateQueries({ queryKey: ["syncStatus"] });

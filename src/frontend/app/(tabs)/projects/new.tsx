@@ -9,17 +9,21 @@ export default function NewProjectScreen() {
   const createProject = useCreateProject();
 
   const handleSubmit = async (data: ProjectFormData) => {
-    await createProject.mutateAsync({
-      name: data.name,
-      status: data.status,
-      street: data.street || null,
-      city: data.city || null,
-      zipCode: data.zipCode || null,
-      clientName: data.clientName || null,
-      clientContact: data.clientContact || null,
-      createdBy: "local-user",
-    });
-    router.back();
+    try {
+      await createProject.mutateAsync({
+        name: data.name,
+        status: data.status,
+        street: data.street || null,
+        city: data.city || null,
+        zipCode: data.zipCode || null,
+        clientName: data.clientName || null,
+        clientContact: data.clientContact || null,
+        createdBy: "local-user",
+      });
+      router.back();
+    } catch {
+      // Global MutationCache.onError shows toast
+    }
   };
 
   return (

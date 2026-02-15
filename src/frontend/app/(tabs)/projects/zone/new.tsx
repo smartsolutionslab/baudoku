@@ -19,14 +19,18 @@ export default function NewZoneScreen() {
   const createZone = useCreateZone();
 
   const handleSubmit = async (data: ZoneFormData) => {
-    await createZone.mutateAsync({
-      projectId,
-      name: data.name,
-      type: data.type,
-      parentZoneId: data.parentZoneId ?? null,
-      sortOrder: data.sortOrder ?? 0,
-    });
-    router.back();
+    try {
+      await createZone.mutateAsync({
+        projectId,
+        name: data.name,
+        type: data.type,
+        parentZoneId: data.parentZoneId ?? null,
+        sortOrder: data.sortOrder ?? 0,
+      });
+      router.back();
+    } catch {
+      // Global MutationCache.onError shows toast
+    }
   };
 
   return (
