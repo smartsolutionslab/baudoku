@@ -4,10 +4,7 @@ import {
   Text,
   ScrollView,
   StyleSheet,
-  Alert,
-  Modal,
   TextInput,
-  TouchableOpacity,
 } from "react-native";
 import { useLocalSearchParams, useRouter, Stack } from "expo-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -38,6 +35,8 @@ import { PhotoTypeSheet, type PhotoType } from "../../../../src/components/insta
 import { PhotoViewer } from "../../../../src/components/installations/PhotoViewer";
 import { MeasurementCard } from "../../../../src/components/installations/MeasurementCard";
 import { MeasurementForm } from "../../../../src/components/installations/MeasurementForm";
+import { BottomSheet } from "../../../../src/components/common/BottomSheet";
+import { Button } from "../../../../src/components/core/Button";
 import { Colors, Spacing, FontSize } from "../../../../src/styles/tokens";
 import type { Photo } from "../../../../src/db/repositories/types";
 import type { MeasurementFormData } from "../../../../src/validation/schemas";
@@ -356,42 +355,30 @@ export default function InstallationDetailScreen() {
         }}
       />
 
-      {/* Caption input modal */}
-      <Modal
+      {/* Caption input */}
+      <BottomSheet
         visible={showCaptionModal}
-        transparent
-        animationType="slide"
-        onRequestClose={() => {
+        onClose={() => {
           setShowCaptionModal(false);
           setPendingPhoto(null);
           setPendingPhotoType(null);
         }}
+        title="Beschriftung (optional)"
       >
-        <View style={styles.modalOverlay}>
-          <View style={styles.captionModal}>
-            <Text style={styles.captionModalTitle}>Beschriftung (optional)</Text>
-            <TextInput
-              style={styles.captionInput}
-              value={captionText}
-              onChangeText={setCaptionText}
-              placeholder="z.B. Kabeltrasse Nordseite"
-              placeholderTextColor={Colors.textTertiary}
-              maxLength={200}
-              autoFocus
-            />
-            <View style={styles.captionActions}>
-              <TouchableOpacity
-                style={styles.captionSkipButton}
-                onPress={handleCaptionConfirm}
-              >
-                <Text style={styles.captionSkipText}>
-                  {captionText.trim() ? "Hinzufügen" : "Überspringen"}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
+        <TextInput
+          style={styles.captionInput}
+          value={captionText}
+          onChangeText={setCaptionText}
+          placeholder="z.B. Kabeltrasse Nordseite"
+          placeholderTextColor={Colors.textTertiary}
+          maxLength={200}
+          autoFocus
+        />
+        <Button
+          title={captionText.trim() ? "Hinzufügen" : "Überspringen"}
+          onPress={handleCaptionConfirm}
+        />
+      </BottomSheet>
       <PhotoViewer
         photo={viewerPhoto}
         visible={showViewer}
@@ -477,23 +464,6 @@ const styles = StyleSheet.create({
     fontSize: FontSize.footnote,
     fontWeight: "600",
   },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: Colors.overlay,
-    justifyContent: "flex-end",
-  },
-  captionModal: {
-    backgroundColor: Colors.card,
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
-    padding: Spacing.xl,
-    paddingBottom: 40,
-  },
-  captionModalTitle: {
-    fontSize: FontSize.headline,
-    fontWeight: "600",
-    marginBottom: Spacing.md,
-  },
   captionInput: {
     borderWidth: 1,
     borderColor: Colors.separator,
@@ -502,19 +472,5 @@ const styles = StyleSheet.create({
     fontSize: FontSize.body,
     color: Colors.textPrimary,
     marginBottom: Spacing.lg,
-  },
-  captionActions: {
-    alignItems: "flex-end",
-  },
-  captionSkipButton: {
-    backgroundColor: Colors.primary,
-    paddingHorizontal: Spacing.xl,
-    paddingVertical: Spacing.md,
-    borderRadius: 10,
-  },
-  captionSkipText: {
-    color: Colors.white,
-    fontSize: FontSize.body,
-    fontWeight: "600",
   },
 });

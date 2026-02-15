@@ -11,6 +11,7 @@ import { CameraView, useCameraPermissions } from "expo-camera";
 import { FontAwesome } from "@expo/vector-icons";
 import { useQrScanner } from "../../../src/hooks/useQrScanner";
 import { ScanOverlay } from "../../../src/components/capture/ScanOverlay";
+import { Button } from "../../../src/components/core/Button";
 import { Colors, Spacing, FontSize, Radius } from "../../../src/styles/tokens";
 import * as zoneRepo from "../../../src/db/repositories/zoneRepo";
 import * as projectRepo from "../../../src/db/repositories/projectRepo";
@@ -55,9 +56,11 @@ export default function ScanScreen() {
         <Text style={styles.permissionText}>
           Kamerazugriff wird für den QR-Scanner benötigt.
         </Text>
-        <TouchableOpacity style={styles.permissionBtn} onPress={requestPermission}>
-          <Text style={styles.permissionBtnText}>Berechtigung erteilen</Text>
-        </TouchableOpacity>
+        <Button
+          title="Berechtigung erteilen"
+          onPress={requestPermission}
+          style={{ marginBottom: Spacing.md, paddingHorizontal: Spacing.xl }}
+        />
         <TouchableOpacity
           style={styles.backBtn}
           onPress={() => router.back()}
@@ -82,7 +85,7 @@ export default function ScanScreen() {
       {/* Top bar */}
       <View style={styles.topBar}>
         <TouchableOpacity onPress={() => router.back()} style={styles.iconBtn}>
-          <FontAwesome name="arrow-left" size={20} color="#fff" />
+          <FontAwesome name="arrow-left" size={20} color={Colors.white} />
         </TouchableOpacity>
         <Text style={styles.topTitle}>QR-Scanner</Text>
         <TouchableOpacity
@@ -92,7 +95,7 @@ export default function ScanScreen() {
           <FontAwesome
             name={torch ? "flash" : "flash"}
             size={20}
-            color={torch ? Colors.warning : "#fff"}
+            color={torch ? Colors.warning : Colors.white}
           />
         </TouchableOpacity>
       </View>
@@ -134,7 +137,7 @@ export default function ScanScreen() {
                     );
                   }}
                 >
-                  <FontAwesome name="plus" size={16} color="#fff" />
+                  <FontAwesome name="plus" size={16} color={Colors.white} />
                   <Text style={styles.actionBtnPrimaryText}>
                     Neue Installation
                   </Text>
@@ -162,7 +165,7 @@ export default function ScanScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#000",
+    backgroundColor: Colors.black,
   },
   centered: {
     flex: 1,
@@ -176,18 +179,6 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
     textAlign: "center",
     marginBottom: Spacing.lg,
-  },
-  permissionBtn: {
-    backgroundColor: Colors.primary,
-    paddingVertical: Spacing.md,
-    paddingHorizontal: Spacing.xl,
-    borderRadius: Radius.md,
-    marginBottom: Spacing.md,
-  },
-  permissionBtnText: {
-    color: "#fff",
-    fontWeight: "600",
-    fontSize: FontSize.body,
   },
   backBtn: {
     paddingVertical: Spacing.md,
@@ -209,7 +200,7 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing.md,
   },
   topTitle: {
-    color: "#fff",
+    color: Colors.white,
     fontSize: FontSize.headline,
     fontWeight: "600",
   },
@@ -247,7 +238,7 @@ const styles = StyleSheet.create({
     marginTop: Spacing.sm,
   },
   retryBtnText: {
-    color: "#fff",
+    color: Colors.white,
     fontWeight: "600",
     fontSize: FontSize.body,
   },
@@ -289,7 +280,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary,
   },
   actionBtnPrimaryText: {
-    color: "#fff",
+    color: Colors.white,
     fontWeight: "600",
     fontSize: FontSize.body,
   },

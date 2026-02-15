@@ -5,13 +5,15 @@ import {
   FlatList,
   StyleSheet,
   TouchableOpacity,
-  ActivityIndicator,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { useSyncStore } from "../../../src/store/useSyncStore";
 import { useSyncStatus } from "../../../src/hooks/useSyncStatus";
 import { useSyncManager } from "../../../src/hooks/useSyncManager";
 import { UploadQueueCard } from "../../../src/components/sync/UploadQueueCard";
+import { Button } from "../../../src/components/core/Button";
+import { StatusBadge } from "../../../src/components/common/StatusBadge";
+import { Colors, Spacing, FontSize, Radius } from "../../../src/styles/tokens";
 import type { SyncOutboxEntry } from "../../../src/db/repositories/types";
 
 function formatTimestamp(date: Date): string {
@@ -37,32 +39,12 @@ function operationLabel(op: string): string {
   }
 }
 
-function statusColor(status: string): string {
-  switch (status) {
-    case "pending":
-      return "#FF9500";
-    case "syncing":
-      return "#007AFF";
-    case "failed":
-      return "#FF3B30";
-    default:
-      return "#8E8E93";
-  }
-}
-
 function OutboxItem({ item }: { item: SyncOutboxEntry }) {
   return (
     <View style={itemStyles.container}>
       <View style={itemStyles.header}>
         <Text style={itemStyles.entityType}>{item.entityType}</Text>
-        <View
-          style={[
-            itemStyles.statusBadge,
-            { backgroundColor: statusColor(item.status) },
-          ]}
-        >
-          <Text style={itemStyles.statusText}>{item.status}</Text>
-        </View>
+        <StatusBadge status={item.status} />
       </View>
       <Text style={itemStyles.operation}>
         {operationLabel(item.operation)}
@@ -119,20 +101,13 @@ export default function SyncScreen() {
           </Text>
         </View>
 
-        <TouchableOpacity
-          style={[
-            styles.syncButton,
-            (!isOnline || isSyncing) && styles.syncButtonDisabled,
-          ]}
+        <Button
+          title="Jetzt synchronisieren"
           onPress={() => void sync()}
-          disabled={!isOnline || isSyncing}
-        >
-          {isSyncing ? (
-            <ActivityIndicator color="#fff" size="small" />
-          ) : (
-            <Text style={styles.syncButtonText}>Jetzt synchronisieren</Text>
-          )}
-        </TouchableOpacity>
+          loading={isSyncing}
+          disabled={!isOnline}
+          style={{ marginTop: Spacing.xs }}
+        />
 
         {syncError && (
           <Text style={styles.syncError}>{syncError}</Text>
@@ -181,14 +156,14 @@ export default function SyncScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F2F2F7",
+    backgroundColor: Colors.background,
   },
   statusCard: {
-    backgroundColor: "#fff",
-    margin: 16,
-    borderRadius: 12,
-    padding: 16,
-    gap: 12,
+    backgroundColor: Colors.card,
+    margin: Spacing.lg,
+    borderRadius: Radius.lg,
+    padding: Spacing.lg,
+    gap: Spacing.md,
   },
   statusRow: {
     flexDirection: "row",
@@ -200,11 +175,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   label: {
-    fontSize: 15,
-    color: "#8E8E93",
+    fontSize: FontSize.body,
+    color: Colors.textTertiary,
   },
   value: {
-    fontSize: 15,
+    fontSize: FontSize.body,
     fontWeight: "500",
   },
   dot: {
@@ -214,43 +189,28 @@ const styles = StyleSheet.create({
     marginRight: 6,
   },
   online: {
-    backgroundColor: "#34C759",
+    backgroundColor: Colors.success,
   },
   offline: {
-    backgroundColor: "#FF3B30",
-  },
-  syncButton: {
-    backgroundColor: "#007AFF",
-    paddingVertical: 12,
-    borderRadius: 10,
-    alignItems: "center",
-    marginTop: 4,
-  },
-  syncButtonDisabled: {
-    backgroundColor: "#C7C7CC",
-  },
-  syncButtonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "600",
+    backgroundColor: Colors.danger,
   },
   syncError: {
-    color: "#FF3B30",
-    fontSize: 13,
+    color: Colors.danger,
+    fontSize: FontSize.caption,
     textAlign: "center",
   },
   conflictCard: {
     backgroundColor: "#FFF3CD",
-    marginHorizontal: 16,
-    marginBottom: 16,
-    borderRadius: 12,
-    padding: 14,
+    marginHorizontal: Spacing.lg,
+    marginBottom: Spacing.lg,
+    borderRadius: Radius.lg,
+    padding: Spacing.md,
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
+    gap: Spacing.sm,
   },
   conflictBadge: {
-    backgroundColor: "#FF9500",
+    backgroundColor: Colors.warning,
     width: 28,
     height: 28,
     borderRadius: 14,
@@ -258,13 +218,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   conflictBadgeText: {
-    color: "#fff",
-    fontSize: 13,
+    color: Colors.white,
+    fontSize: FontSize.caption,
     fontWeight: "700",
   },
   conflictText: {
     flex: 1,
-    fontSize: 15,
+    fontSize: FontSize.body,
     fontWeight: "500",
     color: "#856404",
   },
@@ -273,13 +233,13 @@ const styles = StyleSheet.create({
     color: "#856404",
   },
   sectionTitle: {
-    fontSize: 17,
+    fontSize: FontSize.headline,
     fontWeight: "600",
-    marginHorizontal: 16,
-    marginBottom: 8,
+    marginHorizontal: Spacing.lg,
+    marginBottom: Spacing.sm,
   },
   list: {
-    paddingHorizontal: 16,
+    paddingHorizontal: Spacing.lg,
   },
   emptyState: {
     flex: 1,
@@ -288,52 +248,41 @@ const styles = StyleSheet.create({
     paddingTop: 40,
   },
   emptyText: {
-    fontSize: 15,
-    color: "#8E8E93",
+    fontSize: FontSize.body,
+    color: Colors.textTertiary,
   },
 });
 
 const itemStyles = StyleSheet.create({
   container: {
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    padding: 12,
-    marginBottom: 8,
+    backgroundColor: Colors.card,
+    borderRadius: Radius.md,
+    padding: Spacing.md,
+    marginBottom: Spacing.sm,
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 4,
+    marginBottom: Spacing.xs,
   },
   entityType: {
-    fontSize: 15,
+    fontSize: FontSize.body,
     fontWeight: "600",
     textTransform: "capitalize",
   },
-  statusBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 10,
-  },
-  statusText: {
-    color: "#fff",
-    fontSize: 11,
-    fontWeight: "600",
-    textTransform: "uppercase",
-  },
   operation: {
-    fontSize: 13,
-    color: "#666",
+    fontSize: FontSize.caption,
+    color: Colors.textSecondary,
   },
   timestamp: {
-    fontSize: 12,
-    color: "#8E8E93",
+    fontSize: FontSize.footnote,
+    color: Colors.textTertiary,
     marginTop: 2,
   },
   retry: {
-    fontSize: 12,
-    color: "#FF3B30",
+    fontSize: FontSize.footnote,
+    color: Colors.danger,
     marginTop: 2,
   },
 });
