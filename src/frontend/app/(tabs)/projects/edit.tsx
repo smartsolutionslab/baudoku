@@ -28,8 +28,12 @@ export default function EditProjectScreen() {
   };
 
   const handleSubmit = async (data: ProjectFormData) => {
-    await updateProject.mutateAsync({ id, data });
-    router.back();
+    try {
+      await updateProject.mutateAsync({ id, data });
+      router.back();
+    } catch {
+      // Global MutationCache.onError shows toast
+    }
   };
 
   return (

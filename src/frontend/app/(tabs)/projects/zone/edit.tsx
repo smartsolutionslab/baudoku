@@ -35,16 +35,20 @@ export default function ZoneEditScreen() {
   );
 
   const handleSubmit = async (data: ZoneFormData) => {
-    await updateZone.mutateAsync({
-      id: zoneId,
-      data: {
-        name: data.name,
-        type: data.type,
-        parentZoneId: data.parentZoneId ?? null,
-        sortOrder: data.sortOrder ?? 0,
-      },
-    });
-    router.back();
+    try {
+      await updateZone.mutateAsync({
+        id: zoneId,
+        data: {
+          name: data.name,
+          type: data.type,
+          parentZoneId: data.parentZoneId ?? null,
+          sortOrder: data.sortOrder ?? 0,
+        },
+      });
+      router.back();
+    } catch {
+      // Global MutationCache.onError shows toast
+    }
   };
 
   if (isLoading || !zone) {

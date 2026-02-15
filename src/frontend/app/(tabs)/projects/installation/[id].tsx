@@ -129,18 +129,22 @@ export default function InstallationDetailScreen() {
   const handleCaptionConfirm = useCallback(async () => {
     setShowCaptionModal(false);
     if (!pendingPhoto || !pendingPhotoType) return;
-    await addPhoto.mutateAsync({
-      installationId: id,
-      localPath: pendingPhoto.localPath,
-      type: pendingPhotoType,
-      caption: captionText.trim() || null,
-      exifLatitude: pendingPhoto.exif?.gpsLatitude ?? null,
-      exifLongitude: pendingPhoto.exif?.gpsLongitude ?? null,
-      exifDateTime: pendingPhoto.exif?.dateTime ?? null,
-      exifCameraModel: pendingPhoto.exif?.cameraModel ?? null,
-      takenAt: new Date(),
-      uploadStatus: "pending",
-    });
+    try {
+      await addPhoto.mutateAsync({
+        installationId: id,
+        localPath: pendingPhoto.localPath,
+        type: pendingPhotoType,
+        caption: captionText.trim() || null,
+        exifLatitude: pendingPhoto.exif?.gpsLatitude ?? null,
+        exifLongitude: pendingPhoto.exif?.gpsLongitude ?? null,
+        exifDateTime: pendingPhoto.exif?.dateTime ?? null,
+        exifCameraModel: pendingPhoto.exif?.cameraModel ?? null,
+        takenAt: new Date(),
+        uploadStatus: "pending",
+      });
+    } catch {
+      // Global MutationCache.onError shows toast
+    }
     setPendingPhoto(null);
     setPendingPhotoType(null);
     setCaptionText("");
@@ -153,8 +157,12 @@ export default function InstallationDetailScreen() {
         title: "Foto löschen",
         message: "Dieses Foto wirklich löschen?",
         onConfirm: async () => {
-          await deletePhoto.mutateAsync(photo.id);
-          deletePhotoFile(photo.localPath);
+          try {
+            await deletePhoto.mutateAsync(photo.id);
+            deletePhotoFile(photo.localPath);
+          } catch {
+            // Global MutationCache.onError shows toast
+          }
         },
       });
     },
@@ -167,7 +175,11 @@ export default function InstallationDetailScreen() {
         title: "Messung löschen",
         message: "Diese Messung wirklich löschen?",
         onConfirm: async () => {
-          await deleteMeasurement.mutateAsync(m.id);
+          try {
+            await deleteMeasurement.mutateAsync(m.id);
+          } catch {
+            // Global MutationCache.onError shows toast
+          }
         },
       });
     },
@@ -176,18 +188,22 @@ export default function InstallationDetailScreen() {
 
   const handleAddMeasurement = useCallback(
     async (data: MeasurementFormData) => {
-      await addMeasurement.mutateAsync({
-        installationId: id,
-        type: data.type,
-        value: data.value,
-        unit: data.unit,
-        minThreshold: data.minThreshold ?? null,
-        maxThreshold: data.maxThreshold ?? null,
-        notes: data.notes || null,
-        measuredBy: data.measuredBy,
-        measuredAt: new Date(),
-      });
-      setShowMeasurementForm(false);
+      try {
+        await addMeasurement.mutateAsync({
+          installationId: id,
+          type: data.type,
+          value: data.value,
+          unit: data.unit,
+          minThreshold: data.minThreshold ?? null,
+          maxThreshold: data.maxThreshold ?? null,
+          notes: data.notes || null,
+          measuredBy: data.measuredBy,
+          measuredAt: new Date(),
+        });
+        setShowMeasurementForm(false);
+      } catch {
+        // Global MutationCache.onError shows toast
+      }
     },
     [id, addMeasurement]
   );
@@ -198,8 +214,12 @@ export default function InstallationDetailScreen() {
       message:
         "Diese Installation und alle zugehörigen Daten wirklich löschen?",
       onConfirm: async () => {
-        await deleteInstallation.mutateAsync(id);
-        router.back();
+        try {
+          await deleteInstallation.mutateAsync(id);
+          router.back();
+        } catch {
+          // Global MutationCache.onError shows toast
+        }
       },
     });
   }, [id, deleteInstallation, confirmDelete, router]);

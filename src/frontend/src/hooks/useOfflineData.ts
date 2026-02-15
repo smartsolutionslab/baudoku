@@ -42,6 +42,7 @@ export function useCreateProject() {
     mutationFn: (
       data: Omit<NewProject, "id" | "createdAt" | "updatedAt" | "version">
     ) => projectRepo.create(data),
+    meta: { errorMessage: "Projekt konnte nicht erstellt werden" },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["projects"] });
       queryClient.invalidateQueries({ queryKey: ["syncStatus"] });
@@ -61,6 +62,7 @@ export function useUpdateProject() {
         Omit<NewProject, "id" | "createdAt" | "updatedAt" | "version" | "createdBy">
       >;
     }) => projectRepo.update(id, data),
+    meta: { errorMessage: "Projekt konnte nicht aktualisiert werden" },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["projects"] });
       queryClient.invalidateQueries({ queryKey: ["syncStatus"] });
@@ -72,6 +74,7 @@ export function useDeleteProject() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (id: ProjectId) => projectRepo.remove(id),
+    meta: { errorMessage: "Projekt konnte nicht gelöscht werden" },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["projects"] });
       queryClient.invalidateQueries({ queryKey: ["syncStatus"] });
@@ -94,6 +97,7 @@ export function useCreateZone() {
   return useMutation({
     mutationFn: (data: Omit<NewZone, "id" | "version">) =>
       zoneRepo.create(data),
+    meta: { errorMessage: "Zone konnte nicht erstellt werden" },
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
         queryKey: ["zones", variables.projectId],
@@ -113,6 +117,7 @@ export function useUpdateZone() {
       id: ZoneId;
       data: Partial<Omit<NewZone, "id" | "version" | "projectId">>;
     }) => zoneRepo.update(id, data),
+    meta: { errorMessage: "Zone konnte nicht aktualisiert werden" },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["zones"] });
       queryClient.invalidateQueries({ queryKey: ["syncStatus"] });
@@ -124,6 +129,7 @@ export function useDeleteZone() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (id: ZoneId) => zoneRepo.remove(id),
+    meta: { errorMessage: "Zone konnte nicht gelöscht werden" },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["zones"] });
       queryClient.invalidateQueries({ queryKey: ["syncStatus"] });
@@ -155,6 +161,7 @@ export function useCreateInstallation() {
     mutationFn: (
       data: Omit<NewInstallation, "id" | "createdAt" | "updatedAt" | "version">
     ) => installationRepo.create(data),
+    meta: { errorMessage: "Installation konnte nicht erstellt werden" },
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
         queryKey: ["installations", "zone", variables.zoneId],
@@ -182,6 +189,7 @@ export function useUpdateInstallation() {
         >
       >;
     }) => installationRepo.update(id, data),
+    meta: { errorMessage: "Installation konnte nicht aktualisiert werden" },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["installations"] });
       queryClient.invalidateQueries({ queryKey: ["installation"] });
@@ -194,6 +202,7 @@ export function useDeleteInstallation() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (id: InstallationId) => installationRepo.remove(id),
+    meta: { errorMessage: "Installation konnte nicht gelöscht werden" },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["installations"] });
       queryClient.invalidateQueries({ queryKey: ["syncStatus"] });
@@ -216,6 +225,7 @@ export function useAddPhoto() {
   return useMutation({
     mutationFn: (data: Omit<NewPhoto, "id" | "version">) =>
       photoRepo.create(data),
+    meta: { errorMessage: "Foto konnte nicht hinzugefügt werden" },
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
         queryKey: ["photos", variables.installationId],
@@ -229,6 +239,7 @@ export function useDeletePhoto() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (id: PhotoId) => photoRepo.remove(id),
+    meta: { errorMessage: "Foto konnte nicht gelöscht werden" },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["photos"] });
       queryClient.invalidateQueries({ queryKey: ["syncStatus"] });
@@ -241,6 +252,7 @@ export function useUpdatePhotoAnnotation() {
   return useMutation({
     mutationFn: ({ id, annotation }: { id: PhotoId; annotation: string }) =>
       photoRepo.updateAnnotation(id, annotation),
+    meta: { errorMessage: "Foto-Anmerkung konnte nicht aktualisiert werden" },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["photos"] });
       queryClient.invalidateQueries({ queryKey: ["syncStatus"] });
@@ -263,6 +275,7 @@ export function useAddMeasurement() {
   return useMutation({
     mutationFn: (data: Omit<NewMeasurement, "id" | "version" | "result">) =>
       measurementRepo.create(data),
+    meta: { errorMessage: "Messung konnte nicht hinzugefügt werden" },
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
         queryKey: ["measurements", variables.installationId],
@@ -276,6 +289,7 @@ export function useDeleteMeasurement() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (id: MeasurementId) => measurementRepo.remove(id),
+    meta: { errorMessage: "Messung konnte nicht gelöscht werden" },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["measurements"] });
       queryClient.invalidateQueries({ queryKey: ["syncStatus"] });

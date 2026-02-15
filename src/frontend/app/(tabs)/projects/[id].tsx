@@ -47,8 +47,12 @@ export default function ProjectDetailScreen() {
       message:
         "Dieses Projekt und alle zugehörigen Daten wirklich löschen?",
       onConfirm: async () => {
-        await deleteProject.mutateAsync(id);
-        router.replace("/(tabs)/projects/");
+        try {
+          await deleteProject.mutateAsync(id);
+          router.replace("/(tabs)/projects/");
+        } catch {
+          // Global MutationCache.onError shows toast
+        }
       },
     });
   };

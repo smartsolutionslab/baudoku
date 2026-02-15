@@ -66,13 +66,17 @@ export default function ZoneDetailScreen() {
   );
 
   const handleQrPress = useCallback(async () => {
-    if (zone && !zone.qrCode) {
-      await updateZone.mutateAsync({
-        id: zoneId,
-        data: { qrCode: qrValue },
-      });
+    try {
+      if (zone && !zone.qrCode) {
+        await updateZone.mutateAsync({
+          id: zoneId,
+          data: { qrCode: qrValue },
+        });
+      }
+      setQrSheetVisible(true);
+    } catch {
+      // Global MutationCache.onError shows toast
     }
-    setQrSheetVisible(true);
   }, [zone, zoneId, qrValue, updateZone]);
 
   const handleDelete = () => {
@@ -80,8 +84,12 @@ export default function ZoneDetailScreen() {
       title: "Zone löschen",
       message: "Diese Zone und alle zugehörigen Daten wirklich löschen?",
       onConfirm: async () => {
-        await deleteZone.mutateAsync(zoneId);
-        router.back();
+        try {
+          await deleteZone.mutateAsync(zoneId);
+          router.back();
+        } catch {
+          // Global MutationCache.onError shows toast
+        }
       },
     });
   };
