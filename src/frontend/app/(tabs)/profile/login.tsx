@@ -4,9 +4,9 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  ActivityIndicator,
 } from "react-native";
 import { router } from "expo-router";
+import { Button } from "../../../src/components/core/Button";
 import { Colors, Spacing, FontSize } from "../../../src/styles/tokens";
 import { loginWithKeycloak, parseUserFromToken } from "../../../src/auth/keycloak";
 import { saveTokens } from "../../../src/auth/tokenStorage";
@@ -59,18 +59,12 @@ export default function LoginScreen() {
           </View>
         )}
 
-        <TouchableOpacity
-          style={[styles.loginButton, loading && styles.loginButtonDisabled]}
+        <Button
+          title="Mit Keycloak anmelden"
           onPress={handleLogin}
-          disabled={loading}
-          activeOpacity={0.7}
-        >
-          {loading ? (
-            <ActivityIndicator color="#FFFFFF" />
-          ) : (
-            <Text style={styles.loginButtonText}>Mit Keycloak anmelden</Text>
-          )}
-        </TouchableOpacity>
+          loading={loading}
+          style={{ marginBottom: Spacing.md }}
+        />
 
         <TouchableOpacity
           style={styles.backButton}
@@ -118,23 +112,6 @@ const styles = StyleSheet.create({
     color: Colors.danger,
     fontSize: FontSize.body,
     textAlign: "center",
-  },
-  loginButton: {
-    backgroundColor: Colors.primary,
-    borderRadius: 12,
-    paddingVertical: 14,
-    paddingHorizontal: Spacing.xl,
-    width: "100%",
-    alignItems: "center",
-    marginBottom: Spacing.md,
-  },
-  loginButtonDisabled: {
-    opacity: 0.6,
-  },
-  loginButtonText: {
-    color: "#FFFFFF",
-    fontSize: FontSize.headline,
-    fontWeight: "600",
   },
   backButton: {
     paddingVertical: Spacing.md,

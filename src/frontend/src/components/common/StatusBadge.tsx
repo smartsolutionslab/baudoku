@@ -15,6 +15,9 @@ const statusColors: Record<string, string> = {
   passed: Colors.success,
   failed: Colors.danger,
   warning: Colors.warning,
+  // Sync outbox
+  pending: Colors.warning,
+  syncing: Colors.primary,
   // Zone type
   building: "#5856D6",
   floor: "#AF52DE",
@@ -33,6 +36,8 @@ export const statusLabels: Record<string, string> = {
   passed: "Bestanden",
   failed: "Fehlgeschlagen",
   warning: "Warnung",
+  pending: "Ausstehend",
+  syncing: "Wird synchronisiert",
   building: "Gebäude",
   floor: "Stockwerk",
   room: "Raum",

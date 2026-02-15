@@ -4,12 +4,12 @@ import {
   Text,
   ScrollView,
   StyleSheet,
-  TouchableOpacity,
   Switch,
   Platform,
 } from "react-native";
 import { router } from "expo-router";
 import { useProjects } from "../../../src/hooks/useOfflineData";
+import { Button } from "../../../src/components/core/Button";
 import { useSyncStatus } from "../../../src/hooks/useSyncStatus";
 import { useAuthStore } from "../../../src/store/useAuthStore";
 import { clearTokens } from "../../../src/auth/tokenStorage";
@@ -58,24 +58,12 @@ export default function ProfileScreen() {
             <Row label="Name" value={user.name} />
             <Row label="Email" value={user.email} />
             <Row label="Rolle" value={displayRole(user.roles)} />
-            <TouchableOpacity
-              style={styles.logoutButton}
-              onPress={handleLogout}
-              activeOpacity={0.7}
-            >
-              <Text style={styles.logoutButtonText}>Abmelden</Text>
-            </TouchableOpacity>
+            <Button title="Abmelden" variant="danger" onPress={handleLogout} />
           </>
         ) : (
           <>
             <Text style={styles.notLoggedInText}>Nicht angemeldet</Text>
-            <TouchableOpacity
-              style={styles.loginButton}
-              onPress={() => router.push("/(tabs)/profile/login")}
-              activeOpacity={0.7}
-            >
-              <Text style={styles.loginButtonText}>Anmelden</Text>
-            </TouchableOpacity>
+            <Button title="Anmelden" onPress={() => router.push("/(tabs)/profile/login")} />
           </>
         )}
       </View>
@@ -210,27 +198,5 @@ const styles = StyleSheet.create({
     fontSize: FontSize.body,
     color: Colors.textTertiary,
     fontStyle: "italic",
-  },
-  loginButton: {
-    backgroundColor: Colors.primary,
-    borderRadius: 10,
-    paddingVertical: 12,
-    alignItems: "center",
-  },
-  loginButtonText: {
-    color: "#FFFFFF",
-    fontSize: FontSize.body,
-    fontWeight: "600",
-  },
-  logoutButton: {
-    backgroundColor: Colors.danger,
-    borderRadius: 10,
-    paddingVertical: 12,
-    alignItems: "center",
-  },
-  logoutButtonText: {
-    color: "#FFFFFF",
-    fontSize: FontSize.body,
-    fontWeight: "600",
   },
 });
