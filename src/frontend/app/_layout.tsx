@@ -13,6 +13,7 @@ import { useMigrationsHelper } from "../src/db/useMigrationsHelper";
 import { startConnectivityMonitor, stopConnectivityMonitor } from "../src/sync/ConnectivityMonitor";
 import { useSettingsStore } from "../src/store/useSettingsStore";
 import { OfflineBanner } from "../src/components/sync/OfflineBanner";
+import { ToastContainer } from "../src/components/core/ToastContainer";
 import { View, Text, ActivityIndicator, StyleSheet } from "react-native";
 
 export { ErrorBoundary } from "expo-router";
@@ -84,6 +85,7 @@ function RootLayoutNav() {
       <AuthProvider>
         <SyncProvider>
           <OfflineBanner />
+          <ToastContainer />
           <Stack>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           </Stack>
