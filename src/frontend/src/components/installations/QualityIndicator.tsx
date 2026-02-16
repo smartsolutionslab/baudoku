@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   detailIcon: {
-    marginRight: 4,
+    marginRight: Spacing.xs,
   },
   detailText: {
     fontSize: FontSize.footnote,
