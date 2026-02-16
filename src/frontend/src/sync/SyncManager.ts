@@ -41,16 +41,11 @@ export class SyncManager {
       operation: e.operation,
       baseVersion: 0,
       payload: e.payload,
-      timestamp: e.timestamp instanceof Date
-        ? e.timestamp.toISOString()
-        : String(e.timestamp),
+      timestamp: e.timestamp instanceof Date ? e.timestamp.toISOString() : String(e.timestamp),
     }));
 
     try {
-      const result: ProcessSyncBatchResult = await syncApi.pushBatch(
-        deviceId,
-        deltas
-      );
+      const result: ProcessSyncBatchResult = await syncApi.pushBatch(deviceId,  deltas);
 
       await syncRepo.markAsSynced(ids);
 
@@ -72,10 +67,7 @@ export class SyncManager {
     const lastSync = await syncRepo.getLastSyncTimestamp();
 
     try {
-      const result: ChangeSetResult = await syncApi.pullChanges(
-        deviceId,
-        lastSync
-      );
+      const result: ChangeSetResult = await syncApi.pullChanges(deviceId, lastSync);
 
       for (const delta of result.changes) {
         await applyServerDelta(delta);
@@ -85,8 +77,7 @@ export class SyncManager {
 
       return { pulled: result.changes.length, errors: [] };
     } catch (error) {
-      const message =
-        error instanceof Error ? error.message : "Unbekannter Fehler";
+      const message = error instanceof Error ? error.message : "Unbekannter Fehler";
       return { pulled: 0, errors: [message] };
     }
   }

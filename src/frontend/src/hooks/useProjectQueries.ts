@@ -20,9 +20,7 @@ export function useProject(id: ProjectId) {
 export function useCreateProject() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (
-      data: Omit<NewProject, "id" | "createdAt" | "updatedAt" | "version">
-    ) => projectRepo.create(data),
+    mutationFn: ( data: Omit<NewProject, "id" | "createdAt" | "updatedAt" | "version"> ) => projectRepo.create(data),
     meta: { errorMessage: "Projekt konnte nicht erstellt werden" },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["projects"] });
@@ -34,15 +32,7 @@ export function useCreateProject() {
 export function useUpdateProject() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({
-      id,
-      data,
-    }: {
-      id: ProjectId;
-      data: Partial<
-        Omit<NewProject, "id" | "createdAt" | "updatedAt" | "version" | "createdBy">
-      >;
-    }) => projectRepo.update(id, data),
+    mutationFn: ({ id, data }: { id: ProjectId; data: Partial<Omit<NewProject, "id" | "createdAt" | "updatedAt" | "version" | "createdBy">> }) => projectRepo.update(id, data),
     meta: { errorMessage: "Projekt konnte nicht aktualisiert werden" },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["projects"] });

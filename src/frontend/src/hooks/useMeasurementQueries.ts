@@ -14,13 +14,10 @@ export function useMeasurementsByInstallation(installationId: InstallationId) {
 export function useAddMeasurement() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: Omit<NewMeasurement, "id" | "version" | "result">) =>
-      measurementRepo.create(data),
+    mutationFn: (data: Omit<NewMeasurement, "id" | "version" | "result">) => measurementRepo.create(data),
     meta: { errorMessage: "Messung konnte nicht hinzugefügt werden" },
     onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({
-        queryKey: ["measurements", variables.installationId],
-      });
+      queryClient.invalidateQueries({ queryKey: ["measurements", variables.installationId] });
       queryClient.invalidateQueries({ queryKey: ["syncStatus"] });
     },
   });

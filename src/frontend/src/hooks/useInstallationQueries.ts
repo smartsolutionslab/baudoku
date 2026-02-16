@@ -25,12 +25,8 @@ export function useCreateInstallation() {
     mutationFn: (data: Omit<NewInstallation, "id" | "createdAt" | "updatedAt" | "version">) => installationRepo.create(data),
     meta: { errorMessage: "Installation konnte nicht erstellt werden" },
     onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({
-        queryKey: ["installations", "zone", variables.zoneId],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["installations", "project", variables.projectId],
-      });
+      queryClient.invalidateQueries({ queryKey: ["installations", "zone", variables.zoneId] });
+      queryClient.invalidateQueries({ queryKey: ["installations", "project", variables.projectId] });
       queryClient.invalidateQueries({ queryKey: ["syncStatus"] });
     },
   });
