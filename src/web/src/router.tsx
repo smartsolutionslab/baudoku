@@ -1,6 +1,6 @@
 import {
   createRouter,
-  createRootRoute,
+  createRootRouteWithContext,
   createRoute,
   redirect,
 } from "@tanstack/react-router";
@@ -15,10 +15,23 @@ import { InstallationListPage } from "./routes/projects/$projectId/installations
 import { InstallationNewPage } from "./routes/projects/$projectId/installations/new";
 import { InstallationDetailPage } from "./routes/projects/$projectId/installations/$installationId/index";
 
+// ─── Router Context ─────────────────────────────────────────────
+
+export type RouterContext = {
+  auth: {
+    isAuthenticated: boolean;
+  };
+};
+
 // ─── Route Tree ─────────────────────────────────────────────────
 
-const rootRoute = createRootRoute({
+const rootRoute = createRootRouteWithContext<RouterContext>()({
   component: RootLayout,
+  beforeLoad: ({ context, location }) => {
+    if (!context.auth.isAuthenticated && location.pathname !== "/login") {
+      throw redirect({ to: "/login" });
+    }
+  },
 });
 
 const indexRoute = createRoute({
@@ -110,7 +123,10 @@ const routeTree = rootRoute.addChildren([
   ]),
 ]);
 
-export const router = createRouter({ routeTree });
+export const router = createRouter({
+  routeTree,
+  context: { auth: undefined! },
+});
 
 declare module "@tanstack/react-router" {
   interface Register {
