@@ -11,16 +11,16 @@ namespace BauDoku.Sync.Application.Commands.ProcessSyncBatch;
 public sealed class ProcessSyncBatchCommandHandler
     : ICommandHandler<ProcessSyncBatchCommand, ProcessSyncBatchResult>
 {
-    private readonly ISyncBatchRepository syncBatchRepository;
+    private readonly ISyncBatchRepository syncBatches;
     private readonly IEntityVersionStore entityVersionStore;
     private readonly IUnitOfWork unitOfWork;
 
     public ProcessSyncBatchCommandHandler(
-        ISyncBatchRepository syncBatchRepository,
+        ISyncBatchRepository syncBatches,
         IEntityVersionStore entityVersionStore,
         IUnitOfWork unitOfWork)
     {
-        this.syncBatchRepository = syncBatchRepository;
+        this.syncBatches = syncBatches;
         this.entityVersionStore = entityVersionStore;
         this.unitOfWork = unitOfWork;
     }
@@ -102,7 +102,7 @@ public sealed class ProcessSyncBatchCommandHandler
         else
             batch.MarkFailed();
 
-        await syncBatchRepository.AddAsync(batch, cancellationToken);
+        await syncBatches.AddAsync(batch, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         SyncMetrics.BatchesProcessed.Add(1);
