@@ -27,20 +27,9 @@ export function useInstallationForm({ initialValues, onSubmit }: UseInstallation
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const hasComponentValues =
-    !!initialValues?.manufacturer ||
-    !!initialValues?.model ||
-    !!initialValues?.serialNumber;
-  const hasCableValues =
-    !!initialValues?.cableType ||
-    initialValues?.crossSectionMm2 != null ||
-    initialValues?.lengthM != null;
-  const hasElectricalValues =
-    !!initialValues?.circuitId ||
-    !!initialValues?.fuseType ||
-    initialValues?.fuseRatingA != null ||
-    initialValues?.voltageV != null ||
-    initialValues?.phase != null;
+  const hasComponentValues = !!initialValues?.manufacturer || !!initialValues?.model || !!initialValues?.serialNumber;
+  const hasCableValues = !!initialValues?.cableType || initialValues?.crossSectionMm2 != null || initialValues?.lengthM != null;
+  const hasElectricalValues = !!initialValues?.circuitId || !!initialValues?.fuseType || initialValues?.fuseRatingA != null || initialValues?.voltageV != null || initialValues?.phase != null;
 
   const set = useCallback((key: string, value: unknown) => {
     setForm((prev) => ({ ...prev, [key]: value }));

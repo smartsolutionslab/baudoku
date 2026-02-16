@@ -14,13 +14,10 @@ export function usePhotosByInstallation(installationId: InstallationId) {
 export function useAddPhoto() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: Omit<NewPhoto, "id" | "version">) =>
-      photoRepo.create(data),
+    mutationFn: (data: Omit<NewPhoto, "id" | "version">) => photoRepo.create(data),
     meta: { errorMessage: "Foto konnte nicht hinzugefügt werden" },
     onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({
-        queryKey: ["photos", variables.installationId],
-      });
+      queryClient.invalidateQueries({ queryKey: ["photos", variables.installationId] });
       queryClient.invalidateQueries({ queryKey: ["syncStatus"] });
     },
   });
@@ -41,8 +38,7 @@ export function useDeletePhoto() {
 export function useUpdatePhotoAnnotation() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, annotation }: { id: PhotoId; annotation: string }) =>
-      photoRepo.updateAnnotation(id, annotation),
+    mutationFn: ({ id, annotation }: { id: PhotoId; annotation: string }) => photoRepo.updateAnnotation(id, annotation),
     meta: { errorMessage: "Foto-Anmerkung konnte nicht aktualisiert werden" },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["photos"] });

@@ -11,9 +11,7 @@ export function UploadProgressBar() {
   const total = queue.length;
   const completed = queue.filter((i) => i.status === "completed").length;
   const failed = queue.filter((i) => i.status === "failed").length;
-  const uploading = queue.filter(
-    (i) => i.status === "uploading" || i.status === "queued"
-  ).length;
+  const uploading = queue.filter((i) => i.status === "uploading" || i.status === "queued").length;
   const allDone = total > 0 && uploading === 0;
   const hasActive = uploading > 0;
 
