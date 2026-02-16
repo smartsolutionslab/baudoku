@@ -14,10 +14,10 @@ import {
 import { FontAwesome } from "@expo/vector-icons";
 import type { Photo } from "../../db/repositories/types";
 import type { PhotoId } from "../../types/branded";
-import { StatusBadge } from "../common/StatusBadge";
+import { StatusBadge } from "../common";
 import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
-import { formatDateTime } from "../../utils/formatDate";
-import { photoTypeLabels } from "../../constants/photoLabels";
+import { formatDateTime } from "../../utils";
+import { photoTypeLabels } from "../../constants";
 
 type PhotoViewerProps = {
   photo: Photo | null;

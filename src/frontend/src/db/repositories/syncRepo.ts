@@ -1,8 +1,7 @@
 import { eq, and, sql } from "drizzle-orm";
 import { db } from "../client";
 import { syncOutbox, syncMeta } from "../schema";
-import { generateId } from "../../utils/uuid";
-import { getDeviceId } from "../../utils/deviceId";
+import { generateId, getDeviceId } from "../../utils";
 import type { SyncOutboxEntry } from "./types";
 
 export async function createOutboxEntry(

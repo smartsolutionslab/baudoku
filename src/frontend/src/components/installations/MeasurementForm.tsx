@@ -7,12 +7,12 @@ import {
   Alert,
   ScrollView,
 } from "react-native";
-import { FormField } from "../common/FormField";
+import { FormField } from "../common";
 import { Button, Headline } from "../core";
 import {
   MEASUREMENT_TYPES,
   type MeasurementTypePreset,
-} from "../../constants/measurementTypes";
+} from "../../constants";
 import {
   measurementSchema,
   type MeasurementFormData,

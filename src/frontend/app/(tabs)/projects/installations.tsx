@@ -7,13 +7,10 @@ import {
   StyleSheet,
 } from "react-native";
 import { useLocalSearchParams, useRouter, Stack } from "expo-router";
-import { useInstallationsByProject } from "../../../src/hooks/useOfflineData";
-import { StatusBadge } from "../../../src/components/common/StatusBadge";
-import { EmptyState } from "../../../src/components/common/EmptyState";
-import { SearchBar } from "../../../src/components/common/SearchBar";
-import { FilterChips } from "../../../src/components/common/FilterChips";
+import { useInstallationsByProject } from "../../../src/hooks";
+import { StatusBadge, EmptyState, SearchBar, FilterChips } from "../../../src/components/common";
 import { Colors, Spacing, FontSize, Radius } from "../../../src/styles/tokens";
-import { INSTALLATION_TYPE_OPTIONS, INSTALLATION_STATUS_OPTIONS } from "../../../src/constants/installationOptions";
+import { INSTALLATION_TYPE_OPTIONS, INSTALLATION_STATUS_OPTIONS } from "../../../src/constants";
 import type { Installation } from "../../../src/db/repositories/types";
 import { projectId as toProjectId } from "../../../src/types/branded";
 

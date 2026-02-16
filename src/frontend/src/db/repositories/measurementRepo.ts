@@ -1,7 +1,7 @@
 import { eq, count } from "drizzle-orm";
 import { db } from "../client";
 import { measurements } from "../schema";
-import { generateId } from "../../utils/uuid";
+import { generateId } from "../../utils";
 import { createOutboxEntry } from "./syncRepo";
 import type { Measurement, NewMeasurement } from "./types";
 import type { MeasurementId, InstallationId } from "../../types/branded";

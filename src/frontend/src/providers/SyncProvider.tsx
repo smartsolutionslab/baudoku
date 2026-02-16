@@ -2,8 +2,8 @@ import React, { useEffect, useRef, createContext, useContext } from "react";
 import { SyncManager } from "../sync/SyncManager";
 import { SyncScheduler } from "../sync/SyncScheduler";
 import { setOnReconnect } from "../sync/ConnectivityMonitor";
-import { useSyncStore } from "../store/useSyncStore";
-import { UploadProgressBar } from "../components/sync/UploadProgressBar";
+import { useSyncStore } from "../store";
+import { UploadProgressBar } from "../components/sync";
 import * as photoRepo from "../db/repositories/photoRepo";
 
 type SyncContextValue = {

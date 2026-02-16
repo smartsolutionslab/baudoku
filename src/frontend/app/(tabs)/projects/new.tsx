@@ -1,6 +1,6 @@
 import { useRouter } from "expo-router";
-import { useCreateProject } from "../../../src/hooks/useOfflineData";
-import { ProjectForm } from "../../../src/components/projects/ProjectForm";
+import { useCreateProject } from "../../../src/hooks";
+import { ProjectForm } from "../../../src/components/projects";
 import type { ProjectFormData } from "../../../src/validation/schemas";
 
 export default function NewProjectScreen() {

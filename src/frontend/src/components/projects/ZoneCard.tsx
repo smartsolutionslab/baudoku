@@ -1,6 +1,6 @@
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import type { ZoneNode } from "../../hooks/useZoneTree";
-import { StatusBadge } from "../common/StatusBadge";
+import type { ZoneNode } from "../../hooks";
+import { StatusBadge } from "../common";
 import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
 
 type ZoneCardProps = {

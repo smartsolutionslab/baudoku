@@ -4,7 +4,7 @@ import {
   calculateGpsQuality,
   gpsSourceLabels,
   type GpsQualityResult,
-} from "../../utils/gpsQuality";
+} from "../../utils";
 import { Colors, Spacing, FontSize, FontFamily } from "../../styles/tokens";
 
 type QualityIndicatorProps = {

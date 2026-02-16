@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { View, Text, StyleSheet, Animated } from "react-native";
-import { useUploadStore } from "../../store/useUploadStore";
+import { useUploadStore } from "../../store";
 import { Colors, Spacing, FontSize, Radius, Shadows } from "../../styles/tokens";
 
 export function UploadProgressBar() {

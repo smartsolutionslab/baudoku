@@ -9,10 +9,9 @@ import {
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import type { Photo } from "../../db/repositories/types";
-import { StatusBadge } from "../common/StatusBadge";
-import { EmptyState } from "../common/EmptyState";
+import { StatusBadge, EmptyState } from "../common";
 import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
-import { photoTypeLabels } from "../../constants/photoLabels";
+import { photoTypeLabels } from "../../constants";
 
 type PhotoGalleryProps = {
   photos: Photo[];

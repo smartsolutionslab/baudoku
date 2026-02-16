@@ -1,4 +1,4 @@
-import { useSyncStore } from "../store/useSyncStore";
+import { useSyncStore } from "../store";
 import { useSyncStatusQuery } from "./useOfflineData";
 
 export function useSyncStatus() {

@@ -4,16 +4,13 @@ import {
   useProject,
   useZonesByProject,
   useDeleteProject,
-} from "../../../src/hooks/useOfflineData";
-import { useZoneTree } from "../../../src/hooks/useZoneTree";
-import { useConfirmDelete } from "../../../src/hooks/useConfirmDelete";
-import { ZoneTree } from "../../../src/components/projects/ZoneTree";
-import { StatusBadge } from "../../../src/components/common/StatusBadge";
-import { EmptyState } from "../../../src/components/common/EmptyState";
-import { FloatingActionButton } from "../../../src/components/common/FloatingActionButton";
-import { ActionBar } from "../../../src/components/common/ActionBar";
+  useZoneTree,
+  useConfirmDelete,
+} from "../../../src/hooks";
+import { ZoneTree } from "../../../src/components/projects";
+import { StatusBadge, EmptyState, FloatingActionButton, ActionBar } from "../../../src/components/common";
 import { Colors, Spacing, FontSize, Radius } from "../../../src/styles/tokens";
-import { formatDate } from "../../../src/utils/formatDate";
+import { formatDate } from "../../../src/utils";
 import { projectId } from "../../../src/types/branded";
 
 export default function ProjectDetailScreen() {

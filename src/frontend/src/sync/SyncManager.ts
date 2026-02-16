@@ -2,9 +2,9 @@ import * as syncRepo from "../db/repositories/syncRepo";
 import * as photoRepo from "../db/repositories/photoRepo";
 import * as syncApi from "./syncApi";
 import { applyServerDelta } from "./applyServerDelta";
-import { getDeviceId } from "../utils/deviceId";
+import { getDeviceId } from "../utils";
 import { uploadPhotoChunked } from "./chunkedUpload";
-import { useUploadStore } from "../store/useUploadStore";
+import { useUploadStore } from "../store";
 import type { SyncDeltaDto, ProcessSyncBatchResult, ChangeSetResult } from "./syncApi";
 
 export type SyncResult = {

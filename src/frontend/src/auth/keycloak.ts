@@ -4,7 +4,7 @@ import {
   KEYCLOAK_REALM,
   KEYCLOAK_CLIENT_ID,
 } from "../config/environment";
-import type { AuthUser } from "../store/useAuthStore";
+import type { AuthUser } from "../store";
 
 const realmUrl = `${KEYCLOAK_URL}/realms/${KEYCLOAK_REALM}`;
 

@@ -1,6 +1,6 @@
 import * as ImagePicker from "expo-image-picker";
 import { useCallback } from "react";
-import { savePhoto } from "../utils/photoStorage";
+import { savePhoto } from "../utils";
 
 export type ExifData = {
   gpsLatitude?: number;

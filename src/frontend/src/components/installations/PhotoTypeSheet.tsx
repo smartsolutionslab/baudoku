@@ -1,5 +1,5 @@
 import { Text, TouchableOpacity, StyleSheet } from "react-native";
-import { BottomSheet } from "../common/BottomSheet";
+import { BottomSheet } from "../common";
 import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
 
 const PHOTO_TYPES = [

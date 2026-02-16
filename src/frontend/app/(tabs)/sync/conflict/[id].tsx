@@ -1,7 +1,7 @@
 import { View, Text, ActivityIndicator, StyleSheet } from "react-native";
 import { useLocalSearchParams } from "expo-router";
-import { ConflictDetail } from "../../../../src/components/sync/ConflictDetail";
-import { useConflicts, useResolveConflict } from "../../../../src/hooks/useConflicts";
+import { ConflictDetail } from "../../../../src/components/sync";
+import { useConflicts, useResolveConflict } from "../../../../src/hooks";
 import { Colors, FontSize } from "../../../../src/styles/tokens";
 
 export default function ConflictDetailScreen() {
