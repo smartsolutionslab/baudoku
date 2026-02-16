@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { View } from "react-native";
 import { ZoneCard } from "./ZoneCard";
 import type { ZoneNode } from "../../hooks/useZoneTree";

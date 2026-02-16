@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -16,6 +16,7 @@ import type { Photo } from "../../db/repositories/types";
 import type { PhotoId } from "../../types/branded";
 import { StatusBadge } from "../common/StatusBadge";
 import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
+import { formatDateTime } from "../../utils/formatDate";
 import { photoTypeLabels } from "../../constants/photoLabels";
 
 type PhotoViewerProps = {
@@ -82,15 +83,7 @@ export function PhotoViewer({
                 label={photoTypeLabels[photo.type] ?? photo.type}
               />
               <Text style={styles.date}>
-                {photo.takenAt
-                  ? new Date(photo.takenAt).toLocaleDateString("de-DE", {
-                      day: "2-digit",
-                      month: "2-digit",
-                      year: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })
-                  : ""}
+                {formatDateTime(photo.takenAt ? new Date(photo.takenAt) : null)}
               </Text>
             </View>
 

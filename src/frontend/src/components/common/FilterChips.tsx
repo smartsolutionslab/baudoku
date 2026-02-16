@@ -1,4 +1,3 @@
-import React from "react";
 import { ScrollView, TouchableOpacity, Text, StyleSheet } from "react-native";
 import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
 

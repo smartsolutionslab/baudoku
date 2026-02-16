@@ -1,4 +1,3 @@
-import React from "react";
 import { View, TextInput, TouchableOpacity, StyleSheet } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";

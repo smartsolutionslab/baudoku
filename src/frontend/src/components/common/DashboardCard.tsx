@@ -1,4 +1,3 @@
-import React from "react";
 import { Text, StyleSheet } from "react-native";
 import { Card, Caption } from "../core";
 import { Colors, Spacing, FontSize } from "../../styles/tokens";

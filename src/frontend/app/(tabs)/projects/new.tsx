@@ -1,4 +1,3 @@
-import React from "react";
 import { useRouter } from "expo-router";
 import { useCreateProject } from "../../../src/hooks/useOfflineData";
 import { ProjectForm } from "../../../src/components/projects/ProjectForm";
