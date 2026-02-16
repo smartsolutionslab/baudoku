@@ -12,7 +12,7 @@ public sealed class DependencyTests
         typeof(BauDoku.BuildingBlocks.Application.DependencyInjection).Assembly;
 
     private static readonly Assembly BuildingBlocksInfrastructure =
-        typeof(BauDoku.BuildingBlocks.Infrastructure.DependencyInjection).Assembly;
+        typeof(BauDoku.BuildingBlocks.Infrastructure.Persistence.BaseDbContext).Assembly;
 
     private static Assembly LoadAssembly(string name) => Assembly.Load(name);
 
