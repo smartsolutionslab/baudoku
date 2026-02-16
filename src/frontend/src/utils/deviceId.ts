@@ -8,7 +8,11 @@ let cachedDeviceId: string | null = null;
 export async function getDeviceId(): Promise<string> {
   if (cachedDeviceId) return cachedDeviceId;
 
-  const row = await db.select().from(syncMeta).where(eq(syncMeta.key, "deviceId")).get();
+  const row = await db
+    .select()
+    .from(syncMeta)
+    .where(eq(syncMeta.key, "deviceId"))
+    .get();
 
   if (row) {
     cachedDeviceId = row.value;

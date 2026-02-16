@@ -226,7 +226,6 @@ src/backend/
 - **Ticket-Prefix:** `BD-xxx`
 - **Tests:** xUnit + AwesomeAssertions + NSubstitute + Testcontainers (PostgreSQL)
 - **Keine Primitive im Domain:** `ProjectIdentifier` statt `Guid`, `ProjectName` statt `string`, `Depth` statt `int`
-- **Repository-Variablen** wie Collections benennen: `IProjectRepository` → `projects`, `IInstallationRepository` → `installations` (nicht `projectRepository`)
 - **Frontend:** Branded Types (`src/frontend/src/types/branded.ts`), `type` statt `interface` für Daten-Shapes
 
 ## NuGet Packages (Central Package Management)

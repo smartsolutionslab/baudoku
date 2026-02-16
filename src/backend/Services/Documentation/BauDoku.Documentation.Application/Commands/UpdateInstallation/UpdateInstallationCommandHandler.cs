@@ -7,21 +7,21 @@ namespace BauDoku.Documentation.Application.Commands.UpdateInstallation;
 
 public sealed class UpdateInstallationCommandHandler : ICommandHandler<UpdateInstallationCommand>
 {
-    private readonly IInstallationRepository installations;
+    private readonly IInstallationRepository installationRepository;
     private readonly IUnitOfWork unitOfWork;
 
     public UpdateInstallationCommandHandler(
-        IInstallationRepository installations,
+        IInstallationRepository installationRepository,
         IUnitOfWork unitOfWork)
     {
-        this.installations = installations;
+        this.installationRepository = installationRepository;
         this.unitOfWork = unitOfWork;
     }
 
     public async Task Handle(UpdateInstallationCommand command, CancellationToken cancellationToken)
     {
         var installationId = InstallationIdentifier.From(command.InstallationId);
-        var installation = await installations.GetByIdAsync(installationId, cancellationToken)
+        var installation = await installationRepository.GetByIdAsync(installationId, cancellationToken)
             ?? throw new InvalidOperationException($"Installation mit ID {command.InstallationId} nicht gefunden.");
 
         if (command.Latitude.HasValue && command.Longitude.HasValue

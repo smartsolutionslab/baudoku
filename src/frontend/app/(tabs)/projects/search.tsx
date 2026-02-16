@@ -1,10 +1,19 @@
+import React from "react";
 import { View, FlatList, Text, StyleSheet } from "react-native";
 import { useRouter, Stack } from "expo-router";
-import { useInstallationSearch } from "../../../src/hooks";
-import { SearchBar, FilterChips, EmptyState } from "../../../src/components/common";
-import { InstallationCard } from "../../../src/components/installations";
+import { useInstallationSearch } from "../../../src/hooks/useInstallationSearch";
+import { SearchBar } from "../../../src/components/common/SearchBar";
+import { FilterChips } from "../../../src/components/common/FilterChips";
+import { InstallationCard } from "../../../src/components/installations/InstallationCard";
+import { EmptyState } from "../../../src/components/common/EmptyState";
 import { Colors, Spacing, FontSize } from "../../../src/styles/tokens";
-import { INSTALLATION_STATUS_OPTIONS } from "../../../src/constants";
+
+const STATUS_OPTIONS = [
+  { label: "Geplant", value: "planned" },
+  { label: "In Arbeit", value: "in_progress" },
+  { label: "Fertig", value: "completed" },
+  { label: "Geprüft", value: "inspected" },
+];
 
 export default function SearchScreen() {
   const router = useRouter();
@@ -22,7 +31,7 @@ export default function SearchScreen() {
       />
 
       <FilterChips
-        options={INSTALLATION_STATUS_OPTIONS}
+        options={STATUS_OPTIONS}
         selected={filters.status ?? []}
         onToggle={toggleStatus}
       />

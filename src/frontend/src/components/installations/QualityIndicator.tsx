@@ -1,11 +1,12 @@
+import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import {
   calculateGpsQuality,
   gpsSourceLabels,
   type GpsQualityResult,
-} from "../../utils";
-import { Colors, Spacing, FontSize, FontFamily } from "../../styles/tokens";
+} from "../../utils/gpsQuality";
+import { Colors, Spacing, FontSize } from "../../styles/tokens";
 
 type QualityIndicatorProps = {
   gpsAccuracy: number;
@@ -119,7 +120,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   gradeText: {
-    color: Colors.white,
+    color: "#fff",
     fontSize: FontSize.footnote,
     fontWeight: "700",
   },
@@ -131,7 +132,7 @@ const styles = StyleSheet.create({
   accuracyText: {
     fontSize: FontSize.caption,
     color: Colors.textTertiary,
-    fontFamily: FontFamily.mono,
+    fontFamily: "SpaceMono",
   },
   detailRow: {
     flexDirection: "row",
@@ -143,7 +144,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   detailIcon: {
-    marginRight: Spacing.xs,
+    marginRight: 4,
   },
   detailText: {
     fontSize: FontSize.footnote,
@@ -152,7 +153,7 @@ const styles = StyleSheet.create({
   warningBanner: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: Colors.gpsBgD,
+    backgroundColor: "#FFEBEE",
     paddingHorizontal: Spacing.sm,
     paddingVertical: Spacing.xs,
     borderRadius: 6,

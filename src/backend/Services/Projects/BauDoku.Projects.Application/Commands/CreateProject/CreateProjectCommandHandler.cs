@@ -11,12 +11,12 @@ namespace BauDoku.Projects.Application.Commands.CreateProject;
 
 public sealed class CreateProjectCommandHandler : ICommandHandler<CreateProjectCommand, Guid>
 {
-    private readonly IProjectRepository projects;
+    private readonly IProjectRepository projectRepository;
     private readonly IUnitOfWork unitOfWork;
 
-    public CreateProjectCommandHandler(IProjectRepository projects, IUnitOfWork unitOfWork)
+    public CreateProjectCommandHandler(IProjectRepository projectRepository, IUnitOfWork unitOfWork)
     {
-        this.projects = projects;
+        this.projectRepository = projectRepository;
         this.unitOfWork = unitOfWork;
     }
 
@@ -25,7 +25,7 @@ public sealed class CreateProjectCommandHandler : ICommandHandler<CreateProjectC
         var projectId = ProjectIdentifier.New();
         var name = ProjectName.From(command.Name);
 
-        var nameExists = await projects.ExistsByNameAsync(name, cancellationToken);
+        var nameExists = await projectRepository.ExistsByNameAsync(name, cancellationToken);
         var rule = new ProjectMustHaveUniqueName(nameExists);
         if (rule.IsBroken())
             throw new BusinessRuleException(rule);
@@ -35,7 +35,7 @@ public sealed class CreateProjectCommandHandler : ICommandHandler<CreateProjectC
 
         var project = Project.Create(projectId, name, address, client);
 
-        await projects.AddAsync(project, cancellationToken);
+        await projectRepository.AddAsync(project, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         ProjectsMetrics.ProjectsCreated.Add(1);

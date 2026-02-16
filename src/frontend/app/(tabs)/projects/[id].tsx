@@ -1,17 +1,29 @@
+import React from "react";
 import { View, Text, ScrollView, StyleSheet } from "react-native";
 import { useLocalSearchParams, useRouter, Stack } from "expo-router";
 import {
   useProject,
   useZonesByProject,
   useDeleteProject,
-  useZoneTree,
-  useConfirmDelete,
-} from "../../../src/hooks";
-import { ZoneTree } from "../../../src/components/projects";
-import { StatusBadge, EmptyState, FloatingActionButton, ActionBar } from "../../../src/components/common";
-import { Colors, Spacing, FontSize, Radius } from "../../../src/styles/tokens";
-import { formatDate } from "../../../src/utils";
+} from "../../../src/hooks/useOfflineData";
+import { useZoneTree } from "../../../src/hooks/useZoneTree";
+import { useConfirmDelete } from "../../../src/hooks/useConfirmDelete";
+import { ZoneTree } from "../../../src/components/projects/ZoneTree";
+import { StatusBadge } from "../../../src/components/common/StatusBadge";
+import { EmptyState } from "../../../src/components/common/EmptyState";
+import { FloatingActionButton } from "../../../src/components/common/FloatingActionButton";
+import { ActionBar } from "../../../src/components/common/ActionBar";
+import { Colors, Spacing, FontSize } from "../../../src/styles/tokens";
 import { projectId } from "../../../src/types/branded";
+
+function formatDate(d: Date | null | undefined): string {
+  if (!d) return "";
+  return d.toLocaleDateString("de-DE", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+}
 
 export default function ProjectDetailScreen() {
   const { id: rawId } = useLocalSearchParams<{ id: string }>();
@@ -35,12 +47,8 @@ export default function ProjectDetailScreen() {
       message:
         "Dieses Projekt und alle zugehörigen Daten wirklich löschen?",
       onConfirm: async () => {
-        try {
-          await deleteProject.mutateAsync(id);
-          router.replace("/(tabs)/projects/");
-        } catch {
-          // Global MutationCache.onError shows toast
-        }
+        await deleteProject.mutateAsync(id);
+        router.replace("/(tabs)/projects/");
       },
     });
   };
@@ -149,7 +157,7 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: Colors.card,
     margin: Spacing.lg,
-    borderRadius: Radius.lg,
+    borderRadius: 12,
     padding: Spacing.lg,
     gap: Spacing.md,
   },

@@ -1,8 +1,8 @@
+import React from "react";
 import { View, Text, ActivityIndicator, StyleSheet } from "react-native";
 import { useLocalSearchParams } from "expo-router";
-import { ConflictDetail } from "../../../../src/components/sync";
-import { useConflicts, useResolveConflict } from "../../../../src/hooks";
-import { Colors, FontSize } from "../../../../src/styles/tokens";
+import { ConflictDetail } from "../../../../src/components/sync/ConflictDetail";
+import { useConflicts, useResolveConflict } from "../../../../src/hooks/useConflicts";
 
 export default function ConflictDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   errorText: {
-    color: Colors.danger,
-    fontSize: FontSize.body,
+    color: "#FF3B30",
+    fontSize: 15,
   },
 });

@@ -1,5 +1,6 @@
+import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { Colors, Spacing, Radius } from "../../styles/tokens";
+import { Colors } from "../../styles/tokens";
 
 const statusColors: Record<string, string> = {
   // Project
@@ -14,18 +15,15 @@ const statusColors: Record<string, string> = {
   passed: Colors.success,
   failed: Colors.danger,
   warning: Colors.warning,
-  // Sync outbox
-  pending: Colors.warning,
-  syncing: Colors.primary,
   // Zone type
-  building: Colors.zoneBuilding,
-  floor: Colors.zoneFloor,
-  room: Colors.primary,
-  trench: Colors.warning,
-  section: Colors.textTertiary,
+  building: "#5856D6",
+  floor: "#AF52DE",
+  room: "#007AFF",
+  trench: "#FF9500",
+  section: "#8E8E93",
 };
 
-export const statusLabels: Record<string, string> = {
+const statusLabels: Record<string, string> = {
   active: "Aktiv",
   completed: "Abgeschlossen",
   archived: "Archiviert",
@@ -35,8 +33,6 @@ export const statusLabels: Record<string, string> = {
   passed: "Bestanden",
   failed: "Fehlgeschlagen",
   warning: "Warnung",
-  pending: "Ausstehend",
-  syncing: "Wird synchronisiert",
   building: "Gebäude",
   floor: "Stockwerk",
   room: "Raum",
@@ -62,13 +58,13 @@ export function StatusBadge({ status, label }: StatusBadgeProps) {
 
 const styles = StyleSheet.create({
   badge: {
-    paddingHorizontal: Spacing.sm,
+    paddingHorizontal: 8,
     paddingVertical: 2,
-    borderRadius: Radius.md,
+    borderRadius: 10,
     alignSelf: "flex-start",
   },
   text: {
-    color: Colors.white,
+    color: "#fff",
     fontSize: 11,
     fontWeight: "600",
     textTransform: "uppercase",

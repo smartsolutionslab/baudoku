@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
+import { Colors, Spacing, FontSize } from "../../styles/tokens";
 
 type EmptyStateProps = {
   icon?: React.ComponentProps<typeof FontAwesome>["name"];
@@ -11,11 +11,22 @@ type EmptyStateProps = {
   onAction?: () => void;
 };
 
-export function EmptyState({ icon, title, subtitle, actionLabel, onAction }: EmptyStateProps) {
+export function EmptyState({
+  icon,
+  title,
+  subtitle,
+  actionLabel,
+  onAction,
+}: EmptyStateProps) {
   return (
     <View style={styles.container}>
       {icon && (
-        <FontAwesome name={icon} size={48} color={Colors.disabled} style={styles.icon}/>
+        <FontAwesome
+          name={icon}
+          size={48}
+          color={Colors.disabled}
+          style={styles.icon}
+        />
       )}
       <Text style={styles.title}>{title}</Text>
       {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
@@ -56,10 +67,10 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary,
     paddingHorizontal: Spacing.xl,
     paddingVertical: Spacing.md,
-    borderRadius: Radius.md,
+    borderRadius: 10,
   },
   buttonText: {
-    color: Colors.white,
+    color: "#fff",
     fontSize: FontSize.body,
     fontWeight: "600",
   },

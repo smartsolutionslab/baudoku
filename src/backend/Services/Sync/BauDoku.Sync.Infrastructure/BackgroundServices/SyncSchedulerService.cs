@@ -53,10 +53,10 @@ public sealed class SyncSchedulerService : BackgroundService
     private async Task ProcessPendingBatchesAsync(CancellationToken ct)
     {
         await using var scope = scopeFactory.CreateAsyncScope();
-        var syncBatches = scope.ServiceProvider.GetRequiredService<ISyncBatchRepository>();
+        var repository = scope.ServiceProvider.GetRequiredService<ISyncBatchRepository>();
         var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
 
-        var pendingBatches = await syncBatches.GetPendingBatchesAsync(limit: 10, ct);
+        var pendingBatches = await repository.GetPendingBatchesAsync(limit: 10, ct);
 
         if (pendingBatches.Count == 0)
             return;

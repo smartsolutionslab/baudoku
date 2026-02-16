@@ -1,9 +1,15 @@
-import { ScrollView, StyleSheet } from "react-native";
-import { FormField, FormPicker } from "../common";
-import { Button } from "../core";
-import { useZoneForm } from "../../hooks";
+import React from "react";
+import {
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+} from "react-native";
+import { FormField } from "../common/FormField";
+import { FormPicker } from "../common/FormPicker";
+import { useZoneForm } from "../../hooks/useZoneForm";
 import type { ZoneFormData } from "../../validation/schemas";
-import { Colors, Spacing } from "../../styles/tokens";
+import { Colors, Spacing, FontSize } from "../../styles/tokens";
 import type { Zone } from "../../db/repositories/types";
 
 const typeOptions = [
@@ -23,8 +29,19 @@ type ZoneFormProps = {
   submitting?: boolean;
 };
 
-export function ZoneForm({ zones, defaultParentZoneId, initialValues, submitLabel, onSubmit, submitting }: ZoneFormProps) {
-  const { form, errors, set, handleSubmit } = useZoneForm({ initialValues, defaultParentZoneId, onSubmit });
+export function ZoneForm({
+  zones,
+  defaultParentZoneId,
+  initialValues,
+  submitLabel,
+  onSubmit,
+  submitting,
+}: ZoneFormProps) {
+  const { form, errors, set, handleSubmit } = useZoneForm({
+    initialValues,
+    defaultParentZoneId,
+    onSubmit,
+  });
 
   const parentOptions = [
     { label: "\u2014 Keine \u2014", value: "__none__" },
@@ -72,12 +89,15 @@ export function ZoneForm({ zones, defaultParentZoneId, initialValues, submitLabe
         placeholder="0"
       />
 
-      <Button
-        title={submitting ? "Speichert..." : (submitLabel ?? "Speichern")}
+      <TouchableOpacity
+        style={[styles.button, submitting && styles.buttonDisabled]}
         onPress={() => void handleSubmit()}
-        loading={submitting}
-        style={styles.button}
-      />
+        disabled={submitting}
+      >
+        <Text style={styles.buttonText}>
+          {submitting ? "Speichert..." : (submitLabel ?? "Speichern")}
+        </Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 }
@@ -92,6 +112,18 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   button: {
+    backgroundColor: Colors.primary,
+    paddingVertical: 14,
+    borderRadius: 10,
+    alignItems: "center",
     marginTop: Spacing.xl,
+  },
+  buttonDisabled: {
+    backgroundColor: Colors.disabled,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: FontSize.callout,
+    fontWeight: "600",
   },
 });

@@ -1,10 +1,23 @@
-import { useState, useCallback } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Alert, ScrollView } from "react-native";
-import { FormField } from "../common";
+import React, { useState, useCallback } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Alert,
+  ScrollView,
+} from "react-native";
+import { FormField } from "../common/FormField";
 import { Button, Headline } from "../core";
-import { MEASUREMENT_TYPES, type MeasurementTypePreset } from "../../constants";
-import { measurementSchema, type MeasurementFormData } from "../../validation/schemas";
-import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
+import {
+  MEASUREMENT_TYPES,
+  type MeasurementTypePreset,
+} from "../../constants/measurementTypes";
+import {
+  measurementSchema,
+  type MeasurementFormData,
+} from "../../validation/schemas";
+import { Colors, Spacing, FontSize } from "../../styles/tokens";
 
 type MeasurementFormProps = {
   onSubmit: (data: MeasurementFormData) => Promise<void>;
@@ -12,7 +25,11 @@ type MeasurementFormProps = {
   submitting?: boolean;
 };
 
-export function MeasurementForm({ onSubmit, onCancel, submitting }: MeasurementFormProps) {
+export function MeasurementForm({
+  onSubmit,
+  onCancel,
+  submitting,
+}: MeasurementFormProps) {
   const [form, setForm] = useState<Record<string, string>>({
     measuredBy: "local-user",
   });
@@ -33,8 +50,10 @@ export function MeasurementForm({ onSubmit, onCancel, submitting }: MeasurementF
       ...prev,
       type: preset.type,
       unit: preset.unit,
-      minThreshold: preset.minThreshold != null ? String(preset.minThreshold) : "",
-      maxThreshold: preset.maxThreshold != null ? String(preset.maxThreshold) : "",
+      minThreshold:
+        preset.minThreshold != null ? String(preset.minThreshold) : "",
+      maxThreshold:
+        preset.maxThreshold != null ? String(preset.maxThreshold) : "",
     }));
     setShowSuggestions(false);
     setErrors({});
@@ -90,9 +109,17 @@ export function MeasurementForm({ onSubmit, onCancel, submitting }: MeasurementF
           placeholder="z.B. Isolationswiderstand"
         />
         {showSuggestions && filteredSuggestions.length > 0 && (
-          <ScrollView horizontal style={styles.suggestions} showsHorizontalScrollIndicator={false}>
+          <ScrollView
+            horizontal
+            style={styles.suggestions}
+            showsHorizontalScrollIndicator={false}
+          >
             {filteredSuggestions.map((mt) => (
-              <TouchableOpacity key={mt.type} style={styles.chip} onPress={() => applyPreset(mt)}>
+              <TouchableOpacity
+                key={mt.type}
+                style={styles.chip}
+                onPress={() => applyPreset(mt)}
+              >
                 <Text style={styles.chipText}>{mt.type}</Text>
               </TouchableOpacity>
             ))}
@@ -181,7 +208,7 @@ export function MeasurementForm({ onSubmit, onCancel, submitting }: MeasurementF
 const styles = StyleSheet.create({
   container: {
     backgroundColor: Colors.card,
-    borderRadius: Radius.lg,
+    borderRadius: 12,
     padding: Spacing.lg,
   },
   title: {
@@ -193,7 +220,7 @@ const styles = StyleSheet.create({
   },
   chip: {
     backgroundColor: Colors.background,
-    borderRadius: Radius.xl,
+    borderRadius: 16,
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.xs,
     marginRight: Spacing.xs,

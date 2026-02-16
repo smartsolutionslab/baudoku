@@ -1,6 +1,10 @@
+import React from "react";
 import { useLocalSearchParams, useRouter, Stack } from "expo-router";
-import { useProject, useUpdateProject } from "../../../src/hooks";
-import { ProjectForm } from "../../../src/components/projects";
+import {
+  useProject,
+  useUpdateProject,
+} from "../../../src/hooks/useOfflineData";
+import { ProjectForm } from "../../../src/components/projects/ProjectForm";
 import type { ProjectFormData } from "../../../src/validation/schemas";
 import { projectId } from "../../../src/types/branded";
 
@@ -24,12 +28,8 @@ export default function EditProjectScreen() {
   };
 
   const handleSubmit = async (data: ProjectFormData) => {
-    try {
-      await updateProject.mutateAsync({ id, data });
-      router.back();
-    } catch {
-      // Global MutationCache.onError shows toast
-    }
+    await updateProject.mutateAsync({ id, data });
+    router.back();
   };
 
   return (

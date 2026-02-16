@@ -1,7 +1,8 @@
+import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import type { ZoneNode } from "../../hooks";
-import { StatusBadge } from "../common";
-import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
+import type { ZoneNode } from "../../hooks/useZoneTree";
+import { StatusBadge } from "../common/StatusBadge";
+import { Colors, Spacing, FontSize } from "../../styles/tokens";
 
 type ZoneCardProps = {
   node: ZoneNode;
@@ -14,7 +15,11 @@ export function ZoneCard({ node, expanded, onPress, onToggle }: ZoneCardProps) {
   const hasChildren = node.children.length > 0;
 
   return (
-    <TouchableOpacity style={[styles.card, { marginLeft: node.level * 24 }]} onPress={onPress} activeOpacity={0.7}>
+    <TouchableOpacity
+      style={[styles.card, { marginLeft: node.level * 24 }]}
+      onPress={onPress}
+      activeOpacity={0.7}
+    >
       <View style={styles.row}>
         {hasChildren ? (
           <TouchableOpacity onPress={onToggle} style={styles.toggle}>
@@ -46,7 +51,7 @@ export function ZoneCard({ node, expanded, onPress, onToggle }: ZoneCardProps) {
 const styles = StyleSheet.create({
   card: {
     backgroundColor: Colors.card,
-    borderRadius: Radius.md,
+    borderRadius: 10,
     padding: Spacing.md,
     marginBottom: Spacing.sm,
   },

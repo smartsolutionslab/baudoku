@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import { Platform } from "react-native";
 import * as Location from "expo-location";
-import { useSettingsStore } from "../store";
+import { useSettingsStore } from "../store/useSettingsStore";
 
 export type GpsSource = "internal_gps" | "external_dgnss" | "external_rtk";
 export type GpsCorrService = "none" | "sapos_eps" | "sapos_heps" | "sapos_gpps";

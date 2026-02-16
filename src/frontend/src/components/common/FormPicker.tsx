@@ -1,13 +1,13 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
   TouchableOpacity,
+  Modal,
   FlatList,
   StyleSheet,
 } from "react-native";
-import { BottomSheet } from "./BottomSheet";
-import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
+import { Colors, Spacing, FontSize } from "../../styles/tokens";
 
 type PickerOption = {
   label: string;
@@ -53,28 +53,42 @@ export function FormPicker({
       </TouchableOpacity>
       {error ? <Text style={styles.error}>{error}</Text> : null}
 
-      <BottomSheet visible={visible} onClose={() => setVisible(false)} title={label}>
-        <FlatList 
-          data={options}
-          keyExtractor={(item) => item.value}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              style={[
-                styles.option,
-                item.value === value && styles.optionActive,
-              ]}
-              onPress={() => {
-                onValueChange(item.value);
-                setVisible(false);
-              }}
-            >
-              <Text style={[styles.optionText, item.value === value && styles.optionTextActive]}>
-                {item.label}
-              </Text>
-            </TouchableOpacity>
-          )}
-        />
-      </BottomSheet>
+      <Modal visible={visible} transparent animationType="slide">
+        <TouchableOpacity
+          style={styles.overlay}
+          activeOpacity={1}
+          onPress={() => setVisible(false)}
+        >
+          <View style={styles.sheet}>
+            <Text style={styles.sheetTitle}>{label}</Text>
+            <FlatList
+              data={options}
+              keyExtractor={(item) => item.value}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={[
+                    styles.option,
+                    item.value === value && styles.optionActive,
+                  ]}
+                  onPress={() => {
+                    onValueChange(item.value);
+                    setVisible(false);
+                  }}
+                >
+                  <Text
+                    style={[
+                      styles.optionText,
+                      item.value === value && styles.optionTextActive,
+                    ]}
+                  >
+                    {item.label}
+                  </Text>
+                </TouchableOpacity>
+              )}
+            />
+          </View>
+        </TouchableOpacity>
+      </Modal>
     </View>
   );
 }
@@ -94,7 +108,7 @@ const styles = StyleSheet.create({
   },
   picker: {
     backgroundColor: Colors.card,
-    borderRadius: Radius.md,
+    borderRadius: 10,
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.md,
     flexDirection: "row",
@@ -123,12 +137,31 @@ const styles = StyleSheet.create({
     color: Colors.danger,
     marginTop: Spacing.xs,
   },
+  overlay: {
+    flex: 1,
+    justifyContent: "flex-end",
+    backgroundColor: "rgba(0,0,0,0.3)",
+  },
+  sheet: {
+    backgroundColor: Colors.card,
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+    paddingTop: Spacing.lg,
+    paddingBottom: 34,
+    maxHeight: "50%",
+  },
+  sheetTitle: {
+    fontSize: FontSize.headline,
+    fontWeight: "600",
+    textAlign: "center",
+    marginBottom: Spacing.lg,
+  },
   option: {
     paddingVertical: 14,
     paddingHorizontal: Spacing.xl,
   },
   optionActive: {
-    backgroundColor: Colors.optionActiveBg,
+    backgroundColor: "#E8F0FE",
   },
   optionText: {
     fontSize: FontSize.callout,

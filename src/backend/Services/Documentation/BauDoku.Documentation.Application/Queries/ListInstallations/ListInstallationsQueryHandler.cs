@@ -8,17 +8,17 @@ namespace BauDoku.Documentation.Application.Queries.ListInstallations;
 public sealed class ListInstallationsQueryHandler
     : IQueryHandler<ListInstallationsQuery, PagedResult<InstallationListItemDto>>
 {
-    private readonly IInstallationReadRepository installations;
+    private readonly IInstallationReadRepository readRepository;
 
-    public ListInstallationsQueryHandler(IInstallationReadRepository installations)
+    public ListInstallationsQueryHandler(IInstallationReadRepository readRepository)
     {
-        this.installations = installations;
+        this.readRepository = readRepository;
     }
 
     public async Task<PagedResult<InstallationListItemDto>> Handle(
         ListInstallationsQuery query, CancellationToken cancellationToken)
     {
-        return await installations.ListAsync(
+        return await readRepository.ListAsync(
             query.ProjectId,
             query.ZoneId,
             query.Type,

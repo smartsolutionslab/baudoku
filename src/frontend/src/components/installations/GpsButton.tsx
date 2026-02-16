@@ -1,3 +1,4 @@
+import React from "react";
 import {
   View,
   Text,
@@ -6,10 +7,10 @@ import {
   StyleSheet,
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
-import type { GpsPosition } from "../../hooks";
+import type { GpsPosition } from "../../hooks/useGpsCapture";
 import { QualityIndicator } from "./QualityIndicator";
-import { calculateGpsQuality } from "../../utils";
-import { Colors, Spacing, FontSize, FontFamily, Radius } from "../../styles/tokens";
+import { calculateGpsQuality } from "../../utils/gpsQuality";
+import { Colors, Spacing, FontSize } from "../../styles/tokens";
 
 type GpsButtonProps = {
   position: GpsPosition | null;
@@ -19,7 +20,13 @@ type GpsButtonProps = {
   onClear?: () => void;
 };
 
-export function GpsButton({ position, capturing, error, onCapture, onClear}: GpsButtonProps) {
+export function GpsButton({
+  position,
+  capturing,
+  error,
+  onCapture,
+  onClear,
+}: GpsButtonProps) {
   if (capturing) {
     return (
       <View style={styles.captureCard}>
@@ -89,7 +96,7 @@ export function GpsButton({ position, capturing, error, onCapture, onClear}: Gps
         <FontAwesome
           name="crosshairs"
           size={16}
-          color={Colors.white}
+          color="#fff"
           style={styles.buttonIcon}
         />
         <Text style={styles.buttonText}>GPS-Position erfassen</Text>
@@ -105,15 +112,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: Spacing.md,
-    borderRadius: Radius.md,
+    paddingVertical: 12,
+    borderRadius: 10,
     marginTop: Spacing.lg,
   },
   buttonIcon: {
     marginRight: Spacing.sm,
   },
   buttonText: {
-    color: Colors.white,
+    color: "#fff",
     fontSize: FontSize.body,
     fontWeight: "600",
   },
@@ -122,7 +129,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: Colors.background,
-    borderRadius: Radius.md,
+    borderRadius: 10,
     paddingVertical: 14,
     marginTop: Spacing.lg,
   },
@@ -132,7 +139,7 @@ const styles = StyleSheet.create({
     marginLeft: Spacing.sm,
   },
   successCard: {
-    borderRadius: Radius.md,
+    borderRadius: 10,
     padding: Spacing.md,
     marginTop: Spacing.lg,
   },
@@ -160,13 +167,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.sm,
     paddingVertical: Spacing.xs,
     borderRadius: 6,
-    backgroundColor: Colors.primaryLight,
+    backgroundColor: "rgba(0, 122, 255, 0.1)",
   },
   recaptureText: {
     fontSize: FontSize.footnote,
     color: Colors.primary,
     fontWeight: "600",
-    marginLeft: Spacing.xs,
+    marginLeft: 4,
   },
   clearButton: {
     padding: Spacing.xs,
@@ -174,22 +181,22 @@ const styles = StyleSheet.create({
   coordText: {
     fontSize: FontSize.caption,
     color: Colors.textSecondary,
-    fontFamily: FontFamily.mono,
+    fontFamily: "SpaceMono",
   },
   externalBadge: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: Colors.primaryLight,
+    backgroundColor: "rgba(0, 122, 255, 0.1)",
     paddingHorizontal: 6,
     paddingVertical: 2,
-    borderRadius: Radius.xs,
+    borderRadius: 4,
     marginRight: Spacing.sm,
   },
   externalBadgeText: {
     fontSize: FontSize.footnote,
     color: Colors.primary,
     fontWeight: "600",
-    marginLeft: Spacing.xs,
+    marginLeft: 4,
   },
   errorText: {
     fontSize: FontSize.caption,

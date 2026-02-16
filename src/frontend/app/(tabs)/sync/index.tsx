@@ -1,20 +1,27 @@
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import {
   View,
   Text,
   FlatList,
   StyleSheet,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import { useRouter } from "expo-router";
-import { useSyncStore } from "../../../src/store";
-import { useSyncStatus, useSyncManager } from "../../../src/hooks";
-import { UploadQueueCard } from "../../../src/components/sync";
-import { Button } from "../../../src/components/core";
-import { StatusBadge } from "../../../src/components/common";
-import { Colors, Spacing, FontSize, Radius } from "../../../src/styles/tokens";
-import { formatDateTime } from "../../../src/utils";
+import { useSyncStore } from "../../../src/store/useSyncStore";
+import { useSyncStatus } from "../../../src/hooks/useSyncStatus";
+import { useSyncManager } from "../../../src/hooks/useSyncManager";
 import type { SyncOutboxEntry } from "../../../src/db/repositories/types";
+
+function formatTimestamp(date: Date): string {
+  return date.toLocaleString("de-DE", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
 
 function operationLabel(op: string): string {
   switch (op) {
@@ -29,18 +36,38 @@ function operationLabel(op: string): string {
   }
 }
 
+function statusColor(status: string): string {
+  switch (status) {
+    case "pending":
+      return "#FF9500";
+    case "syncing":
+      return "#007AFF";
+    case "failed":
+      return "#FF3B30";
+    default:
+      return "#8E8E93";
+  }
+}
+
 function OutboxItem({ item }: { item: SyncOutboxEntry }) {
   return (
     <View style={itemStyles.container}>
       <View style={itemStyles.header}>
         <Text style={itemStyles.entityType}>{item.entityType}</Text>
-        <StatusBadge status={item.status} />
+        <View
+          style={[
+            itemStyles.statusBadge,
+            { backgroundColor: statusColor(item.status) },
+          ]}
+        >
+          <Text style={itemStyles.statusText}>{item.status}</Text>
+        </View>
       </View>
       <Text style={itemStyles.operation}>
         {operationLabel(item.operation)}
       </Text>
       <Text style={itemStyles.timestamp}>
-        {formatDateTime(item.timestamp)}
+        {formatTimestamp(item.timestamp)}
       </Text>
       {item.retryCount != null && item.retryCount > 0 && (
         <Text style={itemStyles.retry}>
@@ -91,20 +118,25 @@ export default function SyncScreen() {
           </Text>
         </View>
 
-        <Button
-          title="Jetzt synchronisieren"
+        <TouchableOpacity
+          style={[
+            styles.syncButton,
+            (!isOnline || isSyncing) && styles.syncButtonDisabled,
+          ]}
           onPress={() => void sync()}
-          loading={isSyncing}
-          disabled={!isOnline}
-          style={{ marginTop: Spacing.xs }}
-        />
+          disabled={!isOnline || isSyncing}
+        >
+          {isSyncing ? (
+            <ActivityIndicator color="#fff" size="small" />
+          ) : (
+            <Text style={styles.syncButtonText}>Jetzt synchronisieren</Text>
+          )}
+        </TouchableOpacity>
 
         {syncError && (
           <Text style={styles.syncError}>{syncError}</Text>
         )}
       </View>
-
-      <UploadQueueCard />
 
       {conflicts.length > 0 && (
         <TouchableOpacity
@@ -146,14 +178,14 @@ export default function SyncScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: "#F2F2F7",
   },
   statusCard: {
-    backgroundColor: Colors.card,
-    margin: Spacing.lg,
-    borderRadius: Radius.lg,
-    padding: Spacing.lg,
-    gap: Spacing.md,
+    backgroundColor: "#fff",
+    margin: 16,
+    borderRadius: 12,
+    padding: 16,
+    gap: 12,
   },
   statusRow: {
     flexDirection: "row",
@@ -165,42 +197,57 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   label: {
-    fontSize: FontSize.body,
-    color: Colors.textTertiary,
+    fontSize: 15,
+    color: "#8E8E93",
   },
   value: {
-    fontSize: FontSize.body,
+    fontSize: 15,
     fontWeight: "500",
   },
   dot: {
     width: 8,
     height: 8,
-    borderRadius: Radius.xs,
+    borderRadius: 4,
     marginRight: 6,
   },
   online: {
-    backgroundColor: Colors.success,
+    backgroundColor: "#34C759",
   },
   offline: {
-    backgroundColor: Colors.danger,
+    backgroundColor: "#FF3B30",
+  },
+  syncButton: {
+    backgroundColor: "#007AFF",
+    paddingVertical: 12,
+    borderRadius: 10,
+    alignItems: "center",
+    marginTop: 4,
+  },
+  syncButtonDisabled: {
+    backgroundColor: "#C7C7CC",
+  },
+  syncButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
   },
   syncError: {
-    color: Colors.danger,
-    fontSize: FontSize.caption,
+    color: "#FF3B30",
+    fontSize: 13,
     textAlign: "center",
   },
   conflictCard: {
-    backgroundColor: Colors.diffHighlight,
-    marginHorizontal: Spacing.lg,
-    marginBottom: Spacing.lg,
-    borderRadius: Radius.lg,
-    padding: Spacing.md,
+    backgroundColor: "#FFF3CD",
+    marginHorizontal: 16,
+    marginBottom: 16,
+    borderRadius: 12,
+    padding: 14,
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.sm,
+    gap: 10,
   },
   conflictBadge: {
-    backgroundColor: Colors.warning,
+    backgroundColor: "#FF9500",
     width: 28,
     height: 28,
     borderRadius: 14,
@@ -208,28 +255,28 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   conflictBadgeText: {
-    color: Colors.white,
-    fontSize: FontSize.caption,
+    color: "#fff",
+    fontSize: 13,
     fontWeight: "700",
   },
   conflictText: {
     flex: 1,
-    fontSize: FontSize.body,
+    fontSize: 15,
     fontWeight: "500",
-    color: Colors.warningText,
+    color: "#856404",
   },
   chevron: {
     fontSize: 22,
-    color: Colors.warningText,
+    color: "#856404",
   },
   sectionTitle: {
-    fontSize: FontSize.headline,
+    fontSize: 17,
     fontWeight: "600",
-    marginHorizontal: Spacing.lg,
-    marginBottom: Spacing.sm,
+    marginHorizontal: 16,
+    marginBottom: 8,
   },
   list: {
-    paddingHorizontal: Spacing.lg,
+    paddingHorizontal: 16,
   },
   emptyState: {
     flex: 1,
@@ -238,41 +285,52 @@ const styles = StyleSheet.create({
     paddingTop: 40,
   },
   emptyText: {
-    fontSize: FontSize.body,
-    color: Colors.textTertiary,
+    fontSize: 15,
+    color: "#8E8E93",
   },
 });
 
 const itemStyles = StyleSheet.create({
   container: {
-    backgroundColor: Colors.card,
-    borderRadius: Radius.md,
-    padding: Spacing.md,
-    marginBottom: Spacing.sm,
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    padding: 12,
+    marginBottom: 8,
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: Spacing.xs,
+    marginBottom: 4,
   },
   entityType: {
-    fontSize: FontSize.body,
+    fontSize: 15,
     fontWeight: "600",
     textTransform: "capitalize",
   },
+  statusBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 10,
+  },
+  statusText: {
+    color: "#fff",
+    fontSize: 11,
+    fontWeight: "600",
+    textTransform: "uppercase",
+  },
   operation: {
-    fontSize: FontSize.caption,
-    color: Colors.textSecondary,
+    fontSize: 13,
+    color: "#666",
   },
   timestamp: {
-    fontSize: FontSize.footnote,
-    color: Colors.textTertiary,
+    fontSize: 12,
+    color: "#8E8E93",
     marginTop: 2,
   },
   retry: {
-    fontSize: FontSize.footnote,
-    color: Colors.danger,
+    fontSize: 12,
+    color: "#FF3B30",
     marginTop: 2,
   },
 });

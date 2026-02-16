@@ -32,3 +32,15 @@ function buildTree(zones: Zone[]): ZoneNode[] {
 export function useZoneTree(zones: Zone[] | undefined): ZoneNode[] {
   return useMemo(() => (zones ? buildTree(zones) : []), [zones]);
 }
+
+export function flattenTree(nodes: ZoneNode[]): ZoneNode[] {
+  const result: ZoneNode[] = [];
+  function walk(list: ZoneNode[]) {
+    for (const node of list) {
+      result.push(node);
+      walk(node.children);
+    }
+  }
+  walk(nodes);
+  return result;
+}

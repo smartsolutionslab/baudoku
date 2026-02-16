@@ -1,19 +1,19 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
   TouchableOpacity,
   StyleSheet,
+  ActivityIndicator,
 } from "react-native";
-import { useRouter } from "expo-router";
-import { Button } from "../../../src/components/core";
-import { Colors, Spacing, FontSize, Radius } from "../../../src/styles/tokens";
-import { loginWithKeycloak, parseUserFromToken, saveTokens } from "../../../src/auth";
-import { useAuthStore } from "../../../src/store";
+import { router } from "expo-router";
+import { Colors, Spacing, FontSize } from "../../../src/styles/tokens";
+import { loginWithKeycloak, parseUserFromToken } from "../../../src/auth/keycloak";
+import { saveTokens } from "../../../src/auth/tokenStorage";
+import { useAuthStore } from "../../../src/store/useAuthStore";
 import { setAuthToken } from "../../../src/sync/apiClient";
 
 export default function LoginScreen() {
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -59,12 +59,18 @@ export default function LoginScreen() {
           </View>
         )}
 
-        <Button
-          title="Mit Keycloak anmelden"
+        <TouchableOpacity
+          style={[styles.loginButton, loading && styles.loginButtonDisabled]}
           onPress={handleLogin}
-          loading={loading}
-          style={{ marginBottom: Spacing.md }}
-        />
+          disabled={loading}
+          activeOpacity={0.7}
+        >
+          {loading ? (
+            <ActivityIndicator color="#FFFFFF" />
+          ) : (
+            <Text style={styles.loginButtonText}>Mit Keycloak anmelden</Text>
+          )}
+        </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.backButton}
@@ -102,8 +108,8 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   errorBox: {
-    backgroundColor: Colors.errorBg,
-    borderRadius: Radius.sm,
+    backgroundColor: "#FFF0F0",
+    borderRadius: 8,
     padding: Spacing.md,
     marginBottom: Spacing.lg,
     width: "100%",
@@ -112,6 +118,23 @@ const styles = StyleSheet.create({
     color: Colors.danger,
     fontSize: FontSize.body,
     textAlign: "center",
+  },
+  loginButton: {
+    backgroundColor: Colors.primary,
+    borderRadius: 12,
+    paddingVertical: 14,
+    paddingHorizontal: Spacing.xl,
+    width: "100%",
+    alignItems: "center",
+    marginBottom: Spacing.md,
+  },
+  loginButtonDisabled: {
+    opacity: 0.6,
+  },
+  loginButtonText: {
+    color: "#FFFFFF",
+    fontSize: FontSize.headline,
+    fontWeight: "600",
   },
   backButton: {
     paddingVertical: Spacing.md,

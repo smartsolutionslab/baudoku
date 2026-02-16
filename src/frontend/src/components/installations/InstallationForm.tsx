@@ -1,11 +1,25 @@
-import { Text, ScrollView, StyleSheet } from "react-native";
-import { FormField, FormPicker, CollapsibleSection } from "../common";
-import { Button } from "../core";
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  StyleSheet,
+} from "react-native";
+import { FormField } from "../common/FormField";
+import { FormPicker } from "../common/FormPicker";
 import { GpsButton } from "./GpsButton";
-import { useGpsCapture, type GpsPosition, useInstallationForm } from "../../hooks";
+import { useGpsCapture, type GpsPosition } from "../../hooks/useGpsCapture";
+import { useInstallationForm } from "../../hooks/useInstallationForm";
 import type { InstallationFormData } from "../../validation/schemas";
 import { Colors, Spacing, FontSize } from "../../styles/tokens";
-import { INSTALLATION_STATUS_OPTIONS } from "../../constants";
+
+const statusOptions = [
+  { label: "Geplant", value: "planned" },
+  { label: "In Arbeit", value: "in_progress" },
+  { label: "Abgeschlossen", value: "completed" },
+  { label: "Geprüft", value: "inspected" },
+];
 
 const phaseOptions = [
   { label: "L1", value: "L1" },
@@ -23,7 +37,37 @@ type InstallationFormProps = {
   submitLabel?: string;
 };
 
-export function InstallationForm({ onSubmit, submitting, initialValues, initialGps, submitLabel }: InstallationFormProps) {
+function CollapsibleSection({
+  title,
+  defaultOpen,
+  children,
+}: {
+  title: string;
+  defaultOpen?: boolean;
+  children: React.ReactNode;
+}) {
+  const [open, setOpen] = useState(defaultOpen ?? false);
+  return (
+    <View style={sectionStyles.container}>
+      <TouchableOpacity
+        style={sectionStyles.header}
+        onPress={() => setOpen(!open)}
+      >
+        <Text style={sectionStyles.title}>{title}</Text>
+        <Text style={sectionStyles.chevron}>{open ? "\u2228" : "\u203A"}</Text>
+      </TouchableOpacity>
+      {open && <View style={sectionStyles.body}>{children}</View>}
+    </View>
+  );
+}
+
+export function InstallationForm({
+  onSubmit,
+  submitting,
+  initialValues,
+  initialGps,
+  submitLabel,
+}: InstallationFormProps) {
   const {
     form,
     errors,
@@ -41,7 +85,11 @@ export function InstallationForm({ onSubmit, submitting, initialValues, initialG
   const currentGps = gps.position ?? initialGps ?? null;
 
   return (
-    <ScrollView style={styles.scroll} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+    <ScrollView
+      style={styles.scroll}
+      contentContainerStyle={styles.content}
+      keyboardShouldPersistTaps="handled"
+    >
       <Text style={styles.sectionTitle}>Typ & Status</Text>
       <FormField
         label="Typ"
@@ -54,7 +102,7 @@ export function InstallationForm({ onSubmit, submitting, initialValues, initialG
       <FormPicker
         label="Status"
         required
-        options={INSTALLATION_STATUS_OPTIONS}
+        options={statusOptions}
         value={str("status") || "in_progress"}
         onValueChange={(v) => set("status", v)}
         error={errors.status}
@@ -166,15 +214,49 @@ export function InstallationForm({ onSubmit, submitting, initialValues, initialG
         onClear={gps.clearPosition}
       />
 
-      <Button
-        title={submitting ? "Speichert..." : (submitLabel ?? "Speichern")}
+      <TouchableOpacity
+        style={[styles.button, submitting && styles.buttonDisabled]}
         onPress={() => void handleSubmit(currentGps)}
-        loading={submitting}
-        style={styles.button}
-      />
+        disabled={submitting}
+      >
+        <Text style={styles.buttonText}>
+          {submitting
+            ? "Speichert..."
+            : submitLabel ?? "Speichern"}
+        </Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 }
+
+const sectionStyles = StyleSheet.create({
+  container: {
+    marginBottom: Spacing.md,
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: Colors.card,
+    borderRadius: 10,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.md,
+    marginBottom: Spacing.sm,
+  },
+  title: {
+    fontSize: FontSize.callout,
+    fontWeight: "600",
+    color: Colors.textPrimary,
+  },
+  chevron: {
+    fontSize: 18,
+    color: Colors.textTertiary,
+    fontWeight: "600",
+  },
+  body: {
+    paddingLeft: Spacing.sm,
+  },
+});
 
 const styles = StyleSheet.create({
   scroll: {
@@ -193,6 +275,18 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
   },
   button: {
+    backgroundColor: Colors.primary,
+    paddingVertical: 14,
+    borderRadius: 10,
+    alignItems: "center",
     marginTop: Spacing.md,
+  },
+  buttonDisabled: {
+    backgroundColor: Colors.disabled,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: FontSize.callout,
+    fontWeight: "600",
   },
 });

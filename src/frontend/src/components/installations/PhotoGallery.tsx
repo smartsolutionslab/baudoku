@@ -1,3 +1,4 @@
+import React from "react";
 import {
   View,
   Image,
@@ -9,9 +10,16 @@ import {
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import type { Photo } from "../../db/repositories/types";
-import { StatusBadge, EmptyState } from "../common";
-import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
-import { photoTypeLabels } from "../../constants";
+import { StatusBadge } from "../common/StatusBadge";
+import { EmptyState } from "../common/EmptyState";
+import { Colors, Spacing, FontSize } from "../../styles/tokens";
+
+const photoTypeLabels: Record<string, string> = {
+  before: "Vorher",
+  after: "Nachher",
+  detail: "Detail",
+  overview: "Übersicht",
+};
 
 type PhotoGalleryProps = {
   photos: Photo[];
@@ -93,7 +101,7 @@ const styles = StyleSheet.create({
   item: {
     width: IMAGE_SIZE,
     height: IMAGE_SIZE,
-    borderRadius: Radius.sm,
+    borderRadius: 8,
     overflow: "hidden",
     backgroundColor: Colors.separator,
   },
@@ -123,8 +131,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 4,
     right: 4,
-    backgroundColor: Colors.overlay,
-    borderRadius: Radius.lg,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    borderRadius: 12,
     width: 24,
     height: 24,
     justifyContent: "center",

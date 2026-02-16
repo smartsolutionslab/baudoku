@@ -1,10 +1,13 @@
-import { useState, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import {
   View,
   Text,
   ScrollView,
   StyleSheet,
+  Alert,
+  Modal,
   TextInput,
+  TouchableOpacity,
 } from "react-native";
 import { useLocalSearchParams, useRouter, Stack } from "expo-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -18,24 +21,24 @@ import {
   useAddMeasurement,
   useDeleteMeasurement,
   useDeleteInstallation,
+} from "../../../../src/hooks/useOfflineData";
+import {
   usePhotoCapture,
   type CapturedPhoto,
-  useConfirmDelete,
-} from "../../../../src/hooks";
-import { deletePhotoFile } from "../../../../src/utils";
-import { StatusBadge, EmptyState, ActionBar, BottomSheet } from "../../../../src/components/common";
-import {
-  InstallationDetails,
-  PhotoGallery,
-  PhotoSourceSheet,
-  PhotoTypeSheet,
-  type PhotoType,
-  PhotoViewer,
-  MeasurementCard,
-  MeasurementForm,
-} from "../../../../src/components/installations";
-import { Button } from "../../../../src/components/core";
-import { Colors, Spacing, FontSize, Radius } from "../../../../src/styles/tokens";
+} from "../../../../src/hooks/usePhotoCapture";
+import { useConfirmDelete } from "../../../../src/hooks/useConfirmDelete";
+import { deletePhotoFile } from "../../../../src/utils/photoStorage";
+import { StatusBadge } from "../../../../src/components/common/StatusBadge";
+import { EmptyState } from "../../../../src/components/common/EmptyState";
+import { ActionBar } from "../../../../src/components/common/ActionBar";
+import { InstallationDetails } from "../../../../src/components/installations/InstallationDetails";
+import { PhotoGallery } from "../../../../src/components/installations/PhotoGallery";
+import { PhotoSourceSheet } from "../../../../src/components/installations/PhotoSourceSheet";
+import { PhotoTypeSheet, type PhotoType } from "../../../../src/components/installations/PhotoTypeSheet";
+import { PhotoViewer } from "../../../../src/components/installations/PhotoViewer";
+import { MeasurementCard } from "../../../../src/components/installations/MeasurementCard";
+import { MeasurementForm } from "../../../../src/components/installations/MeasurementForm";
+import { Colors, Spacing, FontSize } from "../../../../src/styles/tokens";
 import type { Photo } from "../../../../src/db/repositories/types";
 import type { MeasurementFormData } from "../../../../src/validation/schemas";
 import { installationId } from "../../../../src/types/branded";
@@ -126,22 +129,18 @@ export default function InstallationDetailScreen() {
   const handleCaptionConfirm = useCallback(async () => {
     setShowCaptionModal(false);
     if (!pendingPhoto || !pendingPhotoType) return;
-    try {
-      await addPhoto.mutateAsync({
-        installationId: id,
-        localPath: pendingPhoto.localPath,
-        type: pendingPhotoType,
-        caption: captionText.trim() || null,
-        exifLatitude: pendingPhoto.exif?.gpsLatitude ?? null,
-        exifLongitude: pendingPhoto.exif?.gpsLongitude ?? null,
-        exifDateTime: pendingPhoto.exif?.dateTime ?? null,
-        exifCameraModel: pendingPhoto.exif?.cameraModel ?? null,
-        takenAt: new Date(),
-        uploadStatus: "pending",
-      });
-    } catch {
-      // Global MutationCache.onError shows toast
-    }
+    await addPhoto.mutateAsync({
+      installationId: id,
+      localPath: pendingPhoto.localPath,
+      type: pendingPhotoType,
+      caption: captionText.trim() || null,
+      exifLatitude: pendingPhoto.exif?.gpsLatitude ?? null,
+      exifLongitude: pendingPhoto.exif?.gpsLongitude ?? null,
+      exifDateTime: pendingPhoto.exif?.dateTime ?? null,
+      exifCameraModel: pendingPhoto.exif?.cameraModel ?? null,
+      takenAt: new Date(),
+      uploadStatus: "pending",
+    });
     setPendingPhoto(null);
     setPendingPhotoType(null);
     setCaptionText("");
@@ -154,12 +153,8 @@ export default function InstallationDetailScreen() {
         title: "Foto löschen",
         message: "Dieses Foto wirklich löschen?",
         onConfirm: async () => {
-          try {
-            await deletePhoto.mutateAsync(photo.id);
-            deletePhotoFile(photo.localPath);
-          } catch {
-            // Global MutationCache.onError shows toast
-          }
+          await deletePhoto.mutateAsync(photo.id);
+          deletePhotoFile(photo.localPath);
         },
       });
     },
@@ -172,11 +167,7 @@ export default function InstallationDetailScreen() {
         title: "Messung löschen",
         message: "Diese Messung wirklich löschen?",
         onConfirm: async () => {
-          try {
-            await deleteMeasurement.mutateAsync(m.id);
-          } catch {
-            // Global MutationCache.onError shows toast
-          }
+          await deleteMeasurement.mutateAsync(m.id);
         },
       });
     },
@@ -185,22 +176,18 @@ export default function InstallationDetailScreen() {
 
   const handleAddMeasurement = useCallback(
     async (data: MeasurementFormData) => {
-      try {
-        await addMeasurement.mutateAsync({
-          installationId: id,
-          type: data.type,
-          value: data.value,
-          unit: data.unit,
-          minThreshold: data.minThreshold ?? null,
-          maxThreshold: data.maxThreshold ?? null,
-          notes: data.notes || null,
-          measuredBy: data.measuredBy,
-          measuredAt: new Date(),
-        });
-        setShowMeasurementForm(false);
-      } catch {
-        // Global MutationCache.onError shows toast
-      }
+      await addMeasurement.mutateAsync({
+        installationId: id,
+        type: data.type,
+        value: data.value,
+        unit: data.unit,
+        minThreshold: data.minThreshold ?? null,
+        maxThreshold: data.maxThreshold ?? null,
+        notes: data.notes || null,
+        measuredBy: data.measuredBy,
+        measuredAt: new Date(),
+      });
+      setShowMeasurementForm(false);
     },
     [id, addMeasurement]
   );
@@ -211,12 +198,8 @@ export default function InstallationDetailScreen() {
       message:
         "Diese Installation und alle zugehörigen Daten wirklich löschen?",
       onConfirm: async () => {
-        try {
-          await deleteInstallation.mutateAsync(id);
-          router.back();
-        } catch {
-          // Global MutationCache.onError shows toast
-        }
+        await deleteInstallation.mutateAsync(id);
+        router.back();
       },
     });
   }, [id, deleteInstallation, confirmDelete, router]);
@@ -353,30 +336,42 @@ export default function InstallationDetailScreen() {
         }}
       />
 
-      {/* Caption input */}
-      <BottomSheet
+      {/* Caption input modal */}
+      <Modal
         visible={showCaptionModal}
-        onClose={() => {
+        transparent
+        animationType="slide"
+        onRequestClose={() => {
           setShowCaptionModal(false);
           setPendingPhoto(null);
           setPendingPhotoType(null);
         }}
-        title="Beschriftung (optional)"
       >
-        <TextInput
-          style={styles.captionInput}
-          value={captionText}
-          onChangeText={setCaptionText}
-          placeholder="z.B. Kabeltrasse Nordseite"
-          placeholderTextColor={Colors.textTertiary}
-          maxLength={200}
-          autoFocus
-        />
-        <Button
-          title={captionText.trim() ? "Hinzufügen" : "Überspringen"}
-          onPress={handleCaptionConfirm}
-        />
-      </BottomSheet>
+        <View style={styles.modalOverlay}>
+          <View style={styles.captionModal}>
+            <Text style={styles.captionModalTitle}>Beschriftung (optional)</Text>
+            <TextInput
+              style={styles.captionInput}
+              value={captionText}
+              onChangeText={setCaptionText}
+              placeholder="z.B. Kabeltrasse Nordseite"
+              placeholderTextColor={Colors.textTertiary}
+              maxLength={200}
+              autoFocus
+            />
+            <View style={styles.captionActions}>
+              <TouchableOpacity
+                style={styles.captionSkipButton}
+                onPress={handleCaptionConfirm}
+              >
+                <Text style={styles.captionSkipText}>
+                  {captionText.trim() ? "Hinzufügen" : "Überspringen"}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
       <PhotoViewer
         photo={viewerPhoto}
         visible={showViewer}
@@ -403,7 +398,7 @@ const styles = StyleSheet.create({
     marginHorizontal: Spacing.lg,
     marginTop: Spacing.lg,
     marginBottom: Spacing.sm,
-    borderRadius: Radius.lg,
+    borderRadius: 12,
     padding: Spacing.lg,
   },
   headerRow: {
@@ -455,20 +450,51 @@ const styles = StyleSheet.create({
   uploadBadge: {
     paddingHorizontal: Spacing.sm,
     paddingVertical: 2,
-    borderRadius: Radius.md,
+    borderRadius: 10,
   },
   uploadBadgeText: {
-    color: Colors.white,
+    color: "#fff",
     fontSize: FontSize.footnote,
     fontWeight: "600",
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "flex-end",
+  },
+  captionModal: {
+    backgroundColor: Colors.card,
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+    padding: Spacing.xl,
+    paddingBottom: 40,
+  },
+  captionModalTitle: {
+    fontSize: FontSize.headline,
+    fontWeight: "600",
+    marginBottom: Spacing.md,
   },
   captionInput: {
     borderWidth: 1,
     borderColor: Colors.separator,
-    borderRadius: Radius.md,
+    borderRadius: 10,
     padding: Spacing.md,
     fontSize: FontSize.body,
     color: Colors.textPrimary,
     marginBottom: Spacing.lg,
+  },
+  captionActions: {
+    alignItems: "flex-end",
+  },
+  captionSkipButton: {
+    backgroundColor: Colors.primary,
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: Spacing.md,
+    borderRadius: 10,
+  },
+  captionSkipText: {
+    color: "#fff",
+    fontSize: FontSize.body,
+    fontWeight: "600",
   },
 });

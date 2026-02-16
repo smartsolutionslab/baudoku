@@ -1,24 +1,42 @@
 import { and, eq, like, or, inArray, sql, count } from "drizzle-orm";
 import { db } from "../client";
 import { installations, zones, projects } from "../schema";
-import { generateId } from "../../utils";
+import { generateId } from "../../utils/uuid";
 import { createOutboxEntry } from "./syncRepo";
 import type { Installation, NewInstallation } from "./types";
 import type { InstallationId, ProjectId, ZoneId, ProjectName, ZoneName } from "../../types/branded";
 
 export async function getByZoneId(zoneId: ZoneId): Promise<Installation[]> {
-  return db.select().from(installations).where(eq(installations.zoneId, zoneId)).all() as unknown as Installation[];
+  return db
+    .select()
+    .from(installations)
+    .where(eq(installations.zoneId, zoneId))
+    .all() as unknown as Installation[];
 }
 
-export async function getByProjectId(projectId: ProjectId): Promise<Installation[]> {
-  return db.select().from(installations).where(eq(installations.projectId, projectId)).all() as unknown as Installation[];
+export async function getByProjectId(
+  projectId: ProjectId
+): Promise<Installation[]> {
+  return db
+    .select()
+    .from(installations)
+    .where(eq(installations.projectId, projectId))
+    .all() as unknown as Installation[];
 }
 
-export async function getById(id: InstallationId): Promise<Installation | undefined> {
-  return db.select().from(installations).where(eq(installations.id, id)).get() as unknown as Installation | undefined;
+export async function getById(
+  id: InstallationId
+): Promise<Installation | undefined> {
+  return db
+    .select()
+    .from(installations)
+    .where(eq(installations.id, id))
+    .get() as unknown as Installation | undefined;
 }
 
-export async function create(data: Omit<NewInstallation, "id" | "createdAt" | "updatedAt" | "version">): Promise<Installation> {
+export async function create(
+  data: Omit<NewInstallation, "id" | "createdAt" | "updatedAt" | "version">
+): Promise<Installation> {
   const now = new Date();
   const installation: NewInstallation = {
     ...data,
@@ -39,7 +57,15 @@ export async function create(data: Omit<NewInstallation, "id" | "createdAt" | "u
   return installation as unknown as Installation;
 }
 
-export async function update(id: InstallationId, data: Partial<Omit<NewInstallation, "id" | "createdAt" | "updatedAt" | "version" | "projectId" | "zoneId">>): Promise<Installation | undefined> {
+export async function update(
+  id: InstallationId,
+  data: Partial<
+    Omit<
+      NewInstallation,
+      "id" | "createdAt" | "updatedAt" | "version" | "projectId" | "zoneId"
+    >
+  >
+): Promise<Installation | undefined> {
   const existing = await getById(id);
   if (!existing) return undefined;
 
@@ -49,7 +75,10 @@ export async function update(id: InstallationId, data: Partial<Omit<NewInstallat
     version: existing.version + 1,
   };
 
-  await db.update(installations).set(updated).where(eq(installations.id, id));
+  await db
+    .update(installations)
+    .set(updated)
+    .where(eq(installations.id, id));
   await createOutboxEntry("installation", id, "update", {
     ...existing,
     ...updated,
@@ -68,7 +97,10 @@ export type SearchResult = Installation & {
   projectName: ProjectName;
 };
 
-export async function search(query: string, filters?: { status?: string[]; projectId?: ProjectId }): Promise<SearchResult[]> {
+export async function search(
+  query: string,
+  filters?: { status?: string[]; projectId?: ProjectId }
+): Promise<SearchResult[]> {
   const pattern = `%${query}%`;
 
   let q = db
@@ -97,7 +129,12 @@ export async function search(query: string, filters?: { status?: string[]; proje
   }
 
   if (filters?.status && filters.status.length > 0) {
-    conditions.push(inArray(installations.status, filters.status as ("planned" | "in_progress" | "completed" | "inspected")[]));
+    conditions.push(
+      inArray(
+        installations.status,
+        filters.status as ("planned" | "in_progress" | "completed" | "inspected")[]
+      )
+    );
   }
 
   if (filters?.projectId) {
@@ -117,7 +154,14 @@ export async function search(query: string, filters?: { status?: string[]; proje
 }
 
 export async function getCountByStatus(): Promise<Record<string, number>> {
-  const rows = await db.select({ status: installations.status, count: count()}).from(installations).groupBy(installations.status).all();
+  const rows = await db
+    .select({
+      status: installations.status,
+      count: count(),
+    })
+    .from(installations)
+    .groupBy(installations.status)
+    .all();
 
   const result: Record<string, number> = {};
   for (const r of rows) {

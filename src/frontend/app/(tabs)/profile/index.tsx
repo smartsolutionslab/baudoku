@@ -1,21 +1,23 @@
+import React from "react";
 import {
   View,
   Text,
   ScrollView,
   StyleSheet,
+  TouchableOpacity,
   Switch,
   Platform,
 } from "react-native";
-import { useRouter } from "expo-router";
-import { useProjects, useSyncStatus } from "../../../src/hooks";
-import { Button } from "../../../src/components/core";
-import { useAuthStore, useSettingsStore } from "../../../src/store";
-import { clearTokens } from "../../../src/auth";
+import { router } from "expo-router";
+import { useProjects } from "../../../src/hooks/useOfflineData";
+import { useSyncStatus } from "../../../src/hooks/useSyncStatus";
+import { useAuthStore } from "../../../src/store/useAuthStore";
+import { clearTokens } from "../../../src/auth/tokenStorage";
 import { setAuthToken } from "../../../src/sync/apiClient";
-import { Colors, Spacing, FontSize, Radius } from "../../../src/styles/tokens";
+import { Colors, Spacing, FontSize } from "../../../src/styles/tokens";
+import { useSettingsStore } from "../../../src/store/useSettingsStore";
 
 export default function ProfileScreen() {
-  const router = useRouter();
   const { data: projects } = useProjects();
   const { isOnline, unsyncedCount, lastSyncTimestamp } = useSyncStatus();
   const { isAuthenticated, user, clearAuth } = useAuthStore();
@@ -56,12 +58,24 @@ export default function ProfileScreen() {
             <Row label="Name" value={user.name} />
             <Row label="Email" value={user.email} />
             <Row label="Rolle" value={displayRole(user.roles)} />
-            <Button title="Abmelden" variant="danger" onPress={handleLogout} />
+            <TouchableOpacity
+              style={styles.logoutButton}
+              onPress={handleLogout}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.logoutButtonText}>Abmelden</Text>
+            </TouchableOpacity>
           </>
         ) : (
           <>
             <Text style={styles.notLoggedInText}>Nicht angemeldet</Text>
-            <Button title="Anmelden" onPress={() => router.push("/(tabs)/profile/login")} />
+            <TouchableOpacity
+              style={styles.loginButton}
+              onPress={() => router.push("/(tabs)/profile/login")}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.loginButtonText}>Anmelden</Text>
+            </TouchableOpacity>
           </>
         )}
       </View>
@@ -154,7 +168,7 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: Colors.card,
-    borderRadius: Radius.lg,
+    borderRadius: 12,
     padding: Spacing.lg,
     marginBottom: Spacing.lg,
     gap: Spacing.md,
@@ -184,7 +198,7 @@ const styles = StyleSheet.create({
   dot: {
     width: 8,
     height: 8,
-    borderRadius: Radius.xs,
+    borderRadius: 4,
     marginRight: 6,
   },
   helpText: {
@@ -196,5 +210,27 @@ const styles = StyleSheet.create({
     fontSize: FontSize.body,
     color: Colors.textTertiary,
     fontStyle: "italic",
+  },
+  loginButton: {
+    backgroundColor: Colors.primary,
+    borderRadius: 10,
+    paddingVertical: 12,
+    alignItems: "center",
+  },
+  loginButtonText: {
+    color: "#FFFFFF",
+    fontSize: FontSize.body,
+    fontWeight: "600",
+  },
+  logoutButton: {
+    backgroundColor: Colors.danger,
+    borderRadius: 10,
+    paddingVertical: 12,
+    alignItems: "center",
+  },
+  logoutButtonText: {
+    color: "#FFFFFF",
+    fontSize: FontSize.body,
+    fontWeight: "600",
   },
 });

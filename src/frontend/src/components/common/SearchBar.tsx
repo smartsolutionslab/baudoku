@@ -1,3 +1,4 @@
+import React from "react";
 import { View, TextInput, TouchableOpacity, StyleSheet } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
@@ -9,10 +10,20 @@ type SearchBarProps = {
   autoFocus?: boolean;
 };
 
-export function SearchBar({ value, onChangeText, placeholder = "Suchen...", autoFocus = true}: SearchBarProps) {
+export function SearchBar({
+  value,
+  onChangeText,
+  placeholder = "Suchen...",
+  autoFocus = true,
+}: SearchBarProps) {
   return (
     <View style={styles.container}>
-      <FontAwesome name="search" size={16} color={Colors.textTertiary} style={styles.icon}/>
+      <FontAwesome
+        name="search"
+        size={16}
+        color={Colors.textTertiary}
+        style={styles.icon}
+      />
       <TextInput
         style={styles.input}
         value={value}

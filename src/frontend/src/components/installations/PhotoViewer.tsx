@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -14,10 +14,15 @@ import {
 import { FontAwesome } from "@expo/vector-icons";
 import type { Photo } from "../../db/repositories/types";
 import type { PhotoId } from "../../types/branded";
-import { StatusBadge } from "../common";
+import { StatusBadge } from "../common/StatusBadge";
 import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
-import { formatDateTime } from "../../utils";
-import { photoTypeLabels } from "../../constants";
+
+const photoTypeLabels: Record<string, string> = {
+  before: "Vorher",
+  after: "Nachher",
+  detail: "Detail",
+  overview: "Übersicht",
+};
 
 type PhotoViewerProps = {
   photo: Photo | null;
@@ -60,7 +65,7 @@ export function PhotoViewer({
         >
           <View style={styles.header}>
             <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-              <FontAwesome name="close" size={22} color={Colors.white} />
+              <FontAwesome name="close" size={22} color="#fff" />
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => onDelete(photo)}
@@ -83,7 +88,15 @@ export function PhotoViewer({
                 label={photoTypeLabels[photo.type] ?? photo.type}
               />
               <Text style={styles.date}>
-                {formatDateTime(photo.takenAt ? new Date(photo.takenAt) : null)}
+                {photo.takenAt
+                  ? new Date(photo.takenAt).toLocaleDateString("de-DE", {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })
+                  : ""}
               </Text>
             </View>
 
@@ -96,7 +109,7 @@ export function PhotoViewer({
                   setDirty(true);
                 }}
                 placeholder="Notiz hinzufügen..."
-                placeholderTextColor={Colors.textTertiary}
+                placeholderTextColor="#666"
                 multiline
                 maxLength={500}
               />
@@ -105,7 +118,7 @@ export function PhotoViewer({
                   style={styles.saveBtn}
                   onPress={handleSave}
                 >
-                  <FontAwesome name="check" size={16} color={Colors.white} />
+                  <FontAwesome name="check" size={16} color="#fff" />
                 </TouchableOpacity>
               )}
             </View>
@@ -119,7 +132,7 @@ export function PhotoViewer({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.black,
+    backgroundColor: "#000",
   },
   flex: {
     flex: 1,
@@ -152,7 +165,7 @@ const styles = StyleSheet.create({
   },
   date: {
     fontSize: FontSize.caption,
-    color: Colors.textQuaternary,
+    color: "#aaa",
   },
   annotationRow: {
     flexDirection: "row",
@@ -165,7 +178,7 @@ const styles = StyleSheet.create({
     borderRadius: Radius.sm,
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
-    color: Colors.white,
+    color: "#fff",
     fontSize: FontSize.caption,
     maxHeight: 80,
   },

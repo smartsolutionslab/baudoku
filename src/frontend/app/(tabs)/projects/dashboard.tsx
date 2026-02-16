@@ -1,3 +1,4 @@
+import React from "react";
 import {
   View,
   Text,
@@ -8,8 +9,8 @@ import {
 } from "react-native";
 import { useRouter, Stack } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
-import { useDashboardStats } from "../../../src/hooks";
-import { DashboardCard } from "../../../src/components/common";
+import { useDashboardStats } from "../../../src/hooks/useDashboardStats";
+import { DashboardCard } from "../../../src/components/common/DashboardCard";
 import { Colors, Spacing, FontSize, Radius } from "../../../src/styles/tokens";
 
 export default function DashboardScreen() {
@@ -122,7 +123,7 @@ export default function DashboardScreen() {
 
       <TouchableOpacity
         style={styles.quickLink}
-        onPress={() => router.push("/(tabs)/sync")}
+        onPress={() => router.navigate("/(tabs)/sync" as any)}
       >
         <FontAwesome name="refresh" size={18} color={Colors.primary} />
         <Text style={styles.quickLinkText}>Synchronisation</Text>

@@ -1,7 +1,8 @@
+import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import type { Project } from "../../db/repositories/types";
-import { StatusBadge } from "../common";
-import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
+import { StatusBadge } from "../common/StatusBadge";
+import { Colors, Spacing, FontSize } from "../../styles/tokens";
 
 type ProjectCardProps = {
   project: Project;
@@ -41,7 +42,7 @@ export function ProjectCard({ project, onPress }: ProjectCardProps) {
 const styles = StyleSheet.create({
   card: {
     backgroundColor: Colors.card,
-    borderRadius: Radius.lg,
+    borderRadius: 12,
     padding: Spacing.lg,
     marginBottom: Spacing.sm,
   },

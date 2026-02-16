@@ -17,6 +17,9 @@ export async function applyServerDelta(delta: ServerDeltaDto): Promise<void> {
     const parsed = JSON.parse(payload) as Record<string, unknown>;
     await applyUpsert(entityType, entityId, parsed);
   } catch (error) {
-    console.error(`Failed to apply server delta for ${entityType}/${entityId}:`, error);
+    console.error(
+      `Failed to apply server delta for ${entityType}/${entityId}:`,
+      error
+    );
   }
 }

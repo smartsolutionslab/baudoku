@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback } from "react";
+import React, { useMemo, useState, useCallback } from "react";
 import { View, Text, FlatList, StyleSheet } from "react-native";
 import { useLocalSearchParams, useRouter, Stack } from "expo-router";
 import {
@@ -6,13 +6,16 @@ import {
   useInstallationsByZone,
   useDeleteZone,
   useUpdateZone,
-  useConfirmDelete,
-} from "../../../../src/hooks";
-import { InstallationCard } from "../../../../src/components/installations";
-import { StatusBadge, EmptyState, FloatingActionButton, ActionBar } from "../../../../src/components/common";
-import { ZoneQrSheet } from "../../../../src/components/projects";
-import { encodeZoneQr } from "../../../../src/utils";
-import { Colors, Spacing, FontSize, Radius } from "../../../../src/styles/tokens";
+} from "../../../../src/hooks/useOfflineData";
+import { useConfirmDelete } from "../../../../src/hooks/useConfirmDelete";
+import { InstallationCard } from "../../../../src/components/installations/InstallationCard";
+import { StatusBadge } from "../../../../src/components/common/StatusBadge";
+import { EmptyState } from "../../../../src/components/common/EmptyState";
+import { FloatingActionButton } from "../../../../src/components/common/FloatingActionButton";
+import { ActionBar } from "../../../../src/components/common/ActionBar";
+import { ZoneQrSheet } from "../../../../src/components/projects/ZoneQrSheet";
+import { encodeZoneQr } from "../../../../src/utils/qrCode";
+import { Colors, Spacing, FontSize } from "../../../../src/styles/tokens";
 import type { Zone } from "../../../../src/db/repositories/types";
 import {
   projectId as toProjectId,
@@ -63,17 +66,13 @@ export default function ZoneDetailScreen() {
   );
 
   const handleQrPress = useCallback(async () => {
-    try {
-      if (zone && !zone.qrCode) {
-        await updateZone.mutateAsync({
-          id: zoneId,
-          data: { qrCode: qrValue },
-        });
-      }
-      setQrSheetVisible(true);
-    } catch {
-      // Global MutationCache.onError shows toast
+    if (zone && !zone.qrCode) {
+      await updateZone.mutateAsync({
+        id: zoneId,
+        data: { qrCode: qrValue },
+      });
     }
+    setQrSheetVisible(true);
   }, [zone, zoneId, qrValue, updateZone]);
 
   const handleDelete = () => {
@@ -81,12 +80,8 @@ export default function ZoneDetailScreen() {
       title: "Zone löschen",
       message: "Diese Zone und alle zugehörigen Daten wirklich löschen?",
       onConfirm: async () => {
-        try {
-          await deleteZone.mutateAsync(zoneId);
-          router.back();
-        } catch {
-          // Global MutationCache.onError shows toast
-        }
+        await deleteZone.mutateAsync(zoneId);
+        router.back();
       },
     });
   };
@@ -189,7 +184,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.card,
     margin: Spacing.lg,
     marginBottom: 0,
-    borderRadius: Radius.lg,
+    borderRadius: 12,
     padding: Spacing.lg,
   },
   headerRow: {

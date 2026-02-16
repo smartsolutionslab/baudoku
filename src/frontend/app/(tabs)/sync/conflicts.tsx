@@ -1,8 +1,8 @@
+import React from "react";
 import { View, Text, ActivityIndicator, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
-import { ConflictList } from "../../../src/components/sync";
-import { useConflicts } from "../../../src/hooks";
-import { Colors, FontSize, Spacing } from "../../../src/styles/tokens";
+import { ConflictList } from "../../../src/components/sync/ConflictList";
+import { useConflicts } from "../../../src/hooks/useConflicts";
 
 export default function ConflictsScreen() {
   const router = useRouter();
@@ -41,7 +41,7 @@ export default function ConflictsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: "#F2F2F7",
   },
   center: {
     flex: 1,
@@ -49,9 +49,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   errorText: {
-    color: Colors.danger,
-    fontSize: FontSize.body,
+    color: "#FF3B30",
+    fontSize: 15,
     textAlign: "center",
-    padding: Spacing.xl,
+    padding: 20,
   },
 });

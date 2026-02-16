@@ -5,12 +5,14 @@ const MOCK_LOCATION_KEY = "baudoku_settings_mockLocation";
 
 type SettingsState = {
   allowMockLocation: boolean;
+  hydrated: boolean;
   setAllowMockLocation: (allow: boolean) => void;
   hydrate: () => Promise<void>;
 };
 
 export const useSettingsStore = create<SettingsState>((set) => ({
   allowMockLocation: true,
+  hydrated: false,
 
   setAllowMockLocation: (allow) => {
     set({ allowMockLocation: allow });
@@ -30,5 +32,6 @@ export const useSettingsStore = create<SettingsState>((set) => ({
     } catch {
       // non-critical setting, ignore read errors
     }
+    set({ hydrated: true });
   },
 }));

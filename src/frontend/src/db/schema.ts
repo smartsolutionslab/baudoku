@@ -12,7 +12,9 @@ export const projects = sqliteTable("projects", {
   gpsLng: real("gps_lng"),
   clientName: text("client_name"),
   clientContact: text("client_contact"),
-  status: text("status", { enum: ["active", "completed", "archived"] }).notNull(),
+  status: text("status", {
+    enum: ["active", "completed", "archived"],
+  }).notNull(),
   createdBy: text("created_by").notNull(),
   createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
   updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
@@ -21,10 +23,14 @@ export const projects = sqliteTable("projects", {
 
 export const zones = sqliteTable("zones", {
   id: text("id").primaryKey(),
-  projectId: text("project_id").notNull().references(() => projects.id),
+  projectId: text("project_id")
+    .notNull()
+    .references(() => projects.id),
   parentZoneId: text("parent_zone_id"),
   name: text("name").notNull(),
-  type: text("type", { enum: ["building", "floor", "room", "section", "trench"] }).notNull(),
+  type: text("type", {
+    enum: ["building", "floor", "room", "section", "trench"],
+  }).notNull(),
   qrCode: text("qr_code"),
   sortOrder: integer("sort_order").default(0),
   version: integer("version").notNull().default(1),
@@ -34,10 +40,16 @@ export const zones = sqliteTable("zones", {
 
 export const installations = sqliteTable("installations", {
   id: text("id").primaryKey(),
-  projectId: text("project_id").notNull().references(() => projects.id),
-  zoneId: text("zone_id").notNull().references(() => zones.id),
+  projectId: text("project_id")
+    .notNull()
+    .references(() => projects.id),
+  zoneId: text("zone_id")
+    .notNull()
+    .references(() => zones.id),
   type: text("type").notNull(),
-  status: text("status", { enum: ["planned", "in_progress", "completed", "inspected"] }).notNull(),
+  status: text("status", {
+    enum: ["planned", "in_progress", "completed", "inspected"],
+  }).notNull(),
 
   // GPS / GNSS
   gpsLat: real("gps_lat"),
@@ -45,9 +57,15 @@ export const installations = sqliteTable("installations", {
   gpsAltitude: real("gps_altitude"),
   gpsAltitudeMsl: real("gps_altitude_msl"),
   gpsAccuracy: real("gps_accuracy"),
-  gpsSource: text("gps_source", { enum: ["internal_gps", "external_dgnss", "external_rtk"] }),
-  gpsCorrService: text("gps_corr_service", { enum: ["none", "sapos_eps", "sapos_heps", "sapos_gpps"] }),
-  gpsRtkStatus: text("gps_rtk_status", { enum: ["no_fix", "autonomous", "dgps", "rtk_float", "rtk_fixed"] }),
+  gpsSource: text("gps_source", {
+    enum: ["internal_gps", "external_dgnss", "external_rtk"],
+  }),
+  gpsCorrService: text("gps_corr_service", {
+    enum: ["none", "sapos_eps", "sapos_heps", "sapos_gpps"],
+  }),
+  gpsRtkStatus: text("gps_rtk_status", {
+    enum: ["no_fix", "autonomous", "dgps", "rtk_float", "rtk_fixed"],
+  }),
   gpsSatCount: integer("gps_sat_count"),
   gpsHdop: real("gps_hdop"),
   gpsCorrAge: real("gps_corr_age"),
@@ -82,38 +100,50 @@ export const installations = sqliteTable("installations", {
 
 export const photos = sqliteTable("photos", {
   id: text("id").primaryKey(),
-  installationId: text("installation_id").notNull().references(() => installations.id),
+  installationId: text("installation_id")
+    .notNull()
+    .references(() => installations.id),
   localPath: text("local_path").notNull(),
   remotePath: text("remote_path"),
   thumbnailPath: text("thumbnail_path"),
-  type: text("type", { enum: ["before", "after", "detail", "overview"] }).notNull(),
+  type: text("type", {
+    enum: ["before", "after", "detail", "overview"],
+  }).notNull(),
   annotations: text("annotations"), // JSON
   gpsLat: real("gps_lat"),
   gpsLng: real("gps_lng"),
   gpsAccuracy: real("gps_accuracy"),
-  gpsSource: text("gps_source", { enum: ["internal_gps", "external_dgnss", "external_rtk"] }),
-  gpsCorrService: text("gps_corr_service", { enum: ["none", "sapos_eps", "sapos_heps"] }),
+  gpsSource: text("gps_source", {
+    enum: ["internal_gps", "external_dgnss", "external_rtk"],
+  }),
+  gpsCorrService: text("gps_corr_service", {
+    enum: ["none", "sapos_eps", "sapos_heps"],
+  }),
   caption: text("caption"),
   exifLatitude: real("exif_latitude"),
   exifLongitude: real("exif_longitude"),
   exifDateTime: text("exif_date_time"),
   exifCameraModel: text("exif_camera_model"),
   takenAt: integer("taken_at", { mode: "timestamp" }).notNull(),
-  uploadStatus: text("upload_status", { enum: ["pending", "uploading", "uploaded", "failed"] }).notNull(),
-  retryCount: integer("retry_count").default(0),
-  lastUploadError: text("last_upload_error"),
+  uploadStatus: text("upload_status", {
+    enum: ["pending", "uploading", "uploaded", "failed"],
+  }).notNull(),
   version: integer("version").notNull().default(1),
 });
 
 export const measurements = sqliteTable("measurements", {
   id: text("id").primaryKey(),
-  installationId: text("installation_id").notNull().references(() => installations.id),
+  installationId: text("installation_id")
+    .notNull()
+    .references(() => installations.id),
   type: text("type").notNull(),
   value: real("value").notNull(),
   unit: text("unit").notNull(),
   minThreshold: real("min_threshold"),
   maxThreshold: real("max_threshold"),
-  result: text("result", { enum: ["passed", "failed", "warning"] }),
+  result: text("result", {
+    enum: ["passed", "failed", "warning"],
+  }),
   notes: text("notes"),
   measuredAt: integer("measured_at", { mode: "timestamp" }).notNull(),
   measuredBy: text("measured_by").notNull(),
@@ -126,12 +156,16 @@ export const syncOutbox = sqliteTable("sync_outbox", {
   id: text("id").primaryKey(),
   entityType: text("entity_type").notNull(),
   entityId: text("entity_id").notNull(),
-  operation: text("operation", { enum: ["create", "update", "delete"] }).notNull(),
+  operation: text("operation", {
+    enum: ["create", "update", "delete"],
+  }).notNull(),
   payload: text("payload").notNull(), // JSON
   timestamp: integer("timestamp", { mode: "timestamp" }).notNull(),
   deviceId: text("device_id").notNull(),
   retryCount: integer("retry_count").default(0),
-  status: text("status", { enum: ["pending", "syncing", "synced", "failed"] }).notNull(),
+  status: text("status", {
+    enum: ["pending", "syncing", "synced", "failed"],
+  }).notNull(),
 });
 
 export const syncMeta = sqliteTable("sync_meta", {

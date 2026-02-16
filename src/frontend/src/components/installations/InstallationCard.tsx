@@ -1,20 +1,34 @@
+import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import type { Installation } from "../../db/repositories/types";
-import { StatusBadge } from "../common";
-import { calculateGpsQuality, formatDate } from "../../utils";
-import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
+import { StatusBadge } from "../common/StatusBadge";
+import { calculateGpsQuality } from "../../utils/gpsQuality";
+import { Colors, Spacing, FontSize } from "../../styles/tokens";
 
 type InstallationCardProps = {
   installation: Installation;
   onPress: () => void;
 };
 
-export function InstallationCard({ installation, onPress }: InstallationCardProps) {
+function formatDate(d: Date | null | undefined): string {
+  if (!d) return "";
+  return d.toLocaleDateString("de-DE", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+}
+
+export function InstallationCard({
+  installation,
+  onPress,
+}: InstallationCardProps) {
   const subtitle = [installation.manufacturer, installation.model]
     .filter(Boolean)
     .join(" — ");
 
-  const gpsQuality = installation.gpsAccuracy != null
+  const gpsQuality =
+    installation.gpsAccuracy != null
       ? calculateGpsQuality({
           gpsAccuracy: installation.gpsAccuracy,
           gpsHdop: installation.gpsHdop,
@@ -30,7 +44,12 @@ export function InstallationCard({ installation, onPress }: InstallationCardProp
           {installation.type}
         </Text>
         {gpsQuality && (
-          <View style={[styles.gpsBadge, { backgroundColor: gpsQuality.color }]}>
+          <View
+            style={[
+              styles.gpsBadge,
+              { backgroundColor: gpsQuality.color },
+            ]}
+          >
             <Text style={styles.gpsBadgeText}>{gpsQuality.grade}</Text>
           </View>
         )}
@@ -49,7 +68,7 @@ export function InstallationCard({ installation, onPress }: InstallationCardProp
 const styles = StyleSheet.create({
   card: {
     backgroundColor: Colors.card,
-    borderRadius: Radius.md,
+    borderRadius: 10,
     padding: Spacing.md,
     marginBottom: Spacing.sm,
   },
@@ -75,7 +94,7 @@ const styles = StyleSheet.create({
     marginRight: Spacing.xs,
   },
   gpsBadgeText: {
-    color: Colors.white,
+    color: "#fff",
     fontSize: 10,
     fontWeight: "700",
   },

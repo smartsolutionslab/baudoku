@@ -29,14 +29,22 @@ const tableMap: TableMap = {
   measurement: measurements,
 };
 
-export async function applyUpsert(entityType: string, entityId: string, payload: Record<string, unknown>): Promise<void> {
+export async function applyUpsert(
+  entityType: string,
+  entityId: string,
+  payload: Record<string, unknown>
+): Promise<void> {
   const table = tableMap[entityType as keyof TableMap];
   if (!table) {
     console.warn(`Unknown entity type for direct write: ${entityType}`);
     return;
   }
 
-  const existing = await db.select().from(table).where(eq(table.id, entityId)).get();
+  const existing = await db
+    .select()
+    .from(table)
+    .where(eq(table.id, entityId))
+    .get();
 
   if (existing) {
     await db.update(table).set(payload).where(eq(table.id, entityId));
@@ -45,7 +53,10 @@ export async function applyUpsert(entityType: string, entityId: string, payload:
   }
 }
 
-export async function applyDelete(entityType: string, entityId: string): Promise<void> {
+export async function applyDelete(
+  entityType: string,
+  entityId: string
+): Promise<void> {
   const table = tableMap[entityType as keyof TableMap];
   if (!table) {
     console.warn(`Unknown entity type for direct delete: ${entityType}`);

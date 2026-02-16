@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { db } from "../client";
 import { projects } from "../schema";
-import { generateId } from "../../utils";
+import { generateId } from "../../utils/uuid";
 import { createOutboxEntry } from "./syncRepo";
 import type { Project, NewProject } from "./types";
 import type { ProjectId } from "../../types/branded";
@@ -14,7 +14,15 @@ export async function getById(id: ProjectId): Promise<Project | undefined> {
   return db.select().from(projects).where(eq(projects.id, id)).get() as unknown as Project | undefined;
 }
 
-export async function create(data: Omit<NewProject, "id" | "createdAt" | "updatedAt" | "version">): Promise<Project> {
+export async function getByStatus(
+  status: "active" | "completed" | "archived"
+): Promise<Project[]> {
+  return db.select().from(projects).where(eq(projects.status, status)).all() as unknown as Project[];
+}
+
+export async function create(
+  data: Omit<NewProject, "id" | "createdAt" | "updatedAt" | "version">
+): Promise<Project> {
   const now = new Date();
   const project: NewProject = {
     ...data,
@@ -30,7 +38,12 @@ export async function create(data: Omit<NewProject, "id" | "createdAt" | "update
   return project as unknown as Project;
 }
 
-export async function update(id: ProjectId, data: Partial< Omit<NewProject, "id" | "createdAt" | "updatedAt" | "version" | "createdBy">>): Promise<Project | undefined> {
+export async function update(
+  id: ProjectId,
+  data: Partial<
+    Omit<NewProject, "id" | "createdAt" | "updatedAt" | "version" | "createdBy">
+  >
+): Promise<Project | undefined> {
   const existing = await getById(id);
   if (!existing) return undefined;
 

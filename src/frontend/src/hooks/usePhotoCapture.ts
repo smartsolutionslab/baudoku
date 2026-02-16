@@ -1,6 +1,6 @@
 import * as ImagePicker from "expo-image-picker";
 import { useCallback } from "react";
-import { savePhoto } from "../utils";
+import { savePhoto } from "../utils/photoStorage";
 
 export type ExifData = {
   gpsLatitude?: number;
@@ -21,7 +21,9 @@ export type UsePhotoCaptureReturn = {
   pickFromGallery: () => Promise<CapturedPhoto | null>;
 };
 
-function extractExif(exif: Record<string, unknown> | null | undefined): ExifData | undefined {
+function extractExif(
+  exif: Record<string, unknown> | null | undefined
+): ExifData | undefined {
   if (!exif) return undefined;
 
   const data: ExifData = {};
@@ -43,7 +45,9 @@ function extractExif(exif: Record<string, unknown> | null | undefined): ExifData
   return data;
 }
 
-function processResult(result: ImagePicker.ImagePickerResult): CapturedPhoto | null {
+function processResult(
+  result: ImagePicker.ImagePickerResult
+): CapturedPhoto | null {
   if (result.canceled || result.assets.length === 0) return null;
   const asset = result.assets[0];
   const localPath = savePhoto(asset.uri);
@@ -75,7 +79,8 @@ export function usePhotoCapture(): UsePhotoCaptureReturn {
 
   const pickFromGallery = useCallback(
     async (): Promise<CapturedPhoto | null> => {
-      const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      const permission =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (!permission.granted) return null;
 
       const result = await ImagePicker.launchImageLibraryAsync({

@@ -1,9 +1,10 @@
+import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import type { Measurement } from "../../db/repositories/types";
-import { StatusBadge } from "../common";
+import { StatusBadge } from "../common/StatusBadge";
 import { Card, Body, Caption } from "../core";
-import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
+import { Colors, Spacing, FontSize } from "../../styles/tokens";
 
 type MeasurementCardProps = {
   measurement: Measurement;
@@ -29,7 +30,10 @@ export function MeasurementCard({ measurement, onDelete }: MeasurementCardProps)
         <View style={styles.headerRight}>
           {m.result && <StatusBadge status={m.result} />}
           {onDelete && (
-            <TouchableOpacity style={styles.deleteButton} onPress={() => onDelete(m)}>
+            <TouchableOpacity
+              style={styles.deleteButton}
+              onPress={() => onDelete(m)}
+            >
               <FontAwesome name="trash-o" size={16} color={Colors.danger} />
             </TouchableOpacity>
           )}
@@ -46,7 +50,7 @@ export function MeasurementCard({ measurement, onDelete }: MeasurementCardProps)
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: Radius.md,
+    borderRadius: 10,
     padding: Spacing.md,
     marginBottom: Spacing.sm,
   },

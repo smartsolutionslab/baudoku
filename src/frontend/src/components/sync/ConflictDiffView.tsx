@@ -1,5 +1,5 @@
+import React from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
-import { Colors, Spacing, FontSize } from "../../styles/tokens";
 
 type DiffRow = {
   field: string;
@@ -98,25 +98,25 @@ const styles = StyleSheet.create({
   },
   headerRow: {
     flexDirection: "row",
-    backgroundColor: Colors.separator,
+    backgroundColor: "#E5E5EA",
     borderBottomWidth: 1,
-    borderBottomColor: Colors.disabled,
+    borderBottomColor: "#C7C7CC",
   },
   headerText: {
     fontWeight: "700",
-    fontSize: FontSize.caption,
+    fontSize: 13,
   },
   row: {
     flexDirection: "row",
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: Colors.separator,
+    borderBottomColor: "#E5E5EA",
   },
   diffRow: {
-    backgroundColor: Colors.diffHighlight,
+    backgroundColor: "#FFF3CD",
   },
   cell: {
-    padding: Spacing.sm,
-    fontSize: FontSize.caption,
+    padding: 8,
+    fontSize: 13,
   },
   fieldCell: {
     width: 140,

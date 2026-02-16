@@ -7,7 +7,7 @@ import {
   Pressable,
   StyleSheet,
 } from "react-native";
-import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
+import { Colors, Spacing, FontSize } from "../../styles/tokens";
 
 type ModalProps = {
   visible: boolean;
@@ -17,7 +17,13 @@ type ModalProps = {
   footer?: React.ReactNode;
 };
 
-export function Modal({ visible, onClose, title, children, footer }: ModalProps) {
+export function Modal({
+  visible,
+  onClose,
+  title,
+  children,
+  footer,
+}: ModalProps) {
   return (
     <RNModal visible={visible} transparent animationType="slide">
       <Pressable style={styles.overlay} onPress={onClose}>
@@ -44,7 +50,7 @@ export function Modal({ visible, onClose, title, children, footer }: ModalProps)
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: Colors.overlay,
+    backgroundColor: "rgba(0,0,0,0.4)",
     justifyContent: "flex-end",
   },
   sheet: {
@@ -80,7 +86,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     marginTop: Spacing.lg,
     backgroundColor: Colors.background,
-    borderRadius: Radius.md,
+    borderRadius: 10,
   },
   closeText: {
     fontSize: FontSize.callout,

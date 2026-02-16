@@ -10,18 +10,18 @@ public sealed class CompleteChunkedUploadCommandHandler : ICommandHandler<Comple
 {
     private readonly IChunkedUploadStorage chunkedUploadStorage;
     private readonly IPhotoStorage photoStorage;
-    private readonly IInstallationRepository installations;
+    private readonly IInstallationRepository installationRepository;
     private readonly IUnitOfWork unitOfWork;
 
     public CompleteChunkedUploadCommandHandler(
         IChunkedUploadStorage chunkedUploadStorage,
         IPhotoStorage photoStorage,
-        IInstallationRepository installations,
+        IInstallationRepository installationRepository,
         IUnitOfWork unitOfWork)
     {
         this.chunkedUploadStorage = chunkedUploadStorage;
         this.photoStorage = photoStorage;
-        this.installations = installations;
+        this.installationRepository = installationRepository;
         this.unitOfWork = unitOfWork;
     }
 
@@ -41,7 +41,7 @@ public sealed class CompleteChunkedUploadCommandHandler : ICommandHandler<Comple
             assembledStream, session.FileName, session.ContentType, cancellationToken);
 
         var installationId = InstallationIdentifier.From(session.InstallationId);
-        var installation = await installations.GetByIdAsync(installationId, cancellationToken)
+        var installation = await installationRepository.GetByIdAsync(installationId, cancellationToken)
             ?? throw new InvalidOperationException($"Installation mit ID {session.InstallationId} nicht gefunden.");
 
         var photoId = PhotoIdentifier.New();

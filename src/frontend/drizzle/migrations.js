@@ -2,12 +2,11 @@
 
 import journal from './meta/_journal.json';
 import m0000 from './0000_bumpy_bushwacker.sql';
-import m0001 from './0001_add_photo_upload_tracking.sql';
 
   export default {
     journal,
     migrations: {
-      m0000,
-      m0001
+      m0000
     }
   }
+  

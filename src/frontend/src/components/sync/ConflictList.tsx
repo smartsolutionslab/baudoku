@@ -1,3 +1,4 @@
+import React from "react";
 import {
   View,
   Text,
@@ -5,7 +6,6 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
-import { Colors, Spacing, FontSize, Radius, FontFamily } from "../../styles/tokens";
 import type { ConflictDto } from "../../sync/syncApi";
 
 type ConflictListProps = {
@@ -63,53 +63,53 @@ export function ConflictList({ conflicts, onSelect }: ConflictListProps) {
 
 const styles = StyleSheet.create({
   list: {
-    padding: Spacing.lg,
+    padding: 16,
   },
   item: {
-    backgroundColor: Colors.card,
-    borderRadius: Radius.md,
-    padding: Spacing.md,
-    marginBottom: Spacing.sm,
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    padding: 12,
+    marginBottom: 8,
   },
   itemHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: Spacing.xs,
+    marginBottom: 4,
   },
   typeBadge: {
-    backgroundColor: Colors.primary,
-    paddingHorizontal: Spacing.sm,
+    backgroundColor: "#007AFF",
+    paddingHorizontal: 8,
     paddingVertical: 2,
-    borderRadius: Radius.md,
+    borderRadius: 10,
   },
   typeBadgeText: {
-    color: Colors.white,
+    color: "#fff",
     fontSize: 11,
     fontWeight: "600",
     textTransform: "capitalize",
   },
   statusBadge: {
-    backgroundColor: Colors.warning,
-    paddingHorizontal: Spacing.sm,
+    backgroundColor: "#FF9500",
+    paddingHorizontal: 8,
     paddingVertical: 2,
-    borderRadius: Radius.md,
+    borderRadius: 10,
   },
   statusBadgeText: {
-    color: Colors.white,
+    color: "#fff",
     fontSize: 11,
     fontWeight: "600",
     textTransform: "capitalize",
   },
   entityId: {
-    fontSize: FontSize.caption,
-    color: Colors.textTertiary,
-    fontFamily: FontFamily.mono,
+    fontSize: 13,
+    color: "#8E8E93",
+    fontFamily: "SpaceMono",
     marginBottom: 2,
   },
   versions: {
-    fontSize: FontSize.footnote,
-    color: Colors.textSecondary,
+    fontSize: 12,
+    color: "#666",
   },
   empty: {
     flex: 1,
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
     paddingTop: 60,
   },
   emptyText: {
-    fontSize: FontSize.body,
-    color: Colors.textTertiary,
+    fontSize: 15,
+    color: "#8E8E93",
   },
 });

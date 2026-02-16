@@ -1,7 +1,7 @@
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { View, Text, StyleSheet, Animated } from "react-native";
-import { useUploadStore } from "../../store";
-import { Colors, Spacing, FontSize, Radius, Shadows } from "../../styles/tokens";
+import { useUploadStore } from "../../store/useUploadStore";
+import { Colors, Spacing, FontSize } from "../../styles/tokens";
 
 export function UploadProgressBar() {
   const queue = useUploadStore((s) => s.queue);
@@ -11,12 +11,17 @@ export function UploadProgressBar() {
   const total = queue.length;
   const completed = queue.filter((i) => i.status === "completed").length;
   const failed = queue.filter((i) => i.status === "failed").length;
-  const uploading = queue.filter((i) => i.status === "uploading" || i.status === "queued").length;
+  const uploading = queue.filter(
+    (i) => i.status === "uploading" || i.status === "queued"
+  ).length;
   const allDone = total > 0 && uploading === 0;
   const hasActive = uploading > 0;
 
-  const overallPercentage = total > 0
-      ? Math.round(queue.reduce((sum, item) => sum + item.percentage, 0) / total)
+  const overallPercentage =
+    total > 0
+      ? Math.round(
+          queue.reduce((sum, item) => sum + item.percentage, 0) / total
+        )
       : 0;
 
   useEffect(() => {
@@ -80,9 +85,13 @@ const styles = StyleSheet.create({
     left: Spacing.lg,
     right: Spacing.lg,
     backgroundColor: Colors.card,
-    borderRadius: Radius.md,
+    borderRadius: 10,
     padding: Spacing.md,
-    ...Shadows.floating,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    elevation: 4,
   },
   text: {
     fontSize: FontSize.caption,

@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { useSyncContext } from "../providers/SyncProvider";
-import { useSyncStore, useToastStore } from "../store";
+import { useSyncStore } from "../store/useSyncStore";
 import type { SyncResult } from "../sync/SyncManager";
 
 export function useSyncManager() {
@@ -23,18 +23,11 @@ export function useSyncManager() {
       setSyncResult(result);
       void loadSyncStatus();
       void loadPendingEntries();
-      const total = result.pushed + result.pulled;
-      if (total > 0) {
-        useToastStore.getState().show(
-          `${total} Änderung${total !== 1 ? "en" : ""} synchronisiert`,
-          "success",
-        );
-      }
       return result;
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Unbekannter Fehler";
+      const message =
+        error instanceof Error ? error.message : "Unbekannter Fehler";
       setSyncError(message);
-      useToastStore.getState().show(`Sync fehlgeschlagen: ${message}`, "error");
       return null;
     }
   }, [syncManager, startSync, setSyncResult, setSyncError, loadSyncStatus, loadPendingEntries]);
@@ -47,7 +40,8 @@ export function useSyncManager() {
       void loadPendingEntries();
       return result;
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Unbekannter Fehler";
+      const message =
+        error instanceof Error ? error.message : "Unbekannter Fehler";
       setSyncError(message);
       return null;
     }
@@ -60,14 +54,15 @@ export function useSyncManager() {
       void loadSyncStatus();
       return result;
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Unbekannter Fehler";
+      const message =
+        error instanceof Error ? error.message : "Unbekannter Fehler";
       setSyncError(message);
       return null;
     }
   }, [syncManager, startSync, setSyncError, loadSyncStatus]);
 
   const triggerNow = useCallback(() => {
-    void syncScheduler?.triggerNow();
+    void syncScheduler.triggerNow();
   }, [syncScheduler]);
 
   return {

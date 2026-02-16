@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { useFonts } from "expo-font";
@@ -6,14 +6,14 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useColorScheme } from "react-native";
 
-import { QueryProvider, AuthProvider, SyncProvider } from "../src/providers";
+import { QueryProvider } from "../src/providers/QueryProvider";
+import { AuthProvider } from "../src/providers/AuthProvider";
+import { SyncProvider } from "../src/providers/SyncProvider";
 import { useMigrationsHelper } from "../src/db/useMigrationsHelper";
 import { startConnectivityMonitor, stopConnectivityMonitor } from "../src/sync/ConnectivityMonitor";
-import { useSettingsStore } from "../src/store";
-import { OfflineBanner } from "../src/components/sync";
-import { ToastContainer } from "../src/components/core";
+import { useSettingsStore } from "../src/store/useSettingsStore";
+import { OfflineBanner } from "../src/components/sync/OfflineBanner";
 import { View, Text, ActivityIndicator, StyleSheet } from "react-native";
-import { Colors, Spacing, FontSize } from "../src/styles/tokens";
 
 export { ErrorBoundary } from "expo-router";
 
@@ -84,7 +84,6 @@ function RootLayoutNav() {
       <AuthProvider>
         <SyncProvider>
           <OfflineBanner />
-          <ToastContainer />
           <Stack>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           </Stack>
@@ -99,16 +98,16 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: Spacing.xl,
+    padding: 20,
   },
   errorText: {
-    color: Colors.danger,
-    fontSize: FontSize.callout,
+    color: "#FF3B30",
+    fontSize: 16,
     textAlign: "center",
   },
   loadingText: {
-    marginTop: Spacing.md,
-    fontSize: FontSize.body,
-    color: Colors.textSecondary,
+    marginTop: 12,
+    fontSize: 14,
+    color: "#666",
   },
 });

@@ -8,17 +8,17 @@ namespace BauDoku.Documentation.Application.Queries.GetInstallationsInRadius;
 public sealed class GetInstallationsInRadiusQueryHandler
     : IQueryHandler<GetInstallationsInRadiusQuery, PagedResult<NearbyInstallationDto>>
 {
-    private readonly IInstallationReadRepository installations;
+    private readonly IInstallationReadRepository readRepository;
 
-    public GetInstallationsInRadiusQueryHandler(IInstallationReadRepository installations)
+    public GetInstallationsInRadiusQueryHandler(IInstallationReadRepository readRepository)
     {
-        this.installations = installations;
+        this.readRepository = readRepository;
     }
 
     public async Task<PagedResult<NearbyInstallationDto>> Handle(
         GetInstallationsInRadiusQuery query, CancellationToken cancellationToken)
     {
-        return await installations.SearchInRadiusAsync(
+        return await readRepository.SearchInRadiusAsync(
             query.Latitude,
             query.Longitude,
             query.RadiusMeters,

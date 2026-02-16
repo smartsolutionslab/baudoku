@@ -25,16 +25,16 @@ const gradeLabels: Record<GpsQualityGrade, string> = {
 
 const gradeColors: Record<GpsQualityGrade, string> = {
   A: Colors.success,
-  B: Colors.gpsGradeB,
+  B: "#A8D500",
   C: Colors.warning,
   D: Colors.danger,
 };
 
 const gradeBgColors: Record<GpsQualityGrade, string> = {
-  A: Colors.gpsBgA,
-  B: Colors.gpsBgB,
-  C: Colors.gpsBgC,
-  D: Colors.gpsBgD,
+  A: "#E8F5E9",
+  B: "#F1F8E9",
+  C: "#FFF8E1",
+  D: "#FFEBEE",
 };
 
 const grades: GpsQualityGrade[] = ["A", "B", "C", "D"];
@@ -94,19 +94,4 @@ export const gpsSourceLabels: Record<string, string> = {
   internal_gps: "Internes GPS",
   external_dgnss: "Externes DGNSS",
   external_rtk: "Externes RTK",
-};
-
-export const corrServiceLabels: Record<string, string> = {
-  none: "Keine",
-  sapos_eps: "SAPOS-EPS",
-  sapos_heps: "SAPOS-HEPS",
-  sapos_gpps: "SAPOS-GPPS",
-};
-
-export const rtkLabels: Record<string, string> = {
-  no_fix: "Kein Fix",
-  autonomous: "Autonom",
-  dgps: "DGPS",
-  rtk_float: "RTK Float",
-  rtk_fixed: "RTK Fixed",
 };

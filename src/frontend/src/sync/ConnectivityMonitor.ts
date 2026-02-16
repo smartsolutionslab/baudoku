@@ -1,5 +1,5 @@
 import NetInfo from "@react-native-community/netinfo";
-import { useSyncStore } from "../store";
+import { useSyncStore } from "../store/useSyncStore";
 
 let unsubscribe: (() => void) | null = null;
 let wasOffline = false;

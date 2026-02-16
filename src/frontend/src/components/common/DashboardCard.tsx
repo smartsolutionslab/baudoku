@@ -1,6 +1,7 @@
+import React from "react";
 import { Text, StyleSheet } from "react-native";
 import { Card, Caption } from "../core";
-import { Colors, Spacing, FontSize } from "../../styles/tokens";
+import { Colors, Spacing } from "../../styles/tokens";
 
 type DashboardCardProps = {
   title: string;
@@ -9,7 +10,12 @@ type DashboardCardProps = {
   color?: string;
 };
 
-export function DashboardCard({ title, value, subtitle, color = Colors.primary}: DashboardCardProps) {
+export function DashboardCard({
+  title,
+  value,
+  subtitle,
+  color = Colors.primary,
+}: DashboardCardProps) {
   return (
     <Card style={styles.card}>
       <Caption style={styles.title}>{title}</Caption>
@@ -32,7 +38,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   subtitle: {
-    fontSize: FontSize.footnote,
+    fontSize: 12,
     marginTop: Spacing.xs,
   },
 });

@@ -1,5 +1,6 @@
+import React from "react";
 import { View, Text, TextInput, StyleSheet, type TextInputProps } from "react-native";
-import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
+import { Colors, Spacing, FontSize } from "../../styles/tokens";
 
 type FormFieldProps = TextInputProps & {
   label: string;
@@ -39,7 +40,7 @@ const styles = StyleSheet.create({
   },
   input: {
     backgroundColor: Colors.card,
-    borderRadius: Radius.md,
+    borderRadius: 10,
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.md,
     fontSize: FontSize.body,

@@ -1,13 +1,13 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
 import {
   useProjects,
   useZonesByProject,
-} from "../../../src/hooks";
-import { ProjectCard } from "../../../src/components/projects";
-import { EmptyState } from "../../../src/components/common";
+} from "../../../src/hooks/useOfflineData";
+import { ProjectCard } from "../../../src/components/projects/ProjectCard";
+import { EmptyState } from "../../../src/components/common/EmptyState";
 import { Colors, Spacing, FontSize, Radius } from "../../../src/styles/tokens";
 import type { ProjectId, ZoneId } from "../../../src/types/branded";
 
@@ -73,7 +73,7 @@ export default function CaptureScreen() {
         style={styles.scanBtn}
         onPress={() => router.push("/(tabs)/capture/scan")}
       >
-        <FontAwesome name="qrcode" size={24} color={Colors.white} />
+        <FontAwesome name="qrcode" size={24} color="#fff" />
         <View style={styles.scanBtnContent}>
           <Text style={styles.scanBtnTitle}>QR-Code scannen</Text>
           <Text style={styles.scanBtnSubtitle}>
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scanBtnTitle: {
-    color: Colors.white,
+    color: "#fff",
     fontSize: FontSize.callout,
     fontWeight: "700",
   },
@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
   },
   zoneItem: {
     backgroundColor: Colors.card,
-    borderRadius: Radius.md,
+    borderRadius: 10,
     padding: Spacing.md,
     marginBottom: Spacing.sm,
     flexDirection: "row",

@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import * as syncApi from "../sync/syncApi";
-import { useSyncStore } from "../store";
-import { getDeviceId } from "../utils";
+import { useSyncStore } from "../store/useSyncStore";
+import { getDeviceId } from "../utils/deviceId";
 import type { ConflictDto } from "../sync/syncApi";
 
 export function useConflicts(status?: string) {
@@ -33,7 +33,6 @@ export function useResolveConflict() {
     }) => {
       await syncApi.resolveConflict(conflictId, strategy, mergedPayload);
     },
-    meta: { errorMessage: "Konflikt konnte nicht aufgelöst werden" },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["conflicts"] });
       queryClient.invalidateQueries({ queryKey: ["syncStatus"] });

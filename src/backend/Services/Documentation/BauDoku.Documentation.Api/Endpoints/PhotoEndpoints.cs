@@ -60,11 +60,11 @@ public static class PhotoEndpoints
 
         group.MapGet("/installations/{installationId:guid}/photos", async (
             Guid installationId,
-            IPhotoReadRepository photos,
+            IPhotoReadRepository photoReadRepository,
             CancellationToken ct) =>
         {
-            var photoList = await photos.ListByInstallationIdAsync(installationId, ct);
-            return Results.Ok(photoList);
+            var photos = await photoReadRepository.ListByInstallationIdAsync(installationId, ct);
+            return Results.Ok(photos);
         })
         .RequireAuthorization()
         .WithName("ListPhotos")

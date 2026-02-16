@@ -1,3 +1,4 @@
+import React from "react";
 import { ScrollView, TouchableOpacity, Text, StyleSheet } from "react-native";
 import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
 
@@ -14,11 +15,20 @@ type FilterChipsProps = {
 
 export function FilterChips({ options, selected, onToggle }: FilterChipsProps) {
   return (
-    <ScrollView horizontal  showsHorizontalScrollIndicator={false} contentContainerStyle={styles.container}>
+    <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      contentContainerStyle={styles.container}
+    >
       {options.map((opt) => {
         const active = selected.includes(opt.value);
         return (
-          <TouchableOpacity  key={opt.value} style={[styles.chip, active && styles.chipActive]} onPress={() => onToggle(opt.value)} activeOpacity={0.7}>
+          <TouchableOpacity
+            key={opt.value}
+            style={[styles.chip, active && styles.chipActive]}
+            onPress={() => onToggle(opt.value)}
+            activeOpacity={0.7}
+          >
             <Text style={[styles.chipText, active && styles.chipTextActive]}>
               {opt.label}
             </Text>
@@ -38,7 +48,7 @@ const styles = StyleSheet.create({
   chip: {
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
-    borderRadius: Radius.xl,
+    borderRadius: 20,
     backgroundColor: Colors.card,
     borderWidth: 1,
     borderColor: Colors.separator,
@@ -53,6 +63,6 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   chipTextActive: {
-    color: Colors.white,
+    color: "#fff",
   },
 });

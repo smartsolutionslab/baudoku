@@ -1,3 +1,4 @@
+import React from "react";
 import {
   TouchableOpacity,
   Text,
@@ -6,7 +7,7 @@ import {
   type ViewStyle,
   type TextStyle,
 } from "react-native";
-import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
+import { Colors, Spacing, FontSize } from "../../styles/tokens";
 
 type ButtonVariant = "primary" | "secondary" | "danger";
 
@@ -23,7 +24,7 @@ type ButtonProps = {
 const variantStyles: Record<ButtonVariant, { container: ViewStyle; text: TextStyle }> = {
   primary: {
     container: { backgroundColor: Colors.primary },
-    text: { color: Colors.white },
+    text: { color: "#fff" },
   },
   secondary: {
     container: { backgroundColor: Colors.background },
@@ -31,11 +32,19 @@ const variantStyles: Record<ButtonVariant, { container: ViewStyle; text: TextSty
   },
   danger: {
     container: { backgroundColor: Colors.danger },
-    text: { color: Colors.white },
+    text: { color: "#fff" },
   },
 };
 
-export function Button({ title, onPress, variant = "primary", disabled = false, loading = false, style, testID }: ButtonProps) {
+export function Button({
+  title,
+  onPress,
+  variant = "primary",
+  disabled = false,
+  loading = false,
+  style,
+  testID,
+}: ButtonProps) {
   const v = variantStyles[variant];
   const isDisabled = disabled || loading;
 
@@ -53,7 +62,10 @@ export function Button({ title, onPress, variant = "primary", disabled = false, 
       testID={testID}
     >
       {loading ? (
-        <ActivityIndicator size="small" color={variant === "secondary" ? Colors.textTertiary : Colors.white}/>
+        <ActivityIndicator
+          size="small"
+          color={variant === "secondary" ? Colors.textTertiary : "#fff"}
+        />
       ) : (
         <Text style={[styles.text, v.text]}>{title}</Text>
       )}
@@ -64,7 +76,7 @@ export function Button({ title, onPress, variant = "primary", disabled = false, 
 const styles = StyleSheet.create({
   container: {
     paddingVertical: 14,
-    borderRadius: Radius.md,
+    borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",
     minHeight: 48,

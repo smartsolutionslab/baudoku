@@ -1,11 +1,11 @@
-import { useMemo } from "react";
+import React, { useMemo } from "react";
 import { View, Text, ActivityIndicator, StyleSheet } from "react-native";
 import { useLocalSearchParams, useRouter, Stack } from "expo-router";
 import {
   useZonesByProject,
   useUpdateZone,
-} from "../../../../src/hooks";
-import { ZoneForm } from "../../../../src/components/projects";
+} from "../../../../src/hooks/useOfflineData";
+import { ZoneForm } from "../../../../src/components/projects/ZoneForm";
 import { Colors, Spacing, FontSize } from "../../../../src/styles/tokens";
 import type { ZoneFormData } from "../../../../src/validation/schemas";
 import {
@@ -35,20 +35,16 @@ export default function ZoneEditScreen() {
   );
 
   const handleSubmit = async (data: ZoneFormData) => {
-    try {
-      await updateZone.mutateAsync({
-        id: zoneId,
-        data: {
-          name: data.name,
-          type: data.type,
-          parentZoneId: data.parentZoneId ?? null,
-          sortOrder: data.sortOrder ?? 0,
-        },
-      });
-      router.back();
-    } catch {
-      // Global MutationCache.onError shows toast
-    }
+    await updateZone.mutateAsync({
+      id: zoneId,
+      data: {
+        name: data.name,
+        type: data.type,
+        parentZoneId: data.parentZoneId ?? null,
+        sortOrder: data.sortOrder ?? 0,
+      },
+    });
+    router.back();
   };
 
   if (isLoading || !zone) {

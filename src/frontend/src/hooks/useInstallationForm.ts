@@ -1,6 +1,9 @@
 import { useState, useCallback } from "react";
 import { Alert } from "react-native";
-import { installationSchema, type InstallationFormData } from "../validation/schemas";
+import {
+  installationSchema,
+  type InstallationFormData,
+} from "../validation/schemas";
 import type { GpsPosition } from "./useGpsCapture";
 
 export type UseInstallationFormOptions = {
@@ -20,16 +23,30 @@ export type UseInstallationFormReturn = {
   hasElectricalValues: boolean;
 };
 
-export function useInstallationForm({ initialValues, onSubmit }: UseInstallationFormOptions): UseInstallationFormReturn {
+export function useInstallationForm({
+  initialValues,
+  onSubmit,
+}: UseInstallationFormOptions): UseInstallationFormReturn {
   const [form, setForm] = useState<Record<string, unknown>>({
     status: "in_progress",
     ...initialValues,
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const hasComponentValues = !!initialValues?.manufacturer || !!initialValues?.model || !!initialValues?.serialNumber;
-  const hasCableValues = !!initialValues?.cableType || initialValues?.crossSectionMm2 != null || initialValues?.lengthM != null;
-  const hasElectricalValues = !!initialValues?.circuitId || !!initialValues?.fuseType || initialValues?.fuseRatingA != null || initialValues?.voltageV != null || initialValues?.phase != null;
+  const hasComponentValues =
+    !!initialValues?.manufacturer ||
+    !!initialValues?.model ||
+    !!initialValues?.serialNumber;
+  const hasCableValues =
+    !!initialValues?.cableType ||
+    initialValues?.crossSectionMm2 != null ||
+    initialValues?.lengthM != null;
+  const hasElectricalValues =
+    !!initialValues?.circuitId ||
+    !!initialValues?.fuseType ||
+    initialValues?.fuseRatingA != null ||
+    initialValues?.voltageV != null ||
+    initialValues?.phase != null;
 
   const set = useCallback((key: string, value: unknown) => {
     setForm((prev) => ({ ...prev, [key]: value }));

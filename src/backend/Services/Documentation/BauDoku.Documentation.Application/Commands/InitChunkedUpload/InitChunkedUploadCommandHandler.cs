@@ -6,21 +6,21 @@ namespace BauDoku.Documentation.Application.Commands.InitChunkedUpload;
 
 public sealed class InitChunkedUploadCommandHandler : ICommandHandler<InitChunkedUploadCommand, Guid>
 {
-    private readonly IInstallationRepository installations;
+    private readonly IInstallationRepository installationRepository;
     private readonly IChunkedUploadStorage chunkedUploadStorage;
 
     public InitChunkedUploadCommandHandler(
-        IInstallationRepository installations,
+        IInstallationRepository installationRepository,
         IChunkedUploadStorage chunkedUploadStorage)
     {
-        this.installations = installations;
+        this.installationRepository = installationRepository;
         this.chunkedUploadStorage = chunkedUploadStorage;
     }
 
     public async Task<Guid> Handle(InitChunkedUploadCommand command, CancellationToken cancellationToken)
     {
         var installationId = InstallationIdentifier.From(command.InstallationId);
-        _ = await installations.GetByIdAsync(installationId, cancellationToken)
+        _ = await installationRepository.GetByIdAsync(installationId, cancellationToken)
             ?? throw new InvalidOperationException($"Installation mit ID {command.InstallationId} nicht gefunden.");
 
         var session = new ChunkedUploadSession(

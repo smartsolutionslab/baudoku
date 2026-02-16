@@ -2,9 +2,8 @@ import React, { useEffect, useRef, createContext, useContext } from "react";
 import { SyncManager } from "../sync/SyncManager";
 import { SyncScheduler } from "../sync/SyncScheduler";
 import { setOnReconnect } from "../sync/ConnectivityMonitor";
-import { useSyncStore } from "../store";
-import { UploadProgressBar } from "../components/sync";
-import * as photoRepo from "../db/repositories/photoRepo";
+import { useSyncStore } from "../store/useSyncStore";
+import { UploadProgressBar } from "../components/sync/UploadProgressBar";
 
 type SyncContextValue = {
   syncManager: SyncManager;
@@ -26,8 +25,6 @@ export function SyncProvider({ children }: { children: React.ReactNode }) {
   const schedulerRef = useRef<SyncScheduler | null>(null);
 
   useEffect(() => {
-    void photoRepo.resetStuckUploads();
-
     const store = useSyncStore.getState();
 
     const scheduler = new SyncScheduler(managerRef.current, {

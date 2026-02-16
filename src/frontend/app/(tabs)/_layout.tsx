@@ -1,10 +1,11 @@
 import React from "react";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Tabs } from "expo-router";
+import { useColorScheme } from "react-native";
 
-import { Colors } from "../../src/styles/tokens";
-import { SyncIndicator } from "../../src/components/sync";
-import { useSyncStatus } from "../../src/hooks";
+import Colors from "../../constants/Colors";
+import { SyncIndicator } from "../../src/components/sync/SyncIndicator";
+import { useSyncStatus } from "../../src/hooks/useSyncStatus";
 
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>["name"];
@@ -19,12 +20,13 @@ function formatBadge(count: number): string | undefined {
 }
 
 export default function TabLayout() {
-  const { unsyncedCount, pendingUploads } = useSyncStatus();
+  const colorScheme = useColorScheme();
+  const { unsyncedCount } = useSyncStatus();
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors.primary,
+        tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
         headerShown: true,
       }}
     >
@@ -56,7 +58,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => (
             <TabBarIcon name="refresh" color={color} />
           ),
-          tabBarBadge: formatBadge(unsyncedCount + pendingUploads),
+          tabBarBadge: formatBadge(unsyncedCount),
         }}
       />
       <Tabs.Screen
