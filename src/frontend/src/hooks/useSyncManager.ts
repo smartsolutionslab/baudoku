@@ -1,7 +1,6 @@
 import { useCallback } from "react";
 import { useSyncContext } from "../providers/SyncProvider";
-import { useSyncStore } from "../store/useSyncStore";
-import { useToastStore } from "../store/useToastStore";
+import { useSyncStore, useToastStore } from "../store";
 import type { SyncResult } from "../sync/SyncManager";
 
 export function useSyncManager() {

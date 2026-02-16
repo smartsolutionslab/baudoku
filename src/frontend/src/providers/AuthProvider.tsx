@@ -1,10 +1,6 @@
 import React, { useEffect, useRef, useCallback } from "react";
-import { useAuthStore } from "../store/useAuthStore";
-import { loadTokens, saveTokens, clearTokens } from "../auth/tokenStorage";
-import {
-  refreshAccessToken,
-  parseUserFromToken,
-} from "../auth/keycloak";
+import { useAuthStore } from "../store";
+import { loadTokens, saveTokens, clearTokens, refreshAccessToken, parseUserFromToken } from "../auth";
 import { setAuthToken, onUnauthorized } from "../sync/apiClient";
 
 function getTokenExpiresIn(token: string): number {

@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { db } from "../client";
 import { projects } from "../schema";
-import { generateId } from "../../utils/uuid";
+import { generateId } from "../../utils";
 import { createOutboxEntry } from "./syncRepo";
 import type { Project, NewProject } from "./types";
 import type { ProjectId } from "../../types/branded";

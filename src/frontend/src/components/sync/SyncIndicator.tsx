@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet } from "react-native";
-import { useSyncStatus } from "../../hooks/useSyncStatus";
+import { useSyncStatus } from "../../hooks";
 import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
 
 export function SyncIndicator() {

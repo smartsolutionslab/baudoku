@@ -5,7 +5,7 @@ import {
   MutationCache,
   QueryCache,
 } from "@tanstack/react-query";
-import { useToastStore } from "../store/useToastStore";
+import { useToastStore } from "../store";
 import { ApiError } from "../sync/apiClient";
 
 function getErrorMessage(error: unknown): string | null {

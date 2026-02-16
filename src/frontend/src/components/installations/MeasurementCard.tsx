@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import type { Measurement } from "../../db/repositories/types";
-import { StatusBadge } from "../common/StatusBadge";
+import { StatusBadge } from "../common";
 import { Card, Body, Caption } from "../core";
 import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
 

@@ -1,14 +1,11 @@
 import { Text, ScrollView, StyleSheet } from "react-native";
-import { FormField } from "../common/FormField";
-import { FormPicker } from "../common/FormPicker";
-import { CollapsibleSection } from "../common/CollapsibleSection";
+import { FormField, FormPicker, CollapsibleSection } from "../common";
 import { Button } from "../core";
 import { GpsButton } from "./GpsButton";
-import { useGpsCapture, type GpsPosition } from "../../hooks/useGpsCapture";
-import { useInstallationForm } from "../../hooks/useInstallationForm";
+import { useGpsCapture, type GpsPosition, useInstallationForm } from "../../hooks";
 import type { InstallationFormData } from "../../validation/schemas";
 import { Colors, Spacing, FontSize } from "../../styles/tokens";
-import { INSTALLATION_STATUS_OPTIONS } from "../../constants/installationOptions";
+import { INSTALLATION_STATUS_OPTIONS } from "../../constants";
 
 const phaseOptions = [
   { label: "L1", value: "L1" },

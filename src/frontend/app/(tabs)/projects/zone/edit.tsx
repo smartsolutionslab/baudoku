@@ -4,8 +4,8 @@ import { useLocalSearchParams, useRouter, Stack } from "expo-router";
 import {
   useZonesByProject,
   useUpdateZone,
-} from "../../../../src/hooks/useOfflineData";
-import { ZoneForm } from "../../../../src/components/projects/ZoneForm";
+} from "../../../../src/hooks";
+import { ZoneForm } from "../../../../src/components/projects";
 import { Colors, Spacing, FontSize } from "../../../../src/styles/tokens";
 import type { ZoneFormData } from "../../../../src/validation/schemas";
 import {

@@ -7,14 +7,12 @@ import {
   Platform,
 } from "react-native";
 import { useRouter } from "expo-router";
-import { useProjects } from "../../../src/hooks/useOfflineData";
-import { Button } from "../../../src/components/core/Button";
-import { useSyncStatus } from "../../../src/hooks/useSyncStatus";
-import { useAuthStore } from "../../../src/store/useAuthStore";
-import { clearTokens } from "../../../src/auth/tokenStorage";
+import { useProjects, useSyncStatus } from "../../../src/hooks";
+import { Button } from "../../../src/components/core";
+import { useAuthStore, useSettingsStore } from "../../../src/store";
+import { clearTokens } from "../../../src/auth";
 import { setAuthToken } from "../../../src/sync/apiClient";
 import { Colors, Spacing, FontSize, Radius } from "../../../src/styles/tokens";
-import { useSettingsStore } from "../../../src/store/useSettingsStore";
 
 export default function ProfileScreen() {
   const router = useRouter();

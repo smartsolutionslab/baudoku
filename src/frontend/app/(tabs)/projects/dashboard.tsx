@@ -8,8 +8,8 @@ import {
 } from "react-native";
 import { useRouter, Stack } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
-import { useDashboardStats } from "../../../src/hooks/useDashboardStats";
-import { DashboardCard } from "../../../src/components/common/DashboardCard";
+import { useDashboardStats } from "../../../src/hooks";
+import { DashboardCard } from "../../../src/components/common";
 import { Colors, Spacing, FontSize, Radius } from "../../../src/styles/tokens";
 
 export default function DashboardScreen() {

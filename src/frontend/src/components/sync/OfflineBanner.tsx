@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { Animated, Text, StyleSheet } from "react-native";
 import { Colors, Spacing, FontSize } from "../../styles/tokens";
-import { useSyncStatus } from "../../hooks/useSyncStatus";
+import { useSyncStatus } from "../../hooks";
 
 export function OfflineBanner() {
   const { isOnline } = useSyncStatus();

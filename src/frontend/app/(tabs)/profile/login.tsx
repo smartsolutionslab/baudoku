@@ -6,11 +6,10 @@ import {
   StyleSheet,
 } from "react-native";
 import { useRouter } from "expo-router";
-import { Button } from "../../../src/components/core/Button";
+import { Button } from "../../../src/components/core";
 import { Colors, Spacing, FontSize, Radius } from "../../../src/styles/tokens";
-import { loginWithKeycloak, parseUserFromToken } from "../../../src/auth/keycloak";
-import { saveTokens } from "../../../src/auth/tokenStorage";
-import { useAuthStore } from "../../../src/store/useAuthStore";
+import { loginWithKeycloak, parseUserFromToken, saveTokens } from "../../../src/auth";
+import { useAuthStore } from "../../../src/store";
 import { setAuthToken } from "../../../src/sync/apiClient";
 
 export default function LoginScreen() {

@@ -1,8 +1,7 @@
 import { ScrollView, StyleSheet } from "react-native";
-import { FormField } from "../common/FormField";
-import { FormPicker } from "../common/FormPicker";
+import { FormField, FormPicker } from "../common";
 import { Button } from "../core";
-import { useZoneForm } from "../../hooks/useZoneForm";
+import { useZoneForm } from "../../hooks";
 import type { ZoneFormData } from "../../validation/schemas";
 import { Colors, Spacing } from "../../styles/tokens";
 import type { Zone } from "../../db/repositories/types";

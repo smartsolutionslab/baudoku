@@ -6,15 +6,12 @@ import {
   useInstallationsByZone,
   useDeleteZone,
   useUpdateZone,
-} from "../../../../src/hooks/useOfflineData";
-import { useConfirmDelete } from "../../../../src/hooks/useConfirmDelete";
-import { InstallationCard } from "../../../../src/components/installations/InstallationCard";
-import { StatusBadge } from "../../../../src/components/common/StatusBadge";
-import { EmptyState } from "../../../../src/components/common/EmptyState";
-import { FloatingActionButton } from "../../../../src/components/common/FloatingActionButton";
-import { ActionBar } from "../../../../src/components/common/ActionBar";
-import { ZoneQrSheet } from "../../../../src/components/projects/ZoneQrSheet";
-import { encodeZoneQr } from "../../../../src/utils/qrCode";
+  useConfirmDelete,
+} from "../../../../src/hooks";
+import { InstallationCard } from "../../../../src/components/installations";
+import { StatusBadge, EmptyState, FloatingActionButton, ActionBar } from "../../../../src/components/common";
+import { ZoneQrSheet } from "../../../../src/components/projects";
+import { encodeZoneQr } from "../../../../src/utils";
 import { Colors, Spacing, FontSize, Radius } from "../../../../src/styles/tokens";
 import type { Zone } from "../../../../src/db/repositories/types";
 import {

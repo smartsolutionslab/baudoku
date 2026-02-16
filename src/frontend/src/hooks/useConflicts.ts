@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import * as syncApi from "../sync/syncApi";
-import { useSyncStore } from "../store/useSyncStore";
-import { getDeviceId } from "../utils/deviceId";
+import { useSyncStore } from "../store";
+import { getDeviceId } from "../utils";
 import type { ConflictDto } from "../sync/syncApi";
 
 export function useConflicts(status?: string) {

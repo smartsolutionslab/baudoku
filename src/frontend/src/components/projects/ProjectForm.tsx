@@ -3,10 +3,9 @@ import {
   ScrollView,
   StyleSheet,
 } from "react-native";
-import { FormField } from "../common/FormField";
-import { FormPicker } from "../common/FormPicker";
+import { FormField, FormPicker } from "../common";
 import { Button } from "../core";
-import { useProjectForm } from "../../hooks/useProjectForm";
+import { useProjectForm } from "../../hooks";
 import type { ProjectFormData } from "../../validation/schemas";
 import { Colors, Spacing, FontSize } from "../../styles/tokens";
 

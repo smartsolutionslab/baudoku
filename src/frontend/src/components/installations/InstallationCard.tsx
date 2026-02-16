@@ -1,8 +1,7 @@
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import type { Installation } from "../../db/repositories/types";
-import { StatusBadge } from "../common/StatusBadge";
-import { calculateGpsQuality } from "../../utils/gpsQuality";
-import { formatDate } from "../../utils/formatDate";
+import { StatusBadge } from "../common";
+import { calculateGpsQuality, formatDate } from "../../utils";
 import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
 
 type InstallationCardProps = {

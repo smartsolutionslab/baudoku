@@ -1,7 +1,6 @@
 import { View, Text, TouchableOpacity, Share, StyleSheet } from "react-native";
 import QRCode from "react-native-qrcode-svg";
-import { BottomSheet } from "../common/BottomSheet";
-import { statusLabels } from "../common/StatusBadge";
+import { BottomSheet, statusLabels } from "../common";
 import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
 
 type ZoneQrSheetProps = {
