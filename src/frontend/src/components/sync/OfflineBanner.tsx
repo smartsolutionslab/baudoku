@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { Animated, Text, StyleSheet } from "react-native";
-import { Colors } from "../../styles/tokens";
+import { Colors, Spacing, FontSize } from "../../styles/tokens";
 import { useSyncStatus } from "../../hooks/useSyncStatus";
 
 export function OfflineBanner() {
@@ -33,14 +33,14 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    backgroundColor: "#FF3B30",
-    paddingVertical: 8,
-    paddingHorizontal: 16,
+    backgroundColor: Colors.danger,
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.lg,
     zIndex: 100,
   },
   text: {
     color: Colors.white,
-    fontSize: 13,
+    fontSize: FontSize.caption,
     textAlign: "center",
     fontWeight: "500",
   },

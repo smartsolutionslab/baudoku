@@ -5,7 +5,7 @@ import {
   StyleSheet,
   Pressable,
 } from "react-native";
-import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
+import { Colors, Spacing, FontSize, Radius, Shadows } from "../../styles/tokens";
 import type { ToastType } from "../../store/useToastStore";
 import { useToastStore } from "../../store/useToastStore";
 
@@ -99,11 +99,7 @@ const styles = StyleSheet.create({
   container: {
     borderRadius: Radius.md,
     marginBottom: Spacing.sm,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
-    elevation: 4,
+    ...Shadows.floating,
   },
   pressable: {
     paddingVertical: Spacing.md,

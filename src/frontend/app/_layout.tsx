@@ -15,6 +15,7 @@ import { useSettingsStore } from "../src/store/useSettingsStore";
 import { OfflineBanner } from "../src/components/sync/OfflineBanner";
 import { ToastContainer } from "../src/components/core/ToastContainer";
 import { View, Text, ActivityIndicator, StyleSheet } from "react-native";
+import { Colors, Spacing, FontSize } from "../src/styles/tokens";
 
 export { ErrorBoundary } from "expo-router";
 
@@ -100,16 +101,16 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: 20,
+    padding: Spacing.xl,
   },
   errorText: {
-    color: "#FF3B30",
-    fontSize: 16,
+    color: Colors.danger,
+    fontSize: FontSize.callout,
     textAlign: "center",
   },
   loadingText: {
-    marginTop: 12,
-    fontSize: 14,
-    color: "#666",
+    marginTop: Spacing.md,
+    fontSize: FontSize.body,
+    color: Colors.textSecondary,
   },
 });

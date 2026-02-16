@@ -10,7 +10,7 @@ import { FontAwesome } from "@expo/vector-icons";
 import type { GpsPosition } from "../../hooks/useGpsCapture";
 import { QualityIndicator } from "./QualityIndicator";
 import { calculateGpsQuality } from "../../utils/gpsQuality";
-import { Colors, Spacing, FontSize, FontFamily } from "../../styles/tokens";
+import { Colors, Spacing, FontSize, FontFamily, Radius } from "../../styles/tokens";
 
 type GpsButtonProps = {
   position: GpsPosition | null;
@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingVertical: 12,
-    borderRadius: 10,
+    borderRadius: Radius.md,
     marginTop: Spacing.lg,
   },
   buttonIcon: {
@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: Colors.background,
-    borderRadius: 10,
+    borderRadius: Radius.md,
     paddingVertical: 14,
     marginTop: Spacing.lg,
   },
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
     marginLeft: Spacing.sm,
   },
   successCard: {
-    borderRadius: 10,
+    borderRadius: Radius.md,
     padding: Spacing.md,
     marginTop: Spacing.lg,
   },

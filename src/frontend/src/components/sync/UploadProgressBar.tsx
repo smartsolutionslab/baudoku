@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { View, Text, StyleSheet, Animated } from "react-native";
 import { useUploadStore } from "../../store/useUploadStore";
-import { Colors, Spacing, FontSize } from "../../styles/tokens";
+import { Colors, Spacing, FontSize, Radius, Shadows } from "../../styles/tokens";
 
 export function UploadProgressBar() {
   const queue = useUploadStore((s) => s.queue);
@@ -85,13 +85,9 @@ const styles = StyleSheet.create({
     left: Spacing.lg,
     right: Spacing.lg,
     backgroundColor: Colors.card,
-    borderRadius: 10,
+    borderRadius: Radius.md,
     padding: Spacing.md,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
-    elevation: 4,
+    ...Shadows.floating,
   },
   text: {
     fontSize: FontSize.caption,

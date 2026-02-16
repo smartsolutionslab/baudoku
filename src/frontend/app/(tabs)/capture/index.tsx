@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
   },
   zoneItem: {
     backgroundColor: Colors.card,
-    borderRadius: 10,
+    borderRadius: Radius.md,
     padding: Spacing.md,
     marginBottom: Spacing.sm,
     flexDirection: "row",
