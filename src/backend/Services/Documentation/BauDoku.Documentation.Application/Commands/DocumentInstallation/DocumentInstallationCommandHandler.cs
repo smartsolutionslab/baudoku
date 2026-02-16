@@ -10,14 +10,14 @@ namespace BauDoku.Documentation.Application.Commands.DocumentInstallation;
 public sealed class DocumentInstallationCommandHandler
     : ICommandHandler<DocumentInstallationCommand, Guid>
 {
-    private readonly IInstallationRepository installationRepository;
+    private readonly IInstallationRepository installations;
     private readonly IUnitOfWork unitOfWork;
 
     public DocumentInstallationCommandHandler(
-        IInstallationRepository installationRepository,
+        IInstallationRepository installations,
         IUnitOfWork unitOfWork)
     {
-        this.installationRepository = installationRepository;
+        this.installations = installations;
         this.unitOfWork = unitOfWork;
     }
 
@@ -72,7 +72,7 @@ public sealed class DocumentInstallationCommandHandler
             modelName,
             serialNumber);
 
-        await installationRepository.AddAsync(installation, cancellationToken);
+        await installations.AddAsync(installation, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         DocumentationMetrics.InstallationsDocumented.Add(1);

@@ -8,21 +8,21 @@ namespace BauDoku.Documentation.Application.Commands.RecordMeasurement;
 
 public sealed class RecordMeasurementCommandHandler : ICommandHandler<RecordMeasurementCommand, Guid>
 {
-    private readonly IInstallationRepository installationRepository;
+    private readonly IInstallationRepository installations;
     private readonly IUnitOfWork unitOfWork;
 
     public RecordMeasurementCommandHandler(
-        IInstallationRepository installationRepository,
+        IInstallationRepository installations,
         IUnitOfWork unitOfWork)
     {
-        this.installationRepository = installationRepository;
+        this.installations = installations;
         this.unitOfWork = unitOfWork;
     }
 
     public async Task<Guid> Handle(RecordMeasurementCommand command, CancellationToken cancellationToken)
     {
         var installationId = InstallationIdentifier.From(command.InstallationId);
-        var installation = await installationRepository.GetByIdAsync(installationId, cancellationToken)
+        var installation = await installations.GetByIdAsync(installationId, cancellationToken)
             ?? throw new InvalidOperationException($"Installation mit ID {command.InstallationId} nicht gefunden.");
 
         var measurementId = MeasurementIdentifier.New();

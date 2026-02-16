@@ -8,19 +8,19 @@ namespace BauDoku.Projects.Application.Commands.AddZone;
 
 public sealed class AddZoneCommandHandler : ICommandHandler<AddZoneCommand>
 {
-    private readonly IProjectRepository projectRepository;
+    private readonly IProjectRepository projects;
     private readonly IUnitOfWork unitOfWork;
 
-    public AddZoneCommandHandler(IProjectRepository projectRepository, IUnitOfWork unitOfWork)
+    public AddZoneCommandHandler(IProjectRepository projects, IUnitOfWork unitOfWork)
     {
-        this.projectRepository = projectRepository;
+        this.projects = projects;
         this.unitOfWork = unitOfWork;
     }
 
     public async Task Handle(AddZoneCommand command, CancellationToken cancellationToken = default)
     {
         var projectId = ProjectIdentifier.From(command.ProjectId);
-        var project = await projectRepository.GetByIdAsync(projectId, cancellationToken)
+        var project = await projects.GetByIdAsync(projectId, cancellationToken)
             ?? throw new InvalidOperationException($"Projekt mit ID '{command.ProjectId}' wurde nicht gefunden.");
 
         var zoneId = ZoneIdentifier.New();
