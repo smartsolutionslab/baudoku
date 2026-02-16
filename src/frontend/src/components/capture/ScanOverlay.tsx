@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, Dimensions } from "react-native";
-import { Colors, Radius } from "../../styles/tokens";
+import { Colors, FontSize, Radius } from "../../styles/tokens";
 
 const { width } = Dimensions.get("window");
 const SCAN_SIZE = width * 0.7;
@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
   },
   hint: {
     color: Colors.white,
-    fontSize: 16,
+    fontSize: FontSize.callout,
     fontWeight: "600",
   },
   middleRow: {

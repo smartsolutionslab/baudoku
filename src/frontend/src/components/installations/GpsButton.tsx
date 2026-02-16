@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 12,
+    paddingVertical: Spacing.md,
     borderRadius: Radius.md,
     marginTop: Spacing.lg,
   },
@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
     fontSize: FontSize.footnote,
     color: Colors.primary,
     fontWeight: "600",
-    marginLeft: 4,
+    marginLeft: Spacing.xs,
   },
   clearButton: {
     padding: Spacing.xs,
@@ -196,7 +196,7 @@ const styles = StyleSheet.create({
     fontSize: FontSize.footnote,
     color: Colors.primary,
     fontWeight: "600",
-    marginLeft: 4,
+    marginLeft: Spacing.xs,
   },
   errorText: {
     fontSize: FontSize.caption,
