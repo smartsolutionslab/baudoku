@@ -7,7 +7,7 @@ import {
 } from "react-native";
 import { router } from "expo-router";
 import { Button } from "../../../src/components/core/Button";
-import { Colors, Spacing, FontSize } from "../../../src/styles/tokens";
+import { Colors, Spacing, FontSize, Radius } from "../../../src/styles/tokens";
 import { loginWithKeycloak, parseUserFromToken } from "../../../src/auth/keycloak";
 import { saveTokens } from "../../../src/auth/tokenStorage";
 import { useAuthStore } from "../../../src/store/useAuthStore";
@@ -102,8 +102,8 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   errorBox: {
-    backgroundColor: "#FFF0F0",
-    borderRadius: 8,
+    backgroundColor: Colors.errorBg,
+    borderRadius: Radius.sm,
     padding: Spacing.md,
     marginBottom: Spacing.lg,
     width: "100%",
