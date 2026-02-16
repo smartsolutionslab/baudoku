@@ -22,8 +22,7 @@ export function InstallationDetails({ installation }: InstallationDetailsProps) 
   const i = installation;
   const hasGps = i.gpsLat != null && i.gpsLng != null;
   const hasCable = i.cableType || i.crossSectionMm2 || i.lengthM;
-  const hasElectrical =
-    i.circuitId || i.fuseType || i.fuseRatingA || i.voltageV || i.phase;
+  const hasElectrical = i.circuitId || i.fuseType || i.fuseRatingA || i.voltageV || i.phase;
   const hasTech = hasGps || hasCable || hasElectrical || i.depthMm;
 
   if (!hasTech) return null;
@@ -48,42 +47,13 @@ export function InstallationDetails({ installation }: InstallationDetailsProps) 
           )}
           <Row label="Breitengrad" value={i.gpsLat?.toFixed(6)} />
           <Row label="Längengrad" value={i.gpsLng?.toFixed(6)} />
-          <Row
-            label="Genauigkeit"
-            value={i.gpsAccuracy != null ? `${i.gpsAccuracy.toFixed(2)} m` : null}
-          />
-          <Row
-            label="Quelle"
-            value={i.gpsSource ? gpsSourceLabels[i.gpsSource] ?? i.gpsSource : null}
-          />
-          <Row
-            label="Korrekturdienst"
-            value={
-              i.gpsCorrService
-                ? corrServiceLabels[i.gpsCorrService] ?? i.gpsCorrService
-                : null
-            }
-          />
-          <Row
-            label="RTK-Status"
-            value={
-              i.gpsRtkStatus
-                ? rtkLabels[i.gpsRtkStatus] ?? i.gpsRtkStatus
-                : null
-            }
-          />
-          <Row
-            label="Satelliten"
-            value={i.gpsSatCount != null ? String(i.gpsSatCount) : null}
-          />
-          <Row
-            label="HDOP"
-            value={i.gpsHdop != null ? i.gpsHdop.toFixed(1) : null}
-          />
-          <Row
-            label="Korrekturalter"
-            value={i.gpsCorrAge != null ? `${i.gpsCorrAge.toFixed(1)} s` : null}
-          />
+          <Row label="Genauigkeit" value={i.gpsAccuracy != null ? `${i.gpsAccuracy.toFixed(2)} m` : null} />
+          <Row label="Quelle" value={i.gpsSource ? gpsSourceLabels[i.gpsSource] ?? i.gpsSource : null} />
+          <Row label="Korrekturdienst" value={i.gpsCorrService ? corrServiceLabels[i.gpsCorrService] ?? i.gpsCorrService : null} />
+          <Row label="RTK-Status" value={i.gpsRtkStatus ? rtkLabels[i.gpsRtkStatus] ?? i.gpsRtkStatus : null} />
+          <Row label="Satelliten" value={i.gpsSatCount != null ? String(i.gpsSatCount) : null} />
+          <Row label="HDOP" value={i.gpsHdop != null ? i.gpsHdop.toFixed(1) : null} />
+          <Row label="Korrekturalter" value={i.gpsCorrAge != null ? `${i.gpsCorrAge.toFixed(1)} s` : null} />
         </>
       )}
 
@@ -91,14 +61,8 @@ export function InstallationDetails({ installation }: InstallationDetailsProps) 
         <>
           <Text style={styles.subTitle}>Kabel</Text>
           <Row label="Typ" value={i.cableType} />
-          <Row
-            label="Querschnitt"
-            value={i.crossSectionMm2 != null ? `${i.crossSectionMm2} mm²` : null}
-          />
-          <Row
-            label="Länge"
-            value={i.lengthM != null ? `${i.lengthM} m` : null}
-          />
+          <Row label="Querschnitt"value={i.crossSectionMm2 != null ? `${i.crossSectionMm2} mm²` : null} />
+          <Row label="Länge" value={i.lengthM != null ? `${i.lengthM} m` : null} />
         </>
       )}
 
@@ -107,14 +71,8 @@ export function InstallationDetails({ installation }: InstallationDetailsProps) 
           <Text style={styles.subTitle}>Elektrik</Text>
           <Row label="Stromkreis" value={i.circuitId} />
           <Row label="Sicherung" value={i.fuseType} />
-          <Row
-            label="Nennstrom"
-            value={i.fuseRatingA != null ? `${i.fuseRatingA} A` : null}
-          />
-          <Row
-            label="Spannung"
-            value={i.voltageV != null ? `${i.voltageV} V` : null}
-          />
+          <Row label="Nennstrom" value={i.fuseRatingA != null ? `${i.fuseRatingA} A` : null} />
+          <Row label="Spannung"  value={i.voltageV != null ? `${i.voltageV} V` : null} />
           <Row label="Phase" value={i.phase} />
         </>
       )}

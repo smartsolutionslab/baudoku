@@ -29,9 +29,7 @@ const CORNER_SIZE = 24;
 const CORNER_WIDTH = 4;
 
 const styles = StyleSheet.create({
-  container: {
-    ...StyleSheet.absoluteFillObject,
-  },
+  container: { ...StyleSheet.absoluteFillObject },
   topOverlay: {
     flex: 1,
     backgroundColor: Colors.overlay,

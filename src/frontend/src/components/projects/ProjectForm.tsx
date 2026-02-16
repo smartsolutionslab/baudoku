@@ -1,8 +1,4 @@
-import {
-  Text,
-  ScrollView,
-  StyleSheet,
-} from "react-native";
+import { Text, ScrollView, StyleSheet } from "react-native";
 import { FormField, FormPicker } from "../common";
 import { Button } from "../core";
 import { useProjectForm } from "../../hooks";
@@ -22,16 +18,8 @@ type ProjectFormProps = {
   submitLabel?: string;
 };
 
-export function ProjectForm({
-  onSubmit,
-  submitting,
-  initialValues,
-  submitLabel,
-}: ProjectFormProps) {
-  const { form, errors, set, handleSubmit } = useProjectForm({
-    initialValues,
-    onSubmit,
-  });
+export function ProjectForm({ onSubmit, submitting, initialValues, submitLabel }: ProjectFormProps) {
+  const { form, errors, set, handleSubmit } = useProjectForm({ initialValues, onSubmit });
 
   return (
     <ScrollView

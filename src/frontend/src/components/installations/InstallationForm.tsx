@@ -23,13 +23,7 @@ type InstallationFormProps = {
   submitLabel?: string;
 };
 
-export function InstallationForm({
-  onSubmit,
-  submitting,
-  initialValues,
-  initialGps,
-  submitLabel,
-}: InstallationFormProps) {
+export function InstallationForm({ onSubmit, submitting, initialValues, initialGps, submitLabel }: InstallationFormProps) {
   const {
     form,
     errors,
@@ -47,11 +41,7 @@ export function InstallationForm({
   const currentGps = gps.position ?? initialGps ?? null;
 
   return (
-    <ScrollView
-      style={styles.scroll}
-      contentContainerStyle={styles.content}
-      keyboardShouldPersistTaps="handled"
-    >
+    <ScrollView style={styles.scroll} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
       <Text style={styles.sectionTitle}>Typ & Status</Text>
       <FormField
         label="Typ"

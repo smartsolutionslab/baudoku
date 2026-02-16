@@ -11,22 +11,11 @@ type EmptyStateProps = {
   onAction?: () => void;
 };
 
-export function EmptyState({
-  icon,
-  title,
-  subtitle,
-  actionLabel,
-  onAction,
-}: EmptyStateProps) {
+export function EmptyState({ icon, title, subtitle, actionLabel, onAction }: EmptyStateProps) {
   return (
     <View style={styles.container}>
       {icon && (
-        <FontAwesome
-          name={icon}
-          size={48}
-          color={Colors.disabled}
-          style={styles.icon}
-        />
+        <FontAwesome name={icon} size={48} color={Colors.disabled} style={styles.icon}/>
       )}
       <Text style={styles.title}>{title}</Text>
       {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}

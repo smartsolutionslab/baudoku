@@ -1,9 +1,5 @@
 import * as AuthSession from "expo-auth-session";
-import {
-  KEYCLOAK_URL,
-  KEYCLOAK_REALM,
-  KEYCLOAK_CLIENT_ID,
-} from "../config/environment";
+import { KEYCLOAK_URL, KEYCLOAK_REALM, KEYCLOAK_CLIENT_ID } from "../config/environment";
 import type { AuthUser } from "../store";
 
 const realmUrl = `${KEYCLOAK_URL}/realms/${KEYCLOAK_REALM}`;
@@ -37,11 +33,8 @@ export async function loginWithKeycloak(): Promise<AuthTokens> {
   const result = await request.promptAsync(discovery);
 
   if (result.type !== "success" || !result.params.code) {
-    throw new Error(
-      result.type === "cancel"
-        ? "Anmeldung abgebrochen"
-        : `Anmeldung fehlgeschlagen: ${result.type}`
-    );
+    const message = result.type === "cancel" ? "Anmeldung abgebrochen" : `Anmeldung fehlgeschlagen: ${result.type}`;
+    throw new Error(message);
   }
 
   const tokenResponse = await AuthSession.exchangeCodeAsync(
@@ -49,18 +42,12 @@ export async function loginWithKeycloak(): Promise<AuthTokens> {
       clientId: KEYCLOAK_CLIENT_ID,
       code: result.params.code,
       redirectUri,
-      extraParams: {
-        code_verifier: request.codeVerifier!,
-      },
+      extraParams: { code_verifier: request.codeVerifier! },
     },
     discovery
   );
 
-  if (
-    !tokenResponse.accessToken ||
-    !tokenResponse.refreshToken ||
-    !tokenResponse.idToken
-  ) {
+  if (!tokenResponse.accessToken || !tokenResponse.refreshToken || !tokenResponse.idToken) {
     throw new Error("Unvollständige Token-Antwort vom Server");
   }
 
@@ -71,9 +58,7 @@ export async function loginWithKeycloak(): Promise<AuthTokens> {
   };
 }
 
-export async function refreshAccessToken(
-  refreshToken: string
-): Promise<AuthTokens> {
+export async function refreshAccessToken(refreshToken: string): Promise<AuthTokens> {
   const tokenResponse = await AuthSession.refreshAsync(
     {
       clientId: KEYCLOAK_CLIENT_ID,
@@ -108,10 +93,7 @@ export function parseUserFromToken(idToken: string): AuthUser {
   return {
     id: payload.sub ?? "",
     email: payload.email ?? "",
-    name:
-      payload.name ??
-      [payload.preferred_username].filter(Boolean).join(" ") ??
-      "",
+    name: payload.name ?? [payload.preferred_username].filter(Boolean).join(" ") ?? "",
     roles: payload.realm_access?.roles ?? [],
   };
 }
@@ -120,10 +102,7 @@ export async function logoutFromKeycloak(idToken: string): Promise<void> {
   if (!discovery.endSessionEndpoint) return;
 
   try {
-    await fetch(
-      `${discovery.endSessionEndpoint}?id_token_hint=${idToken}&post_logout_redirect_uri=${encodeURIComponent(redirectUri)}`,
-      { method: "GET" }
-    );
+    await fetch(`${discovery.endSessionEndpoint}?id_token_hint=${idToken}&post_logout_redirect_uri=${encodeURIComponent(redirectUri)}`, { method: "GET" });
   } catch {
     // Logout-Fehler ignorieren — Tokens werden lokal gelöscht
   }

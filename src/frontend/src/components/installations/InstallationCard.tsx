@@ -9,16 +9,12 @@ type InstallationCardProps = {
   onPress: () => void;
 };
 
-export function InstallationCard({
-  installation,
-  onPress,
-}: InstallationCardProps) {
+export function InstallationCard({ installation, onPress }: InstallationCardProps) {
   const subtitle = [installation.manufacturer, installation.model]
     .filter(Boolean)
     .join(" — ");
 
-  const gpsQuality =
-    installation.gpsAccuracy != null
+  const gpsQuality = installation.gpsAccuracy != null
       ? calculateGpsQuality({
           gpsAccuracy: installation.gpsAccuracy,
           gpsHdop: installation.gpsHdop,
@@ -34,12 +30,7 @@ export function InstallationCard({
           {installation.type}
         </Text>
         {gpsQuality && (
-          <View
-            style={[
-              styles.gpsBadge,
-              { backgroundColor: gpsQuality.color },
-            ]}
-          >
+          <View style={[styles.gpsBadge, { backgroundColor: gpsQuality.color }]}>
             <Text style={styles.gpsBadgeText}>{gpsQuality.grade}</Text>
           </View>
         )}

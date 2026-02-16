@@ -9,19 +9,9 @@ type BottomSheetProps = {
   children: React.ReactNode;
 };
 
-export function BottomSheet({
-  visible,
-  onClose,
-  title,
-  children,
-}: BottomSheetProps) {
+export function BottomSheet({ visible, onClose, title, children}: BottomSheetProps) {
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="slide"
-      onRequestClose={onClose}
-    >
+    <Modal visible={visible}  transparent animationType="slide" onRequestClose={onClose}>
       <Pressable style={styles.overlay} onPress={onClose}>
         <Pressable style={styles.sheet} onPress={(e) => e.stopPropagation()}>
           <View style={styles.handle} />
