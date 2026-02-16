@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { Colors } from "../../styles/tokens";
+import { Colors, Spacing, Radius } from "../../styles/tokens";
 
 const statusColors: Record<string, string> = {
   // Project
@@ -21,9 +21,9 @@ const statusColors: Record<string, string> = {
   // Zone type
   building: "#5856D6",
   floor: "#AF52DE",
-  room: "#007AFF",
-  trench: "#FF9500",
-  section: "#8E8E93",
+  room: Colors.primary,
+  trench: Colors.warning,
+  section: Colors.textTertiary,
 };
 
 export const statusLabels: Record<string, string> = {
@@ -63,9 +63,9 @@ export function StatusBadge({ status, label }: StatusBadgeProps) {
 
 const styles = StyleSheet.create({
   badge: {
-    paddingHorizontal: 8,
+    paddingHorizontal: Spacing.sm,
     paddingVertical: 2,
-    borderRadius: 10,
+    borderRadius: Radius.md,
     alignSelf: "flex-start",
   },
   text: {

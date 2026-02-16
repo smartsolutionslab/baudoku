@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { Colors, Spacing, FontSize } from "../../styles/tokens";
+import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
 
 type EmptyStateProps = {
   icon?: React.ComponentProps<typeof FontAwesome>["name"];
@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary,
     paddingHorizontal: Spacing.xl,
     paddingVertical: Spacing.md,
-    borderRadius: 10,
+    borderRadius: Radius.md,
   },
   buttonText: {
     color: Colors.white,

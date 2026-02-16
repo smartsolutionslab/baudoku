@@ -7,7 +7,7 @@ import {
   Alert,
   ScrollView,
 } from "react-native";
-import { Colors } from "../../styles/tokens";
+import { Colors, Spacing, FontSize, Radius, FontFamily } from "../../styles/tokens";
 import { ConflictDiffView } from "./ConflictDiffView";
 import type { ConflictDto } from "../../sync/syncApi";
 
@@ -97,70 +97,70 @@ export function ConflictDetail({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F2F2F7",
+    backgroundColor: Colors.background,
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 16,
+    padding: Spacing.lg,
     backgroundColor: Colors.white,
-    gap: 8,
+    gap: Spacing.sm,
   },
   badge: {
-    backgroundColor: "#007AFF",
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
+    backgroundColor: Colors.primary,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.xs,
+    borderRadius: Radius.lg,
   },
   badgeText: {
     color: Colors.white,
-    fontSize: 12,
+    fontSize: FontSize.footnote,
     fontWeight: "600",
     textTransform: "capitalize",
   },
   entityId: {
     flex: 1,
-    fontSize: 13,
-    color: "#8E8E93",
-    fontFamily: "SpaceMono",
+    fontSize: FontSize.caption,
+    color: Colors.textTertiary,
+    fontFamily: FontFamily.mono,
   },
   versionRow: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.sm,
     backgroundColor: Colors.white,
     borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: "#E5E5EA",
+    borderTopColor: Colors.separator,
   },
   versionLabel: {
-    fontSize: 14,
-    color: "#666",
+    fontSize: FontSize.body,
+    color: Colors.textSecondary,
   },
   sectionTitle: {
-    fontSize: 17,
+    fontSize: FontSize.headline,
     fontWeight: "600",
-    margin: 16,
-    marginBottom: 8,
+    margin: Spacing.lg,
+    marginBottom: Spacing.sm,
   },
   actions: {
     flexDirection: "row",
-    padding: 16,
-    gap: 12,
+    padding: Spacing.lg,
+    gap: Spacing.md,
   },
   button: {
     flex: 1,
     paddingVertical: 14,
-    borderRadius: 10,
+    borderRadius: Radius.md,
     alignItems: "center",
   },
   clientButton: {
-    backgroundColor: "#007AFF",
+    backgroundColor: Colors.primary,
   },
   serverButton: {
-    backgroundColor: "#34C759",
+    backgroundColor: Colors.success,
   },
   buttonText: {
     color: Colors.white,
-    fontSize: 16,
+    fontSize: FontSize.callout,
     fontWeight: "600",
   },
 });

@@ -1,7 +1,7 @@
 import React from "react";
 import { TouchableOpacity, Text, StyleSheet } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { Colors } from "../../styles/tokens";
+import { Colors, Shadows } from "../../styles/tokens";
 
 type FloatingActionButtonProps = {
   icon?: React.ComponentProps<typeof FontAwesome>["name"];
@@ -38,11 +38,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: 16,
     gap: 8,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
+    ...Shadows.elevated,
   },
   label: {
     color: Colors.white,

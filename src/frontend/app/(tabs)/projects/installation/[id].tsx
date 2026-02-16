@@ -37,7 +37,7 @@ import { MeasurementCard } from "../../../../src/components/installations/Measur
 import { MeasurementForm } from "../../../../src/components/installations/MeasurementForm";
 import { BottomSheet } from "../../../../src/components/common/BottomSheet";
 import { Button } from "../../../../src/components/core/Button";
-import { Colors, Spacing, FontSize } from "../../../../src/styles/tokens";
+import { Colors, Spacing, FontSize, Radius } from "../../../../src/styles/tokens";
 import type { Photo } from "../../../../src/db/repositories/types";
 import type { MeasurementFormData } from "../../../../src/validation/schemas";
 import { installationId } from "../../../../src/types/branded";
@@ -457,7 +457,7 @@ const styles = StyleSheet.create({
   uploadBadge: {
     paddingHorizontal: Spacing.sm,
     paddingVertical: 2,
-    borderRadius: 10,
+    borderRadius: Radius.md,
   },
   uploadBadgeText: {
     color: Colors.white,
@@ -467,7 +467,7 @@ const styles = StyleSheet.create({
   captionInput: {
     borderWidth: 1,
     borderColor: Colors.separator,
-    borderRadius: 10,
+    borderRadius: Radius.md,
     padding: Spacing.md,
     fontSize: FontSize.body,
     color: Colors.textPrimary,
