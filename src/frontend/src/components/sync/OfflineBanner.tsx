@@ -16,10 +16,7 @@ export function OfflineBanner() {
   }, [isOnline, translateY]);
 
   return (
-    <Animated.View
-      style={[styles.banner, { transform: [{ translateY }] }]}
-      pointerEvents={isOnline ? "none" : "auto"}
-    >
+    <Animated.View style={[styles.banner, { transform: [{ translateY }] }]} pointerEvents={isOnline ? "none" : "auto"}>
       <Text style={styles.text}>
         Keine Internetverbindung — Daten werden lokal gespeichert
       </Text>

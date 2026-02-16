@@ -1,11 +1,4 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Alert,
-  ScrollView,
-} from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView } from "react-native";
 import { Colors, Spacing, FontSize, Radius, FontFamily } from "../../styles/tokens";
 import { ConflictDiffView } from "./ConflictDiffView";
 import type { ConflictDto } from "../../sync/syncApi";

@@ -7,20 +7,14 @@ import type { Zone, NewZone } from "./types";
 import type { ProjectId, ZoneId } from "../../types/branded";
 
 export async function getByProjectId(projectId: ProjectId): Promise<Zone[]> {
-  return db
-    .select()
-    .from(zones)
-    .where(eq(zones.projectId, projectId))
-    .all() as unknown as Zone[];
+  return db.select().from(zones).where(eq(zones.projectId, projectId)).all() as unknown as Zone[];
 }
 
 export async function getById(id: ZoneId): Promise<Zone | undefined> {
   return db.select().from(zones).where(eq(zones.id, id)).get() as unknown as Zone | undefined;
 }
 
-export async function create(
-  data: Omit<NewZone, "id" | "version">
-): Promise<Zone> {
+export async function create(data: Omit<NewZone, "id" | "version">): Promise<Zone> {
   const zone: NewZone = {
     ...data,
     id: generateId(),
@@ -33,10 +27,7 @@ export async function create(
   return zone as unknown as Zone;
 }
 
-export async function update(
-  id: ZoneId,
-  data: Partial<Omit<NewZone, "id" | "version" | "projectId">>
-): Promise<Zone | undefined> {
+export async function update(id: ZoneId, data: Partial<Omit<NewZone, "id" | "version" | "projectId">>): Promise<Zone | undefined> {
   const existing = await getById(id);
   if (!existing) return undefined;
 
