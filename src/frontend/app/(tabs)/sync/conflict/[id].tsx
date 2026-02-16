@@ -3,6 +3,7 @@ import { View, Text, ActivityIndicator, StyleSheet } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import { ConflictDetail } from "../../../../src/components/sync/ConflictDetail";
 import { useConflicts, useResolveConflict } from "../../../../src/hooks/useConflicts";
+import { Colors, FontSize } from "../../../../src/styles/tokens";
 
 export default function ConflictDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -49,7 +50,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   errorText: {
-    color: "#FF3B30",
-    fontSize: 15,
+    color: Colors.danger,
+    fontSize: FontSize.body,
   },
 });

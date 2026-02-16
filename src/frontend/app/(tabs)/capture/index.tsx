@@ -73,7 +73,7 @@ export default function CaptureScreen() {
         style={styles.scanBtn}
         onPress={() => router.push("/(tabs)/capture/scan")}
       >
-        <FontAwesome name="qrcode" size={24} color="#fff" />
+        <FontAwesome name="qrcode" size={24} color={Colors.white} />
         <View style={styles.scanBtnContent}>
           <Text style={styles.scanBtnTitle}>QR-Code scannen</Text>
           <Text style={styles.scanBtnSubtitle}>
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scanBtnTitle: {
-    color: "#fff",
+    color: Colors.white,
     fontSize: FontSize.callout,
     fontWeight: "700",
   },
