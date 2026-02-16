@@ -35,15 +35,7 @@ const variantStyles: Record<ButtonVariant, { container: ViewStyle; text: TextSty
   },
 };
 
-export function Button({
-  title,
-  onPress,
-  variant = "primary",
-  disabled = false,
-  loading = false,
-  style,
-  testID,
-}: ButtonProps) {
+export function Button({ title, onPress, variant = "primary", disabled = false, loading = false, style, testID }: ButtonProps) {
   const v = variantStyles[variant];
   const isDisabled = disabled || loading;
 
@@ -61,10 +53,7 @@ export function Button({
       testID={testID}
     >
       {loading ? (
-        <ActivityIndicator
-          size="small"
-          color={variant === "secondary" ? Colors.textTertiary : Colors.white}
-        />
+        <ActivityIndicator size="small" color={variant === "secondary" ? Colors.textTertiary : Colors.white}/>
       ) : (
         <Text style={[styles.text, v.text]}>{title}</Text>
       )}

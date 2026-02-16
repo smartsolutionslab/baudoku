@@ -53,12 +53,8 @@ export function FormPicker({
       </TouchableOpacity>
       {error ? <Text style={styles.error}>{error}</Text> : null}
 
-      <BottomSheet
-        visible={visible}
-        onClose={() => setVisible(false)}
-        title={label}
-      >
-        <FlatList
+      <BottomSheet visible={visible} onClose={() => setVisible(false)} title={label}>
+        <FlatList 
           data={options}
           keyExtractor={(item) => item.value}
           renderItem={({ item }) => (
@@ -72,12 +68,7 @@ export function FormPicker({
                 setVisible(false);
               }}
             >
-              <Text
-                style={[
-                  styles.optionText,
-                  item.value === value && styles.optionTextActive,
-                ]}
-              >
+              <Text style={[styles.optionText, item.value === value && styles.optionTextActive]}>
                 {item.label}
               </Text>
             </TouchableOpacity>

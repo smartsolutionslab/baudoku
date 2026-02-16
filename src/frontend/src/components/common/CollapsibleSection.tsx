@@ -16,10 +16,7 @@ export function CollapsibleSection({
   const [open, setOpen] = useState(defaultOpen ?? false);
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        style={styles.header}
-        onPress={() => setOpen(!open)}
-      >
+      <TouchableOpacity style={styles.header} onPress={() => setOpen(!open)}>
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.chevron}>{open ? "\u2228" : "\u203A"}</Text>
       </TouchableOpacity>

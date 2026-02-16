@@ -1,22 +1,9 @@
 import { useState, useCallback } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Alert,
-  ScrollView,
-} from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Alert, ScrollView } from "react-native";
 import { FormField } from "../common";
 import { Button, Headline } from "../core";
-import {
-  MEASUREMENT_TYPES,
-  type MeasurementTypePreset,
-} from "../../constants";
-import {
-  measurementSchema,
-  type MeasurementFormData,
-} from "../../validation/schemas";
+import { MEASUREMENT_TYPES, type MeasurementTypePreset } from "../../constants";
+import { measurementSchema, type MeasurementFormData } from "../../validation/schemas";
 import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
 
 type MeasurementFormProps = {
@@ -25,11 +12,7 @@ type MeasurementFormProps = {
   submitting?: boolean;
 };
 
-export function MeasurementForm({
-  onSubmit,
-  onCancel,
-  submitting,
-}: MeasurementFormProps) {
+export function MeasurementForm({ onSubmit, onCancel, submitting }: MeasurementFormProps) {
   const [form, setForm] = useState<Record<string, string>>({
     measuredBy: "local-user",
   });
@@ -50,10 +33,8 @@ export function MeasurementForm({
       ...prev,
       type: preset.type,
       unit: preset.unit,
-      minThreshold:
-        preset.minThreshold != null ? String(preset.minThreshold) : "",
-      maxThreshold:
-        preset.maxThreshold != null ? String(preset.maxThreshold) : "",
+      minThreshold: preset.minThreshold != null ? String(preset.minThreshold) : "",
+      maxThreshold: preset.maxThreshold != null ? String(preset.maxThreshold) : "",
     }));
     setShowSuggestions(false);
     setErrors({});
@@ -109,17 +90,9 @@ export function MeasurementForm({
           placeholder="z.B. Isolationswiderstand"
         />
         {showSuggestions && filteredSuggestions.length > 0 && (
-          <ScrollView
-            horizontal
-            style={styles.suggestions}
-            showsHorizontalScrollIndicator={false}
-          >
+          <ScrollView horizontal style={styles.suggestions} showsHorizontalScrollIndicator={false}>
             {filteredSuggestions.map((mt) => (
-              <TouchableOpacity
-                key={mt.type}
-                style={styles.chip}
-                onPress={() => applyPreset(mt)}
-              >
+              <TouchableOpacity key={mt.type} style={styles.chip} onPress={() => applyPreset(mt)}>
                 <Text style={styles.chipText}>{mt.type}</Text>
               </TouchableOpacity>
             ))}

@@ -3,10 +3,7 @@ import * as SecureStore from "expo-secure-store";
 const ACCESS_TOKEN_KEY = "baudoku_access_token";
 const REFRESH_TOKEN_KEY = "baudoku_refresh_token";
 
-export async function saveTokens(
-  accessToken: string,
-  refreshToken: string
-): Promise<void> {
+export async function saveTokens(accessToken: string, refreshToken: string): Promise<void> {
   await SecureStore.setItemAsync(ACCESS_TOKEN_KEY, accessToken);
   await SecureStore.setItemAsync(REFRESH_TOKEN_KEY, refreshToken);
 }

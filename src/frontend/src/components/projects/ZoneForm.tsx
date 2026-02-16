@@ -23,19 +23,8 @@ type ZoneFormProps = {
   submitting?: boolean;
 };
 
-export function ZoneForm({
-  zones,
-  defaultParentZoneId,
-  initialValues,
-  submitLabel,
-  onSubmit,
-  submitting,
-}: ZoneFormProps) {
-  const { form, errors, set, handleSubmit } = useZoneForm({
-    initialValues,
-    defaultParentZoneId,
-    onSubmit,
-  });
+export function ZoneForm({ zones, defaultParentZoneId, initialValues, submitLabel, onSubmit, submitting }: ZoneFormProps) {
+  const { form, errors, set, handleSubmit } = useZoneForm({ initialValues, defaultParentZoneId, onSubmit });
 
   const parentOptions = [
     { label: "\u2014 Keine \u2014", value: "__none__" },
