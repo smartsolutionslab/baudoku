@@ -30,6 +30,9 @@
     <Project Path="Services/Sync/BauDoku.Sync.Domain/BauDoku.Sync.Domain.csproj" />
     <Project Path="Services/Sync/BauDoku.Sync.Infrastructure/BauDoku.Sync.Infrastructure.csproj" />
   </Folder>
+  <Folder Name="/Tools/">
+    <Project Path="Tools/BauDoku.MigrationRunner/BauDoku.MigrationRunner.csproj" />
+  </Folder>
   <Folder Name="/Tests/">
     <Project Path="../../tests/backend/BauDoku.BuildingBlocks.UnitTests/BauDoku.BuildingBlocks.UnitTests.csproj" />
     <Project Path="../../tests/backend/BauDoku.ArchitectureTests/BauDoku.ArchitectureTests.csproj" />

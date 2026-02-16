@@ -21,17 +21,27 @@ var keycloak = builder.AddContainer("keycloak", "quay.io/keycloak/keycloak", "26
     .WithBindMount("./keycloak", "/opt/keycloak/data/import")
     .WithArgs("start-dev", "--import-realm");
 
+var migrationRunner = builder.AddProject("migration-runner", @"..\..\Tools\BauDoku.MigrationRunner\BauDoku.MigrationRunner.csproj")
+    .WithReference(projectsDb)
+    .WithReference(documentationDb)
+    .WithReference(syncDb)
+    .WaitFor(projectsDb)
+    .WaitFor(documentationDb)
+    .WaitFor(syncDb);
+
 var projectsApi = builder.AddProject("projects-api", @"..\..\Services\Projects\BauDoku.Projects.Api\BauDoku.Projects.Api.csproj")
     .WithReference(projectsDb)
     .WithReference(rabbitmq)
     .WaitFor(projectsDb)
-    .WaitFor(rabbitmq);
+    .WaitFor(rabbitmq)
+    .WaitFor(migrationRunner);
 
 var documentationApi = builder.AddProject("documentation-api", @"..\..\Services\Documentation\BauDoku.Documentation.Api\BauDoku.Documentation.Api.csproj")
     .WithReference(documentationDb)
     .WithReference(rabbitmq)
     .WaitFor(documentationDb)
-    .WaitFor(rabbitmq);
+    .WaitFor(rabbitmq)
+    .WaitFor(migrationRunner);
 
 var syncApi = builder.AddProject("sync-api", @"..\..\Services\Sync\BauDoku.Sync.Api\BauDoku.Sync.Api.csproj")
     .WithReference(syncDb)
@@ -39,7 +49,8 @@ var syncApi = builder.AddProject("sync-api", @"..\..\Services\Sync\BauDoku.Sync.
     .WithReference(rabbitmq)
     .WaitFor(syncDb)
     .WaitFor(redis)
-    .WaitFor(rabbitmq);
+    .WaitFor(rabbitmq)
+    .WaitFor(migrationRunner);
 
 var apiGateway = builder.AddProject("api-gateway", @"..\..\ApiGateway\BauDoku.ApiGateway\BauDoku.ApiGateway.csproj")
     .WithReference(projectsApi)
