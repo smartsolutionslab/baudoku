@@ -14,10 +14,7 @@ export type UseProjectFormReturn = {
   handleSubmit: () => Promise<void>;
 };
 
-export function useProjectForm({
-  initialValues,
-  onSubmit,
-}: UseProjectFormOptions): UseProjectFormReturn {
+export function useProjectForm({ initialValues, onSubmit }: UseProjectFormOptions): UseProjectFormReturn {
   const [form, setForm] = useState<Partial<ProjectFormData>>({
     status: "active",
     ...initialValues,

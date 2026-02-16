@@ -32,8 +32,7 @@ export function useSyncManager() {
       }
       return result;
     } catch (error) {
-      const message =
-        error instanceof Error ? error.message : "Unbekannter Fehler";
+      const message = error instanceof Error ? error.message : "Unbekannter Fehler";
       setSyncError(message);
       useToastStore.getState().show(`Sync fehlgeschlagen: ${message}`, "error");
       return null;
@@ -48,8 +47,7 @@ export function useSyncManager() {
       void loadPendingEntries();
       return result;
     } catch (error) {
-      const message =
-        error instanceof Error ? error.message : "Unbekannter Fehler";
+      const message = error instanceof Error ? error.message : "Unbekannter Fehler";
       setSyncError(message);
       return null;
     }
@@ -62,8 +60,7 @@ export function useSyncManager() {
       void loadSyncStatus();
       return result;
     } catch (error) {
-      const message =
-        error instanceof Error ? error.message : "Unbekannter Fehler";
+      const message = error instanceof Error ? error.message : "Unbekannter Fehler";
       setSyncError(message);
       return null;
     }

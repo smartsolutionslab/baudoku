@@ -17,11 +17,8 @@ export function UploadProgressBar() {
   const allDone = total > 0 && uploading === 0;
   const hasActive = uploading > 0;
 
-  const overallPercentage =
-    total > 0
-      ? Math.round(
-          queue.reduce((sum, item) => sum + item.percentage, 0) / total
-        )
+  const overallPercentage = total > 0
+      ? Math.round(queue.reduce((sum, item) => sum + item.percentage, 0) / total)
       : 0;
 
   useEffect(() => {
