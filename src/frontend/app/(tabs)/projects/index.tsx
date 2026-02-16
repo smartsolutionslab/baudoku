@@ -31,7 +31,7 @@ export default function ProjectsScreen() {
       <Stack.Screen
         options={{
           headerRight: () => (
-            <View style={{ flexDirection: "row", gap: 16, marginRight: 8 }}>
+            <View style={styles.headerActions}>
               <TouchableOpacity
                 onPress={() => router.push("/(tabs)/projects/search")}
               >
@@ -87,6 +87,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.background,
+  },
+  headerActions: {
+    flexDirection: "row",
+    gap: Spacing.lg,
+    marginRight: Spacing.sm,
   },
   list: {
     paddingHorizontal: Spacing.lg,

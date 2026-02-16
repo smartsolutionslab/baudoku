@@ -16,6 +16,9 @@ export const Colors = {
   overlayLight: "rgba(0,0,0,0.3)",
   primaryLight: "rgba(0, 122, 255, 0.1)",
   optionActiveBg: "#E8F0FE",
+  warningText: "#856404",
+  errorBg: "#FFF0F0",
+  textQuaternary: "#AAAAAA",
   // Zone types
   zoneBuilding: "#5856D6",
   zoneFloor: "#AF52DE",
