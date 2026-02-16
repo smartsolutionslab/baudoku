@@ -1,4 +1,3 @@
-import React from "react";
 import { Text, TouchableOpacity, StyleSheet } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { BottomSheet } from "../common/BottomSheet";

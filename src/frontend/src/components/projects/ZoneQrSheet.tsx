@@ -1,4 +1,3 @@
-import React from "react";
 import { View, Text, TouchableOpacity, Share, StyleSheet } from "react-native";
 import QRCode from "react-native-qrcode-svg";
 import { BottomSheet } from "../common/BottomSheet";

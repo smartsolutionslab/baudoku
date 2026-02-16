@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import {
   View,
   Text,
@@ -14,17 +14,8 @@ import { UploadQueueCard } from "../../../src/components/sync/UploadQueueCard";
 import { Button } from "../../../src/components/core/Button";
 import { StatusBadge } from "../../../src/components/common/StatusBadge";
 import { Colors, Spacing, FontSize, Radius } from "../../../src/styles/tokens";
+import { formatDateTime } from "../../../src/utils/formatDate";
 import type { SyncOutboxEntry } from "../../../src/db/repositories/types";
-
-function formatTimestamp(date: Date): string {
-  return date.toLocaleString("de-DE", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
 
 function operationLabel(op: string): string {
   switch (op) {
@@ -50,7 +41,7 @@ function OutboxItem({ item }: { item: SyncOutboxEntry }) {
         {operationLabel(item.operation)}
       </Text>
       <Text style={itemStyles.timestamp}>
-        {formatTimestamp(item.timestamp)}
+        {formatDateTime(item.timestamp)}
       </Text>
       {item.retryCount != null && item.retryCount > 0 && (
         <Text style={itemStyles.retry}>

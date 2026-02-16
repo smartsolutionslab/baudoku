@@ -1,4 +1,3 @@
-import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import type { Project } from "../../db/repositories/types";
 import { StatusBadge } from "../common/StatusBadge";

@@ -1,4 +1,3 @@
-import React from "react";
 import { View, Text, ActivityIndicator, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import { ConflictList } from "../../../src/components/sync/ConflictList";

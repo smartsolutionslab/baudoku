@@ -1,4 +1,3 @@
-import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { useSyncStatus } from "../../hooks/useSyncStatus";
 import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";

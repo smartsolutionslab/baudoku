@@ -1,4 +1,3 @@
-import React from "react";
 import { useLocalSearchParams, useRouter, Stack } from "expo-router";
 import {
   useProject,

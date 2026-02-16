@@ -1,4 +1,3 @@
-import React from "react";
 import { View, Text, StyleSheet, Dimensions } from "react-native";
 import { Colors, FontSize, Radius } from "../../styles/tokens";
 

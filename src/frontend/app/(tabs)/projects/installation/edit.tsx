@@ -1,4 +1,3 @@
-import React from "react";
 import { useLocalSearchParams, useRouter, Stack } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
 import * as installationRepo from "../../../../src/db/repositories/installationRepo";
