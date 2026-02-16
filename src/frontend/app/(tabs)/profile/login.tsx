@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
-import { router } from "expo-router";
+import { useRouter } from "expo-router";
 import { Button } from "../../../src/components/core/Button";
 import { Colors, Spacing, FontSize, Radius } from "../../../src/styles/tokens";
 import { loginWithKeycloak, parseUserFromToken } from "../../../src/auth/keycloak";
@@ -14,6 +14,7 @@ import { useAuthStore } from "../../../src/store/useAuthStore";
 import { setAuthToken } from "../../../src/sync/apiClient";
 
 export default function LoginScreen() {
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

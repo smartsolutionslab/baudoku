@@ -7,13 +7,7 @@ import { FilterChips } from "../../../src/components/common/FilterChips";
 import { InstallationCard } from "../../../src/components/installations/InstallationCard";
 import { EmptyState } from "../../../src/components/common/EmptyState";
 import { Colors, Spacing, FontSize } from "../../../src/styles/tokens";
-
-const STATUS_OPTIONS = [
-  { label: "Geplant", value: "planned" },
-  { label: "In Arbeit", value: "in_progress" },
-  { label: "Fertig", value: "completed" },
-  { label: "Geprüft", value: "inspected" },
-];
+import { INSTALLATION_STATUS_OPTIONS } from "../../../src/constants/installationOptions";
 
 export default function SearchScreen() {
   const router = useRouter();
@@ -31,7 +25,7 @@ export default function SearchScreen() {
       />
 
       <FilterChips
-        options={STATUS_OPTIONS}
+        options={INSTALLATION_STATUS_OPTIONS}
         selected={filters.status ?? []}
         onToggle={toggleStatus}
       />
