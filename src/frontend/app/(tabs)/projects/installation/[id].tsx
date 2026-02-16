@@ -18,25 +18,23 @@ import {
   useAddMeasurement,
   useDeleteMeasurement,
   useDeleteInstallation,
-} from "../../../../src/hooks/useOfflineData";
-import {
   usePhotoCapture,
   type CapturedPhoto,
-} from "../../../../src/hooks/usePhotoCapture";
-import { useConfirmDelete } from "../../../../src/hooks/useConfirmDelete";
-import { deletePhotoFile } from "../../../../src/utils/photoStorage";
-import { StatusBadge } from "../../../../src/components/common/StatusBadge";
-import { EmptyState } from "../../../../src/components/common/EmptyState";
-import { ActionBar } from "../../../../src/components/common/ActionBar";
-import { InstallationDetails } from "../../../../src/components/installations/InstallationDetails";
-import { PhotoGallery } from "../../../../src/components/installations/PhotoGallery";
-import { PhotoSourceSheet } from "../../../../src/components/installations/PhotoSourceSheet";
-import { PhotoTypeSheet, type PhotoType } from "../../../../src/components/installations/PhotoTypeSheet";
-import { PhotoViewer } from "../../../../src/components/installations/PhotoViewer";
-import { MeasurementCard } from "../../../../src/components/installations/MeasurementCard";
-import { MeasurementForm } from "../../../../src/components/installations/MeasurementForm";
-import { BottomSheet } from "../../../../src/components/common/BottomSheet";
-import { Button } from "../../../../src/components/core/Button";
+  useConfirmDelete,
+} from "../../../../src/hooks";
+import { deletePhotoFile } from "../../../../src/utils";
+import { StatusBadge, EmptyState, ActionBar, BottomSheet } from "../../../../src/components/common";
+import {
+  InstallationDetails,
+  PhotoGallery,
+  PhotoSourceSheet,
+  PhotoTypeSheet,
+  type PhotoType,
+  PhotoViewer,
+  MeasurementCard,
+  MeasurementForm,
+} from "../../../../src/components/installations";
+import { Button } from "../../../../src/components/core";
 import { Colors, Spacing, FontSize, Radius } from "../../../../src/styles/tokens";
 import type { Photo } from "../../../../src/db/repositories/types";
 import type { MeasurementFormData } from "../../../../src/validation/schemas";

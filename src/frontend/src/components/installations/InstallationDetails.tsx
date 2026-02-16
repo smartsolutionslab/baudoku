@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet } from "react-native";
 import type { Installation } from "../../db/repositories/types";
 import { QualityIndicator } from "./QualityIndicator";
-import { gpsSourceLabels, corrServiceLabels, rtkLabels } from "../../utils/gpsQuality";
+import { gpsSourceLabels, corrServiceLabels, rtkLabels } from "../../utils";
 import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
 
 type InstallationDetailsProps = {

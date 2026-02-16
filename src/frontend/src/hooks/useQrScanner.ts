@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef } from "react";
-import { decodeZoneQr } from "../utils/qrCode";
+import { decodeZoneQr } from "../utils";
 import type { BarcodeScanningResult } from "expo-camera";
 import type { ProjectId, ZoneId } from "../types/branded";
 

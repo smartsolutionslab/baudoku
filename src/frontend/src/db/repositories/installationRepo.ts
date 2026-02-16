@@ -1,7 +1,7 @@
 import { and, eq, like, or, inArray, sql, count } from "drizzle-orm";
 import { db } from "../client";
 import { installations, zones, projects } from "../schema";
-import { generateId } from "../../utils/uuid";
+import { generateId } from "../../utils";
 import { createOutboxEntry } from "./syncRepo";
 import type { Installation, NewInstallation } from "./types";
 import type { InstallationId, ProjectId, ZoneId, ProjectName, ZoneName } from "../../types/branded";

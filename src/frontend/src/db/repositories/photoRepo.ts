@@ -1,7 +1,7 @@
 import { eq, or, sql, count } from "drizzle-orm";
 import { db } from "../client";
 import { photos } from "../schema";
-import { generateId } from "../../utils/uuid";
+import { generateId } from "../../utils";
 import { createOutboxEntry } from "./syncRepo";
 import type { Photo, NewPhoto } from "./types";
 import type { PhotoId, InstallationId } from "../../types/branded";

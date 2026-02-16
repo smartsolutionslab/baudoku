@@ -6,8 +6,7 @@ import {
   Pressable,
 } from "react-native";
 import { Colors, Spacing, FontSize, Radius, Shadows } from "../../styles/tokens";
-import type { ToastType } from "../../store/useToastStore";
-import { useToastStore } from "../../store/useToastStore";
+import { useToastStore, type ToastType } from "../../store";
 
 const backgroundColors: Record<ToastType, string> = {
   success: Colors.success,

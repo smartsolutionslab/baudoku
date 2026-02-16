@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import { View } from "react-native";
 import { ZoneCard } from "./ZoneCard";
-import type { ZoneNode } from "../../hooks/useZoneTree";
+import type { ZoneNode } from "../../hooks";
 import type { ZoneId } from "../../types/branded";
 
 type ZoneTreeProps = {

@@ -6,9 +6,9 @@ import {
   StyleSheet,
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
-import type { GpsPosition } from "../../hooks/useGpsCapture";
+import type { GpsPosition } from "../../hooks";
 import { QualityIndicator } from "./QualityIndicator";
-import { calculateGpsQuality } from "../../utils/gpsQuality";
+import { calculateGpsQuality } from "../../utils";
 import { Colors, Spacing, FontSize, FontFamily, Radius } from "../../styles/tokens";
 
 type GpsButtonProps = {

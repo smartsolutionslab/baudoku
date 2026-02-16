@@ -1,5 +1,5 @@
 import { View, StyleSheet } from "react-native";
-import { useToastStore } from "../../store/useToastStore";
+import { useToastStore } from "../../store";
 import { Toast } from "./Toast";
 import { Spacing } from "../../styles/tokens";
 

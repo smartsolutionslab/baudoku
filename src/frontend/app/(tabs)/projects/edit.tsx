@@ -2,8 +2,8 @@ import { useLocalSearchParams, useRouter, Stack } from "expo-router";
 import {
   useProject,
   useUpdateProject,
-} from "../../../src/hooks/useOfflineData";
-import { ProjectForm } from "../../../src/components/projects/ProjectForm";
+} from "../../../src/hooks";
+import { ProjectForm } from "../../../src/components/projects";
 import type { ProjectFormData } from "../../../src/validation/schemas";
 import { projectId } from "../../../src/types/branded";
 

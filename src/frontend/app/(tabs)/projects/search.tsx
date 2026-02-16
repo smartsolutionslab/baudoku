@@ -1,12 +1,10 @@
 import { View, FlatList, Text, StyleSheet } from "react-native";
 import { useRouter, Stack } from "expo-router";
-import { useInstallationSearch } from "../../../src/hooks/useInstallationSearch";
-import { SearchBar } from "../../../src/components/common/SearchBar";
-import { FilterChips } from "../../../src/components/common/FilterChips";
-import { InstallationCard } from "../../../src/components/installations/InstallationCard";
-import { EmptyState } from "../../../src/components/common/EmptyState";
+import { useInstallationSearch } from "../../../src/hooks";
+import { SearchBar, FilterChips, EmptyState } from "../../../src/components/common";
+import { InstallationCard } from "../../../src/components/installations";
 import { Colors, Spacing, FontSize } from "../../../src/styles/tokens";
-import { INSTALLATION_STATUS_OPTIONS } from "../../../src/constants/installationOptions";
+import { INSTALLATION_STATUS_OPTIONS } from "../../../src/constants";
 
 export default function SearchScreen() {
   const router = useRouter();

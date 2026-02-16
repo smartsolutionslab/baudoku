@@ -1,6 +1,6 @@
 import { Text, TouchableOpacity, StyleSheet } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
-import { BottomSheet } from "../common/BottomSheet";
+import { BottomSheet } from "../common";
 import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
 
 type PhotoSourceSheetProps = {
