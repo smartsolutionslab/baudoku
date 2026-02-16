@@ -52,7 +52,7 @@ var apiGateway = builder.AddProject("api-gateway", @"..\..\ApiGateway\BauDoku.Ap
 
 builder.AddViteApp("web", @"..\..\..\..\src\web")
     .WithReference(apiGateway)
-    .WithHttpEndpoint(port: 5173, env: "PORT")
+    .WithHttpEndpoint(port: 5173, name: "vite", env: "PORT")
     .WithExternalHttpEndpoints();
 
 builder.Build().Run();
