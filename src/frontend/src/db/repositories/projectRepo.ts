@@ -14,12 +14,6 @@ export async function getById(id: ProjectId): Promise<Project | undefined> {
   return db.select().from(projects).where(eq(projects.id, id)).get() as unknown as Project | undefined;
 }
 
-export async function getByStatus(
-  status: "active" | "completed" | "archived"
-): Promise<Project[]> {
-  return db.select().from(projects).where(eq(projects.status, status)).all() as unknown as Project[];
-}
-
 export async function create(
   data: Omit<NewProject, "id" | "createdAt" | "updatedAt" | "version">
 ): Promise<Project> {

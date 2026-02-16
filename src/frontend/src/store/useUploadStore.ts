@@ -10,13 +10,6 @@ export type UploadItem = {
   error?: string;
 };
 
-export type QueueSummary = {
-  total: number;
-  completed: number;
-  failed: number;
-  uploading: number;
-};
-
 type UploadState = {
   queue: UploadItem[];
   isProcessing: boolean;
@@ -27,10 +20,9 @@ type UploadState = {
   markFailed: (photoId: PhotoId, error: string) => void;
   setProcessing: (processing: boolean) => void;
   removeCompleted: () => void;
-  getQueueSummary: () => QueueSummary;
 };
 
-export const useUploadStore = create<UploadState>((set, get) => ({
+export const useUploadStore = create<UploadState>((set) => ({
   queue: [],
   isProcessing: false,
 
@@ -75,16 +67,4 @@ export const useUploadStore = create<UploadState>((set, get) => ({
     set((state) => ({
       queue: state.queue.filter((item) => item.status !== "completed"),
     })),
-
-  getQueueSummary: () => {
-    const { queue } = get();
-    return {
-      total: queue.length,
-      completed: queue.filter((i) => i.status === "completed").length,
-      failed: queue.filter((i) => i.status === "failed").length,
-      uploading: queue.filter(
-        (i) => i.status === "uploading" || i.status === "queued"
-      ).length,
-    };
-  },
 }));
