@@ -18,11 +18,7 @@ export async function getByInstallationId(installationId: InstallationId): Promi
 }
 
 export async function create(data: Omit<NewMeasurement, "id" | "version" | "result">): Promise<Measurement> {
-  const result = evaluateResult(
-    data.value,
-    data.minThreshold ?? null,
-    data.maxThreshold ?? null
-  );
+  const result = evaluateResult(data.value, data.minThreshold ?? null, data.maxThreshold ?? null);
 
   const measurement: NewMeasurement = {
     ...data,
@@ -32,12 +28,7 @@ export async function create(data: Omit<NewMeasurement, "id" | "version" | "resu
   };
 
   await db.insert(measurements).values(measurement);
-  await createOutboxEntry(
-    "measurement",
-    measurement.id,
-    "create",
-    measurement
-  );
+  await createOutboxEntry("measurement", measurement.id, "create", measurement);
 
   return measurement as unknown as Measurement;
 }

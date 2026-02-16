@@ -75,8 +75,7 @@ export function usePhotoCapture(): UsePhotoCaptureReturn {
 
   const pickFromGallery = useCallback(
     async (): Promise<CapturedPhoto | null> => {
-      const permission =
-        await ImagePicker.requestMediaLibraryPermissionsAsync();
+      const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (!permission.granted) return null;
 
       const result = await ImagePicker.launchImageLibraryAsync({
