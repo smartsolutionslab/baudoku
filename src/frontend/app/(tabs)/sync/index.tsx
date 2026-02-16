@@ -226,11 +226,11 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: FontSize.body,
     fontWeight: "500",
-    color: "#856404",
+    color: Colors.warningText,
   },
   chevron: {
     fontSize: 22,
-    color: "#856404",
+    color: Colors.warningText,
   },
   sectionTitle: {
     fontSize: FontSize.headline,

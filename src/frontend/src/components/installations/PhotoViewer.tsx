@@ -126,7 +126,7 @@ export function PhotoViewer({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#000",
+    backgroundColor: Colors.black,
   },
   flex: {
     flex: 1,
@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
   },
   date: {
     fontSize: FontSize.caption,
-    color: "#aaa",
+    color: Colors.textQuaternary,
   },
   annotationRow: {
     flexDirection: "row",
