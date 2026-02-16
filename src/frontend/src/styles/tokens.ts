@@ -16,6 +16,17 @@ export const Colors = {
   overlayLight: "rgba(0,0,0,0.3)",
   primaryLight: "rgba(0, 122, 255, 0.1)",
   optionActiveBg: "#E8F0FE",
+  // Zone types
+  zoneBuilding: "#5856D6",
+  zoneFloor: "#AF52DE",
+  // GPS quality backgrounds
+  gpsGradeB: "#A8D500",
+  gpsBgA: "#E8F5E9",
+  gpsBgB: "#F1F8E9",
+  gpsBgC: "#FFF8E1",
+  gpsBgD: "#FFEBEE",
+  // Diff highlight
+  diffHighlight: "#FFF3CD",
 };
 
 export const Spacing = { xs: 4, sm: 8, md: 12, lg: 16, xl: 24 };
@@ -33,7 +44,7 @@ export const FontFamily = {
   mono: "SpaceMono",
 };
 
-export const Radius = { sm: 8, md: 10, lg: 12 };
+export const Radius = { xs: 4, sm: 8, md: 10, lg: 12, xl: 16 };
 
 export const Shadows = {
   card: {

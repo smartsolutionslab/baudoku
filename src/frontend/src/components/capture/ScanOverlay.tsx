@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, Dimensions } from "react-native";
-import { Colors } from "../../styles/tokens";
+import { Colors, Radius } from "../../styles/tokens";
 
 const { width } = Dimensions.get("window");
 const SCAN_SIZE = width * 0.7;
@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
   scanWindow: {
     width: SCAN_SIZE,
     height: SCAN_SIZE,
-    borderRadius: 16,
+    borderRadius: Radius.xl,
   },
   bottomOverlay: {
     flex: 1,
@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
     borderTopWidth: CORNER_WIDTH,
     borderLeftWidth: CORNER_WIDTH,
     borderColor: Colors.white,
-    borderTopLeftRadius: 16,
+    borderTopLeftRadius: Radius.xl,
   },
   topRight: {
     top: 0,
@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
     borderTopWidth: CORNER_WIDTH,
     borderRightWidth: CORNER_WIDTH,
     borderColor: Colors.white,
-    borderTopRightRadius: 16,
+    borderTopRightRadius: Radius.xl,
   },
   bottomLeft: {
     bottom: 0,
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: CORNER_WIDTH,
     borderLeftWidth: CORNER_WIDTH,
     borderColor: Colors.white,
-    borderBottomLeftRadius: 16,
+    borderBottomLeftRadius: Radius.xl,
   },
   bottomRight: {
     bottom: 0,
@@ -97,6 +97,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: CORNER_WIDTH,
     borderRightWidth: CORNER_WIDTH,
     borderColor: Colors.white,
-    borderBottomRightRadius: 16,
+    borderBottomRightRadius: Radius.xl,
   },
 });

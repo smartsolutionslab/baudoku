@@ -17,7 +17,7 @@ import {
   measurementSchema,
   type MeasurementFormData,
 } from "../../validation/schemas";
-import { Colors, Spacing, FontSize } from "../../styles/tokens";
+import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
 
 type MeasurementFormProps = {
   onSubmit: (data: MeasurementFormData) => Promise<void>;
@@ -208,7 +208,7 @@ export function MeasurementForm({
 const styles = StyleSheet.create({
   container: {
     backgroundColor: Colors.card,
-    borderRadius: 12,
+    borderRadius: Radius.lg,
     padding: Spacing.lg,
   },
   title: {
@@ -220,7 +220,7 @@ const styles = StyleSheet.create({
   },
   chip: {
     backgroundColor: Colors.background,
-    borderRadius: 16,
+    borderRadius: Radius.xl,
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.xs,
     marginRight: Spacing.xs,

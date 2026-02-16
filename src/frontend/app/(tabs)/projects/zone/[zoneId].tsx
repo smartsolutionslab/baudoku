@@ -15,7 +15,7 @@ import { FloatingActionButton } from "../../../../src/components/common/Floating
 import { ActionBar } from "../../../../src/components/common/ActionBar";
 import { ZoneQrSheet } from "../../../../src/components/projects/ZoneQrSheet";
 import { encodeZoneQr } from "../../../../src/utils/qrCode";
-import { Colors, Spacing, FontSize } from "../../../../src/styles/tokens";
+import { Colors, Spacing, FontSize, Radius } from "../../../../src/styles/tokens";
 import type { Zone } from "../../../../src/db/repositories/types";
 import {
   projectId as toProjectId,
@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.card,
     margin: Spacing.lg,
     marginBottom: 0,
-    borderRadius: 12,
+    borderRadius: Radius.lg,
     padding: Spacing.lg,
   },
   headerRow: {

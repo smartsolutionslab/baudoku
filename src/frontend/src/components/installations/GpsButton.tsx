@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primaryLight,
     paddingHorizontal: 6,
     paddingVertical: 2,
-    borderRadius: 4,
+    borderRadius: Radius.xs,
     marginRight: Spacing.sm,
   },
   externalBadgeText: {

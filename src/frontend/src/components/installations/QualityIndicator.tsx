@@ -6,7 +6,7 @@ import {
   gpsSourceLabels,
   type GpsQualityResult,
 } from "../../utils/gpsQuality";
-import { Colors, Spacing, FontSize } from "../../styles/tokens";
+import { Colors, Spacing, FontSize, FontFamily } from "../../styles/tokens";
 
 type QualityIndicatorProps = {
   gpsAccuracy: number;
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
   accuracyText: {
     fontSize: FontSize.caption,
     color: Colors.textTertiary,
-    fontFamily: "SpaceMono",
+    fontFamily: FontFamily.mono,
   },
   detailRow: {
     flexDirection: "row",
@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
   warningBanner: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#FFEBEE",
+    backgroundColor: Colors.gpsBgD,
     paddingHorizontal: Spacing.sm,
     paddingVertical: Spacing.xs,
     borderRadius: 6,

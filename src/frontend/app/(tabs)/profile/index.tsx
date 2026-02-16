@@ -14,7 +14,7 @@ import { useSyncStatus } from "../../../src/hooks/useSyncStatus";
 import { useAuthStore } from "../../../src/store/useAuthStore";
 import { clearTokens } from "../../../src/auth/tokenStorage";
 import { setAuthToken } from "../../../src/sync/apiClient";
-import { Colors, Spacing, FontSize } from "../../../src/styles/tokens";
+import { Colors, Spacing, FontSize, Radius } from "../../../src/styles/tokens";
 import { useSettingsStore } from "../../../src/store/useSettingsStore";
 
 export default function ProfileScreen() {
@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: Colors.card,
-    borderRadius: 12,
+    borderRadius: Radius.lg,
     padding: Spacing.lg,
     marginBottom: Spacing.lg,
     gap: Spacing.md,
@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
   dot: {
     width: 8,
     height: 8,
-    borderRadius: 4,
+    borderRadius: Radius.xs,
     marginRight: 6,
   },
   helpText: {
