@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
-import { Colors, Spacing, FontSize } from "../../styles/tokens";
+import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
 
 export type ActionBarItem = {
   icon: React.ComponentProps<typeof FontAwesome>["name"];
@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.card,
     marginHorizontal: Spacing.lg,
     marginTop: Spacing.sm,
-    borderRadius: 12,
+    borderRadius: Radius.lg,
     paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.sm,
   },

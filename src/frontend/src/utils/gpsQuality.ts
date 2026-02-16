@@ -25,16 +25,16 @@ const gradeLabels: Record<GpsQualityGrade, string> = {
 
 const gradeColors: Record<GpsQualityGrade, string> = {
   A: Colors.success,
-  B: "#A8D500",
+  B: Colors.gpsGradeB,
   C: Colors.warning,
   D: Colors.danger,
 };
 
 const gradeBgColors: Record<GpsQualityGrade, string> = {
-  A: "#E8F5E9",
-  B: "#F1F8E9",
-  C: "#FFF8E1",
-  D: "#FFEBEE",
+  A: Colors.gpsBgA,
+  B: Colors.gpsBgB,
+  C: Colors.gpsBgC,
+  D: Colors.gpsBgD,
 };
 
 const grades: GpsQualityGrade[] = ["A", "B", "C", "D"];

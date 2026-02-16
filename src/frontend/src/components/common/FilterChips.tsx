@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
   chip: {
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
-    borderRadius: 20,
+    borderRadius: Radius.xl,
     backgroundColor: Colors.card,
     borderWidth: 1,
     borderColor: Colors.separator,

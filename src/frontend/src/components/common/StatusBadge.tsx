@@ -19,8 +19,8 @@ const statusColors: Record<string, string> = {
   pending: Colors.warning,
   syncing: Colors.primary,
   // Zone type
-  building: "#5856D6",
-  floor: "#AF52DE",
+  building: Colors.zoneBuilding,
+  floor: Colors.zoneFloor,
   room: Colors.primary,
   trench: Colors.warning,
   section: Colors.textTertiary,
