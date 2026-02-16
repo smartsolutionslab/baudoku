@@ -1,7 +1,7 @@
 import React from "react";
 import { Text, StyleSheet } from "react-native";
 import { Card, Caption } from "../core";
-import { Colors, Spacing } from "../../styles/tokens";
+import { Colors, Spacing, FontSize } from "../../styles/tokens";
 
 type DashboardCardProps = {
   title: string;
@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   subtitle: {
-    fontSize: 12,
+    fontSize: FontSize.footnote,
     marginTop: Spacing.xs,
   },
 });

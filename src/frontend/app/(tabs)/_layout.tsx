@@ -1,9 +1,8 @@
 import React from "react";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Tabs } from "expo-router";
-import { useColorScheme } from "react-native";
 
-import Colors from "../../constants/Colors";
+import { Colors } from "../../src/styles/tokens";
 import { SyncIndicator } from "../../src/components/sync/SyncIndicator";
 import { useSyncStatus } from "../../src/hooks/useSyncStatus";
 
@@ -20,13 +19,12 @@ function formatBadge(count: number): string | undefined {
 }
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
   const { unsyncedCount, pendingUploads } = useSyncStatus();
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
+        tabBarActiveTintColor: Colors.primary,
         headerShown: true,
       }}
     >
