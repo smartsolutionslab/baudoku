@@ -13,27 +13,9 @@ import { EmptyState } from "../../../src/components/common/EmptyState";
 import { SearchBar } from "../../../src/components/common/SearchBar";
 import { FilterChips } from "../../../src/components/common/FilterChips";
 import { Colors, Spacing, FontSize, Radius } from "../../../src/styles/tokens";
+import { INSTALLATION_TYPE_OPTIONS, INSTALLATION_STATUS_OPTIONS } from "../../../src/constants/installationOptions";
 import type { Installation } from "../../../src/db/repositories/types";
 import { projectId as toProjectId } from "../../../src/types/branded";
-
-const INSTALLATION_TYPES = [
-  { value: "cable_tray", label: "Kabeltrasse" },
-  { value: "junction_box", label: "Abzweigdose" },
-  { value: "cable_pull", label: "Kabelzug" },
-  { value: "conduit", label: "Leerrohr" },
-  { value: "grounding", label: "Erdung" },
-  { value: "lightning_protection", label: "Blitzschutz" },
-  { value: "switchgear", label: "Schaltanlage" },
-  { value: "transformer", label: "Trafo" },
-  { value: "other", label: "Sonstige" },
-];
-
-const STATUS_FILTERS = [
-  { value: "planned", label: "Geplant" },
-  { value: "in_progress", label: "In Arbeit" },
-  { value: "completed", label: "Abgeschlossen" },
-  { value: "inspected", label: "Geprüft" },
-];
 
 export default function InstallationsListScreen() {
   const { projectId: rawProjectId } = useLocalSearchParams<{ projectId: string }>();
@@ -103,12 +85,12 @@ export default function InstallationsListScreen() {
 
       {/* Filters */}
       <FilterChips
-        options={INSTALLATION_TYPES}
+        options={INSTALLATION_TYPE_OPTIONS}
         selected={typeFilter ? [typeFilter] : []}
         onToggle={(v) => setTypeFilter(typeFilter === v ? "" : v)}
       />
       <FilterChips
-        options={STATUS_FILTERS}
+        options={INSTALLATION_STATUS_OPTIONS}
         selected={statusFilter ? [statusFilter] : []}
         onToggle={(v) => setStatusFilter(statusFilter === v ? "" : v)}
       />

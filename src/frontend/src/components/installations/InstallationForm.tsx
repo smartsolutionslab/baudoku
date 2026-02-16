@@ -9,13 +9,7 @@ import { useGpsCapture, type GpsPosition } from "../../hooks/useGpsCapture";
 import { useInstallationForm } from "../../hooks/useInstallationForm";
 import type { InstallationFormData } from "../../validation/schemas";
 import { Colors, Spacing, FontSize } from "../../styles/tokens";
-
-const statusOptions = [
-  { label: "Geplant", value: "planned" },
-  { label: "In Arbeit", value: "in_progress" },
-  { label: "Abgeschlossen", value: "completed" },
-  { label: "Geprüft", value: "inspected" },
-];
+import { INSTALLATION_STATUS_OPTIONS } from "../../constants/installationOptions";
 
 const phaseOptions = [
   { label: "L1", value: "L1" },
@@ -74,7 +68,7 @@ export function InstallationForm({
       <FormPicker
         label="Status"
         required
-        options={statusOptions}
+        options={INSTALLATION_STATUS_OPTIONS}
         value={str("status") || "in_progress"}
         onValueChange={(v) => set("status", v)}
         error={errors.status}

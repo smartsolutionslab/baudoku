@@ -7,7 +7,7 @@ import {
   Switch,
   Platform,
 } from "react-native";
-import { router } from "expo-router";
+import { useRouter } from "expo-router";
 import { useProjects } from "../../../src/hooks/useOfflineData";
 import { Button } from "../../../src/components/core/Button";
 import { useSyncStatus } from "../../../src/hooks/useSyncStatus";
@@ -18,6 +18,7 @@ import { Colors, Spacing, FontSize, Radius } from "../../../src/styles/tokens";
 import { useSettingsStore } from "../../../src/store/useSettingsStore";
 
 export default function ProfileScreen() {
+  const router = useRouter();
   const { data: projects } = useProjects();
   const { isOnline, unsyncedCount, lastSyncTimestamp } = useSyncStatus();
   const { isAuthenticated, user, clearAuth } = useAuthStore();
