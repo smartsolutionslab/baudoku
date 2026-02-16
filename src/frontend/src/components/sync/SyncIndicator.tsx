@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { useSyncStatus } from "../../hooks/useSyncStatus";
-import { Colors, Spacing, FontSize } from "../../styles/tokens";
+import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
 
 export function SyncIndicator() {
   const { isOnline, unsyncedCount } = useSyncStatus();
@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
   dot: {
     width: 8,
     height: 8,
-    borderRadius: 4,
+    borderRadius: Radius.xs,
     marginRight: 6,
   },
   online: {

@@ -16,13 +16,7 @@ import type { Photo } from "../../db/repositories/types";
 import type { PhotoId } from "../../types/branded";
 import { StatusBadge } from "../common/StatusBadge";
 import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
-
-const photoTypeLabels: Record<string, string> = {
-  before: "Vorher",
-  after: "Nachher",
-  detail: "Detail",
-  overview: "Übersicht",
-};
+import { photoTypeLabels } from "../../constants/photoLabels";
 
 type PhotoViewerProps = {
   photo: Photo | null;
@@ -109,7 +103,7 @@ export function PhotoViewer({
                   setDirty(true);
                 }}
                 placeholder="Notiz hinzufügen..."
-                placeholderTextColor="#666"
+                placeholderTextColor={Colors.textTertiary}
                 multiline
                 maxLength={500}
               />

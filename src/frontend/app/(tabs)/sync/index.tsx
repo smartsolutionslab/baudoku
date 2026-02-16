@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
   dot: {
     width: 8,
     height: 8,
-    borderRadius: 4,
+    borderRadius: Radius.xs,
     marginRight: 6,
   },
   online: {
@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   conflictCard: {
-    backgroundColor: "#FFF3CD",
+    backgroundColor: Colors.diffHighlight,
     marginHorizontal: Spacing.lg,
     marginBottom: Spacing.lg,
     borderRadius: Radius.lg,

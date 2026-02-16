@@ -13,13 +13,7 @@ import type { Photo } from "../../db/repositories/types";
 import { StatusBadge } from "../common/StatusBadge";
 import { EmptyState } from "../common/EmptyState";
 import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
-
-const photoTypeLabels: Record<string, string> = {
-  before: "Vorher",
-  after: "Nachher",
-  detail: "Detail",
-  overview: "Übersicht",
-};
+import { photoTypeLabels } from "../../constants/photoLabels";
 
 type PhotoGalleryProps = {
   photos: Photo[];
@@ -132,7 +126,7 @@ const styles = StyleSheet.create({
     bottom: 4,
     right: 4,
     backgroundColor: Colors.overlay,
-    borderRadius: 12,
+    borderRadius: Radius.lg,
     width: 24,
     height: 24,
     justifyContent: "center",

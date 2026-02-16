@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
     borderBottomColor: Colors.separator,
   },
   diffRow: {
-    backgroundColor: "#FFF3CD",
+    backgroundColor: Colors.diffHighlight,
   },
   cell: {
     padding: Spacing.sm,

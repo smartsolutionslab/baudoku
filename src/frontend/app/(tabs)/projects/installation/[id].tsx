@@ -405,7 +405,7 @@ const styles = StyleSheet.create({
     marginHorizontal: Spacing.lg,
     marginTop: Spacing.lg,
     marginBottom: Spacing.sm,
-    borderRadius: 12,
+    borderRadius: Radius.lg,
     padding: Spacing.lg,
   },
   headerRow: {

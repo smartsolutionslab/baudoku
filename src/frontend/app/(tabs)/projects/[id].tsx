@@ -13,7 +13,7 @@ import { StatusBadge } from "../../../src/components/common/StatusBadge";
 import { EmptyState } from "../../../src/components/common/EmptyState";
 import { FloatingActionButton } from "../../../src/components/common/FloatingActionButton";
 import { ActionBar } from "../../../src/components/common/ActionBar";
-import { Colors, Spacing, FontSize } from "../../../src/styles/tokens";
+import { Colors, Spacing, FontSize, Radius } from "../../../src/styles/tokens";
 import { formatDate } from "../../../src/utils/formatDate";
 import { projectId } from "../../../src/types/branded";
 
@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: Colors.card,
     margin: Spacing.lg,
-    borderRadius: 12,
+    borderRadius: Radius.lg,
     padding: Spacing.lg,
     gap: Spacing.md,
   },

@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from "react-native";
 import type { Installation } from "../../db/repositories/types";
 import { QualityIndicator } from "./QualityIndicator";
 import { gpsSourceLabels, corrServiceLabels, rtkLabels } from "../../utils/gpsQuality";
-import { Colors, Spacing, FontSize } from "../../styles/tokens";
+import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
 
 type InstallationDetailsProps = {
   installation: Installation;
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.card,
     marginHorizontal: Spacing.lg,
     marginBottom: Spacing.lg,
-    borderRadius: 12,
+    borderRadius: Radius.lg,
     padding: Spacing.lg,
   },
   cardTitle: {
