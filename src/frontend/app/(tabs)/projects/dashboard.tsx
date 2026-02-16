@@ -123,7 +123,7 @@ export default function DashboardScreen() {
 
       <TouchableOpacity
         style={styles.quickLink}
-        onPress={() => router.navigate("/(tabs)/sync" as any)}
+        onPress={() => router.push("/(tabs)/sync")}
       >
         <FontAwesome name="refresh" size={18} color={Colors.primary} />
         <Text style={styles.quickLinkText}>Synchronisation</Text>
