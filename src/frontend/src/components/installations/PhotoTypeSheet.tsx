@@ -1,4 +1,3 @@
-import React from "react";
 import { Text, TouchableOpacity, StyleSheet } from "react-native";
 import { BottomSheet } from "../common/BottomSheet";
 import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";

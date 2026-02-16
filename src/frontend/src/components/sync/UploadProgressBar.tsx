@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { View, Text, StyleSheet, Animated } from "react-native";
 import { useUploadStore } from "../../store/useUploadStore";
 import { Colors, Spacing, FontSize, Radius, Shadows } from "../../styles/tokens";

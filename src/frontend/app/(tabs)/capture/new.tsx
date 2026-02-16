@@ -1,4 +1,3 @@
-import React from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useCreateInstallation } from "../../../src/hooks/useOfflineData";
 import { InstallationForm } from "../../../src/components/installations/InstallationForm";

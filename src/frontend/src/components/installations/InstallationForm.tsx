@@ -1,4 +1,3 @@
-import React from "react";
 import { Text, ScrollView, StyleSheet } from "react-native";
 import { FormField } from "../common/FormField";
 import { FormPicker } from "../common/FormPicker";

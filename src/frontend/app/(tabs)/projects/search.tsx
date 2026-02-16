@@ -1,4 +1,3 @@
-import React from "react";
 import { View, FlatList, Text, StyleSheet } from "react-native";
 import { useRouter, Stack } from "expo-router";
 import { useInstallationSearch } from "../../../src/hooks/useInstallationSearch";
