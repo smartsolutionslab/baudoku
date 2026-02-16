@@ -4,7 +4,7 @@ import { FontAwesome } from "@expo/vector-icons";
 import type { Measurement } from "../../db/repositories/types";
 import { StatusBadge } from "../common/StatusBadge";
 import { Card, Body, Caption } from "../core";
-import { Colors, Spacing, FontSize } from "../../styles/tokens";
+import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
 
 type MeasurementCardProps = {
   measurement: Measurement;
@@ -50,7 +50,7 @@ export function MeasurementCard({ measurement, onDelete }: MeasurementCardProps)
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: 10,
+    borderRadius: Radius.md,
     padding: Spacing.md,
     marginBottom: Spacing.sm,
   },

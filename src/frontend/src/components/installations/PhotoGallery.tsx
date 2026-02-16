@@ -12,7 +12,7 @@ import { FontAwesome } from "@expo/vector-icons";
 import type { Photo } from "../../db/repositories/types";
 import { StatusBadge } from "../common/StatusBadge";
 import { EmptyState } from "../common/EmptyState";
-import { Colors, Spacing, FontSize } from "../../styles/tokens";
+import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
 
 const photoTypeLabels: Record<string, string> = {
   before: "Vorher",
@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
   item: {
     width: IMAGE_SIZE,
     height: IMAGE_SIZE,
-    borderRadius: 8,
+    borderRadius: Radius.sm,
     overflow: "hidden",
     backgroundColor: Colors.separator,
   },

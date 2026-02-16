@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import type { ZoneNode } from "../../hooks/useZoneTree";
 import { StatusBadge } from "../common/StatusBadge";
-import { Colors, Spacing, FontSize } from "../../styles/tokens";
+import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
 
 type ZoneCardProps = {
   node: ZoneNode;
@@ -51,7 +51,7 @@ export function ZoneCard({ node, expanded, onPress, onToggle }: ZoneCardProps) {
 const styles = StyleSheet.create({
   card: {
     backgroundColor: Colors.card,
-    borderRadius: 10,
+    borderRadius: Radius.md,
     padding: Spacing.md,
     marginBottom: Spacing.sm,
   },

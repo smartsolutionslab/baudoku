@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { useSyncStatus } from "../../hooks/useSyncStatus";
+import { Colors, Spacing, FontSize } from "../../styles/tokens";
 
 export function SyncIndicator() {
   const { isOnline, unsyncedCount } = useSyncStatus();
@@ -22,8 +23,8 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 12,
-    paddingVertical: 4,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.xs,
   },
   dot: {
     width: 8,
@@ -32,13 +33,13 @@ const styles = StyleSheet.create({
     marginRight: 6,
   },
   online: {
-    backgroundColor: "#34C759",
+    backgroundColor: Colors.success,
   },
   offline: {
-    backgroundColor: "#FF3B30",
+    backgroundColor: Colors.danger,
   },
   text: {
-    fontSize: 13,
-    color: "#666",
+    fontSize: FontSize.caption,
+    color: Colors.textSecondary,
   },
 });

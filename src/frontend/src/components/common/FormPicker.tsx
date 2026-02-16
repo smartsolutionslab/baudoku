@@ -7,7 +7,7 @@ import {
   StyleSheet,
 } from "react-native";
 import { BottomSheet } from "./BottomSheet";
-import { Colors, Spacing, FontSize } from "../../styles/tokens";
+import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
 
 type PickerOption = {
   label: string;
@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
   },
   picker: {
     backgroundColor: Colors.card,
-    borderRadius: 10,
+    borderRadius: Radius.md,
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.md,
     flexDirection: "row",

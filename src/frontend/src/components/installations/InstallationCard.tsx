@@ -4,7 +4,7 @@ import type { Installation } from "../../db/repositories/types";
 import { StatusBadge } from "../common/StatusBadge";
 import { calculateGpsQuality } from "../../utils/gpsQuality";
 import { formatDate } from "../../utils/formatDate";
-import { Colors, Spacing, FontSize } from "../../styles/tokens";
+import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
 
 type InstallationCardProps = {
   installation: Installation;
@@ -60,7 +60,7 @@ export function InstallationCard({
 const styles = StyleSheet.create({
   card: {
     backgroundColor: Colors.card,
-    borderRadius: 10,
+    borderRadius: Radius.md,
     padding: Spacing.md,
     marginBottom: Spacing.sm,
   },
