@@ -7,17 +7,17 @@ namespace BauDoku.Projects.Application.Queries.GetProject;
 
 public sealed class GetProjectQueryHandler : IQueryHandler<GetProjectQuery, ProjectDto?>
 {
-    private readonly IProjectRepository projectRepository;
+    private readonly IProjectRepository projects;
 
-    public GetProjectQueryHandler(IProjectRepository projectRepository)
+    public GetProjectQueryHandler(IProjectRepository projects)
     {
-        this.projectRepository = projectRepository;
+        this.projects = projects;
     }
 
     public async Task<ProjectDto?> Handle(GetProjectQuery query, CancellationToken cancellationToken = default)
     {
         var projectId = ProjectIdentifier.From(query.ProjectId);
-        var project = await projectRepository.GetByIdReadOnlyAsync(projectId, cancellationToken);
+        var project = await projects.GetByIdReadOnlyAsync(projectId, cancellationToken);
 
         if (project is null)
             return null;
