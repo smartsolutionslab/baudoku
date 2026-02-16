@@ -81,21 +81,13 @@ export async function apiPost<T>(path: string, body: unknown): Promise<T> {
   return response.json() as Promise<T>;
 }
 
-export async function apiRawUpload(
-  path: string,
-  body: Blob | ArrayBuffer,
-  extraHeaders?: Record<string, string>
-): Promise<Response> {
+export async function apiRawUpload(path: string, body: Blob | ArrayBuffer, extraHeaders?: Record<string, string>): Promise<Response> {
   const headers: Record<string, string> = {
     ...extraHeaders,
   };
   if (authToken) headers["Authorization"] = `Bearer ${authToken}`;
 
-  const response = await fetch(`${baseUrl}${path}`, {
-    method: "POST",
-    headers,
-    body,
-  });
+  const response = await fetch(`${baseUrl}${path}`, { method: "POST", headers, body });
 
   if (!response.ok) {
     if (response.status === 401) handleUnauthorized();
@@ -106,15 +98,8 @@ export async function apiRawUpload(
   return response;
 }
 
-export async function apiUpload<T>(
-  path: string,
-  formData: FormData
-): Promise<T> {
-  const response = await fetch(`${baseUrl}${path}`, {
-    method: "POST",
-    headers: getHeaders(),
-    body: formData,
-  });
+export async function apiUpload<T>(path: string, formData: FormData): Promise<T> {
+  const response = await fetch(`${baseUrl}${path}`, { method: "POST", headers: getHeaders(), body: formData });
 
   if (!response.ok) {
     if (response.status === 401) handleUnauthorized();

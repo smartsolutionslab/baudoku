@@ -14,13 +14,10 @@ export function useZonesByProject(projectId: ProjectId) {
 export function useCreateZone() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: Omit<NewZone, "id" | "version">) =>
-      zoneRepo.create(data),
+    mutationFn: (data: Omit<NewZone, "id" | "version">) => zoneRepo.create(data),
     meta: { errorMessage: "Zone konnte nicht erstellt werden" },
     onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({
-        queryKey: ["zones", variables.projectId],
-      });
+      queryClient.invalidateQueries({ queryKey: ["zones", variables.projectId] });
       queryClient.invalidateQueries({ queryKey: ["syncStatus"] });
     },
   });
@@ -29,13 +26,7 @@ export function useCreateZone() {
 export function useUpdateZone() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({
-      id,
-      data,
-    }: {
-      id: ZoneId;
-      data: Partial<Omit<NewZone, "id" | "version" | "projectId">>;
-    }) => zoneRepo.update(id, data),
+    mutationFn: ({ id, data }: { id: ZoneId; data: Partial<Omit<NewZone, "id" | "version" | "projectId">> }) => zoneRepo.update(id, data),
     meta: { errorMessage: "Zone konnte nicht aktualisiert werden" },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["zones"] });
@@ -47,8 +38,7 @@ export function useUpdateZone() {
 export function useDeleteZone() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: ZoneId) => zoneRepo.remove(id),
-    meta: { errorMessage: "Zone konnte nicht gelöscht werden" },
+    mutationFn: (id: ZoneId) => zoneRepo.remove(id), meta: { errorMessage: "Zone konnte nicht gelöscht werden" },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["zones"] });
       queryClient.invalidateQueries({ queryKey: ["syncStatus"] });

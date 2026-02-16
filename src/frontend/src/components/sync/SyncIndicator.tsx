@@ -7,9 +7,7 @@ export function SyncIndicator() {
 
   return (
     <View style={styles.container}>
-      <View
-        style={[styles.dot, isOnline ? styles.online : styles.offline]}
-      />
+      <View style={[styles.dot, isOnline ? styles.online : styles.offline]}/>
       <Text style={styles.text}>
         {isOnline ? "Online" : "Offline"}
         {unsyncedCount > 0 && ` (${unsyncedCount})`}

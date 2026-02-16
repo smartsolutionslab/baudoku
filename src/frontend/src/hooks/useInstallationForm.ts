@@ -1,9 +1,6 @@
 import { useState, useCallback } from "react";
 import { Alert } from "react-native";
-import {
-  installationSchema,
-  type InstallationFormData,
-} from "../validation/schemas";
+import { installationSchema, type InstallationFormData } from "../validation/schemas";
 import type { GpsPosition } from "./useGpsCapture";
 
 export type UseInstallationFormOptions = {
@@ -23,10 +20,7 @@ export type UseInstallationFormReturn = {
   hasElectricalValues: boolean;
 };
 
-export function useInstallationForm({
-  initialValues,
-  onSubmit,
-}: UseInstallationFormOptions): UseInstallationFormReturn {
+export function useInstallationForm({ initialValues, onSubmit }: UseInstallationFormOptions): UseInstallationFormReturn {
   const [form, setForm] = useState<Record<string, unknown>>({
     status: "in_progress",
     ...initialValues,

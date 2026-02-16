@@ -1,25 +1,6 @@
 import type { InferSelectModel, InferInsertModel } from "drizzle-orm";
-import type {
-  projects,
-  zones,
-  installations,
-  photos,
-  measurements,
-  syncOutbox,
-} from "../schema";
-import type {
-  ProjectId,
-  ZoneId,
-  InstallationId,
-  PhotoId,
-  MeasurementId,
-  SyncOutboxEntryId,
-  ProjectName,
-  ZoneName,
-  Latitude,
-  Longitude,
-  DepthMm,
-} from "../../types/branded";
+import type { projects, zones, installations, photos, measurements, syncOutbox } from "../schema";
+import type { ProjectId, ZoneId, InstallationId, PhotoId, MeasurementId, SyncOutboxEntryId, ProjectName, ZoneName, Latitude, Longitude, DepthMm } from "../../types/branded";
 
 // ─── Raw DB types (Drizzle-inferred) ─────────────────────────────
 // These are used internally by the ORM layer.

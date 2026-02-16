@@ -22,9 +22,7 @@ export function useInstallationsByProject(projectId: ProjectId) {
 export function useCreateInstallation() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (
-      data: Omit<NewInstallation, "id" | "createdAt" | "updatedAt" | "version">
-    ) => installationRepo.create(data),
+    mutationFn: (data: Omit<NewInstallation, "id" | "createdAt" | "updatedAt" | "version">) => installationRepo.create(data),
     meta: { errorMessage: "Installation konnte nicht erstellt werden" },
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
@@ -41,17 +39,9 @@ export function useCreateInstallation() {
 export function useUpdateInstallation() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({
-      id,
-      data,
-    }: {
+    mutationFn: ({ id, data }: {
       id: InstallationId;
-      data: Partial<
-        Omit<
-          NewInstallation,
-          "id" | "createdAt" | "updatedAt" | "version" | "projectId" | "zoneId"
-        >
-      >;
+      data: Partial<Omit<NewInstallation, "id" | "createdAt" | "updatedAt" | "version" | "projectId" | "zoneId">>;
     }) => installationRepo.update(id, data),
     meta: { errorMessage: "Installation konnte nicht aktualisiert werden" },
     onSuccess: () => {
