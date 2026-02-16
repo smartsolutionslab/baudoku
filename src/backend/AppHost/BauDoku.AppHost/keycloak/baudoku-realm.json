@@ -42,6 +42,27 @@
       "fullScopeAllowed": true
     },
     {
+      "clientId": "baudoku-web",
+      "enabled": true,
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": false,
+      "redirectUris": [
+        "http://localhost:5173/*",
+        "http://127.0.0.1:5173/*"
+      ],
+      "webOrigins": [
+        "http://localhost:5173",
+        "http://127.0.0.1:5173"
+      ],
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "http://localhost:5173/*"
+      },
+      "protocol": "openid-connect",
+      "fullScopeAllowed": true
+    },
+    {
       "clientId": "baudoku-api",
       "enabled": true,
       "publicClient": false,
