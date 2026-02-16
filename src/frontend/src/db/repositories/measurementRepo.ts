@@ -27,16 +27,6 @@ export async function getByInstallationId(
     .all() as unknown as Measurement[];
 }
 
-export async function getById(
-  id: MeasurementId
-): Promise<Measurement | undefined> {
-  return db
-    .select()
-    .from(measurements)
-    .where(eq(measurements.id, id))
-    .get() as unknown as Measurement | undefined;
-}
-
 export async function create(
   data: Omit<NewMeasurement, "id" | "version" | "result">
 ): Promise<Measurement> {
@@ -62,38 +52,6 @@ export async function create(
   );
 
   return measurement as unknown as Measurement;
-}
-
-export async function update(
-  id: MeasurementId,
-  data: Partial<
-    Omit<NewMeasurement, "id" | "version" | "installationId" | "result">
-  >
-): Promise<Measurement | undefined> {
-  const existing = await getById(id);
-  if (!existing) return undefined;
-
-  const newValue = data.value ?? existing.value;
-  const newMin = data.minThreshold !== undefined ? data.minThreshold : existing.minThreshold;
-  const newMax = data.maxThreshold !== undefined ? data.maxThreshold : existing.maxThreshold;
-  const result = evaluateResult(newValue, newMin ?? null, newMax ?? null);
-
-  const updated = {
-    ...data,
-    result,
-    version: existing.version + 1,
-  };
-
-  await db
-    .update(measurements)
-    .set(updated)
-    .where(eq(measurements.id, id));
-  await createOutboxEntry("measurement", id, "update", {
-    ...existing,
-    ...updated,
-  });
-
-  return { ...existing, ...updated } as Measurement;
 }
 
 export async function remove(id: MeasurementId): Promise<void> {

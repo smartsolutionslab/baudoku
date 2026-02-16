@@ -9,7 +9,6 @@ type SyncState = {
   isOnline: boolean;
   lastSyncTimestamp: string | null;
   pendingEntries: SyncOutboxEntry[];
-  loading: boolean;
 
   isSyncing: boolean;
   lastSyncResult: SyncResult | null;
@@ -30,7 +29,6 @@ export const useSyncStore = create<SyncState>((set) => ({
   isOnline: true,
   lastSyncTimestamp: null,
   pendingEntries: [],
-  loading: false,
 
   isSyncing: false,
   lastSyncResult: null,
@@ -40,12 +38,11 @@ export const useSyncStore = create<SyncState>((set) => ({
   setOnline: (online) => set({ isOnline: online }),
 
   loadSyncStatus: async () => {
-    set({ loading: true });
     const [unsyncedCount, lastSyncTimestamp] = await Promise.all([
       syncRepo.getUnsyncedCount(),
       syncRepo.getLastSyncTimestamp(),
     ]);
-    set({ unsyncedCount, lastSyncTimestamp, loading: false });
+    set({ unsyncedCount, lastSyncTimestamp });
   },
 
   loadPendingEntries: async () => {
