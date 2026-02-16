@@ -9,12 +9,7 @@ type DashboardCardProps = {
   color?: string;
 };
 
-export function DashboardCard({
-  title,
-  value,
-  subtitle,
-  color = Colors.primary,
-}: DashboardCardProps) {
+export function DashboardCard({ title, value, subtitle, color = Colors.primary}: DashboardCardProps) {
   return (
     <Card style={styles.card}>
       <Caption style={styles.title}>{title}</Caption>

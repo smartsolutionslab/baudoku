@@ -19,13 +19,7 @@ type GpsButtonProps = {
   onClear?: () => void;
 };
 
-export function GpsButton({
-  position,
-  capturing,
-  error,
-  onCapture,
-  onClear,
-}: GpsButtonProps) {
+export function GpsButton({ position, capturing, error, onCapture, onClear}: GpsButtonProps) {
   if (capturing) {
     return (
       <View style={styles.captureCard}>

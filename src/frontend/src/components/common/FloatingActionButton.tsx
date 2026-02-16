@@ -10,12 +10,7 @@ type FloatingActionButtonProps = {
   testID?: string;
 };
 
-export function FloatingActionButton({
-  icon = "plus",
-  label,
-  onPress,
-  testID,
-}: FloatingActionButtonProps) {
+export function FloatingActionButton({ icon = "plus", label, onPress, testID }: FloatingActionButtonProps) {
   return (
     <TouchableOpacity style={styles.fab} onPress={onPress} activeOpacity={0.8} testID={testID}>
       <FontAwesome name={icon} size={20} color={Colors.white} />

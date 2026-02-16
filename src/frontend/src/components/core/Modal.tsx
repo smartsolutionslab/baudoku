@@ -17,13 +17,7 @@ type ModalProps = {
   footer?: React.ReactNode;
 };
 
-export function Modal({
-  visible,
-  onClose,
-  title,
-  children,
-  footer,
-}: ModalProps) {
+export function Modal({ visible, onClose, title, children, footer }: ModalProps) {
   return (
     <RNModal visible={visible} transparent animationType="slide">
       <Pressable style={styles.overlay} onPress={onClose}>
