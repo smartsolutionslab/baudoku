@@ -37,11 +37,7 @@ public sealed class ValueObjectJsonConverterFactoryTests
         public static TestIntVo From(int value) => new(value);
     }
 
-    private sealed record TestConstructorOnlyVo : ValueObject
-    {
-        public string Value { get; }
-        public TestConstructorOnlyVo(string value) => Value = value;
-    }
+    private sealed record TestConstructorOnlyVo(string Value) : ValueObject;
 
     private sealed record TestDto(TestStringVo Name, TestGuidVo Id, TestIntVo Count);
 

@@ -6,34 +6,20 @@ using BauDoku.Documentation.Domain.ValueObjects;
 
 namespace BauDoku.Documentation.Application.Commands.CompleteChunkedUpload;
 
-public sealed class CompleteChunkedUploadCommandHandler : ICommandHandler<CompleteChunkedUploadCommand, Guid>
+public sealed class CompleteChunkedUploadCommandHandler(
+    IChunkedUploadStorage chunkedUploadStorage,
+    IPhotoStorage photoStorage,
+    IInstallationRepository installations,
+    IUnitOfWork unitOfWork)
+    : ICommandHandler<CompleteChunkedUploadCommand, Guid>
 {
-    private readonly IChunkedUploadStorage chunkedUploadStorage;
-    private readonly IPhotoStorage photoStorage;
-    private readonly IInstallationRepository installations;
-    private readonly IUnitOfWork unitOfWork;
-
-    public CompleteChunkedUploadCommandHandler(
-        IChunkedUploadStorage chunkedUploadStorage,
-        IPhotoStorage photoStorage,
-        IInstallationRepository installations,
-        IUnitOfWork unitOfWork)
-    {
-        this.chunkedUploadStorage = chunkedUploadStorage;
-        this.photoStorage = photoStorage;
-        this.installations = installations;
-        this.unitOfWork = unitOfWork;
-    }
-
     public async Task<Guid> Handle(CompleteChunkedUploadCommand command, CancellationToken cancellationToken)
     {
         var session = await chunkedUploadStorage.GetSessionAsync(command.SessionId, cancellationToken)
             ?? throw new InvalidOperationException($"Upload-Session mit ID {command.SessionId} nicht gefunden.");
 
         var uploadedChunks = await chunkedUploadStorage.GetUploadedChunkCountAsync(command.SessionId, cancellationToken);
-        if (uploadedChunks != session.TotalChunks)
-            throw new InvalidOperationException(
-                $"Upload unvollständig: {uploadedChunks}/{session.TotalChunks} Chunks hochgeladen.");
+        if (uploadedChunks != session.TotalChunks) throw new InvalidOperationException($"Upload unvollständig: {uploadedChunks}/{session.TotalChunks} Chunks hochgeladen.");
 
         await using var assembledStream = await chunkedUploadStorage.AssembleAsync(command.SessionId, cancellationToken);
 

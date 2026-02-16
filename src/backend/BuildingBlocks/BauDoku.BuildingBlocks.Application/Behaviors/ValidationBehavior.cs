@@ -4,18 +4,10 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace BauDoku.BuildingBlocks.Application.Behaviors;
 
-public sealed class ValidationBehavior<TCommand, TResult> : ICommandHandler<TCommand, TResult>
+public sealed class ValidationBehavior<TCommand, TResult>(ICommandHandler<TCommand, TResult> inner, IEnumerable<IValidator<TCommand>> validators)
+    : ICommandHandler<TCommand, TResult>
     where TCommand : ICommand<TResult>
 {
-    private readonly ICommandHandler<TCommand, TResult> inner;
-    private readonly IEnumerable<IValidator<TCommand>> validators;
-
-    public ValidationBehavior(ICommandHandler<TCommand, TResult> inner, IEnumerable<IValidator<TCommand>> validators)
-    {
-        this.inner = inner;
-        this.validators = validators;
-    }
-
     public async Task<TResult> Handle(TCommand command, CancellationToken cancellationToken = default)
     {
         if (validators.Any())
@@ -37,18 +29,12 @@ public sealed class ValidationBehavior<TCommand, TResult> : ICommandHandler<TCom
     }
 }
 
-public sealed class ValidationBehaviorVoid<TCommand> : ICommandHandler<TCommand>
+public sealed class ValidationBehaviorVoid<TCommand>(
+    ICommandHandler<TCommand> inner,
+    IEnumerable<IValidator<TCommand>> validators)
+    : ICommandHandler<TCommand>
     where TCommand : ICommand
 {
-    private readonly ICommandHandler<TCommand> inner;
-    private readonly IEnumerable<IValidator<TCommand>> validators;
-
-    public ValidationBehaviorVoid(ICommandHandler<TCommand> inner, IEnumerable<IValidator<TCommand>> validators)
-    {
-        this.inner = inner;
-        this.validators = validators;
-    }
-
     public async Task Handle(TCommand command, CancellationToken cancellationToken = default)
     {
         if (validators.Any())

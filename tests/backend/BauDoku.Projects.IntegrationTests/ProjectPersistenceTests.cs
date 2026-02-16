@@ -7,15 +7,8 @@ using Microsoft.EntityFrameworkCore;
 namespace BauDoku.Projects.IntegrationTests;
 
 [Collection(PostgreSqlCollection.Name)]
-public sealed class ProjectPersistenceTests
+public sealed class ProjectPersistenceTests(PostgreSqlFixture fixture)
 {
-    private readonly PostgreSqlFixture fixture;
-
-    public ProjectPersistenceTests(PostgreSqlFixture fixture)
-    {
-        this.fixture = fixture;
-    }
-
     [Fact]
     public async Task CreateProject_ShouldPersistAndLoad()
     {

@@ -5,17 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BauDoku.Projects.Infrastructure.Persistence.Repositories;
 
-public sealed class ProjectReadRepository : IProjectReadRepository
+public sealed class ProjectReadRepository(ProjectsDbContext context) : IProjectReadRepository
 {
-    private readonly ProjectsDbContext context;
-
-    public ProjectReadRepository(ProjectsDbContext context)
-    {
-        this.context = context;
-    }
-
-    public async Task<PagedResult<ProjectListItemDto>> ListAsync(
-        string? search, int page, int pageSize, CancellationToken cancellationToken = default)
+    public async Task<PagedResult<ProjectListItemDto>> ListAsync(string? search, int page, int pageSize, CancellationToken cancellationToken = default)
     {
         var query = context.Projects.AsNoTracking();
 

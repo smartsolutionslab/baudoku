@@ -6,17 +6,9 @@ using BauDoku.Projects.Domain.ValueObjects;
 
 namespace BauDoku.Projects.Application.Commands.AddZone;
 
-public sealed class AddZoneCommandHandler : ICommandHandler<AddZoneCommand>
+public sealed class AddZoneCommandHandler(IProjectRepository projects, IUnitOfWork unitOfWork)
+    : ICommandHandler<AddZoneCommand>
 {
-    private readonly IProjectRepository projects;
-    private readonly IUnitOfWork unitOfWork;
-
-    public AddZoneCommandHandler(IProjectRepository projects, IUnitOfWork unitOfWork)
-    {
-        this.projects = projects;
-        this.unitOfWork = unitOfWork;
-    }
-
     public async Task Handle(AddZoneCommand command, CancellationToken cancellationToken = default)
     {
         var projectId = ProjectIdentifier.From(command.ProjectId);

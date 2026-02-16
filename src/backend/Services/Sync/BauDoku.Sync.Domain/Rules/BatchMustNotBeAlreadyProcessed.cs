@@ -3,15 +3,8 @@ using BauDoku.Sync.Domain.ValueObjects;
 
 namespace BauDoku.Sync.Domain.Rules;
 
-public sealed class BatchMustNotBeAlreadyProcessed : IBusinessRule
+public sealed class BatchMustNotBeAlreadyProcessed(BatchStatus currentStatus) : IBusinessRule
 {
-    private readonly BatchStatus currentStatus;
-
-    public BatchMustNotBeAlreadyProcessed(BatchStatus currentStatus)
-    {
-        this.currentStatus = currentStatus;
-    }
-
     public bool IsBroken() =>
         currentStatus == BatchStatus.Completed ||
         currentStatus == BatchStatus.Failed ||

@@ -8,13 +8,13 @@ namespace BauDoku.Sync.IntegrationTests.Api;
 [Collection(PostgreSqlCollection.Name)]
 public sealed class SyncEndpointTests : IDisposable
 {
-    private readonly SyncApiFactory _factory;
-    private readonly HttpClient _client;
+    private readonly SyncApiFactory factory;
+    private readonly HttpClient client;
 
     public SyncEndpointTests(PostgreSqlFixture fixture)
     {
-        _factory = new SyncApiFactory(fixture);
-        _client = _factory.CreateClient();
+        factory = new SyncApiFactory(fixture);
+        client = factory.CreateClient();
     }
 
     [Fact]
@@ -37,7 +37,7 @@ public sealed class SyncEndpointTests : IDisposable
             }
         };
 
-        var response = await _client.PostAsJsonAsync("/api/sync/batch", command);
+        var response = await client.PostAsJsonAsync("/api/sync/batch", command);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
@@ -45,7 +45,7 @@ public sealed class SyncEndpointTests : IDisposable
     [Fact]
     public async Task GetChangesSince_ShouldReturn200()
     {
-        var response = await _client.GetAsync("/api/sync/changes?deviceId=test-device");
+        var response = await client.GetAsync("/api/sync/changes?deviceId=test-device");
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
@@ -53,7 +53,7 @@ public sealed class SyncEndpointTests : IDisposable
     [Fact]
     public async Task GetConflicts_ShouldReturn200()
     {
-        var response = await _client.GetAsync("/api/sync/conflicts");
+        var response = await client.GetAsync("/api/sync/conflicts");
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
@@ -80,7 +80,7 @@ public sealed class SyncEndpointTests : IDisposable
                 }
             }
         };
-        var firstResponse = await _client.PostAsJsonAsync("/api/sync/batch", firstBatch);
+        var firstResponse = await client.PostAsJsonAsync("/api/sync/batch", firstBatch);
         firstResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 
         // Second batch from different device with stale version → creates conflict
@@ -100,7 +100,7 @@ public sealed class SyncEndpointTests : IDisposable
                 }
             }
         };
-        var conflictResponse = await _client.PostAsJsonAsync("/api/sync/batch", conflictBatch);
+        var conflictResponse = await client.PostAsJsonAsync("/api/sync/batch", conflictBatch);
         conflictResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 
         var batchResult = await conflictResponse.Content.ReadFromJsonAsync<BatchResultDto>();
@@ -113,7 +113,7 @@ public sealed class SyncEndpointTests : IDisposable
             Strategy = "server_wins",
             MergedPayload = (string?)null
         };
-        var resolveResponse = await _client.PostAsJsonAsync(
+        var resolveResponse = await client.PostAsJsonAsync(
             $"/api/sync/conflicts/{conflictId}/resolve", resolveRequest);
 
         resolveResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
@@ -121,8 +121,8 @@ public sealed class SyncEndpointTests : IDisposable
 
     public void Dispose()
     {
-        _client.Dispose();
-        _factory.Dispose();
+        client.Dispose();
+        factory.Dispose();
     }
 
     private sealed record BatchResultDto(Guid BatchId, int AppliedCount, int ConflictCount, List<ConflictItemDto> Conflicts);

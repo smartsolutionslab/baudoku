@@ -6,22 +6,9 @@ using BauDoku.Sync.Domain.ValueObjects;
 
 namespace BauDoku.Sync.Application.Commands.ResolveConflict;
 
-public sealed class ResolveConflictCommandHandler : ICommandHandler<ResolveConflictCommand>
+public sealed class ResolveConflictCommandHandler(ISyncBatchRepository syncBatches, IEntityVersionStore entityVersionStore, IUnitOfWork unitOfWork)
+    : ICommandHandler<ResolveConflictCommand>
 {
-    private readonly ISyncBatchRepository syncBatches;
-    private readonly IEntityVersionStore entityVersionStore;
-    private readonly IUnitOfWork unitOfWork;
-
-    public ResolveConflictCommandHandler(
-        ISyncBatchRepository syncBatches,
-        IEntityVersionStore entityVersionStore,
-        IUnitOfWork unitOfWork)
-    {
-        this.syncBatches = syncBatches;
-        this.entityVersionStore = entityVersionStore;
-        this.unitOfWork = unitOfWork;
-    }
-
     public async Task Handle(ResolveConflictCommand command, CancellationToken cancellationToken = default)
     {
         var conflictId = ConflictRecordIdentifier.From(command.ConflictId);

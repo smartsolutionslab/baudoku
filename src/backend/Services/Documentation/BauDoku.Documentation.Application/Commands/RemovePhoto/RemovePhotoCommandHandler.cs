@@ -6,22 +6,9 @@ using BauDoku.Documentation.Domain.ValueObjects;
 
 namespace BauDoku.Documentation.Application.Commands.RemovePhoto;
 
-public sealed class RemovePhotoCommandHandler : ICommandHandler<RemovePhotoCommand>
+public sealed class RemovePhotoCommandHandler(IInstallationRepository installations, IPhotoStorage photoStorage, IUnitOfWork unitOfWork)
+    : ICommandHandler<RemovePhotoCommand>
 {
-    private readonly IInstallationRepository installations;
-    private readonly IPhotoStorage photoStorage;
-    private readonly IUnitOfWork unitOfWork;
-
-    public RemovePhotoCommandHandler(
-        IInstallationRepository installations,
-        IPhotoStorage photoStorage,
-        IUnitOfWork unitOfWork)
-    {
-        this.installations = installations;
-        this.photoStorage = photoStorage;
-        this.unitOfWork = unitOfWork;
-    }
-
     public async Task Handle(RemovePhotoCommand command, CancellationToken cancellationToken)
     {
         var installationId = InstallationIdentifier.From(command.InstallationId);

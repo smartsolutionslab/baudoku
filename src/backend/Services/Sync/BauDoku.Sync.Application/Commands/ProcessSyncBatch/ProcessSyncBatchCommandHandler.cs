@@ -8,26 +8,10 @@ using BauDoku.Sync.Domain.ValueObjects;
 
 namespace BauDoku.Sync.Application.Commands.ProcessSyncBatch;
 
-public sealed class ProcessSyncBatchCommandHandler
+public sealed class ProcessSyncBatchCommandHandler(ISyncBatchRepository syncBatches, IEntityVersionStore entityVersionStore, IUnitOfWork unitOfWork)
     : ICommandHandler<ProcessSyncBatchCommand, ProcessSyncBatchResult>
 {
-    private readonly ISyncBatchRepository syncBatches;
-    private readonly IEntityVersionStore entityVersionStore;
-    private readonly IUnitOfWork unitOfWork;
-
-    public ProcessSyncBatchCommandHandler(
-        ISyncBatchRepository syncBatches,
-        IEntityVersionStore entityVersionStore,
-        IUnitOfWork unitOfWork)
-    {
-        this.syncBatches = syncBatches;
-        this.entityVersionStore = entityVersionStore;
-        this.unitOfWork = unitOfWork;
-    }
-
-    public async Task<ProcessSyncBatchResult> Handle(
-        ProcessSyncBatchCommand command,
-        CancellationToken cancellationToken = default)
+    public async Task<ProcessSyncBatchResult> Handle(ProcessSyncBatchCommand command, CancellationToken cancellationToken = default)
     {
         var batchId = SyncBatchIdentifier.New();
         var deviceId = DeviceIdentifier.From(command.DeviceId);

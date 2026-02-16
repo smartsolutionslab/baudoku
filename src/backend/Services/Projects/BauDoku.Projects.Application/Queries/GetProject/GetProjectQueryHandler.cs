@@ -5,15 +5,8 @@ using BauDoku.Projects.Domain.ValueObjects;
 
 namespace BauDoku.Projects.Application.Queries.GetProject;
 
-public sealed class GetProjectQueryHandler : IQueryHandler<GetProjectQuery, ProjectDto?>
+public sealed class GetProjectQueryHandler(IProjectRepository projects) : IQueryHandler<GetProjectQuery, ProjectDto?>
 {
-    private readonly IProjectRepository projects;
-
-    public GetProjectQueryHandler(IProjectRepository projects)
-    {
-        this.projects = projects;
-    }
-
     public async Task<ProjectDto?> Handle(GetProjectQuery query, CancellationToken cancellationToken = default)
     {
         var projectId = ProjectIdentifier.From(query.ProjectId);

@@ -5,16 +5,9 @@ using BauDoku.Documentation.Application.Queries.Dtos;
 
 namespace BauDoku.Documentation.Application.Queries.GetInstallationsInBoundingBox;
 
-public sealed class GetInstallationsInBoundingBoxQueryHandler
+public sealed class GetInstallationsInBoundingBoxQueryHandler(IInstallationReadRepository installations)
     : IQueryHandler<GetInstallationsInBoundingBoxQuery, PagedResult<InstallationListItemDto>>
 {
-    private readonly IInstallationReadRepository installations;
-
-    public GetInstallationsInBoundingBoxQueryHandler(IInstallationReadRepository installations)
-    {
-        this.installations = installations;
-    }
-
     public async Task<PagedResult<InstallationListItemDto>> Handle(
         GetInstallationsInBoundingBoxQuery query, CancellationToken cancellationToken)
     {

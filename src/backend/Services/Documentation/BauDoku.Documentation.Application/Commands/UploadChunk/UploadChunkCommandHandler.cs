@@ -3,15 +3,9 @@ using BauDoku.Documentation.Application.Contracts;
 
 namespace BauDoku.Documentation.Application.Commands.UploadChunk;
 
-public sealed class UploadChunkCommandHandler : ICommandHandler<UploadChunkCommand>
+public sealed class UploadChunkCommandHandler(IChunkedUploadStorage chunkedUploadStorage)
+    : ICommandHandler<UploadChunkCommand>
 {
-    private readonly IChunkedUploadStorage chunkedUploadStorage;
-
-    public UploadChunkCommandHandler(IChunkedUploadStorage chunkedUploadStorage)
-    {
-        this.chunkedUploadStorage = chunkedUploadStorage;
-    }
-
     public async Task Handle(UploadChunkCommand command, CancellationToken cancellationToken)
     {
         var session = await chunkedUploadStorage.GetSessionAsync(command.SessionId, cancellationToken)

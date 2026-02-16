@@ -5,16 +5,9 @@ using BauDoku.Documentation.Application.Queries.Dtos;
 
 namespace BauDoku.Documentation.Application.Queries.GetInstallationsInRadius;
 
-public sealed class GetInstallationsInRadiusQueryHandler
+public sealed class GetInstallationsInRadiusQueryHandler(IInstallationReadRepository installations)
     : IQueryHandler<GetInstallationsInRadiusQuery, PagedResult<NearbyInstallationDto>>
 {
-    private readonly IInstallationReadRepository installations;
-
-    public GetInstallationsInRadiusQueryHandler(IInstallationReadRepository installations)
-    {
-        this.installations = installations;
-    }
-
     public async Task<PagedResult<NearbyInstallationDto>> Handle(
         GetInstallationsInRadiusQuery query, CancellationToken cancellationToken)
     {

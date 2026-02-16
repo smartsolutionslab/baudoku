@@ -4,18 +4,10 @@ using BauDoku.Sync.Domain.ValueObjects;
 
 namespace BauDoku.Sync.Application.Queries.GetChangesSince;
 
-public sealed class GetChangesSinceQueryHandler : IQueryHandler<GetChangesSinceQuery, ChangeSetResult>
+public sealed class GetChangesSinceQueryHandler(IEntityVersionReadStore entityVersionReadStore)
+    : IQueryHandler<GetChangesSinceQuery, ChangeSetResult>
 {
-    private readonly IEntityVersionReadStore entityVersionReadStore;
-
-    public GetChangesSinceQueryHandler(IEntityVersionReadStore entityVersionReadStore)
-    {
-        this.entityVersionReadStore = entityVersionReadStore;
-    }
-
-    public async Task<ChangeSetResult> Handle(
-        GetChangesSinceQuery query,
-        CancellationToken cancellationToken = default)
+    public async Task<ChangeSetResult> Handle(GetChangesSinceQuery query, CancellationToken cancellationToken = default)
     {
         var deviceId = DeviceIdentifier.From(query.DeviceId);
         var limit = query.Limit ?? 100;

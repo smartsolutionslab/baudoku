@@ -5,8 +5,7 @@ namespace BauDoku.Sync.Domain.ValueObjects;
 
 public sealed record EntityType : ValueObject
 {
-    private static readonly HashSet<string> ValidValues =
-        ["project", "zone", "installation", "photo", "measurement"];
+    private static readonly HashSet<string> ValidValues = ["project", "zone", "installation", "photo", "measurement"];
 
     public static readonly EntityType Project = new("project");
     public static readonly EntityType Zone = new("zone");

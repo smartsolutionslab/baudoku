@@ -14,8 +14,7 @@ public ref struct ReferenceGuard<T> where T : class
     public ReferenceGuard<T> IsNotNull(string? message = null)
     {
         if (value is null)
-            throw new ArgumentNullException(paramName,
-                message ?? $"{paramName} darf nicht null sein.");
+            throw new ArgumentNullException(paramName, message ?? $"{paramName} darf nicht null sein.");
         return this;
     }
 }

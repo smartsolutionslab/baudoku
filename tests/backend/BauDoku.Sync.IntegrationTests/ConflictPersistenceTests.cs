@@ -7,15 +7,8 @@ using Microsoft.EntityFrameworkCore;
 namespace BauDoku.Sync.IntegrationTests;
 
 [Collection(PostgreSqlCollection.Name)]
-public sealed class ConflictPersistenceTests
+public sealed class ConflictPersistenceTests(PostgreSqlFixture fixture)
 {
-    private readonly PostgreSqlFixture fixture;
-
-    public ConflictPersistenceTests(PostgreSqlFixture fixture)
-    {
-        this.fixture = fixture;
-    }
-
     private static SyncBatch CreateBatchWithConflict(out ConflictRecordIdentifier conflictId)
     {
         var batch = SyncBatch.Create(SyncBatchIdentifier.New(), DeviceIdentifier.From("device-conflict-test"), DateTime.UtcNow);

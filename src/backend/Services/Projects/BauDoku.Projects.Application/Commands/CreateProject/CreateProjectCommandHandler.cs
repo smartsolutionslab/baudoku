@@ -9,17 +9,9 @@ using BauDoku.Projects.Domain.ValueObjects;
 
 namespace BauDoku.Projects.Application.Commands.CreateProject;
 
-public sealed class CreateProjectCommandHandler : ICommandHandler<CreateProjectCommand, Guid>
+public sealed class CreateProjectCommandHandler(IProjectRepository projects, IUnitOfWork unitOfWork)
+    : ICommandHandler<CreateProjectCommand, Guid>
 {
-    private readonly IProjectRepository projects;
-    private readonly IUnitOfWork unitOfWork;
-
-    public CreateProjectCommandHandler(IProjectRepository projects, IUnitOfWork unitOfWork)
-    {
-        this.projects = projects;
-        this.unitOfWork = unitOfWork;
-    }
-
     public async Task<Guid> Handle(CreateProjectCommand command, CancellationToken cancellationToken = default)
     {
         var projectId = ProjectIdentifier.New();

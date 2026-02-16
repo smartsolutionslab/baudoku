@@ -8,13 +8,13 @@ namespace BauDoku.Projects.IntegrationTests.Api;
 [Collection(PostgreSqlCollection.Name)]
 public sealed class ProjectEndpointTests : IDisposable
 {
-    private readonly ProjectsApiFactory _factory;
-    private readonly HttpClient _client;
+    private readonly ProjectsApiFactory factory;
+    private readonly HttpClient client;
 
     public ProjectEndpointTests(PostgreSqlFixture fixture)
     {
-        _factory = new ProjectsApiFactory(fixture);
-        _client = _factory.CreateClient();
+        factory = new ProjectsApiFactory(fixture);
+        client = factory.CreateClient();
     }
 
     [Fact]
@@ -29,7 +29,7 @@ public sealed class ProjectEndpointTests : IDisposable
             ClientName = "Test GmbH"
         };
 
-        var response = await _client.PostAsJsonAsync("/api/projects", command);
+        var response = await client.PostAsJsonAsync("/api/projects", command);
 
         response.StatusCode.Should().Be(HttpStatusCode.Created);
         var body = await response.Content.ReadFromJsonAsync<IdResponse>();
@@ -39,7 +39,7 @@ public sealed class ProjectEndpointTests : IDisposable
     [Fact]
     public async Task ListProjects_ShouldReturn200()
     {
-        var response = await _client.GetAsync("/api/projects");
+        var response = await client.GetAsync("/api/projects");
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
@@ -56,10 +56,10 @@ public sealed class ProjectEndpointTests : IDisposable
             ZipCode = "80331",
             ClientName = "Kunde"
         };
-        var createResponse = await _client.PostAsJsonAsync("/api/projects", command);
+        var createResponse = await client.PostAsJsonAsync("/api/projects", command);
         var created = await createResponse.Content.ReadFromJsonAsync<IdResponse>();
 
-        var response = await _client.GetAsync($"/api/projects/{created!.Id}");
+        var response = await client.GetAsync($"/api/projects/{created!.Id}");
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
@@ -67,7 +67,7 @@ public sealed class ProjectEndpointTests : IDisposable
     [Fact]
     public async Task GetProject_WithNonExistentId_ShouldReturn404()
     {
-        var response = await _client.GetAsync($"/api/projects/{Guid.NewGuid()}");
+        var response = await client.GetAsync($"/api/projects/{Guid.NewGuid()}");
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
@@ -84,19 +84,19 @@ public sealed class ProjectEndpointTests : IDisposable
             ZipCode = "20095",
             ClientName = "Zonen GmbH"
         };
-        var createResponse = await _client.PostAsJsonAsync("/api/projects", command);
+        var createResponse = await client.PostAsJsonAsync("/api/projects", command);
         var created = await createResponse.Content.ReadFromJsonAsync<IdResponse>();
 
         var zoneRequest = new { Name = "Erdgeschoss", Type = "floor" };
-        var response = await _client.PostAsJsonAsync($"/api/projects/{created!.Id}/zones", zoneRequest);
+        var response = await client.PostAsJsonAsync($"/api/projects/{created!.Id}/zones", zoneRequest);
 
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
     }
 
     public void Dispose()
     {
-        _client.Dispose();
-        _factory.Dispose();
+        client.Dispose();
+        factory.Dispose();
     }
 
     private sealed record IdResponse(Guid Id);

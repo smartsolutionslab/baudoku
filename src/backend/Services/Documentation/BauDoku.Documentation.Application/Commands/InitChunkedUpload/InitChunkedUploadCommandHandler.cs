@@ -4,19 +4,9 @@ using BauDoku.Documentation.Domain.ValueObjects;
 
 namespace BauDoku.Documentation.Application.Commands.InitChunkedUpload;
 
-public sealed class InitChunkedUploadCommandHandler : ICommandHandler<InitChunkedUploadCommand, Guid>
+public sealed class InitChunkedUploadCommandHandler(IInstallationRepository installations, IChunkedUploadStorage chunkedUploadStorage)
+    : ICommandHandler<InitChunkedUploadCommand, Guid>
 {
-    private readonly IInstallationRepository installations;
-    private readonly IChunkedUploadStorage chunkedUploadStorage;
-
-    public InitChunkedUploadCommandHandler(
-        IInstallationRepository installations,
-        IChunkedUploadStorage chunkedUploadStorage)
-    {
-        this.installations = installations;
-        this.chunkedUploadStorage = chunkedUploadStorage;
-    }
-
     public async Task<Guid> Handle(InitChunkedUploadCommand command, CancellationToken cancellationToken)
     {
         var installationId = InstallationIdentifier.From(command.InstallationId);

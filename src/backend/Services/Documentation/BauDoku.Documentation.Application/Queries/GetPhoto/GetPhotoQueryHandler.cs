@@ -5,15 +5,8 @@ using BauDoku.Documentation.Domain.ValueObjects;
 
 namespace BauDoku.Documentation.Application.Queries.GetPhoto;
 
-public sealed class GetPhotoQueryHandler : IQueryHandler<GetPhotoQuery, PhotoDto?>
+public sealed class GetPhotoQueryHandler(IPhotoReadRepository photos) : IQueryHandler<GetPhotoQuery, PhotoDto?>
 {
-    private readonly IPhotoReadRepository photos;
-
-    public GetPhotoQueryHandler(IPhotoReadRepository photos)
-    {
-        this.photos = photos;
-    }
-
     public async Task<PhotoDto?> Handle(GetPhotoQuery query, CancellationToken cancellationToken)
     {
         return await photos.GetByIdAsync(query.PhotoId, cancellationToken);

@@ -7,15 +7,8 @@ using BauDoku.Sync.IntegrationTests.Fixtures;
 namespace BauDoku.Sync.IntegrationTests;
 
 [Collection(PostgreSqlCollection.Name)]
-public sealed class EntityVersionStorePersistenceTests
+public sealed class EntityVersionStorePersistenceTests(PostgreSqlFixture fixture)
 {
-    private readonly PostgreSqlFixture fixture;
-
-    public EntityVersionStorePersistenceTests(PostgreSqlFixture fixture)
-    {
-        this.fixture = fixture;
-    }
-
     [Fact]
     public async Task SetAndGetVersion_ShouldPersistAndRetrieve()
     {

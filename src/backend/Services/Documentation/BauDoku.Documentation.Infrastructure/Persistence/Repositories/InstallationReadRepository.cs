@@ -5,15 +5,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BauDoku.Documentation.Infrastructure.Persistence.Repositories;
 
-public sealed class InstallationReadRepository : IInstallationReadRepository
+public sealed class InstallationReadRepository(DocumentationDbContext context) : IInstallationReadRepository
 {
-    private readonly DocumentationDbContext context;
-
-    public InstallationReadRepository(DocumentationDbContext context)
-    {
-        this.context = context;
-    }
-
     public async Task<PagedResult<InstallationListItemDto>> ListAsync(
         Guid? projectId,
         Guid? zoneId,

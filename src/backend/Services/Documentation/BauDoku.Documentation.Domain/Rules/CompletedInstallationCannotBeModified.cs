@@ -3,15 +3,8 @@ using BauDoku.Documentation.Domain.ValueObjects;
 
 namespace BauDoku.Documentation.Domain.Rules;
 
-public sealed class CompletedInstallationCannotBeModified : IBusinessRule
+public sealed class CompletedInstallationCannotBeModified(InstallationStatus currentStatus) : IBusinessRule
 {
-    private readonly InstallationStatus currentStatus;
-
-    public CompletedInstallationCannotBeModified(InstallationStatus currentStatus)
-    {
-        this.currentStatus = currentStatus;
-    }
-
     public bool IsBroken() =>
         currentStatus == InstallationStatus.Completed ||
         currentStatus == InstallationStatus.Inspected;

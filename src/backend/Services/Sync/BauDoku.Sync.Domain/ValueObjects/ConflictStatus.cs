@@ -5,8 +5,7 @@ namespace BauDoku.Sync.Domain.ValueObjects;
 
 public sealed record ConflictStatus : ValueObject
 {
-    private static readonly HashSet<string> ValidValues =
-        ["unresolved", "client_wins", "server_wins", "merged"];
+    private static readonly HashSet<string> ValidValues = ["unresolved", "client_wins", "server_wins", "merged"];
 
     public static readonly ConflictStatus Unresolved = new("unresolved");
     public static readonly ConflictStatus ClientWins = new("client_wins");

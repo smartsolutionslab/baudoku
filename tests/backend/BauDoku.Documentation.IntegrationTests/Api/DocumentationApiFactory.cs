@@ -6,18 +6,11 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace BauDoku.Documentation.IntegrationTests.Api;
 
-public sealed class DocumentationApiFactory : WebApplicationFactory<Program>
+public sealed class DocumentationApiFactory(PostgreSqlFixture fixture) : WebApplicationFactory<Program>
 {
-    private readonly PostgreSqlFixture _fixture;
-
-    public DocumentationApiFactory(PostgreSqlFixture fixture)
-    {
-        _fixture = fixture;
-    }
-
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        builder.UseSetting("ConnectionStrings:DocumentationDb", _fixture.ConnectionString);
+        builder.UseSetting("ConnectionStrings:DocumentationDb", fixture.ConnectionString);
         builder.UseSetting("PhotoStorage:Provider", "Local");
         builder.UseSetting("PhotoStorage:LocalPath", Path.GetTempPath());
 

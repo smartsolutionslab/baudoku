@@ -7,15 +7,8 @@ using Microsoft.EntityFrameworkCore;
 namespace BauDoku.Documentation.IntegrationTests;
 
 [Collection(PostgreSqlCollection.Name)]
-public sealed class InstallationMeasurementPersistenceTests
+public sealed class InstallationMeasurementPersistenceTests(PostgreSqlFixture fixture)
 {
-    private readonly PostgreSqlFixture fixture;
-
-    public InstallationMeasurementPersistenceTests(PostgreSqlFixture fixture)
-    {
-        this.fixture = fixture;
-    }
-
     [Fact]
     public async Task RecordMeasurement_WithThresholds_ShouldPersistAndLoad()
     {

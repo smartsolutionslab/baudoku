@@ -9,11 +9,9 @@ public sealed class ProcessSyncBatchCommandValidatorTests
 {
     private readonly ProcessSyncBatchCommandValidator validator = new();
 
-    private static SyncDeltaDto CreateValidDelta() =>
-        new("project", Guid.NewGuid(), "create", 0, """{"name":"Test"}""", DateTime.UtcNow);
+    private static SyncDeltaDto CreateValidDelta() => new("project", Guid.NewGuid(), "create", 0, """{"name":"Test"}""", DateTime.UtcNow);
 
-    private static ProcessSyncBatchCommand CreateValidCommand() =>
-        new("device-001", [CreateValidDelta()]);
+    private static ProcessSyncBatchCommand CreateValidCommand() => new("device-001", [CreateValidDelta()]);
 
     [Fact]
     public void ValidCommand_ShouldHaveNoErrors()

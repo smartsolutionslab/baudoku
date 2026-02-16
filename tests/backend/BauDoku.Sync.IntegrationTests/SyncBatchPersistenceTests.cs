@@ -7,15 +7,8 @@ using Microsoft.EntityFrameworkCore;
 namespace BauDoku.Sync.IntegrationTests;
 
 [Collection(PostgreSqlCollection.Name)]
-public sealed class SyncBatchPersistenceTests
+public sealed class SyncBatchPersistenceTests(PostgreSqlFixture fixture)
 {
-    private readonly PostgreSqlFixture fixture;
-
-    public SyncBatchPersistenceTests(PostgreSqlFixture fixture)
-    {
-        this.fixture = fixture;
-    }
-
     [Fact]
     public async Task CreateBatch_ShouldPersistAndLoad()
     {

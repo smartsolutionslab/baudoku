@@ -5,10 +5,7 @@ namespace BauDoku.Documentation.Domain.ValueObjects;
 
 public sealed record PhotoType : ValueObject
 {
-    private static readonly HashSet<string> ValidValues =
-    [
-        "before", "after", "detail", "overview", "document", "other"
-    ];
+    private static readonly HashSet<string> ValidValues = ["before", "after", "detail", "overview", "document", "other"];
 
     public static readonly PhotoType Before = new("before");
     public static readonly PhotoType After = new("after");

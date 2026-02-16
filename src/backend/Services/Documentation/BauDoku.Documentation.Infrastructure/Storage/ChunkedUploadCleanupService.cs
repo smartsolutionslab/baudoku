@@ -6,21 +6,14 @@ using Microsoft.Extensions.Logging;
 
 namespace BauDoku.Documentation.Infrastructure.Storage;
 
-public sealed class ChunkedUploadCleanupService : BackgroundService
+public sealed class ChunkedUploadCleanupService(IConfiguration configuration, ILogger<ChunkedUploadCleanupService> logger)
+    : BackgroundService
 {
-    private readonly string basePath;
-    private readonly ILogger<ChunkedUploadCleanupService> logger;
+    private readonly string basePath = configuration["PhotoStorage:ChunkedPath"]
+                                       ?? Path.Combine(Directory.GetCurrentDirectory(), "uploads", "chunks");
+
     private readonly TimeSpan interval = TimeSpan.FromMinutes(15);
     private readonly TimeSpan maxAge = TimeSpan.FromHours(1);
-
-    public ChunkedUploadCleanupService(
-        IConfiguration configuration,
-        ILogger<ChunkedUploadCleanupService> logger)
-    {
-        basePath = configuration["PhotoStorage:ChunkedPath"]
-            ?? Path.Combine(Directory.GetCurrentDirectory(), "uploads", "chunks");
-        this.logger = logger;
-    }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {

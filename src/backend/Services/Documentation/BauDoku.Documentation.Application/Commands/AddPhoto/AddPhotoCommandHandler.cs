@@ -6,22 +6,9 @@ using BauDoku.Documentation.Domain.ValueObjects;
 
 namespace BauDoku.Documentation.Application.Commands.AddPhoto;
 
-public sealed class AddPhotoCommandHandler : ICommandHandler<AddPhotoCommand, Guid>
+public sealed class AddPhotoCommandHandler(IInstallationRepository installations, IPhotoStorage photoStorage, IUnitOfWork unitOfWork)
+    : ICommandHandler<AddPhotoCommand, Guid>
 {
-    private readonly IInstallationRepository installations;
-    private readonly IPhotoStorage photoStorage;
-    private readonly IUnitOfWork unitOfWork;
-
-    public AddPhotoCommandHandler(
-        IInstallationRepository installations,
-        IPhotoStorage photoStorage,
-        IUnitOfWork unitOfWork)
-    {
-        this.installations = installations;
-        this.photoStorage = photoStorage;
-        this.unitOfWork = unitOfWork;
-    }
-
     public async Task<Guid> Handle(AddPhotoCommand command, CancellationToken cancellationToken)
     {
         var installationId = InstallationIdentifier.From(command.InstallationId);

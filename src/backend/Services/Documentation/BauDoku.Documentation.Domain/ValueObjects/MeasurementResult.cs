@@ -5,10 +5,7 @@ namespace BauDoku.Documentation.Domain.ValueObjects;
 
 public sealed record MeasurementResult : ValueObject
 {
-    private static readonly HashSet<string> ValidValues =
-    [
-        "passed", "failed", "warning"
-    ];
+    private static readonly HashSet<string> ValidValues = ["passed", "failed", "warning"];
 
     public static readonly MeasurementResult Passed = new("passed");
     public static readonly MeasurementResult Failed = new("failed");

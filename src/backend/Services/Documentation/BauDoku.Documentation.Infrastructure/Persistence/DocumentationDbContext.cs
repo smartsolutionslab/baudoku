@@ -6,18 +6,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BauDoku.Documentation.Infrastructure.Persistence;
 
-public sealed class DocumentationDbContext : BaseDbContext
+public sealed class DocumentationDbContext(
+    DbContextOptions<DocumentationDbContext> options,
+    IDispatcher dispatcher)
+    : BaseDbContext(options, dispatcher)
 {
     public DbSet<Installation> Installations => Set<Installation>();
     public DbSet<Photo> Photos => Set<Photo>();
     public DbSet<Measurement> Measurements => Set<Measurement>();
-
-    public DocumentationDbContext(
-        DbContextOptions<DocumentationDbContext> options,
-        IDispatcher dispatcher)
-        : base(options, dispatcher)
-    {
-    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

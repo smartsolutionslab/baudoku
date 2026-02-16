@@ -5,8 +5,7 @@ namespace BauDoku.Documentation.Domain.ValueObjects;
 
 public sealed record GpsQualityGrade : ValueObject
 {
-    private static readonly HashSet<string> ValidValues =
-        ["a", "b", "c", "d"];
+    private static readonly HashSet<string> ValidValues = ["a", "b", "c", "d"];
 
     public static readonly GpsQualityGrade A = new("a");
     public static readonly GpsQualityGrade B = new("b");

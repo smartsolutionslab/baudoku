@@ -5,9 +5,5 @@ namespace BauDoku.Sync.Application.Contracts;
 
 public interface IEntityVersionReadStore
 {
-    Task<List<ServerDeltaDto>> GetChangedSinceAsync(
-        DateTime? since,
-        DeviceIdentifier? excludeDeviceId,
-        int limit,
-        CancellationToken cancellationToken = default);
+    Task<List<ServerDeltaDto>> GetChangedSinceAsync(DateTime? since, DeviceIdentifier? excludeDeviceId, int limit, CancellationToken cancellationToken = default);
 }

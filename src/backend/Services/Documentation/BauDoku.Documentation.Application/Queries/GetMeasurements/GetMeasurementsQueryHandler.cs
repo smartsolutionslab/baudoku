@@ -5,16 +5,9 @@ using BauDoku.Documentation.Domain.ValueObjects;
 
 namespace BauDoku.Documentation.Application.Queries.GetMeasurements;
 
-public sealed class GetMeasurementsQueryHandler
+public sealed class GetMeasurementsQueryHandler(IInstallationRepository installations)
     : IQueryHandler<GetMeasurementsQuery, IReadOnlyList<MeasurementDto>>
 {
-    private readonly IInstallationRepository installations;
-
-    public GetMeasurementsQueryHandler(IInstallationRepository installations)
-    {
-        this.installations = installations;
-    }
-
     public async Task<IReadOnlyList<MeasurementDto>> Handle(
         GetMeasurementsQuery query, CancellationToken cancellationToken)
     {

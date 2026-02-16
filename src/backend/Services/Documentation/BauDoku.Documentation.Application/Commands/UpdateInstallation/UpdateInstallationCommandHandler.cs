@@ -5,19 +5,9 @@ using BauDoku.Documentation.Domain.ValueObjects;
 
 namespace BauDoku.Documentation.Application.Commands.UpdateInstallation;
 
-public sealed class UpdateInstallationCommandHandler : ICommandHandler<UpdateInstallationCommand>
+public sealed class UpdateInstallationCommandHandler(IInstallationRepository installations, IUnitOfWork unitOfWork)
+    : ICommandHandler<UpdateInstallationCommand>
 {
-    private readonly IInstallationRepository installations;
-    private readonly IUnitOfWork unitOfWork;
-
-    public UpdateInstallationCommandHandler(
-        IInstallationRepository installations,
-        IUnitOfWork unitOfWork)
-    {
-        this.installations = installations;
-        this.unitOfWork = unitOfWork;
-    }
-
     public async Task Handle(UpdateInstallationCommand command, CancellationToken cancellationToken)
     {
         var installationId = InstallationIdentifier.From(command.InstallationId);

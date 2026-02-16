@@ -6,19 +6,9 @@ using BauDoku.Documentation.Domain.ValueObjects;
 
 namespace BauDoku.Documentation.Application.Commands.RemoveMeasurement;
 
-public sealed class RemoveMeasurementCommandHandler : ICommandHandler<RemoveMeasurementCommand>
+public sealed class RemoveMeasurementCommandHandler(IInstallationRepository installations, IUnitOfWork unitOfWork)
+    : ICommandHandler<RemoveMeasurementCommand>
 {
-    private readonly IInstallationRepository installations;
-    private readonly IUnitOfWork unitOfWork;
-
-    public RemoveMeasurementCommandHandler(
-        IInstallationRepository installations,
-        IUnitOfWork unitOfWork)
-    {
-        this.installations = installations;
-        this.unitOfWork = unitOfWork;
-    }
-
     public async Task Handle(RemoveMeasurementCommand command, CancellationToken cancellationToken)
     {
         var installationId = InstallationIdentifier.From(command.InstallationId);

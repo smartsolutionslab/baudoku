@@ -24,7 +24,7 @@ public static class AuthEndpoints
             {
                 ["client_id"] = configuration["Authentication:Keycloak:ClientId"] ?? "baudoku-app",
                 ["token"] = request.RefreshToken,
-                ["token_type_hint"] = "refresh_token",
+                ["token_type_hint"] = "refresh_token"
             });
 
             try

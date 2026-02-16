@@ -6,19 +6,9 @@ using BauDoku.Documentation.Domain.ValueObjects;
 
 namespace BauDoku.Documentation.Application.Commands.RecordMeasurement;
 
-public sealed class RecordMeasurementCommandHandler : ICommandHandler<RecordMeasurementCommand, Guid>
+public sealed class RecordMeasurementCommandHandler(IInstallationRepository installations, IUnitOfWork unitOfWork)
+    : ICommandHandler<RecordMeasurementCommand, Guid>
 {
-    private readonly IInstallationRepository installations;
-    private readonly IUnitOfWork unitOfWork;
-
-    public RecordMeasurementCommandHandler(
-        IInstallationRepository installations,
-        IUnitOfWork unitOfWork)
-    {
-        this.installations = installations;
-        this.unitOfWork = unitOfWork;
-    }
-
     public async Task<Guid> Handle(RecordMeasurementCommand command, CancellationToken cancellationToken)
     {
         var installationId = InstallationIdentifier.From(command.InstallationId);
