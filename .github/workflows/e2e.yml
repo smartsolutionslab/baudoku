@@ -90,7 +90,7 @@ jobs:
 
       - name: Build debug APK
         working-directory: src/frontend/android
-        run: ./gradlew assembleDebug --no-daemon
+        run: ./gradlew assembleDebug -PbundleInDebug=true --no-daemon
 
       - name: Run Maestro flows
         uses: reactivecircus/android-emulator-runner@v2
