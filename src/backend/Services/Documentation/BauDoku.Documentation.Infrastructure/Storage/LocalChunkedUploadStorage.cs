@@ -1,6 +1,6 @@
 using System.Text.Json;
 using BauDoku.Documentation.Application.Contracts;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace BauDoku.Documentation.Infrastructure.Storage;
 
@@ -8,10 +8,11 @@ public sealed class LocalChunkedUploadStorage : IChunkedUploadStorage
 {
     private readonly string basePath;
 
-    public LocalChunkedUploadStorage(IConfiguration configuration)
+    public LocalChunkedUploadStorage(IOptions<PhotoStorageOptions> options)
     {
-        basePath = configuration["PhotoStorage:ChunkedPath"]
-            ?? Path.Combine(Directory.GetCurrentDirectory(), "uploads", "chunks");
+        basePath = options.Value.ChunkedPath;
+        if (!Path.IsPathRooted(basePath))
+            basePath = Path.Combine(Directory.GetCurrentDirectory(), basePath);
         Directory.CreateDirectory(basePath);
     }
 

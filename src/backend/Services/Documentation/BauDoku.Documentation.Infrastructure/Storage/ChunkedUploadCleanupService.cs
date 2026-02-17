@@ -1,19 +1,25 @@
 using System.Text.Json;
 using BauDoku.Documentation.Application.Contracts;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace BauDoku.Documentation.Infrastructure.Storage;
 
-public sealed class ChunkedUploadCleanupService(IConfiguration configuration, ILogger<ChunkedUploadCleanupService> logger)
+public sealed class ChunkedUploadCleanupService(IOptions<PhotoStorageOptions> options, ILogger<ChunkedUploadCleanupService> logger)
     : BackgroundService
 {
-    private readonly string basePath = configuration["PhotoStorage:ChunkedPath"]
-                                       ?? Path.Combine(Directory.GetCurrentDirectory(), "uploads", "chunks");
-
+    private readonly string basePath = ResolveBasePath(options.Value.ChunkedPath);
     private readonly TimeSpan interval = TimeSpan.FromMinutes(15);
     private readonly TimeSpan maxAge = TimeSpan.FromHours(1);
+
+    private static string ResolveBasePath(string chunkedPath)
+    {
+        if (Path.IsPathRooted(chunkedPath))
+            return chunkedPath;
+        return Path.Combine(Directory.GetCurrentDirectory(), chunkedPath);
+    }
+
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {

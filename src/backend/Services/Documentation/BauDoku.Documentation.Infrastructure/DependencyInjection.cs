@@ -6,13 +6,14 @@ using BauDoku.Documentation.Infrastructure.Storage;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace BauDoku.Documentation.Infrastructure;
 
 public static class DependencyInjection
 {
     public static IServiceCollection AddDocumentationInfrastructure(
-        this IServiceCollection services, string connectionString)
+        this IServiceCollection services, string connectionString, IConfiguration configuration)
     {
         services.AddDbContext<DocumentationDbContext>(options =>
             options.UseNpgsql(connectionString, o => o.UseNetTopologySuite()));
@@ -22,13 +23,14 @@ public static class DependencyInjection
         services.AddScoped<IInstallationReadRepository, InstallationReadRepository>();
         services.AddScoped<IPhotoReadRepository, PhotoReadRepository>();
 
+        services.Configure<PhotoStorageOptions>(configuration.GetSection("PhotoStorage"));
+
         services.AddSingleton<IPhotoStorage>(sp =>
         {
-            var config = sp.GetRequiredService<IConfiguration>();
-            var provider = config["PhotoStorage:Provider"];
-            return provider?.Equals("Azure", StringComparison.OrdinalIgnoreCase) == true
-                ? new AzureBlobPhotoStorage(config)
-                : new LocalFilePhotoStorage(config);
+            var options = sp.GetRequiredService<IOptions<PhotoStorageOptions>>();
+            return options.Value.Provider.Equals("Azure", StringComparison.OrdinalIgnoreCase)
+                ? new AzureBlobPhotoStorage(options)
+                : new LocalFilePhotoStorage(options);
         });
 
         services.AddSingleton<IChunkedUploadStorage, LocalChunkedUploadStorage>();

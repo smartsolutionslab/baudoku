@@ -1,5 +1,5 @@
 using BauDoku.Documentation.Application.Contracts;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace BauDoku.Documentation.Infrastructure.Storage;
 
@@ -7,9 +7,11 @@ public sealed class LocalFilePhotoStorage : IPhotoStorage
 {
     private readonly string basePath;
 
-    public LocalFilePhotoStorage(IConfiguration configuration)
+    public LocalFilePhotoStorage(IOptions<PhotoStorageOptions> options)
     {
-        basePath = configuration["PhotoStorage:LocalPath"] ?? Path.Combine(Directory.GetCurrentDirectory(), "uploads", "photos");
+        basePath = options.Value.LocalPath;
+        if (!Path.IsPathRooted(basePath))
+            basePath = Path.Combine(Directory.GetCurrentDirectory(), basePath);
         Directory.CreateDirectory(basePath);
     }
 
