@@ -10,15 +10,15 @@ namespace BauDoku.Projects.UnitTests.Application.Commands;
 
 public sealed class AddZoneCommandHandlerTests
 {
-    private readonly IProjectRepository repository;
+    private readonly IProjectRepository projects;
     private readonly IUnitOfWork unitOfWork;
     private readonly AddZoneCommandHandler handler;
 
     public AddZoneCommandHandlerTests()
     {
-        repository = Substitute.For<IProjectRepository>();
+        projects = Substitute.For<IProjectRepository>();
         unitOfWork = Substitute.For<IUnitOfWork>();
-        handler = new AddZoneCommandHandler(repository, unitOfWork);
+        handler = new AddZoneCommandHandler(projects, unitOfWork);
     }
 
     private static Project CreateValidProject() =>
@@ -32,7 +32,7 @@ public sealed class AddZoneCommandHandlerTests
     public async Task Handle_WithValidCommand_ShouldAddZoneAndSave()
     {
         var project = CreateValidProject();
-        repository.GetByIdAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>())
+        projects.GetByIdAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(project);
 
         var command = new AddZoneCommand(project.Id.Value, "Erdgeschoss", "floor", null);
@@ -46,7 +46,7 @@ public sealed class AddZoneCommandHandlerTests
     [Fact]
     public async Task Handle_WhenProjectNotFound_ShouldThrow()
     {
-        repository.GetByIdAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>())
+        projects.GetByIdAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>())
             .Returns((Project?)null);
 
         var command = new AddZoneCommand(Guid.NewGuid(), "Erdgeschoss", "floor", null);
@@ -63,7 +63,7 @@ public sealed class AddZoneCommandHandlerTests
         var parentId = ZoneIdentifier.New();
         project.AddZone(parentId, ZoneName.From("Gebäude A"), ZoneType.Building);
 
-        repository.GetByIdAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>())
+        projects.GetByIdAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(project);
 
         var command = new AddZoneCommand(project.Id.Value, "Erdgeschoss", "floor", parentId.Value);

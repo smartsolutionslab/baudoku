@@ -133,18 +133,18 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
-          cache-dependency-path: src/package-lock.json
+          cache-dependency-path: src/frontend/package-lock.json
 
       - name: Install dependencies
-        working-directory: src
+        working-directory: src/frontend
         run: npm ci
 
       - name: Typecheck
-        working-directory: src/frontend
+        working-directory: src/frontend/mobile-app
         run: npx tsc --noEmit
 
       - name: Test
-        working-directory: src/frontend
+        working-directory: src/frontend/mobile-app
         run: npm test
 
   web:
@@ -158,18 +158,18 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
-          cache-dependency-path: src/package-lock.json
+          cache-dependency-path: src/frontend/package-lock.json
 
       - name: Install dependencies
-        working-directory: src
+        working-directory: src/frontend
         run: npm ci
 
       - name: Typecheck
-        working-directory: src/web
+        working-directory: src/frontend/web
         run: npx tsc --noEmit
 
       - name: Build
-        working-directory: src/web
+        working-directory: src/frontend/web
         run: npx vite build
 
   build-android:
@@ -179,7 +179,7 @@ jobs:
     if: github.event_name == 'workflow_dispatch' && inputs.build_android == true
     defaults:
       run:
-        working-directory: src/frontend
+        working-directory: src/frontend/mobile-app
     steps:
       - uses: actions/checkout@v4
 
@@ -188,7 +188,7 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
-          cache-dependency-path: src/package-lock.json
+          cache-dependency-path: src/frontend/package-lock.json
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -200,7 +200,7 @@ jobs:
         uses: android-actions/setup-android@v3
 
       - name: Install dependencies
-        working-directory: src
+        working-directory: src/frontend
         run: npm ci
 
       - name: Expo prebuild
@@ -212,7 +212,7 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: gradle-${{ runner.os }}-${{ hashFiles('src/frontend/android/**/*.gradle*', 'src/frontend/android/gradle-wrapper.properties') }}
+          key: gradle-${{ runner.os }}-${{ hashFiles('src/frontend/mobile-app/android/**/*.gradle*', 'src/frontend/mobile-app/android/gradle-wrapper.properties') }}
           restore-keys: gradle-${{ runner.os }}-
 
       - name: Build APK
@@ -222,7 +222,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: android-apk
-          path: src/frontend/android/app/build/outputs/apk/release/*.apk
+          path: src/frontend/mobile-app/android/app/build/outputs/apk/release/*.apk
           retention-days: 30
 
   build-ios:
@@ -232,7 +232,7 @@ jobs:
     if: github.event_name == 'workflow_dispatch' && inputs.build_ios == true
     defaults:
       run:
-        working-directory: src/frontend
+        working-directory: src/frontend/mobile-app
     steps:
       - uses: actions/checkout@v4
 
@@ -241,10 +241,10 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
-          cache-dependency-path: src/package-lock.json
+          cache-dependency-path: src/frontend/package-lock.json
 
       - name: Install dependencies
-        working-directory: src
+        working-directory: src/frontend
         run: npm ci
 
       - name: Expo prebuild
@@ -273,7 +273,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ios-simulator-app
-          path: src/frontend/BauDoku-simulator.zip
+          path: src/frontend/mobile-app/BauDoku-simulator.zip
           retention-days: 30
 
   eas-build:
@@ -283,7 +283,7 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     defaults:
       run:
-        working-directory: src/frontend
+        working-directory: src/frontend/mobile-app
     steps:
       - uses: actions/checkout@v4
 
@@ -292,10 +292,10 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
-          cache-dependency-path: src/package-lock.json
+          cache-dependency-path: src/frontend/package-lock.json
 
       - name: Install dependencies
-        working-directory: src
+        working-directory: src/frontend
         run: npm ci
 
       - name: Setup Expo
@@ -352,7 +352,7 @@ jobs:
           - name: api-gateway
             dockerfile: src/backend/ApiGateway/BauDoku.ApiGateway/Dockerfile
           - name: web
-            dockerfile: src/web/Dockerfile
+            dockerfile: src/frontend/web/Dockerfile
     steps:
       - uses: actions/checkout@v4
 

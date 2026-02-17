@@ -5,27 +5,15 @@ using BauDoku.Documentation.Domain.ValueObjects;
 
 namespace BauDoku.Documentation.Application.Commands.UpdateInstallation;
 
-public sealed class UpdateInstallationCommandHandler : ICommandHandler<UpdateInstallationCommand>
+public sealed class UpdateInstallationCommandHandler(IInstallationRepository installations, IUnitOfWork unitOfWork)
+    : ICommandHandler<UpdateInstallationCommand>
 {
-    private readonly IInstallationRepository installationRepository;
-    private readonly IUnitOfWork unitOfWork;
-
-    public UpdateInstallationCommandHandler(
-        IInstallationRepository installationRepository,
-        IUnitOfWork unitOfWork)
-    {
-        this.installationRepository = installationRepository;
-        this.unitOfWork = unitOfWork;
-    }
-
     public async Task Handle(UpdateInstallationCommand command, CancellationToken cancellationToken)
     {
         var installationId = InstallationIdentifier.From(command.InstallationId);
-        var installation = await installationRepository.GetByIdAsync(installationId, cancellationToken)
-            ?? throw new InvalidOperationException($"Installation mit ID {command.InstallationId} nicht gefunden.");
+        var installation = await installations.GetByIdAsync(installationId, cancellationToken) ?? throw new InvalidOperationException($"Installation mit ID {command.InstallationId} nicht gefunden.");
 
-        if (command.Latitude.HasValue && command.Longitude.HasValue
-            && command.HorizontalAccuracy.HasValue && command.GpsSource is not null)
+        if (command.Latitude.HasValue && command.Longitude.HasValue && command.HorizontalAccuracy.HasValue && command.GpsSource is not null)
         {
             var position = GpsPosition.Create(
                 command.Latitude.Value,
@@ -49,8 +37,7 @@ public sealed class UpdateInstallationCommandHandler : ICommandHandler<UpdateIns
 
         if (command.CableType is not null)
         {
-            installation.UpdateCableSpec(
-                CableSpec.Create(command.CableType, command.CrossSection, command.CableColor, command.ConductorCount));
+            installation.UpdateCableSpec(CableSpec.Create(command.CableType, command.CrossSection, command.CableColor, command.ConductorCount));
         }
 
         if (command.DepthMm.HasValue)

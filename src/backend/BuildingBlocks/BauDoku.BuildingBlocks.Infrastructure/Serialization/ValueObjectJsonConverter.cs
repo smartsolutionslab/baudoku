@@ -4,28 +4,18 @@ using System.Text.Json.Serialization;
 
 namespace BauDoku.BuildingBlocks.Infrastructure.Serialization;
 
-public sealed class ValueObjectJsonConverter<TVo, TValue> : JsonConverter<TVo>
+public sealed class ValueObjectJsonConverter<TVo, TValue>(MethodInfo? fromMethod) : JsonConverter<TVo>
 {
-    private readonly MethodInfo? fromMethod;
-
-    public ValueObjectJsonConverter(MethodInfo? fromMethod)
-    {
-        this.fromMethod = fromMethod;
-    }
-
     public override TVo? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         var value = JsonSerializer.Deserialize<TValue>(ref reader, options);
-        if (value is null)
-            return default;
+        if (value is null) return default;
 
-        if (fromMethod is not null)
-            return (TVo)fromMethod.Invoke(null, [value])!;
+        if (fromMethod is not null) return (TVo)fromMethod.Invoke(null, [value])!;
 
         // Fallback: try constructor with single value parameter
         var constructor = typeToConvert.GetConstructor([typeof(TValue)]);
-        if (constructor is not null)
-            return (TVo)constructor.Invoke([value]);
+        if (constructor is not null) return (TVo)constructor.Invoke([value]);
 
         throw new JsonException($"Cannot deserialize ValueObject {typeToConvert.Name}: no From() method or matching constructor found.");
     }

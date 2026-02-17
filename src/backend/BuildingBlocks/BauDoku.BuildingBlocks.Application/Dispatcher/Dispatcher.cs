@@ -7,17 +7,9 @@ using Microsoft.Extensions.Logging;
 
 namespace BauDoku.BuildingBlocks.Application.Dispatcher;
 
-public sealed class Dispatcher : IDispatcher
+public sealed class Dispatcher(IServiceProvider serviceProvider, ILogger<Dispatcher> logger)
+    : IDispatcher
 {
-    private readonly IServiceProvider serviceProvider;
-    private readonly ILogger<Dispatcher> logger;
-
-    public Dispatcher(IServiceProvider serviceProvider, ILogger<Dispatcher> logger)
-    {
-        this.serviceProvider = serviceProvider;
-        this.logger = logger;
-    }
-
     public async Task<TResult> Send<TResult>(ICommand<TResult> command, CancellationToken cancellationToken = default)
     {
         var handlerType = typeof(ICommandHandler<,>).MakeGenericType(command.GetType(), typeof(TResult));
@@ -54,8 +46,7 @@ public sealed class Dispatcher : IDispatcher
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Fehler im DomainEventHandler {HandlerType} für {EventType}",
-                    handler!.GetType().Name, domainEvent.GetType().Name);
+                logger.LogError(ex, "Fehler im DomainEventHandler {HandlerType} für {EventType}", handler!.GetType().Name, domainEvent.GetType().Name);
             }
         }
     }

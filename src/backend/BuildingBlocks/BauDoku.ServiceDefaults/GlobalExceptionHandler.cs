@@ -8,21 +8,10 @@ using Microsoft.Extensions.Logging;
 
 namespace BauDoku.ServiceDefaults;
 
-public sealed class GlobalExceptionHandler : IExceptionHandler
+public sealed class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger, IHostEnvironment environment)
+    : IExceptionHandler
 {
-    private readonly ILogger<GlobalExceptionHandler> logger;
-    private readonly IHostEnvironment environment;
-
-    public GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger, IHostEnvironment environment)
-    {
-        this.logger = logger;
-        this.environment = environment;
-    }
-
-    public async ValueTask<bool> TryHandleAsync(
-        HttpContext httpContext,
-        Exception exception,
-        CancellationToken cancellationToken)
+    public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
     {
         var problemDetails = exception switch
         {
@@ -66,8 +55,7 @@ public sealed class GlobalExceptionHandler : IExceptionHandler
         }
         else
         {
-            logger.LogWarning(exception, "Handled exception: {ExceptionType} — {Message}",
-                exception.GetType().Name, exception.Message);
+            logger.LogWarning(exception, "Handled exception: {ExceptionType} — {Message}", exception.GetType().Name, exception.Message);
         }
 
         httpContext.Response.StatusCode = problemDetails.Status ?? StatusCodes.Status500InternalServerError;

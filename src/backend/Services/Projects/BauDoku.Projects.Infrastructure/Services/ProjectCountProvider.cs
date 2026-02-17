@@ -5,19 +5,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BauDoku.Projects.Infrastructure.Services;
 
-public sealed class ProjectCountProvider : IProjectCountProvider
+public sealed class ProjectCountProvider(ProjectsDbContext dbContext) : IProjectCountProvider
 {
-    private readonly ProjectsDbContext dbContext;
-
-    public ProjectCountProvider(ProjectsDbContext dbContext)
-    {
-        this.dbContext = dbContext;
-    }
-
     public async Task<int> GetActiveCountAsync(CancellationToken ct = default)
     {
-        return await dbContext.Projects
-            .Where(p => p.Status == ProjectStatus.Active)
-            .CountAsync(ct);
+        return await dbContext.Projects.Where(p => p.Status == ProjectStatus.Active).CountAsync(ct);
     }
 }

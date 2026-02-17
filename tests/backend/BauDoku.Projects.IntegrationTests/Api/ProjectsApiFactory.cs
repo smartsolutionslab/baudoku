@@ -6,18 +6,11 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace BauDoku.Projects.IntegrationTests.Api;
 
-public sealed class ProjectsApiFactory : WebApplicationFactory<Program>
+public sealed class ProjectsApiFactory(PostgreSqlFixture fixture) : WebApplicationFactory<Program>
 {
-    private readonly PostgreSqlFixture _fixture;
-
-    public ProjectsApiFactory(PostgreSqlFixture fixture)
-    {
-        _fixture = fixture;
-    }
-
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        builder.UseSetting("ConnectionStrings:ProjectsDb", _fixture.ConnectionString);
+        builder.UseSetting("ConnectionStrings:ProjectsDb", fixture.ConnectionString);
 
         builder.ConfigureServices(services =>
         {

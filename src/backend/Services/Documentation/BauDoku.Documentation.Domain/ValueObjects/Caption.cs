@@ -3,7 +3,7 @@ using BauDoku.BuildingBlocks.Domain.Guards;
 
 namespace BauDoku.Documentation.Domain.ValueObjects;
 
-public sealed record Caption : ValueObject
+public sealed record Caption : IValueObject
 {
     public const int MaxLength = 500;
 

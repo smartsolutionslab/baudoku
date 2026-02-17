@@ -8,25 +8,22 @@ using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("DocumentationDb")
-    ?? throw new InvalidOperationException("Connection string 'DocumentationDb' not found.");
+var connectionString = builder.Configuration.GetConnectionString("DocumentationDb") ?? throw new InvalidOperationException("Connection string 'DocumentationDb' not found.");
 
 builder.AddServiceDefaults(health =>
 {
     health.AddNpgSql(connectionString, name: "postgresql", tags: ["ready"]);
-    health.AddNpgSql(connectionString, healthQuery: "SELECT PostGIS_Version()",
-        name: "postgis", tags: ["ready"]);
+    health.AddNpgSql(connectionString, healthQuery: "SELECT PostGIS_Version()", name: "postgis", tags: ["ready"]);
 });
 
-builder.Services.ConfigureHttpJsonOptions(options =>
-    options.SerializerOptions.Converters.Add(new ValueObjectJsonConverterFactory()));
+builder.Services.ConfigureHttpJsonOptions(options => options.SerializerOptions.Converters.Add(new ValueObjectJsonConverterFactory()));
 
 builder.Services.AddOpenApi();
 
 builder.Services.AddBauDokuAuthentication(builder.Configuration, builder.Environment);
 
 builder.Services.AddApplication(BauDoku.Documentation.Application.DependencyInjection.Assembly);
-builder.Services.AddDocumentationInfrastructure(connectionString);
+builder.Services.AddDocumentationInfrastructure(connectionString, builder.Configuration);
 
 var app = builder.Build();
 

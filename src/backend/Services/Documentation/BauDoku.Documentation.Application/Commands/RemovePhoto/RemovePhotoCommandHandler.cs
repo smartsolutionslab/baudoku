@@ -6,31 +6,16 @@ using BauDoku.Documentation.Domain.ValueObjects;
 
 namespace BauDoku.Documentation.Application.Commands.RemovePhoto;
 
-public sealed class RemovePhotoCommandHandler : ICommandHandler<RemovePhotoCommand>
+public sealed class RemovePhotoCommandHandler(IInstallationRepository installations, IPhotoStorage photoStorage, IUnitOfWork unitOfWork)
+    : ICommandHandler<RemovePhotoCommand>
 {
-    private readonly IInstallationRepository installationRepository;
-    private readonly IPhotoStorage photoStorage;
-    private readonly IUnitOfWork unitOfWork;
-
-    public RemovePhotoCommandHandler(
-        IInstallationRepository installationRepository,
-        IPhotoStorage photoStorage,
-        IUnitOfWork unitOfWork)
-    {
-        this.installationRepository = installationRepository;
-        this.photoStorage = photoStorage;
-        this.unitOfWork = unitOfWork;
-    }
-
     public async Task Handle(RemovePhotoCommand command, CancellationToken cancellationToken)
     {
         var installationId = InstallationIdentifier.From(command.InstallationId);
-        var installation = await installationRepository.GetByIdAsync(installationId, cancellationToken)
-            ?? throw new InvalidOperationException($"Installation mit ID {command.InstallationId} nicht gefunden.");
+        var installation = await installations.GetByIdAsync(installationId, cancellationToken) ?? throw new InvalidOperationException($"Installation mit ID {command.InstallationId} nicht gefunden.");
 
         var photoId = PhotoIdentifier.From(command.PhotoId);
-        var photo = installation.Photos.FirstOrDefault(p => p.Id == photoId)
-            ?? throw new InvalidOperationException($"Foto mit ID {command.PhotoId} nicht gefunden.");
+        var photo = installation.Photos.FirstOrDefault(p => p.Id == photoId) ?? throw new InvalidOperationException($"Foto mit ID {command.PhotoId} nicht gefunden.");
 
         installation.RemovePhoto(photoId);
 

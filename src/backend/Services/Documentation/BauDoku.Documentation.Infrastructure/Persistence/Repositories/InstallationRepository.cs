@@ -5,15 +5,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BauDoku.Documentation.Infrastructure.Persistence.Repositories;
 
-public sealed class InstallationRepository : IInstallationRepository
+public sealed class InstallationRepository(DocumentationDbContext context) : IInstallationRepository
 {
-    private readonly DocumentationDbContext context;
-
-    public InstallationRepository(DocumentationDbContext context)
-    {
-        this.context = context;
-    }
-
     public async Task<Installation?> GetByIdAsync(InstallationIdentifier id, CancellationToken cancellationToken = default)
     {
         return await context.Installations

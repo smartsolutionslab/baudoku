@@ -6,43 +6,22 @@ using BauDoku.Documentation.Domain.ValueObjects;
 
 namespace BauDoku.Documentation.Application.Commands.CompleteChunkedUpload;
 
-public sealed class CompleteChunkedUploadCommandHandler : ICommandHandler<CompleteChunkedUploadCommand, Guid>
+public sealed class CompleteChunkedUploadCommandHandler(IChunkedUploadStorage chunkedUploadStorage, IPhotoStorage photoStorage, IInstallationRepository installations, IUnitOfWork unitOfWork)
+    : ICommandHandler<CompleteChunkedUploadCommand, Guid>
 {
-    private readonly IChunkedUploadStorage chunkedUploadStorage;
-    private readonly IPhotoStorage photoStorage;
-    private readonly IInstallationRepository installationRepository;
-    private readonly IUnitOfWork unitOfWork;
-
-    public CompleteChunkedUploadCommandHandler(
-        IChunkedUploadStorage chunkedUploadStorage,
-        IPhotoStorage photoStorage,
-        IInstallationRepository installationRepository,
-        IUnitOfWork unitOfWork)
-    {
-        this.chunkedUploadStorage = chunkedUploadStorage;
-        this.photoStorage = photoStorage;
-        this.installationRepository = installationRepository;
-        this.unitOfWork = unitOfWork;
-    }
-
     public async Task<Guid> Handle(CompleteChunkedUploadCommand command, CancellationToken cancellationToken)
     {
-        var session = await chunkedUploadStorage.GetSessionAsync(command.SessionId, cancellationToken)
-            ?? throw new InvalidOperationException($"Upload-Session mit ID {command.SessionId} nicht gefunden.");
+        var session = await chunkedUploadStorage.GetSessionAsync(command.SessionId, cancellationToken) ?? throw new InvalidOperationException($"Upload-Session mit ID {command.SessionId} nicht gefunden.");
 
         var uploadedChunks = await chunkedUploadStorage.GetUploadedChunkCountAsync(command.SessionId, cancellationToken);
-        if (uploadedChunks != session.TotalChunks)
-            throw new InvalidOperationException(
-                $"Upload unvollständig: {uploadedChunks}/{session.TotalChunks} Chunks hochgeladen.");
+        if (uploadedChunks != session.TotalChunks) throw new InvalidOperationException($"Upload unvollständig: {uploadedChunks}/{session.TotalChunks} Chunks hochgeladen.");
 
         await using var assembledStream = await chunkedUploadStorage.AssembleAsync(command.SessionId, cancellationToken);
 
-        var blobUrl = await photoStorage.UploadAsync(
-            assembledStream, session.FileName, session.ContentType, cancellationToken);
+        var blobUrl = await photoStorage.UploadAsync(assembledStream, session.FileName, session.ContentType, cancellationToken);
 
         var installationId = InstallationIdentifier.From(session.InstallationId);
-        var installation = await installationRepository.GetByIdAsync(installationId, cancellationToken)
-            ?? throw new InvalidOperationException($"Installation mit ID {session.InstallationId} nicht gefunden.");
+        var installation = await installations.GetByIdAsync(installationId, cancellationToken) ?? throw new InvalidOperationException($"Installation mit ID {session.InstallationId} nicht gefunden.");
 
         var photoId = PhotoIdentifier.New();
         var photoType = PhotoType.From(session.PhotoType);
@@ -50,8 +29,7 @@ public sealed class CompleteChunkedUploadCommandHandler : ICommandHandler<Comple
         var description = session.Description is not null ? Description.From(session.Description) : null;
 
         GpsPosition? position = null;
-        if (session.Latitude.HasValue && session.Longitude.HasValue
-            && session.HorizontalAccuracy.HasValue && session.GpsSource is not null)
+        if (session.Latitude.HasValue && session.Longitude.HasValue && session.HorizontalAccuracy.HasValue && session.GpsSource is not null)
         {
             position = GpsPosition.Create(
                 session.Latitude.Value,
@@ -61,9 +39,7 @@ public sealed class CompleteChunkedUploadCommandHandler : ICommandHandler<Comple
                 session.GpsSource);
         }
 
-        installation.AddPhoto(
-            photoId, session.FileName, blobUrl, session.ContentType, session.TotalSize,
-            photoType, caption, description, position);
+        installation.AddPhoto(photoId, session.FileName, blobUrl, session.ContentType, session.TotalSize, photoType, caption, description, position);
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
 

@@ -4,29 +4,28 @@ using BauDoku.Sync.Application.Contracts;
 using BauDoku.Sync.Domain.Aggregates;
 using BauDoku.Sync.Domain.ValueObjects;
 using BauDoku.Sync.Infrastructure.BackgroundServices;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using NSubstitute;
-using NSubstitute.ExceptionExtensions;
 
 namespace BauDoku.Sync.UnitTests.Infrastructure.BackgroundServices;
 
 public sealed class SyncSchedulerServiceTests
 {
-    private readonly ISyncBatchRepository repository;
+    private readonly ISyncBatchRepository syncBatches;
     private readonly IUnitOfWork unitOfWork;
     private readonly ILogger<SyncSchedulerService> logger;
     private readonly SyncSchedulerService service;
 
     public SyncSchedulerServiceTests()
     {
-        repository = Substitute.For<ISyncBatchRepository>();
+        syncBatches = Substitute.For<ISyncBatchRepository>();
         unitOfWork = Substitute.For<IUnitOfWork>();
         logger = Substitute.For<ILogger<SyncSchedulerService>>();
 
         var serviceProvider = Substitute.For<IServiceProvider>();
-        serviceProvider.GetService(typeof(ISyncBatchRepository)).Returns(repository);
+        serviceProvider.GetService(typeof(ISyncBatchRepository)).Returns(syncBatches);
         serviceProvider.GetService(typeof(IUnitOfWork)).Returns(unitOfWork);
 
         var scope = Substitute.For<IServiceScope>();
@@ -35,30 +34,25 @@ public sealed class SyncSchedulerServiceTests
         var scopeFactory = Substitute.For<IServiceScopeFactory>();
         scopeFactory.CreateScope().Returns(scope);
 
-        var config = new ConfigurationBuilder()
-            .AddInMemoryCollection(new Dictionary<string, string?>
-            {
-                ["Sync:SchedulerIntervalSeconds"] = "1"
-            })
-            .Build();
+        var options = Options.Create(new SyncOptions { SchedulerIntervalSeconds = 1 });
 
-        service = new SyncSchedulerService(scopeFactory, logger, config);
+        service = new SyncSchedulerService(scopeFactory, logger, options);
     }
 
     [Fact]
     public async Task ExecuteAsync_WhenNoPendingBatches_ShouldNotCallSaveChanges()
     {
-        var repositoryCalled = new TaskCompletionSource<bool>();
-        repository.GetPendingBatchesAsync(Arg.Any<int>(), Arg.Any<CancellationToken>())
+        var syncBatchesCalled = new TaskCompletionSource<bool>();
+        syncBatches.GetPendingBatchesAsync(Arg.Any<int>(), Arg.Any<CancellationToken>())
             .Returns(_ =>
             {
-                repositoryCalled.TrySetResult(true);
+                syncBatchesCalled.TrySetResult(true);
                 return new List<SyncBatch>();
             });
 
         using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
         await service.StartAsync(cts.Token);
-        await repositoryCalled.Task.WaitAsync(TimeSpan.FromSeconds(5));
+        await syncBatchesCalled.Task.WaitAsync(TimeSpan.FromSeconds(5));
         await service.StopAsync(CancellationToken.None);
 
         await unitOfWork.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
@@ -73,7 +67,7 @@ public sealed class SyncSchedulerServiceTests
             DateTime.UtcNow);
 
         var saveChangesCalled = new TaskCompletionSource<bool>();
-        repository.GetPendingBatchesAsync(Arg.Any<int>(), Arg.Any<CancellationToken>())
+        syncBatches.GetPendingBatchesAsync(Arg.Any<int>(), Arg.Any<CancellationToken>())
             .Returns(
                 new List<SyncBatch> { batch },
                 new List<SyncBatch>());
@@ -92,17 +86,17 @@ public sealed class SyncSchedulerServiceTests
     [Fact]
     public async Task ExecuteAsync_WhenRepositoryThrows_ShouldNotCrash()
     {
-        var repositoryCalled = new TaskCompletionSource<bool>();
-        repository.GetPendingBatchesAsync(Arg.Any<int>(), Arg.Any<CancellationToken>())
+        var syncBatchesCalled = new TaskCompletionSource<bool>();
+        syncBatches.GetPendingBatchesAsync(Arg.Any<int>(), Arg.Any<CancellationToken>())
             .Returns<List<SyncBatch>>(_ =>
             {
-                repositoryCalled.TrySetResult(true);
+                syncBatchesCalled.TrySetResult(true);
                 throw new InvalidOperationException("DB connection lost");
             });
 
         using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
         await service.StartAsync(cts.Token);
-        await repositoryCalled.Task.WaitAsync(TimeSpan.FromSeconds(5));
+        await syncBatchesCalled.Task.WaitAsync(TimeSpan.FromSeconds(5));
 
         // Service should still be alive (not crashed)
         var stopAct = () => service.StopAsync(CancellationToken.None);
@@ -112,26 +106,20 @@ public sealed class SyncSchedulerServiceTests
     [Fact]
     public void Constructor_ShouldUseConfiguredInterval()
     {
-        var config = new ConfigurationBuilder()
-            .AddInMemoryCollection(new Dictionary<string, string?>
-            {
-                ["Sync:SchedulerIntervalSeconds"] = "60"
-            })
-            .Build();
-
+        var options = Options.Create(new SyncOptions { SchedulerIntervalSeconds = 60 });
         var scopeFactory = Substitute.For<IServiceScopeFactory>();
 
-        var service = new SyncSchedulerService(scopeFactory, logger, config);
+        var service = new SyncSchedulerService(scopeFactory, logger, options);
         service.Should().NotBeNull();
     }
 
     [Fact]
-    public void Constructor_WithoutConfig_ShouldDefaultTo30Seconds()
+    public void Constructor_WithDefaultOptions_ShouldDefaultTo30Seconds()
     {
-        var config = new ConfigurationBuilder().Build();
+        var options = Options.Create(new SyncOptions());
         var scopeFactory = Substitute.For<IServiceScopeFactory>();
 
-        var service = new SyncSchedulerService(scopeFactory, logger, config);
+        var service = new SyncSchedulerService(scopeFactory, logger, options);
         service.Should().NotBeNull();
     }
 }

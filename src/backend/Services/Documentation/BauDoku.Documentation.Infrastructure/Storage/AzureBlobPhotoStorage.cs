@@ -1,7 +1,7 @@
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using BauDoku.Documentation.Application.Contracts;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace BauDoku.Documentation.Infrastructure.Storage;
 
@@ -9,13 +9,12 @@ public sealed class AzureBlobPhotoStorage : IPhotoStorage
 {
     private readonly BlobContainerClient containerClient;
 
-    public AzureBlobPhotoStorage(IConfiguration configuration)
+    public AzureBlobPhotoStorage(IOptions<PhotoStorageOptions> options)
     {
-        var connectionString = configuration["PhotoStorage:AzureConnectionString"]
-            ?? throw new InvalidOperationException("PhotoStorage:AzureConnectionString is not configured.");
-        var containerName = configuration["PhotoStorage:AzureContainerName"] ?? "photos";
+        var config = options.Value;
+        var connectionString = config.AzureConnectionString ?? throw new InvalidOperationException("PhotoStorage:AzureConnectionString is not configured.");
 
-        containerClient = new BlobContainerClient(connectionString, containerName);
+        containerClient = new BlobContainerClient(connectionString, config.AzureContainerName);
         containerClient.CreateIfNotExists();
     }
 

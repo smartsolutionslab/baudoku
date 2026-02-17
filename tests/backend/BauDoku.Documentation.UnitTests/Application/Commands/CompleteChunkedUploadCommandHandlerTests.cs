@@ -12,7 +12,7 @@ public sealed class CompleteChunkedUploadCommandHandlerTests
 {
     private readonly IChunkedUploadStorage chunkedUploadStorage;
     private readonly IPhotoStorage photoStorage;
-    private readonly IInstallationRepository repository;
+    private readonly IInstallationRepository installations;
     private readonly IUnitOfWork unitOfWork;
     private readonly CompleteChunkedUploadCommandHandler handler;
 
@@ -20,10 +20,10 @@ public sealed class CompleteChunkedUploadCommandHandlerTests
     {
         chunkedUploadStorage = Substitute.For<IChunkedUploadStorage>();
         photoStorage = Substitute.For<IPhotoStorage>();
-        repository = Substitute.For<IInstallationRepository>();
+        installations = Substitute.For<IInstallationRepository>();
         unitOfWork = Substitute.For<IUnitOfWork>();
         handler = new CompleteChunkedUploadCommandHandler(
-            chunkedUploadStorage, photoStorage, repository, unitOfWork);
+            chunkedUploadStorage, photoStorage, installations, unitOfWork);
     }
 
     private static Installation CreateValidInstallation() =>
@@ -54,7 +54,7 @@ public sealed class CompleteChunkedUploadCommandHandlerTests
             .Returns(new MemoryStream([1, 2, 3]));
         photoStorage.UploadAsync(Arg.Any<Stream>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
             .Returns("https://blob.storage/photo.jpg");
-        repository.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
+        installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
 
         var command = new CompleteChunkedUploadCommand(sessionId);
@@ -118,7 +118,7 @@ public sealed class CompleteChunkedUploadCommandHandlerTests
             .Returns(new MemoryStream([1, 2, 3]));
         photoStorage.UploadAsync(Arg.Any<Stream>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
             .Returns("https://blob.storage/photo.jpg");
-        repository.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
+        installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
 
         var command = new CompleteChunkedUploadCommand(sessionId);
@@ -145,7 +145,7 @@ public sealed class CompleteChunkedUploadCommandHandlerTests
             .Returns(new MemoryStream([1, 2, 3]));
         photoStorage.UploadAsync(Arg.Any<Stream>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
             .Returns("https://blob.storage/photo.jpg");
-        repository.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
+        installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
 
         var command = new CompleteChunkedUploadCommand(sessionId);

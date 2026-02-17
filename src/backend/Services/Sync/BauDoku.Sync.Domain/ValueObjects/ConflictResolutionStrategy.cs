@@ -3,10 +3,9 @@ using BauDoku.BuildingBlocks.Domain.Guards;
 
 namespace BauDoku.Sync.Domain.ValueObjects;
 
-public sealed record ConflictResolutionStrategy : ValueObject
+public sealed record ConflictResolutionStrategy : IValueObject
 {
-    private static readonly HashSet<string> ValidValues =
-        ["client_wins", "server_wins", "manual_merge"];
+    private static readonly HashSet<string> ValidValues = ["client_wins", "server_wins", "manual_merge"];
 
     public static readonly ConflictResolutionStrategy ClientWins = new("client_wins");
     public static readonly ConflictResolutionStrategy ServerWins = new("server_wins");

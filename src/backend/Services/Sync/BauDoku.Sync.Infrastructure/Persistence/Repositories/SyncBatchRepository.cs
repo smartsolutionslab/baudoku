@@ -5,15 +5,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BauDoku.Sync.Infrastructure.Persistence.Repositories;
 
-public sealed class SyncBatchRepository : ISyncBatchRepository
+public sealed class SyncBatchRepository(SyncDbContext context) : ISyncBatchRepository
 {
-    private readonly SyncDbContext context;
-
-    public SyncBatchRepository(SyncDbContext context)
-    {
-        this.context = context;
-    }
-
     public async Task<SyncBatch?> GetByIdAsync(SyncBatchIdentifier id, CancellationToken cancellationToken = default)
     {
         return await context.SyncBatches

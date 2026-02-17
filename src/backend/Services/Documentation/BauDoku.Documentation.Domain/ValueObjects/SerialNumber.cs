@@ -3,7 +3,7 @@ using BauDoku.BuildingBlocks.Domain.Guards;
 
 namespace BauDoku.Documentation.Domain.ValueObjects;
 
-public sealed record SerialNumber : ValueObject
+public sealed record SerialNumber : IValueObject
 {
     public const int MaxLength = 100;
 

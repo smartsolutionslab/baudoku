@@ -1,6 +1,6 @@
 namespace BauDoku.BuildingBlocks.Domain;
 
-public abstract class Entity<TId> where TId : ValueObject
+public abstract class Entity<TIdentity> where TIdentity : IValueObject
 {
-    public TId Id { get; protected set; } = default!;
+    public TIdentity Id { get; protected set; } = default!;
 }

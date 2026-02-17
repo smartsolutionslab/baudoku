@@ -9,13 +9,13 @@ namespace BauDoku.Documentation.UnitTests.Application.Queries;
 
 public sealed class GetInstallationQueryHandlerTests
 {
-    private readonly IInstallationRepository repository;
+    private readonly IInstallationRepository installations;
     private readonly GetInstallationQueryHandler handler;
 
     public GetInstallationQueryHandlerTests()
     {
-        repository = Substitute.For<IInstallationRepository>();
-        handler = new GetInstallationQueryHandler(repository);
+        installations = Substitute.For<IInstallationRepository>();
+        handler = new GetInstallationQueryHandler(installations);
     }
 
     [Fact]
@@ -38,7 +38,7 @@ public sealed class GetInstallationQueryHandlerTests
             MeasurementType.InsulationResistance,
             MeasurementValue.Create(500.0, "MΩ", 1.0, null));
 
-        repository.GetByIdReadOnlyAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
+        installations.GetByIdReadOnlyAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
 
         var result = await handler.Handle(new GetInstallationQuery(installation.Id.Value), CancellationToken.None);
@@ -56,7 +56,7 @@ public sealed class GetInstallationQueryHandlerTests
     [Fact]
     public async Task Handle_WhenNotFound_ShouldReturnNull()
     {
-        repository.GetByIdReadOnlyAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
+        installations.GetByIdReadOnlyAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns((Installation?)null);
 
         var result = await handler.Handle(new GetInstallationQuery(Guid.NewGuid()), CancellationToken.None);
@@ -74,7 +74,7 @@ public sealed class GetInstallationQueryHandlerTests
             InstallationType.JunctionBox,
             GpsPosition.Create(48.0, 11.0, 500.0, 2.5, "dgnss", "SAPOS-EPS", "fix", 12, 0.8, 1.5));
 
-        repository.GetByIdReadOnlyAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
+        installations.GetByIdReadOnlyAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
 
         var result = await handler.Handle(new GetInstallationQuery(installation.Id.Value), CancellationToken.None);

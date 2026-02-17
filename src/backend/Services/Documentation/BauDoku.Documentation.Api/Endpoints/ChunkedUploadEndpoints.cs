@@ -10,8 +10,7 @@ public static class ChunkedUploadEndpoints
 {
     public static void MapChunkedUploadEndpoints(this IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/api/documentation/uploads")
-            .WithTags("Chunked Upload");
+        var group = app.MapGroup("/api/documentation/uploads").WithTags("Chunked Upload");
 
         group.MapPost("/init", async (
             InitChunkedUploadCommand command,

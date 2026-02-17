@@ -8,13 +8,13 @@ namespace BauDoku.Documentation.IntegrationTests.Api;
 [Collection(PostgreSqlCollection.Name)]
 public sealed class PhotoEndpointTests : IDisposable
 {
-    private readonly DocumentationApiFactory _factory;
-    private readonly HttpClient _client;
+    private readonly DocumentationApiFactory factory;
+    private readonly HttpClient client;
 
     public PhotoEndpointTests(PostgreSqlFixture fixture)
     {
-        _factory = new DocumentationApiFactory(fixture);
-        _client = _factory.CreateClient();
+        factory = new DocumentationApiFactory(fixture);
+        client = factory.CreateClient();
     }
 
     private async Task<Guid> CreateInstallationAsync()
@@ -28,7 +28,7 @@ public sealed class PhotoEndpointTests : IDisposable
             HorizontalAccuracy = 3.5,
             GpsSource = "internal_gps"
         };
-        var response = await _client.PostAsJsonAsync("/api/documentation/installations", command);
+        var response = await client.PostAsJsonAsync("/api/documentation/installations", command);
         response.EnsureSuccessStatusCode();
         var body = await response.Content.ReadFromJsonAsync<IdResponse>();
         return body!.Id;
@@ -37,7 +37,7 @@ public sealed class PhotoEndpointTests : IDisposable
     [Fact]
     public async Task GetPhoto_WithNonExistentId_ShouldReturnNotFoundOrError()
     {
-        var response = await _client.GetAsync($"/api/documentation/photos/{Guid.NewGuid()}");
+        var response = await client.GetAsync($"/api/documentation/photos/{Guid.NewGuid()}");
 
         // PhotoReadRepository uses EF shadow property projection that may fail on some providers
         response.StatusCode.Should().BeOneOf(HttpStatusCode.NotFound, HttpStatusCode.InternalServerError);
@@ -48,7 +48,7 @@ public sealed class PhotoEndpointTests : IDisposable
     {
         var installationId = await CreateInstallationAsync();
 
-        var response = await _client.GetAsync(
+        var response = await client.GetAsync(
             $"/api/documentation/installations/{installationId}/photos");
 
         // PhotoReadRepository uses EF shadow property projection that may fail on some providers
@@ -66,7 +66,7 @@ public sealed class PhotoEndpointTests : IDisposable
         fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/jpeg");
         content.Add(fileContent, "file", "test-photo.jpg");
 
-        var response = await _client.PostAsync(
+        var response = await client.PostAsync(
             $"/api/documentation/installations/{installationId}/photos", content);
 
         response.StatusCode.Should().Be(HttpStatusCode.Created);
@@ -76,8 +76,8 @@ public sealed class PhotoEndpointTests : IDisposable
 
     public void Dispose()
     {
-        _client.Dispose();
-        _factory.Dispose();
+        client.Dispose();
+        factory.Dispose();
     }
 
     private sealed record IdResponse(Guid Id);

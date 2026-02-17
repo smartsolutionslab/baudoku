@@ -1,3 +1,6 @@
+using BauDoku.BuildingBlocks.Infrastructure.Auth;
+using Microsoft.Extensions.Options;
+
 namespace BauDoku.ApiGateway.Endpoints;
 
 public static class AuthEndpoints
@@ -6,25 +9,25 @@ public static class AuthEndpoints
     {
         app.MapPost("/api/auth/logout", async (
             LogoutRequest request,
-            IConfiguration configuration,
+            IOptions<KeycloakOptions> keycloakOptions,
             IHttpClientFactory httpClientFactory,
             ILogger<LogoutRequest> logger) =>
         {
-            var authority = configuration["Authentication:Keycloak:Authority"];
-            if (string.IsNullOrEmpty(authority))
+            var keycloak = keycloakOptions.Value;
+            if (string.IsNullOrEmpty(keycloak.Authority))
             {
                 logger.LogWarning("Keycloak authority not configured — logout skipped");
                 return Results.Ok();
             }
 
-            var revokeUrl = $"{authority}/protocol/openid-connect/revoke";
+            var revokeUrl = $"{keycloak.Authority}/protocol/openid-connect/revoke";
 
             var client = httpClientFactory.CreateClient();
             var content = new FormUrlEncodedContent(new Dictionary<string, string>
             {
-                ["client_id"] = configuration["Authentication:Keycloak:ClientId"] ?? "baudoku-app",
+                ["client_id"] = keycloak.ClientId,
                 ["token"] = request.RefreshToken,
-                ["token_type_hint"] = "refresh_token",
+                ["token_type_hint"] = "refresh_token"
             });
 
             try
@@ -48,5 +51,3 @@ public static class AuthEndpoints
         .AllowAnonymous();
     }
 }
-
-public sealed record LogoutRequest(string RefreshToken);

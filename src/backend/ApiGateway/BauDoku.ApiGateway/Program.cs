@@ -1,4 +1,5 @@
 using BauDoku.ApiGateway.Endpoints;
+using BauDoku.BuildingBlocks.Infrastructure.Auth;
 using BauDoku.ServiceDefaults;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +12,7 @@ builder.AddServiceDefaults(health =>
 });
 
 builder.Services.AddHttpClient();
+builder.Services.Configure<KeycloakOptions>(builder.Configuration.GetSection("Authentication:Keycloak"));
 
 builder.Services.AddReverseProxy()
     .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"))

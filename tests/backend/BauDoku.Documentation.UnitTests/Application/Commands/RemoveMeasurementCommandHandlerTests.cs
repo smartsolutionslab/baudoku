@@ -10,15 +10,15 @@ namespace BauDoku.Documentation.UnitTests.Application.Commands;
 
 public sealed class RemoveMeasurementCommandHandlerTests
 {
-    private readonly IInstallationRepository repository;
+    private readonly IInstallationRepository installations;
     private readonly IUnitOfWork unitOfWork;
     private readonly RemoveMeasurementCommandHandler handler;
 
     public RemoveMeasurementCommandHandlerTests()
     {
-        repository = Substitute.For<IInstallationRepository>();
+        installations = Substitute.For<IInstallationRepository>();
         unitOfWork = Substitute.For<IUnitOfWork>();
-        handler = new RemoveMeasurementCommandHandler(repository, unitOfWork);
+        handler = new RemoveMeasurementCommandHandler(installations, unitOfWork);
     }
 
     private static Installation CreateInstallationWithMeasurement(out MeasurementIdentifier measurementId)
@@ -43,7 +43,7 @@ public sealed class RemoveMeasurementCommandHandlerTests
     public async Task Handle_WithValidCommand_ShouldRemoveMeasurement()
     {
         var installation = CreateInstallationWithMeasurement(out var measurementId);
-        repository.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
+        installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
 
         var command = new RemoveMeasurementCommand(installation.Id.Value, measurementId.Value);
@@ -57,7 +57,7 @@ public sealed class RemoveMeasurementCommandHandlerTests
     [Fact]
     public async Task Handle_WhenInstallationNotFound_ShouldThrow()
     {
-        repository.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
+        installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns((Installation?)null);
 
         var command = new RemoveMeasurementCommand(Guid.NewGuid(), Guid.NewGuid());

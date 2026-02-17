@@ -13,9 +13,7 @@ public ref struct GuidGuard
 
     public GuidGuard IsNotEmpty(string? message = null)
     {
-        if (value == Guid.Empty)
-            throw new ArgumentException(
-                message ?? $"{paramName} darf nicht leer sein.", paramName);
+        if (value == Guid.Empty) throw new ArgumentException(message ?? $"{paramName} darf nicht leer sein.", paramName);
         return this;
     }
 }

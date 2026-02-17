@@ -8,15 +8,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace BauDoku.E2E.SmokeTests.Api;
 
-public sealed class SyncApiFactory : WebApplicationFactory<SyncApi::Program>
+public sealed class SyncApiFactory(E2EFixture fixture) : WebApplicationFactory<SyncApi::Program>
 {
-    private readonly E2EFixture fixture;
-
-    public SyncApiFactory(E2EFixture fixture)
-    {
-        this.fixture = fixture;
-    }
-
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.UseSetting("ConnectionStrings:SyncDb", fixture.SyncConnectionString);

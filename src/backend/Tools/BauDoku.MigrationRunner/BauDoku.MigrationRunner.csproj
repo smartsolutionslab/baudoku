@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\BuildingBlocks\BauDoku.ServiceDefaults\BauDoku.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\..\Services\Projects\BauDoku.Projects.Infrastructure\BauDoku.Projects.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Services\Documentation\BauDoku.Documentation.Infrastructure\BauDoku.Documentation.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Services\Sync\BauDoku.Sync.Infrastructure\BauDoku.Sync.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

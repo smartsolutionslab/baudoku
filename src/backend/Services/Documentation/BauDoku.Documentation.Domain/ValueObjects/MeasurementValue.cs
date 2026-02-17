@@ -3,7 +3,7 @@ using BauDoku.BuildingBlocks.Domain.Guards;
 
 namespace BauDoku.Documentation.Domain.ValueObjects;
 
-public sealed record MeasurementValue : ValueObject
+public sealed record MeasurementValue : IValueObject
 {
     public const int MaxUnitLength = 20;
 

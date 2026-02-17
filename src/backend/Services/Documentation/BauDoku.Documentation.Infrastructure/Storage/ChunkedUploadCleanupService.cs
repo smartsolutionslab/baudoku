@@ -1,25 +1,23 @@
 using System.Text.Json;
 using BauDoku.Documentation.Application.Contracts;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace BauDoku.Documentation.Infrastructure.Storage;
 
-public sealed class ChunkedUploadCleanupService : BackgroundService
+public sealed class ChunkedUploadCleanupService(IOptions<PhotoStorageOptions> options, ILogger<ChunkedUploadCleanupService> logger)
+    : BackgroundService
 {
-    private readonly string basePath;
-    private readonly ILogger<ChunkedUploadCleanupService> logger;
+    private readonly string basePath = ResolveBasePath(options.Value.ChunkedPath);
     private readonly TimeSpan interval = TimeSpan.FromMinutes(15);
     private readonly TimeSpan maxAge = TimeSpan.FromHours(1);
 
-    public ChunkedUploadCleanupService(
-        IConfiguration configuration,
-        ILogger<ChunkedUploadCleanupService> logger)
+    private static string ResolveBasePath(string chunkedPath)
     {
-        basePath = configuration["PhotoStorage:ChunkedPath"]
-            ?? Path.Combine(Directory.GetCurrentDirectory(), "uploads", "chunks");
-        this.logger = logger;
+        if (Path.IsPathRooted(chunkedPath))
+            return chunkedPath;
+        return Path.Combine(Directory.GetCurrentDirectory(), chunkedPath);
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -68,7 +66,9 @@ public sealed class ChunkedUploadCleanupService : BackgroundService
         }
 
         if (cleaned > 0)
+        {
             logger.LogInformation("Chunked-Upload-Cleanup: {Count} abgelaufene Sessions entfernt", cleaned);
+        }
     }
 
     private void TryDeleteDirectory(string path)

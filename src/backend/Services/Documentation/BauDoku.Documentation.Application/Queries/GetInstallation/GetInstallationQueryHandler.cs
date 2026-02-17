@@ -5,23 +5,15 @@ using BauDoku.Documentation.Domain.ValueObjects;
 
 namespace BauDoku.Documentation.Application.Queries.GetInstallation;
 
-public sealed class GetInstallationQueryHandler
+public sealed class GetInstallationQueryHandler(IInstallationRepository installations)
     : IQueryHandler<GetInstallationQuery, InstallationDto?>
 {
-    private readonly IInstallationRepository installationRepository;
-
-    public GetInstallationQueryHandler(IInstallationRepository installationRepository)
-    {
-        this.installationRepository = installationRepository;
-    }
-
     public async Task<InstallationDto?> Handle(GetInstallationQuery query, CancellationToken cancellationToken)
     {
         var installationId = InstallationIdentifier.From(query.InstallationId);
-        var installation = await installationRepository.GetByIdReadOnlyAsync(installationId, cancellationToken);
+        var installation = await installations.GetByIdReadOnlyAsync(installationId, cancellationToken);
 
-        if (installation is null)
-            return null;
+        if (installation is null) return null;
 
         var photos = installation.Photos.Select(p => new PhotoDto(
             p.Id.Value,

@@ -24,8 +24,7 @@ public sealed class ValueObjectJsonConverterFactory : JsonConverterFactory
     private static JsonConverter? BuildConverter(Type voType)
     {
         var valueProperty = voType.GetProperty("Value", BindingFlags.Public | BindingFlags.Instance);
-        if (valueProperty is null)
-            return null;
+        if (valueProperty is null) return null;
 
         var fromMethod = voType.GetMethod("From", BindingFlags.Public | BindingFlags.Static, [valueProperty.PropertyType]);
 

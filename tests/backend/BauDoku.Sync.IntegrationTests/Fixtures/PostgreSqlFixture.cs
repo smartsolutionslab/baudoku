@@ -8,8 +8,7 @@ namespace BauDoku.Sync.IntegrationTests.Fixtures;
 
 public sealed class PostgreSqlFixture : IAsyncLifetime
 {
-    private readonly PostgreSqlContainer container = new PostgreSqlBuilder("postgres:17-alpine")
-        .Build();
+    private readonly PostgreSqlContainer container = new PostgreSqlBuilder("postgres:17-alpine").Build();
 
     public string ConnectionString => container.GetConnectionString();
 

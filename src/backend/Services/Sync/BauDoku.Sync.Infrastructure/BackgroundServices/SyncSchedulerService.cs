@@ -1,29 +1,18 @@
 using BauDoku.BuildingBlocks.Application.Persistence;
 using BauDoku.Sync.Application.Contracts;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace BauDoku.Sync.Infrastructure.BackgroundServices;
 
-public sealed class SyncSchedulerService : BackgroundService
+public sealed class SyncSchedulerService(
+    IServiceScopeFactory scopeFactory,
+    ILogger<SyncSchedulerService> logger,
+    IOptions<SyncOptions> syncOptions) : BackgroundService
 {
-    private readonly IServiceScopeFactory scopeFactory;
-    private readonly ILogger<SyncSchedulerService> logger;
-    private readonly TimeSpan interval;
-
-    public SyncSchedulerService(
-        IServiceScopeFactory scopeFactory,
-        ILogger<SyncSchedulerService> logger,
-        IConfiguration configuration)
-    {
-        this.scopeFactory = scopeFactory;
-        this.logger = logger;
-
-        var seconds = configuration.GetValue("Sync:SchedulerIntervalSeconds", 30);
-        interval = TimeSpan.FromSeconds(seconds);
-    }
+    private readonly TimeSpan interval = TimeSpan.FromSeconds(syncOptions.Value.SchedulerIntervalSeconds);
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -53,10 +42,10 @@ public sealed class SyncSchedulerService : BackgroundService
     private async Task ProcessPendingBatchesAsync(CancellationToken ct)
     {
         await using var scope = scopeFactory.CreateAsyncScope();
-        var repository = scope.ServiceProvider.GetRequiredService<ISyncBatchRepository>();
+        var syncBatches = scope.ServiceProvider.GetRequiredService<ISyncBatchRepository>();
         var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
 
-        var pendingBatches = await repository.GetPendingBatchesAsync(limit: 10, ct);
+        var pendingBatches = await syncBatches.GetPendingBatchesAsync(limit: 10, ct);
 
         if (pendingBatches.Count == 0)
             return;

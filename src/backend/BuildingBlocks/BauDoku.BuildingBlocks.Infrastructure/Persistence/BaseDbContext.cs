@@ -5,16 +5,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BauDoku.BuildingBlocks.Infrastructure.Persistence;
 
-public abstract class BaseDbContext : DbContext, IUnitOfWork
+public abstract class BaseDbContext(DbContextOptions options, IDispatcher dispatcher) : DbContext(options), IUnitOfWork
 {
-    private readonly IDispatcher dispatcher;
-
-    protected BaseDbContext(DbContextOptions options, IDispatcher dispatcher)
-        : base(options)
-    {
-        this.dispatcher = dispatcher;
-    }
-
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         var domainEvents = GetDomainEvents();
@@ -22,7 +14,7 @@ public abstract class BaseDbContext : DbContext, IUnitOfWork
 
         foreach (var domainEvent in domainEvents)
         {
-            await this.dispatcher.Publish(domainEvent, cancellationToken);
+            await dispatcher.Publish(domainEvent, cancellationToken);
         }
 
         return result;

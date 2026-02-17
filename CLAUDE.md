@@ -29,12 +29,11 @@ Mobile App zur Dokumentation elektrischer Installationen auf Baustellen. Zielgru
 ### ValueObject-Pattern
 
 ```csharp
-// Basis: abstract record mit IValueObject Marker-Interface
+// Marker-Interface für alle ValueObjects
 public interface IValueObject;
-public abstract record ValueObject : IValueObject;
 
 // Konkretes ValueObject: sealed record, private Konstruktor, statische Factory-Methode, Guard-Validierung
-public sealed record ProjectName : ValueObject
+public sealed record ProjectName : IValueObject
 {
     public const int MaxLength = 200;
     public string Value { get; }
@@ -51,7 +50,7 @@ public sealed record ProjectName : ValueObject
 }
 
 // ID-ValueObject (Namenskonvention: *Identifier, nicht *Id)
-public sealed record ProjectIdentifier : ValueObject
+public sealed record ProjectIdentifier : IValueObject
 {
     public Guid Value { get; }
     private ProjectIdentifier(Guid value) => Value = value;
@@ -65,7 +64,7 @@ public sealed record ProjectIdentifier : ValueObject
 }
 
 // Enum-artige ValueObjects (statt C# enums)
-public sealed record InstallationStatus : ValueObject
+public sealed record InstallationStatus : IValueObject
 {
     private static readonly HashSet<string> ValidValues = ["in_progress", "completed", "inspected"];
 
@@ -108,12 +107,12 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 ### Entity + AggregateRoot
 
 ```csharp
-public abstract class Entity<TId> where TId : ValueObject
+public abstract class Entity<TId> where TId : IValueObject
 {
     public TId Id { get; protected set; } = default!;
 }
 
-public abstract class AggregateRoot<TId> : Entity<TId>, IAggregateRoot where TId : ValueObject
+public abstract class AggregateRoot<TId> : Entity<TId>, IAggregateRoot where TId : IValueObject
 {
     private readonly List<IDomainEvent> domainEvents = [];  // kein Underscore-Prefix!
     public IReadOnlyList<IDomainEvent> DomainEvents => domainEvents.AsReadOnly();
@@ -182,31 +181,49 @@ public static class ProjectEndpoints
 ## Solution-Struktur
 
 ```
-src/backend/
-├── BuildingBlocks/
-│   ├── BauDoku.BuildingBlocks.Domain/          # ValueObject, IValueObject, Entity, AggregateRoot, Guards/Ensure, IDomainEvent, IBusinessRule
-│   ├── BauDoku.BuildingBlocks.Application/     # Dispatcher, ICommand/IQuery, Behaviors (Validation, Logging, Transaction)
-│   ├── BauDoku.BuildingBlocks.Infrastructure/  # BaseDbContext, UnitOfWork, Messaging, ValueObjectJsonConverterFactory
-│   └── BauDoku.ServiceDefaults/                # Aspire ServiceDefaults (OpenTelemetry, Health Checks, Service Discovery)
-├── Services/
-│   ├── Documentation/                          # BC: Installationsdokumentation
-│   │   ├── BauDoku.Documentation.Domain/       # Installation (AggregateRoot), Photo, Measurement (Entities), GpsPosition, CableSpec, Depth (ValueObjects)
-│   │   ├── BauDoku.Documentation.Application/  # Commands + Queries + Handlers + Validators + EventHandlers
-│   │   ├── BauDoku.Documentation.Infrastructure/ # DbContext, EF Configs, Repositories, BlobStorage
-│   │   └── BauDoku.Documentation.Api/          # Minimal API Endpoints
-│   ├── Projects/                               # BC: Projektverwaltung
-│   │   ├── BauDoku.Projects.Domain/            # Project (AggregateRoot), Zone (Entity), ProjectName, Address, ZoneType (ValueObjects)
-│   │   ├── BauDoku.Projects.Application/
-│   │   ├── BauDoku.Projects.Infrastructure/
-│   │   └── BauDoku.Projects.Api/
-│   └── Sync/                                   # BC: Offline-Synchronisation
-│       ├── BauDoku.Sync.Domain/
-│       ├── BauDoku.Sync.Application/
-│       ├── BauDoku.Sync.Infrastructure/
-│       └── BauDoku.Sync.Api/
-├── ApiGateway/BauDoku.ApiGateway/              # YARP Reverse Proxy
-├── AppHost/BauDoku.AppHost/                    # .NET Aspire
-└── BauDoku.slnx
+src/
+├── frontend/                                     # npm workspaces root (package.json + package-lock.json)
+│   ├── mobile-app/                               # React Native/Expo mobile app
+│   │   ├── app/                                  # Expo Router file-based routing
+│   │   ├── src/                                  # Components, hooks, stores, sync, db
+│   │   ├── drizzle/                              # SQLite migrations
+│   │   ├── metro.config.js
+│   │   └── package.json
+│   ├── web/                                      # Vite/React web app (TanStack Router)
+│   │   ├── src/                                  # Components, hooks, routes, auth
+│   │   ├── Dockerfile
+│   │   └── package.json
+│   └── packages/                                 # Shared npm packages
+│       ├── shared-types/                         # @baudoku/shared-types
+│       ├── shared-validation/                    # @baudoku/shared-validation
+│       ├── shared-api/                           # @baudoku/shared-api
+│       ├── shared-constants/                     # @baudoku/shared-constants
+│       └── shared-logic/                         # @baudoku/shared-logic
+├── backend/
+│   ├── BuildingBlocks/
+│   │   ├── BauDoku.BuildingBlocks.Domain/        # IValueObject, Entity, AggregateRoot, Guards/Ensure, IDomainEvent, IBusinessRule
+│   │   ├── BauDoku.BuildingBlocks.Application/   # Dispatcher, ICommand/IQuery, Behaviors (Validation, Logging, Transaction)
+│   │   ├── BauDoku.BuildingBlocks.Infrastructure/ # BaseDbContext, UnitOfWork, Messaging, ValueObjectJsonConverterFactory
+│   │   └── BauDoku.ServiceDefaults/              # Aspire ServiceDefaults (OpenTelemetry, Health Checks, Service Discovery)
+│   ├── Services/
+│   │   ├── Documentation/                        # BC: Installationsdokumentation
+│   │   │   ├── BauDoku.Documentation.Domain/     # Installation (AggregateRoot), Photo, Measurement (Entities), GpsPosition, CableSpec, Depth (ValueObjects)
+│   │   │   ├── BauDoku.Documentation.Application/ # Commands + Queries + Handlers + Validators + EventHandlers
+│   │   │   ├── BauDoku.Documentation.Infrastructure/ # DbContext, EF Configs, Repositories, BlobStorage
+│   │   │   └── BauDoku.Documentation.Api/        # Minimal API Endpoints
+│   │   ├── Projects/                             # BC: Projektverwaltung
+│   │   │   ├── BauDoku.Projects.Domain/          # Project (AggregateRoot), Zone (Entity), ProjectName, Address, ZoneType (ValueObjects)
+│   │   │   ├── BauDoku.Projects.Application/
+│   │   │   ├── BauDoku.Projects.Infrastructure/
+│   │   │   └── BauDoku.Projects.Api/
+│   │   └── Sync/                                 # BC: Offline-Synchronisation
+│   │       ├── BauDoku.Sync.Domain/
+│   │       ├── BauDoku.Sync.Application/
+│   │       ├── BauDoku.Sync.Infrastructure/
+│   │       └── BauDoku.Sync.Api/
+│   ├── ApiGateway/BauDoku.ApiGateway/            # YARP Reverse Proxy
+│   ├── AppHost/BauDoku.AppHost/                  # .NET Aspire
+│   └── BauDoku.slnx
 ```
 
 ## Bounded Contexts
@@ -226,7 +243,8 @@ src/backend/
 - **Ticket-Prefix:** `BD-xxx`
 - **Tests:** xUnit + AwesomeAssertions + NSubstitute + Testcontainers (PostgreSQL)
 - **Keine Primitive im Domain:** `ProjectIdentifier` statt `Guid`, `ProjectName` statt `string`, `Depth` statt `int`
-- **Frontend:** Branded Types (`src/frontend/src/types/branded.ts`), `type` statt `interface` für Daten-Shapes
+- **Repository-Variablen** wie Collections benennen: `IProjectRepository` → `projects`, `IInstallationRepository` → `installations` (nicht `projectRepository`)
+- **Frontend:** Branded Types (`src/frontend/mobile-app/src/types/branded.ts`), `type` statt `interface` für Daten-Shapes
 
 ## NuGet Packages (Central Package Management)
 

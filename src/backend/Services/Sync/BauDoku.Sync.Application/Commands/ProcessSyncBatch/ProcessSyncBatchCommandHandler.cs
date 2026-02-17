@@ -8,26 +8,10 @@ using BauDoku.Sync.Domain.ValueObjects;
 
 namespace BauDoku.Sync.Application.Commands.ProcessSyncBatch;
 
-public sealed class ProcessSyncBatchCommandHandler
+public sealed class ProcessSyncBatchCommandHandler(ISyncBatchRepository syncBatches, IEntityVersionStore entityVersionStore, IUnitOfWork unitOfWork)
     : ICommandHandler<ProcessSyncBatchCommand, ProcessSyncBatchResult>
 {
-    private readonly ISyncBatchRepository syncBatchRepository;
-    private readonly IEntityVersionStore entityVersionStore;
-    private readonly IUnitOfWork unitOfWork;
-
-    public ProcessSyncBatchCommandHandler(
-        ISyncBatchRepository syncBatchRepository,
-        IEntityVersionStore entityVersionStore,
-        IUnitOfWork unitOfWork)
-    {
-        this.syncBatchRepository = syncBatchRepository;
-        this.entityVersionStore = entityVersionStore;
-        this.unitOfWork = unitOfWork;
-    }
-
-    public async Task<ProcessSyncBatchResult> Handle(
-        ProcessSyncBatchCommand command,
-        CancellationToken cancellationToken = default)
+    public async Task<ProcessSyncBatchResult> Handle(ProcessSyncBatchCommand command, CancellationToken cancellationToken = default)
     {
         var batchId = SyncBatchIdentifier.New();
         var deviceId = DeviceIdentifier.From(command.DeviceId);
@@ -102,7 +86,7 @@ public sealed class ProcessSyncBatchCommandHandler
         else
             batch.MarkFailed();
 
-        await syncBatchRepository.AddAsync(batch, cancellationToken);
+        await syncBatches.AddAsync(batch, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         SyncMetrics.BatchesProcessed.Add(1);

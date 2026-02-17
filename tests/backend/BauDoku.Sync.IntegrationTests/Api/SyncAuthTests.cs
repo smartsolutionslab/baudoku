@@ -8,13 +8,13 @@ namespace BauDoku.Sync.IntegrationTests.Api;
 [Collection(PostgreSqlCollection.Name)]
 public sealed class SyncAuthTests : IDisposable
 {
-    private readonly SyncApiFactory _factory;
-    private readonly HttpClient _client;
+    private readonly SyncApiFactory factory;
+    private readonly HttpClient client;
 
     public SyncAuthTests(PostgreSqlFixture fixture)
     {
-        _factory = new SyncApiFactory(fixture);
-        _client = _factory.CreateClient();
+        factory = new SyncApiFactory(fixture);
+        client = factory.CreateClient();
     }
 
     [Fact]
@@ -23,7 +23,7 @@ public sealed class SyncAuthTests : IDisposable
         TestAuthHandler.Roles = ["user"];
         try
         {
-            var response = await _client.PostAsJsonAsync("/api/sync/batch", new
+            var response = await client.PostAsJsonAsync("/api/sync/batch", new
             {
                 DeviceId = "test-device-auth",
                 Deltas = new[]
@@ -56,7 +56,7 @@ public sealed class SyncAuthTests : IDisposable
         {
             var conflictId = Guid.NewGuid();
 
-            var response = await _client.PostAsJsonAsync($"/api/sync/conflicts/{conflictId}/resolve", new
+            var response = await client.PostAsJsonAsync($"/api/sync/conflicts/{conflictId}/resolve", new
             {
                 Strategy = "server_wins",
                 MergedPayload = (string?)null
@@ -76,7 +76,7 @@ public sealed class SyncAuthTests : IDisposable
         TestAuthHandler.Roles = ["inspector"];
         try
         {
-            var response = await _client.GetAsync("/api/sync/changes?deviceId=test-device-auth");
+            var response = await client.GetAsync("/api/sync/changes?deviceId=test-device-auth");
 
             response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
@@ -88,7 +88,7 @@ public sealed class SyncAuthTests : IDisposable
 
     public void Dispose()
     {
-        _client.Dispose();
-        _factory.Dispose();
+        client.Dispose();
+        factory.Dispose();
     }
 }

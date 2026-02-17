@@ -3,10 +3,9 @@ using BauDoku.BuildingBlocks.Domain.Guards;
 
 namespace BauDoku.Sync.Domain.ValueObjects;
 
-public sealed record EntityType : ValueObject
+public sealed record EntityType : IValueObject
 {
-    private static readonly HashSet<string> ValidValues =
-        ["project", "zone", "installation", "photo", "measurement"];
+    private static readonly HashSet<string> ValidValues = ["project", "zone", "installation", "photo", "measurement"];
 
     public static readonly EntityType Project = new("project");
     public static readonly EntityType Zone = new("zone");
