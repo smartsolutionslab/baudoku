@@ -16,7 +16,8 @@ public sealed class UpdateInstallationCommandValidatorTests
             SatelliteCount: null, Hdop: null, CorrectionAge: null,
             Description: "Test", CableType: "NYM-J",
             CrossSection: 2.5m, CableColor: null, ConductorCount: null,
-            DepthMm: 600);
+            DepthMm: 600,
+            Manufacturer: null, ModelName: null, SerialNumber: null);
 
     [Fact]
     public void ValidCommand_ShouldHaveNoErrors()

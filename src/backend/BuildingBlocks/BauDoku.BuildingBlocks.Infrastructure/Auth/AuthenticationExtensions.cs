@@ -46,18 +46,18 @@ public static class AuthenticationExtensions
                 {
                     OnTokenValidated = context =>
                     {
-                        var logger = context.HttpContext.RequestServices
-                            .GetRequiredService<ILoggerFactory>()
-                            .CreateLogger("BauDoku.Auth");
+                        var loggerFactory = context.HttpContext.RequestServices.GetRequiredService<ILoggerFactory>();
+                        var logger = loggerFactory.CreateLogger("BauDoku.Auth");
                         var userId = context.Principal?.FindFirstValue(ClaimTypes.NameIdentifier);
-                        logger.LogDebug("Token validated for user {UserId}", userId);
+                        var roles = context.Principal?.FindAll(ClaimTypes.Role).Select(c => c.Value).ToArray() ?? [];
+                        var ipAddress = context.HttpContext.Connection.RemoteIpAddress;
+                        logger.LogInformation("User authenticated: {UserId}, Roles: [{Roles}], IP: {IpAddress}", userId, string.Join(", ", roles), ipAddress);
                         return Task.CompletedTask;
                     },
                     OnAuthenticationFailed = context =>
                     {
-                        var logger = context.HttpContext.RequestServices
-                            .GetRequiredService<ILoggerFactory>()
-                            .CreateLogger("BauDoku.Auth");
+                        var loggerFactory = context.HttpContext.RequestServices.GetRequiredService<ILoggerFactory>();
+                        var logger = loggerFactory.CreateLogger("BauDoku.Auth");
                         logger.LogWarning(context.Exception, "Authentication failed");
                         return Task.CompletedTask;
                     },

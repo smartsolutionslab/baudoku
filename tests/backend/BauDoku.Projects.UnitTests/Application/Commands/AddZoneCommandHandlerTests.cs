@@ -53,7 +53,7 @@ public sealed class AddZoneCommandHandlerTests
 
         var act = () => handler.Handle(command);
 
-        await act.Should().ThrowAsync<InvalidOperationException>();
+        await act.Should().ThrowAsync<KeyNotFoundException>();
     }
 
     [Fact]

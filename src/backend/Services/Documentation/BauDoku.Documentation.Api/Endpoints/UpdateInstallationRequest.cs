@@ -16,4 +16,7 @@ public sealed record UpdateInstallationRequest(
     decimal? CrossSection,
     string? CableColor,
     int? ConductorCount,
-    int? DepthMm);
+    int? DepthMm,
+    string? Manufacturer,
+    string? ModelName,
+    string? SerialNumber);

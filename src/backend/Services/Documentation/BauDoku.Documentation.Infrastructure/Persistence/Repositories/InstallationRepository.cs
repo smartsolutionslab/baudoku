@@ -28,4 +28,9 @@ public sealed class InstallationRepository(DocumentationDbContext context) : IIn
     {
         await context.Installations.AddAsync(aggregate, cancellationToken);
     }
+
+    public void Remove(Installation installation)
+    {
+        context.Installations.Remove(installation);
+    }
 }

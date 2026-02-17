@@ -1,5 +1,9 @@
 using BauDoku.BuildingBlocks.Application.Dispatcher;
+using BauDoku.BuildingBlocks.Application.Pagination;
+using BauDoku.BuildingBlocks.Application.Responses;
 using BauDoku.BuildingBlocks.Infrastructure.Auth;
+using BauDoku.Documentation.Application.Commands.CompleteInstallation;
+using BauDoku.Documentation.Application.Commands.DeleteInstallation;
 using BauDoku.Documentation.Application.Commands.DocumentInstallation;
 using BauDoku.Documentation.Application.Commands.UpdateInstallation;
 using BauDoku.Documentation.Application.Queries.Dtos;
@@ -22,12 +26,12 @@ public static class InstallationEndpoints
             CancellationToken ct) =>
         {
             var id = await dispatcher.Send(command, ct);
-            return Results.Created($"/api/documentation/installations/{id}", new { id });
+            return Results.Created($"/api/documentation/installations/{id}", new CreatedResponse(id));
         })
         .RequireAuthorization(AuthPolicies.RequireUser)
         .WithName("DocumentInstallation")
         .WithSummary("Neue Installation dokumentieren")
-        .Produces<object>(StatusCodes.Status201Created)
+        .Produces<CreatedResponse>(StatusCodes.Status201Created)
         .ProducesValidationProblem();
 
         group.MapGet("/", async (
@@ -50,7 +54,7 @@ public static class InstallationEndpoints
         .RequireAuthorization()
         .WithName("ListInstallations")
         .WithSummary("Installationen auflisten und filtern")
-        .Produces<object>(StatusCodes.Status200OK);
+        .Produces<PagedResult<InstallationListItemDto>>(StatusCodes.Status200OK);
 
         group.MapGet("/nearby", async (
             double latitude,
@@ -70,7 +74,7 @@ public static class InstallationEndpoints
         .RequireAuthorization()
         .WithName("GetInstallationsNearby")
         .WithSummary("Installationen im Umkreis suchen")
-        .Produces<object>(StatusCodes.Status200OK);
+        .Produces<PagedResult<NearbyInstallationDto>>(StatusCodes.Status200OK);
 
         group.MapGet("/in-area", async (
             double minLatitude,
@@ -91,7 +95,7 @@ public static class InstallationEndpoints
         .RequireAuthorization()
         .WithName("GetInstallationsInArea")
         .WithSummary("Installationen in einem Gebiet suchen")
-        .Produces<object>(StatusCodes.Status200OK);
+        .Produces<PagedResult<InstallationListItemDto>>(StatusCodes.Status200OK);
 
         group.MapGet("/{id:guid}", async (
             Guid id,
@@ -131,7 +135,10 @@ public static class InstallationEndpoints
                 request.CrossSection,
                 request.CableColor,
                 request.ConductorCount,
-                request.DepthMm);
+                request.DepthMm,
+                request.Manufacturer,
+                request.ModelName,
+                request.SerialNumber);
 
             await dispatcher.Send(command, ct);
             return Results.NoContent();
@@ -142,5 +149,35 @@ public static class InstallationEndpoints
         .Produces(StatusCodes.Status204NoContent)
         .Produces(StatusCodes.Status404NotFound)
         .ProducesValidationProblem();
+
+        group.MapPost("/{id:guid}/complete", async (
+            Guid id,
+            IDispatcher dispatcher,
+            CancellationToken ct) =>
+        {
+            var command = new CompleteInstallationCommand(id);
+            await dispatcher.Send(command, ct);
+            return Results.NoContent();
+        })
+        .RequireAuthorization(AuthPolicies.RequireUser)
+        .WithName("CompleteInstallation")
+        .WithSummary("Installation als abgeschlossen markieren")
+        .Produces(StatusCodes.Status204NoContent)
+        .Produces(StatusCodes.Status404NotFound);
+
+        group.MapDelete("/{id:guid}", async (
+            Guid id,
+            IDispatcher dispatcher,
+            CancellationToken ct) =>
+        {
+            var command = new DeleteInstallationCommand(id);
+            await dispatcher.Send(command, ct);
+            return Results.NoContent();
+        })
+        .RequireAuthorization(AuthPolicies.RequireAdmin)
+        .WithName("DeleteInstallation")
+        .WithSummary("Installation loeschen")
+        .Produces(StatusCodes.Status204NoContent)
+        .Produces(StatusCodes.Status404NotFound);
     }
 }

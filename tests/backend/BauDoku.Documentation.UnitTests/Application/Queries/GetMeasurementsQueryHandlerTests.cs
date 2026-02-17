@@ -54,6 +54,6 @@ public sealed class GetMeasurementsQueryHandlerTests
 
         var act = () => handler.Handle(new GetMeasurementsQuery(Guid.NewGuid()), CancellationToken.None);
 
-        await act.Should().ThrowAsync<InvalidOperationException>();
+        await act.Should().ThrowAsync<KeyNotFoundException>();
     }
 }

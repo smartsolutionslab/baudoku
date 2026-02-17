@@ -9,10 +9,10 @@ namespace BauDoku.Documentation.Application.Commands.RecordMeasurement;
 public sealed class RecordMeasurementCommandHandler(IInstallationRepository installations, IUnitOfWork unitOfWork)
     : ICommandHandler<RecordMeasurementCommand, Guid>
 {
-    public async Task<Guid> Handle(RecordMeasurementCommand command, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(RecordMeasurementCommand command, CancellationToken cancellationToken = default)
     {
         var installationId = InstallationIdentifier.From(command.InstallationId);
-        var installation = await installations.GetByIdAsync(installationId, cancellationToken) ?? throw new InvalidOperationException($"Installation mit ID {command.InstallationId} nicht gefunden.");
+        var installation = await installations.GetByIdAsync(installationId, cancellationToken) ?? throw new KeyNotFoundException($"Installation mit ID {command.InstallationId} nicht gefunden.");
 
         var measurementId = MeasurementIdentifier.New();
         var type = MeasurementType.From(command.Type);

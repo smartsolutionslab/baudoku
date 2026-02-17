@@ -9,11 +9,11 @@ namespace BauDoku.Documentation.Application.Commands.AddPhoto;
 public sealed class AddPhotoCommandHandler(IInstallationRepository installations, IPhotoStorage photoStorage, IUnitOfWork unitOfWork)
     : ICommandHandler<AddPhotoCommand, Guid>
 {
-    public async Task<Guid> Handle(AddPhotoCommand command, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(AddPhotoCommand command, CancellationToken cancellationToken = default)
     {
         var installationId = InstallationIdentifier.From(command.InstallationId);
         var installation = await installations.GetByIdAsync(installationId, cancellationToken)
-            ?? throw new InvalidOperationException($"Installation mit ID {command.InstallationId} nicht gefunden.");
+            ?? throw new KeyNotFoundException($"Installation mit ID {command.InstallationId} nicht gefunden.");
 
         var blobUrl = await photoStorage.UploadAsync(
             command.Stream, command.FileName, command.ContentType, cancellationToken);

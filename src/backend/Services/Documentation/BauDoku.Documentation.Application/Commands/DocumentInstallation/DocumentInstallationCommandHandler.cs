@@ -10,7 +10,7 @@ namespace BauDoku.Documentation.Application.Commands.DocumentInstallation;
 public sealed class DocumentInstallationCommandHandler(IInstallationRepository installations, IUnitOfWork unitOfWork)
     : ICommandHandler<DocumentInstallationCommand, Guid>
 {
-    public async Task<Guid> Handle(DocumentInstallationCommand command, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(DocumentInstallationCommand command, CancellationToken cancellationToken = default)
     {
         var installationId = InstallationIdentifier.New();
 

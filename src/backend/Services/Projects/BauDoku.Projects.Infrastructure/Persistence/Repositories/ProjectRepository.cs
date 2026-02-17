@@ -31,4 +31,9 @@ public sealed class ProjectRepository(ProjectsDbContext context) : IProjectRepos
     {
         await context.Projects.AddAsync(aggregate, cancellationToken);
     }
+
+    public void Remove(Project project)
+    {
+        context.Projects.Remove(project);
+    }
 }

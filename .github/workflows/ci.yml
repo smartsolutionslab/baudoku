@@ -122,6 +122,28 @@ jobs:
             --verbosity normal \
             --logger "console;verbosity=detailed"
 
+  keycloak-auth:
+    name: Keycloak Auth Tests
+    runs-on: ubuntu-latest
+    needs: backend
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Run Keycloak auth tests
+        env:
+          TESTCONTAINERS_RYUK_DISABLED: true
+        run: |
+          dotnet test tests/backend/BauDoku.Auth.IntegrationTests/ \
+            --configuration Release \
+            --verbosity normal \
+            --logger "console;verbosity=detailed"
+
   frontend:
     name: Frontend Build & Typecheck
     runs-on: ubuntu-latest

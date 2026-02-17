@@ -89,6 +89,22 @@ public sealed class DocumentationAuthTests : IDisposable
         }
     }
 
+    [Fact]
+    public async Task ListInstallations_WithoutAuthentication_Returns401()
+    {
+        TestAuthHandler.IsAuthenticated = false;
+        try
+        {
+            var response = await _client.GetAsync("/api/documentation/installations");
+
+            response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        }
+        finally
+        {
+            TestAuthHandler.IsAuthenticated = true;
+        }
+    }
+
     public void Dispose()
     {
         _client.Dispose();

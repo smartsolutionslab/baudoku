@@ -2,6 +2,7 @@ using BauDoku.BuildingBlocks.Application.Dispatcher;
 using BauDoku.BuildingBlocks.Infrastructure.Auth;
 using BauDoku.Sync.Application.Commands.ProcessSyncBatch;
 using BauDoku.Sync.Application.Commands.ResolveConflict;
+using BauDoku.Sync.Application.Queries.Dtos;
 using BauDoku.Sync.Application.Queries.GetChangesSince;
 using BauDoku.Sync.Application.Queries.GetConflicts;
 
@@ -23,6 +24,7 @@ public static class SyncEndpoints
         })
         .RequireAuthorization(AuthPolicies.RequireUser)
         .WithName("ProcessSyncBatch")
+        .WithSummary("Sync-Batch verarbeiten")
         .Produces<ProcessSyncBatchResult>(StatusCodes.Status200OK)
         .ProducesValidationProblem();
 
@@ -39,7 +41,8 @@ public static class SyncEndpoints
         })
         .RequireAuthorization()
         .WithName("GetChangesSince")
-        .Produces(StatusCodes.Status200OK);
+        .WithSummary("Aenderungen seit einem Zeitpunkt abrufen")
+        .Produces<ChangeSetResult>(StatusCodes.Status200OK);
 
         group.MapGet("/conflicts", async (
             string? deviceId,
@@ -53,7 +56,8 @@ public static class SyncEndpoints
         })
         .RequireAuthorization()
         .WithName("GetConflicts")
-        .Produces(StatusCodes.Status200OK);
+        .WithSummary("Sync-Konflikte auflisten")
+        .Produces<List<ConflictDto>>(StatusCodes.Status200OK);
 
         group.MapPost("/conflicts/{id:guid}/resolve", async (
             Guid id,
@@ -67,7 +71,9 @@ public static class SyncEndpoints
         })
         .RequireAuthorization(AuthPolicies.RequireAdmin)
         .WithName("ResolveConflict")
+        .WithSummary("Sync-Konflikt manuell aufloesen")
         .Produces(StatusCodes.Status204NoContent)
+        .Produces(StatusCodes.Status404NotFound)
         .ProducesValidationProblem();
     }
 }

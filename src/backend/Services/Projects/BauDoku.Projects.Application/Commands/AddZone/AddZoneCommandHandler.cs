@@ -13,7 +13,7 @@ public sealed class AddZoneCommandHandler(IProjectRepository projects, IUnitOfWo
     {
         var projectId = ProjectIdentifier.From(command.ProjectId);
         var project = await projects.GetByIdAsync(projectId, cancellationToken)
-            ?? throw new InvalidOperationException($"Projekt mit ID '{command.ProjectId}' wurde nicht gefunden.");
+            ?? throw new KeyNotFoundException($"Projekt mit ID '{command.ProjectId}' wurde nicht gefunden.");
 
         var zoneId = ZoneIdentifier.New();
         var zoneName = ZoneName.From(command.Name);

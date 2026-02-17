@@ -8,10 +8,10 @@ namespace BauDoku.Documentation.Application.Commands.UpdateInstallation;
 public sealed class UpdateInstallationCommandHandler(IInstallationRepository installations, IUnitOfWork unitOfWork)
     : ICommandHandler<UpdateInstallationCommand>
 {
-    public async Task Handle(UpdateInstallationCommand command, CancellationToken cancellationToken)
+    public async Task Handle(UpdateInstallationCommand command, CancellationToken cancellationToken = default)
     {
         var installationId = InstallationIdentifier.From(command.InstallationId);
-        var installation = await installations.GetByIdAsync(installationId, cancellationToken) ?? throw new InvalidOperationException($"Installation mit ID {command.InstallationId} nicht gefunden.");
+        var installation = await installations.GetByIdAsync(installationId, cancellationToken) ?? throw new KeyNotFoundException($"Installation mit ID {command.InstallationId} nicht gefunden.");
 
         if (command.Latitude.HasValue && command.Longitude.HasValue && command.HorizontalAccuracy.HasValue && command.GpsSource is not null)
         {
@@ -43,6 +43,14 @@ public sealed class UpdateInstallationCommandHandler(IInstallationRepository ins
         if (command.DepthMm.HasValue)
         {
             installation.UpdateDepth(Depth.From(command.DepthMm.Value));
+        }
+
+        if (command.Manufacturer is not null || command.ModelName is not null || command.SerialNumber is not null)
+        {
+            installation.UpdateDeviceInfo(
+                command.Manufacturer is not null ? Manufacturer.From(command.Manufacturer) : null,
+                command.ModelName is not null ? ModelName.From(command.ModelName) : null,
+                command.SerialNumber is not null ? SerialNumber.From(command.SerialNumber) : null);
         }
 
         await unitOfWork.SaveChangesAsync(cancellationToken);

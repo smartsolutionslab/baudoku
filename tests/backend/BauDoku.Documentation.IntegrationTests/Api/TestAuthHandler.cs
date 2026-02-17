@@ -11,10 +11,15 @@ public sealed class TestAuthHandler(IOptionsMonitor<AuthenticationSchemeOptions>
 {
     public const string SchemeName = "TestScheme";
 
+    public static bool IsAuthenticated { get; set; } = true;
+
     public static string[] Roles { get; set; } = ["user", "admin"];
 
     protected override Task<AuthenticateResult> HandleAuthenticateAsync()
     {
+        if (!IsAuthenticated)
+            return Task.FromResult(AuthenticateResult.NoResult());
+
         var claims = new List<Claim>
         {
             new(ClaimTypes.NameIdentifier, "test-user-id"),

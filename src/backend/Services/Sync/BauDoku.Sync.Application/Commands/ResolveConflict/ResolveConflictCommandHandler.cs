@@ -12,7 +12,7 @@ public sealed class ResolveConflictCommandHandler(ISyncBatchRepository syncBatch
     public async Task Handle(ResolveConflictCommand command, CancellationToken cancellationToken = default)
     {
         var conflictId = ConflictRecordIdentifier.From(command.ConflictId);
-        var batch = await syncBatches.GetByConflictIdAsync(conflictId, cancellationToken) ?? throw new InvalidOperationException($"Batch fuer Konflikt {command.ConflictId} nicht gefunden.");
+        var batch = await syncBatches.GetByConflictIdAsync(conflictId, cancellationToken) ?? throw new KeyNotFoundException($"Batch fuer Konflikt {command.ConflictId} nicht gefunden.");
 
         var strategy = ConflictResolutionStrategy.From(command.Strategy);
         var mergedPayload = command.MergedPayload is not null ? DeltaPayload.From(command.MergedPayload) : null;
