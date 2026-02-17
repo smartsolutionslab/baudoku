@@ -21,18 +21,18 @@ public sealed class ProcessSyncBatchCommandHandler(ISyncBatchRepository syncBatc
         var appliedCount = 0;
         var conflicts = new List<ConflictDto>();
 
-        foreach (var deltaDto in command.Deltas)
+        foreach (var (entityTypeName, entityId, operationName, baseVersion, payloadJson, timestamp) in command.Deltas)
         {
-            SyncMetrics.DeltaPayloadSize.Record(deltaDto.Payload.Length);
+            SyncMetrics.DeltaPayloadSize.Record(payloadJson.Length);
 
-            var entityType = EntityType.From(deltaDto.EntityType);
-            var entityRef = EntityReference.Create(entityType, deltaDto.EntityId);
-            var operation = DeltaOperation.From(deltaDto.Operation);
-            var clientBaseVersion = SyncVersion.From(deltaDto.BaseVersion);
-            var payload = DeltaPayload.From(deltaDto.Payload);
+            var entityType = EntityType.From(entityTypeName);
+            var entityRef = EntityReference.Create(entityType, entityId);
+            var operation = DeltaOperation.From(operationName);
+            var clientBaseVersion = SyncVersion.From(baseVersion);
+            var payload = DeltaPayload.From(payloadJson);
 
             var currentServerVersion = await entityVersionStore.GetCurrentVersionAsync(
-                entityType, deltaDto.EntityId, cancellationToken);
+                entityType, entityId, cancellationToken);
 
             if (clientBaseVersion.Value == currentServerVersion.Value)
             {
@@ -45,18 +45,18 @@ public sealed class ProcessSyncBatchCommandHandler(ISyncBatchRepository syncBatc
                     clientBaseVersion,
                     newVersion,
                     payload,
-                    deltaDto.Timestamp);
+                    timestamp);
 
                 await entityVersionStore.SetVersionAsync(
-                    entityType, deltaDto.EntityId, newVersion,
-                    deltaDto.Payload, deviceId, cancellationToken);
+                    entityType, entityId, newVersion,
+                    payloadJson, deviceId, cancellationToken);
 
                 appliedCount++;
             }
             else
             {
                 var serverPayloadJson = await entityVersionStore.GetCurrentPayloadAsync(
-                    entityType, deltaDto.EntityId, cancellationToken);
+                    entityType, entityId, cancellationToken);
                 var serverPayload = DeltaPayload.From(serverPayloadJson ?? "{}");
 
                 var conflict = batch.AddConflict(

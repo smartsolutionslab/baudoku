@@ -10,14 +10,7 @@ public sealed class ListInstallationsQueryHandler(IInstallationReadRepository in
 {
     public async Task<PagedResult<InstallationListItemDto>> Handle(ListInstallationsQuery query, CancellationToken cancellationToken = default)
     {
-        return await installations.ListAsync(
-            query.ProjectId,
-            query.ZoneId,
-            query.Type,
-            query.Status,
-            query.Search,
-            query.Page,
-            query.PageSize,
-            cancellationToken);
+        var (projectId, zoneId, type, status, search, page, pageSize) = query;
+        return await installations.ListAsync(projectId, zoneId, type, status, search, page, pageSize, cancellationToken);
     }
 }

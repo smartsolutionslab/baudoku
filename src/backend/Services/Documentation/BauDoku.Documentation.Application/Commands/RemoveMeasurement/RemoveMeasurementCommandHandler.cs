@@ -11,11 +11,12 @@ public sealed class RemoveMeasurementCommandHandler(IInstallationRepository inst
 {
     public async Task Handle(RemoveMeasurementCommand command, CancellationToken cancellationToken = default)
     {
-        var installationId = InstallationIdentifier.From(command.InstallationId);
-        var installation = await installations.GetByIdAsync(installationId, cancellationToken) ?? throw new KeyNotFoundException($"Installation mit ID {command.InstallationId} nicht gefunden.");
+        var (installationId, measurementId) = command;
+        var installation = await installations.GetByIdAsync(
+            InstallationIdentifier.From(installationId), cancellationToken)
+            ?? throw new KeyNotFoundException($"Installation mit ID {installationId} nicht gefunden.");
 
-        var measurementId = MeasurementIdentifier.From(command.MeasurementId);
-        installation.RemoveMeasurement(measurementId);
+        installation.RemoveMeasurement(MeasurementIdentifier.From(measurementId));
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
 

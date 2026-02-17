@@ -11,14 +11,16 @@ public sealed class RecordMeasurementCommandHandler(IInstallationRepository inst
 {
     public async Task<Guid> Handle(RecordMeasurementCommand command, CancellationToken cancellationToken = default)
     {
-        var installationId = InstallationIdentifier.From(command.InstallationId);
-        var installation = await installations.GetByIdAsync(installationId, cancellationToken) ?? throw new KeyNotFoundException($"Installation mit ID {command.InstallationId} nicht gefunden.");
+        var (installationId, type, value, unit, minThreshold, maxThreshold, notes) = command;
+        var installation = await installations.GetByIdAsync(
+            InstallationIdentifier.From(installationId), cancellationToken)
+            ?? throw new KeyNotFoundException($"Installation mit ID {installationId} nicht gefunden.");
 
         var measurementId = MeasurementIdentifier.New();
-        var type = MeasurementType.From(command.Type);
-        var value = MeasurementValue.Create(command.Value, command.Unit, command.MinThreshold, command.MaxThreshold);
+        var measurementType = MeasurementType.From(type);
+        var measurementValue = MeasurementValue.Create(value, unit, minThreshold, maxThreshold);
 
-        installation.RecordMeasurement(measurementId, type, value, command.Notes);
+        installation.RecordMeasurement(measurementId, measurementType, measurementValue, notes);
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
 

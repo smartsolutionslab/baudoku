@@ -14,17 +14,19 @@ public sealed class CreateProjectCommandHandler(IProjectRepository projects, IUn
 {
     public async Task<Guid> Handle(CreateProjectCommand command, CancellationToken cancellationToken = default)
     {
-        var projectId = ProjectIdentifier.New();
-        var name = ProjectName.From(command.Name);
+        var (name, street, city, zipCode, clientName, clientEmail, clientPhone) = command;
 
-        var nameExists = await projects.ExistsByNameAsync(name, cancellationToken);
+        var projectId = ProjectIdentifier.New();
+        var projectName = ProjectName.From(name);
+
+        var nameExists = await projects.ExistsByNameAsync(projectName, cancellationToken);
         var rule = new ProjectMustHaveUniqueName(nameExists);
         if (rule.IsBroken()) throw new BusinessRuleException(rule);
 
-        var address = Address.Create(command.Street, command.City, command.ZipCode);
-        var client = ClientInfo.Create(command.ClientName, command.ClientEmail, command.ClientPhone);
+        var address = Address.Create(street, city, zipCode);
+        var client = ClientInfo.Create(clientName, clientEmail, clientPhone);
 
-        var project = Project.Create(projectId, name, address, client);
+        var project = Project.Create(projectId, projectName, address, client);
 
         await projects.AddAsync(project, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);

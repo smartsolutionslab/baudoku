@@ -11,33 +11,31 @@ public sealed class AddPhotoCommandHandler(IInstallationRepository installations
 {
     public async Task<Guid> Handle(AddPhotoCommand command, CancellationToken cancellationToken = default)
     {
-        var installationId = InstallationIdentifier.From(command.InstallationId);
-        var installation = await installations.GetByIdAsync(installationId, cancellationToken)
-            ?? throw new KeyNotFoundException($"Installation mit ID {command.InstallationId} nicht gefunden.");
+        var (installationId, fileName, contentType, fileSize, photoTypeName, captionText, descriptionText,
+             latitude, longitude, altitude, horizontalAccuracy, gpsSource, stream, takenAt) = command;
 
-        var blobUrl = await photoStorage.UploadAsync(
-            command.Stream, command.FileName, command.ContentType, cancellationToken);
+        var installation = await installations.GetByIdAsync(
+            InstallationIdentifier.From(installationId), cancellationToken)
+            ?? throw new KeyNotFoundException($"Installation mit ID {installationId} nicht gefunden.");
+
+        var blobUrl = await photoStorage.UploadAsync(stream, fileName, contentType, cancellationToken);
 
         var photoId = PhotoIdentifier.New();
-        var photoType = PhotoType.From(command.PhotoType);
-        var caption = command.Caption is not null ? Caption.From(command.Caption) : null;
-        var description = command.Description is not null ? Description.From(command.Description) : null;
+        var photoType = PhotoType.From(photoTypeName);
+        var caption = captionText is not null ? Caption.From(captionText) : null;
+        var description = descriptionText is not null ? Description.From(descriptionText) : null;
 
         GpsPosition? position = null;
-        if (command.Latitude.HasValue && command.Longitude.HasValue
-            && command.HorizontalAccuracy.HasValue && command.GpsSource is not null)
+        if (latitude.HasValue && longitude.HasValue
+            && horizontalAccuracy.HasValue && gpsSource is not null)
         {
             position = GpsPosition.Create(
-                command.Latitude.Value,
-                command.Longitude.Value,
-                command.Altitude,
-                command.HorizontalAccuracy.Value,
-                command.GpsSource);
+                latitude.Value, longitude.Value, altitude, horizontalAccuracy.Value, gpsSource);
         }
 
         installation.AddPhoto(
-            photoId, command.FileName, blobUrl, command.ContentType, command.FileSize,
-            photoType, caption, description, position, command.TakenAt);
+            photoId, fileName, blobUrl, contentType, fileSize,
+            photoType, caption, description, position, takenAt);
 
         try
         {
@@ -50,7 +48,7 @@ public sealed class AddPhotoCommandHandler(IInstallationRepository installations
         }
 
         DocumentationMetrics.PhotosAdded.Add(1);
-        DocumentationMetrics.PhotoFileSize.Record(command.FileSize);
+        DocumentationMetrics.PhotoFileSize.Record(fileSize);
 
         return photoId.Value;
     }

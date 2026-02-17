@@ -10,14 +10,8 @@ public sealed class GetInstallationsInBoundingBoxQueryHandler(IInstallationReadR
 {
     public async Task<PagedResult<InstallationListItemDto>> Handle(GetInstallationsInBoundingBoxQuery query, CancellationToken cancellationToken = default)
     {
+        var (minLatitude, minLongitude, maxLatitude, maxLongitude, projectId, page, pageSize) = query;
         return await installations.SearchInBoundingBoxAsync(
-            query.MinLatitude,
-            query.MinLongitude,
-            query.MaxLatitude,
-            query.MaxLongitude,
-            query.ProjectId,
-            query.Page,
-            query.PageSize,
-            cancellationToken);
+            minLatitude, minLongitude, maxLatitude, maxLongitude, projectId, page, pageSize, cancellationToken);
     }
 }

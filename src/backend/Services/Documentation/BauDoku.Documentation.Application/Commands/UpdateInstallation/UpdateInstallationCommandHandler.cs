@@ -10,47 +10,44 @@ public sealed class UpdateInstallationCommandHandler(IInstallationRepository ins
 {
     public async Task Handle(UpdateInstallationCommand command, CancellationToken cancellationToken = default)
     {
-        var installationId = InstallationIdentifier.From(command.InstallationId);
-        var installation = await installations.GetByIdAsync(installationId, cancellationToken) ?? throw new KeyNotFoundException($"Installation mit ID {command.InstallationId} nicht gefunden.");
+        var (installationId, latitude, longitude, altitude, horizontalAccuracy, gpsSource,
+             correctionService, rtkFixStatus, satelliteCount, hdop, correctionAge, description,
+             cableType, crossSection, cableColor, conductorCount, depthMm, manufacturer, modelName, serialNumber) = command;
 
-        if (command.Latitude.HasValue && command.Longitude.HasValue && command.HorizontalAccuracy.HasValue && command.GpsSource is not null)
+        var installation = await installations.GetByIdAsync(
+            InstallationIdentifier.From(installationId), cancellationToken)
+            ?? throw new KeyNotFoundException($"Installation mit ID {installationId} nicht gefunden.");
+
+        if (latitude.HasValue && longitude.HasValue && horizontalAccuracy.HasValue && gpsSource is not null)
         {
             var position = GpsPosition.Create(
-                command.Latitude.Value,
-                command.Longitude.Value,
-                command.Altitude,
-                command.HorizontalAccuracy.Value,
-                command.GpsSource,
-                command.CorrectionService,
-                command.RtkFixStatus,
-                command.SatelliteCount,
-                command.Hdop,
-                command.CorrectionAge);
+                latitude.Value, longitude.Value, altitude, horizontalAccuracy.Value, gpsSource,
+                correctionService, rtkFixStatus, satelliteCount, hdop, correctionAge);
 
             installation.UpdatePosition(position);
         }
 
-        if (command.Description is not null)
+        if (description is not null)
         {
-            installation.UpdateDescription(Description.From(command.Description));
+            installation.UpdateDescription(Description.From(description));
         }
 
-        if (command.CableType is not null)
+        if (cableType is not null)
         {
-            installation.UpdateCableSpec(CableSpec.Create(command.CableType, command.CrossSection, command.CableColor, command.ConductorCount));
+            installation.UpdateCableSpec(CableSpec.Create(cableType, crossSection, cableColor, conductorCount));
         }
 
-        if (command.DepthMm.HasValue)
+        if (depthMm.HasValue)
         {
-            installation.UpdateDepth(Depth.From(command.DepthMm.Value));
+            installation.UpdateDepth(Depth.From(depthMm.Value));
         }
 
-        if (command.Manufacturer is not null || command.ModelName is not null || command.SerialNumber is not null)
+        if (manufacturer is not null || modelName is not null || serialNumber is not null)
         {
             installation.UpdateDeviceInfo(
-                command.Manufacturer is not null ? Manufacturer.From(command.Manufacturer) : null,
-                command.ModelName is not null ? ModelName.From(command.ModelName) : null,
-                command.SerialNumber is not null ? SerialNumber.From(command.SerialNumber) : null);
+                manufacturer is not null ? Manufacturer.From(manufacturer) : null,
+                modelName is not null ? ModelName.From(modelName) : null,
+                serialNumber is not null ? SerialNumber.From(serialNumber) : null);
         }
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
