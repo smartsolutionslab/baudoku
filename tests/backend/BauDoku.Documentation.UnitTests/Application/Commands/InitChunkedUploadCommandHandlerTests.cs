@@ -9,15 +9,15 @@ namespace BauDoku.Documentation.UnitTests.Application.Commands;
 
 public sealed class InitChunkedUploadCommandHandlerTests
 {
-    private readonly IInstallationRepository repository;
+    private readonly IInstallationRepository installations;
     private readonly IChunkedUploadStorage chunkedUploadStorage;
     private readonly InitChunkedUploadCommandHandler handler;
 
     public InitChunkedUploadCommandHandlerTests()
     {
-        repository = Substitute.For<IInstallationRepository>();
+        installations = Substitute.For<IInstallationRepository>();
         chunkedUploadStorage = Substitute.For<IChunkedUploadStorage>();
-        handler = new InitChunkedUploadCommandHandler(repository, chunkedUploadStorage);
+        handler = new InitChunkedUploadCommandHandler(installations, chunkedUploadStorage);
     }
 
     private static Installation CreateValidInstallation() =>
@@ -37,7 +37,7 @@ public sealed class InitChunkedUploadCommandHandlerTests
     {
         var installation = CreateValidInstallation();
         var expectedSessionId = Guid.NewGuid();
-        repository.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
+        installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
         chunkedUploadStorage.InitSessionAsync(Arg.Any<ChunkedUploadSession>(), Arg.Any<CancellationToken>())
             .Returns(expectedSessionId);
@@ -57,7 +57,7 @@ public sealed class InitChunkedUploadCommandHandlerTests
     [Fact]
     public async Task Handle_WhenInstallationNotFound_ShouldThrow()
     {
-        repository.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
+        installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns((Installation?)null);
 
         var command = CreateValidCommand(Guid.NewGuid());

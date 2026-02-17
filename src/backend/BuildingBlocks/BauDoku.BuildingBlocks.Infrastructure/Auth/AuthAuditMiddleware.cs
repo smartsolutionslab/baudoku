@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
@@ -19,13 +18,5 @@ public sealed class AuthAuditMiddleware(RequestDelegate next, ILogger<AuthAuditM
 
             logger.LogWarning("Auth {StatusCode}: User={UserId} Method={Method} Path={Path}", context.Response.StatusCode, userId, method, path);
         }
-    }
-}
-
-public static class AuthAuditMiddlewareExtensions
-{
-    public static IApplicationBuilder UseAuthAuditLogging(this IApplicationBuilder app)
-    {
-        return app.UseMiddleware<AuthAuditMiddleware>();
     }
 }

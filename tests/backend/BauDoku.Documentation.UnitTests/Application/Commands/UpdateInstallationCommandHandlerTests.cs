@@ -10,15 +10,15 @@ namespace BauDoku.Documentation.UnitTests.Application.Commands;
 
 public sealed class UpdateInstallationCommandHandlerTests
 {
-    private readonly IInstallationRepository repository;
+    private readonly IInstallationRepository installations;
     private readonly IUnitOfWork unitOfWork;
     private readonly UpdateInstallationCommandHandler handler;
 
     public UpdateInstallationCommandHandlerTests()
     {
-        repository = Substitute.For<IInstallationRepository>();
+        installations = Substitute.For<IInstallationRepository>();
         unitOfWork = Substitute.For<IUnitOfWork>();
-        handler = new UpdateInstallationCommandHandler(repository, unitOfWork);
+        handler = new UpdateInstallationCommandHandler(installations, unitOfWork);
     }
 
     private static Installation CreateValidInstallation() =>
@@ -33,7 +33,7 @@ public sealed class UpdateInstallationCommandHandlerTests
     public async Task Handle_WithGpsUpdate_ShouldUpdatePosition()
     {
         var installation = CreateValidInstallation();
-        repository.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
+        installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
 
         var command = new UpdateInstallationCommand(
@@ -66,7 +66,7 @@ public sealed class UpdateInstallationCommandHandlerTests
     public async Task Handle_WithDescriptionUpdate_ShouldUpdateDescription()
     {
         var installation = CreateValidInstallation();
-        repository.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
+        installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
 
         var command = new UpdateInstallationCommand(
@@ -90,7 +90,7 @@ public sealed class UpdateInstallationCommandHandlerTests
     public async Task Handle_WithCableSpecUpdate_ShouldUpdateCableSpec()
     {
         var installation = CreateValidInstallation();
-        repository.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
+        installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
 
         var command = new UpdateInstallationCommand(
@@ -118,7 +118,7 @@ public sealed class UpdateInstallationCommandHandlerTests
     public async Task Handle_WithDepthUpdate_ShouldUpdateDepth()
     {
         var installation = CreateValidInstallation();
-        repository.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
+        installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
 
         var command = new UpdateInstallationCommand(
@@ -142,7 +142,7 @@ public sealed class UpdateInstallationCommandHandlerTests
     [Fact]
     public async Task Handle_WhenInstallationNotFound_ShouldThrow()
     {
-        repository.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
+        installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns((Installation?)null);
 
         var command = new UpdateInstallationCommand(
@@ -164,7 +164,7 @@ public sealed class UpdateInstallationCommandHandlerTests
     public async Task Handle_WithNoUpdates_ShouldStillSave()
     {
         var installation = CreateValidInstallation();
-        repository.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
+        installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
 
         var command = new UpdateInstallationCommand(

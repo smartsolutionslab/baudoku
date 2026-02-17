@@ -7,23 +7,13 @@ using Microsoft.Extensions.Logging;
 
 namespace BauDoku.Sync.Infrastructure.BackgroundServices;
 
-public sealed class SyncSchedulerService : BackgroundService
+public sealed class SyncSchedulerService(
+    IServiceScopeFactory scopeFactory,
+    ILogger<SyncSchedulerService> logger,
+    IConfiguration configuration) : BackgroundService
 {
-    private readonly IServiceScopeFactory scopeFactory;
-    private readonly ILogger<SyncSchedulerService> logger;
-    private readonly TimeSpan interval;
-
-    public SyncSchedulerService(
-        IServiceScopeFactory scopeFactory,
-        ILogger<SyncSchedulerService> logger,
-        IConfiguration configuration)
-    {
-        this.scopeFactory = scopeFactory;
-        this.logger = logger;
-
-        var seconds = configuration.GetValue("Sync:SchedulerIntervalSeconds", 30);
-        interval = TimeSpan.FromSeconds(seconds);
-    }
+    private readonly TimeSpan interval = TimeSpan.FromSeconds(
+        configuration.GetValue("Sync:SchedulerIntervalSeconds", 30));
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {

@@ -9,13 +9,13 @@ namespace BauDoku.Documentation.UnitTests.Application.Queries;
 
 public sealed class GetMeasurementsQueryHandlerTests
 {
-    private readonly IInstallationRepository repository;
+    private readonly IInstallationRepository installations;
     private readonly GetMeasurementsQueryHandler handler;
 
     public GetMeasurementsQueryHandlerTests()
     {
-        repository = Substitute.For<IInstallationRepository>();
-        handler = new GetMeasurementsQueryHandler(repository);
+        installations = Substitute.For<IInstallationRepository>();
+        handler = new GetMeasurementsQueryHandler(installations);
     }
 
     [Fact]
@@ -34,7 +34,7 @@ public sealed class GetMeasurementsQueryHandlerTests
             MeasurementValue.Create(500.0, "MΩ", 1.0, null),
             "Notiz");
 
-        repository.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
+        installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
 
         var result = await handler.Handle(new GetMeasurementsQuery(installation.Id.Value), CancellationToken.None);
@@ -49,7 +49,7 @@ public sealed class GetMeasurementsQueryHandlerTests
     [Fact]
     public async Task Handle_WhenInstallationNotFound_ShouldThrow()
     {
-        repository.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
+        installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns((Installation?)null);
 
         var act = () => handler.Handle(new GetMeasurementsQuery(Guid.NewGuid()), CancellationToken.None);

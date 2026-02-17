@@ -3,11 +3,13 @@ using FluentValidation;
 
 namespace BauDoku.BuildingBlocks.Application.Behaviors;
 
-public sealed class ValidationBehavior<TCommand, TResult>(ICommandHandler<TCommand, TResult> inner, IEnumerable<IValidator<TCommand>> validators)
-    : ICommandHandler<TCommand, TResult>
-    where TCommand : ICommand<TResult>
+public sealed class ValidationBehaviorVoid<TCommand>(
+    ICommandHandler<TCommand> inner,
+    IEnumerable<IValidator<TCommand>> validators)
+    : ICommandHandler<TCommand>
+    where TCommand : ICommand
 {
-    public async Task<TResult> Handle(TCommand command, CancellationToken cancellationToken = default)
+    public async Task Handle(TCommand command, CancellationToken cancellationToken = default)
     {
         if (validators.Any())
         {
@@ -24,6 +26,6 @@ public sealed class ValidationBehavior<TCommand, TResult>(ICommandHandler<TComma
                 throw new ValidationException(failures);
         }
 
-        return await inner.Handle(command, cancellationToken);
+        await inner.Handle(command, cancellationToken);
     }
 }
