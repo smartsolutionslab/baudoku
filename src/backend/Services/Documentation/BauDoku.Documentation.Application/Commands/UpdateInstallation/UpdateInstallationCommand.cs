@@ -19,4 +19,7 @@ public sealed record UpdateInstallationCommand(
     decimal? CrossSection,
     string? CableColor,
     int? ConductorCount,
-    int? DepthMm) : ICommand;
+    int? DepthMm,
+    string? Manufacturer,
+    string? ModelName,
+    string? SerialNumber) : ICommand;

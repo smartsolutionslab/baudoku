@@ -184,4 +184,20 @@ public sealed class Installation : AggregateRoot<InstallationIdentifier>
 
         AddDomainEvent(new InstallationCompleted(Id, DateTime.UtcNow));
     }
+
+    public void Delete()
+    {
+        AddDomainEvent(new InstallationDeleted(Id, ProjectId, DateTime.UtcNow));
+    }
+
+    public void UpdateDeviceInfo(Manufacturer? manufacturer, ModelName? modelName, SerialNumber? serialNumber)
+    {
+        CheckRule(new CompletedInstallationCannotBeModified(Status));
+
+        Manufacturer = manufacturer;
+        ModelName = modelName;
+        SerialNumber = serialNumber;
+
+        AddDomainEvent(new InstallationUpdated(Id, DateTime.UtcNow));
+    }
 }

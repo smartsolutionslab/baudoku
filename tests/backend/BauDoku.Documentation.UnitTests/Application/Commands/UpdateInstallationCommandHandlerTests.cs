@@ -53,7 +53,8 @@ public sealed class UpdateInstallationCommandHandlerTests
             CrossSection: null,
             CableColor: null,
             ConductorCount: null,
-            DepthMm: null);
+            DepthMm: null,
+            Manufacturer: null, ModelName: null, SerialNumber: null);
 
         await handler.Handle(command, CancellationToken.None);
 
@@ -77,7 +78,8 @@ public sealed class UpdateInstallationCommandHandlerTests
             SatelliteCount: null, Hdop: null, CorrectionAge: null,
             Description: "Neue Beschreibung",
             CableType: null, CrossSection: null, CableColor: null,
-            ConductorCount: null, DepthMm: null);
+            ConductorCount: null, DepthMm: null,
+            Manufacturer: null, ModelName: null, SerialNumber: null);
 
         await handler.Handle(command, CancellationToken.None);
 
@@ -104,7 +106,8 @@ public sealed class UpdateInstallationCommandHandlerTests
             CrossSection: 2.5m,
             CableColor: "grau",
             ConductorCount: 3,
-            DepthMm: null);
+            DepthMm: null,
+            Manufacturer: null, ModelName: null, SerialNumber: null);
 
         await handler.Handle(command, CancellationToken.None);
 
@@ -130,7 +133,8 @@ public sealed class UpdateInstallationCommandHandlerTests
             Description: null,
             CableType: null, CrossSection: null, CableColor: null,
             ConductorCount: null,
-            DepthMm: 600);
+            DepthMm: 600,
+            Manufacturer: null, ModelName: null, SerialNumber: null);
 
         await handler.Handle(command, CancellationToken.None);
 
@@ -153,7 +157,8 @@ public sealed class UpdateInstallationCommandHandlerTests
             SatelliteCount: null, Hdop: null, CorrectionAge: null,
             Description: null,
             CableType: null, CrossSection: null, CableColor: null,
-            ConductorCount: null, DepthMm: null);
+            ConductorCount: null, DepthMm: null,
+            Manufacturer: null, ModelName: null, SerialNumber: null);
 
         var act = () => handler.Handle(command, CancellationToken.None);
 
@@ -175,7 +180,8 @@ public sealed class UpdateInstallationCommandHandlerTests
             SatelliteCount: null, Hdop: null, CorrectionAge: null,
             Description: null,
             CableType: null, CrossSection: null, CableColor: null,
-            ConductorCount: null, DepthMm: null);
+            ConductorCount: null, DepthMm: null,
+            Manufacturer: null, ModelName: null, SerialNumber: null);
 
         await handler.Handle(command, CancellationToken.None);
 

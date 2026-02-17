@@ -45,6 +45,14 @@ public sealed class UpdateInstallationCommandHandler(IInstallationRepository ins
             installation.UpdateDepth(Depth.From(command.DepthMm.Value));
         }
 
+        if (command.Manufacturer is not null || command.ModelName is not null || command.SerialNumber is not null)
+        {
+            installation.UpdateDeviceInfo(
+                command.Manufacturer is not null ? Manufacturer.From(command.Manufacturer) : null,
+                command.ModelName is not null ? ModelName.From(command.ModelName) : null,
+                command.SerialNumber is not null ? SerialNumber.From(command.SerialNumber) : null);
+        }
+
         await unitOfWork.SaveChangesAsync(cancellationToken);
     }
 }

@@ -2,6 +2,8 @@ using BauDoku.BuildingBlocks.Application.Dispatcher;
 using BauDoku.BuildingBlocks.Application.Pagination;
 using BauDoku.BuildingBlocks.Application.Responses;
 using BauDoku.BuildingBlocks.Infrastructure.Auth;
+using BauDoku.Documentation.Application.Commands.CompleteInstallation;
+using BauDoku.Documentation.Application.Commands.DeleteInstallation;
 using BauDoku.Documentation.Application.Commands.DocumentInstallation;
 using BauDoku.Documentation.Application.Commands.UpdateInstallation;
 using BauDoku.Documentation.Application.Queries.Dtos;
@@ -133,7 +135,10 @@ public static class InstallationEndpoints
                 request.CrossSection,
                 request.CableColor,
                 request.ConductorCount,
-                request.DepthMm);
+                request.DepthMm,
+                request.Manufacturer,
+                request.ModelName,
+                request.SerialNumber);
 
             await dispatcher.Send(command, ct);
             return Results.NoContent();
@@ -144,5 +149,35 @@ public static class InstallationEndpoints
         .Produces(StatusCodes.Status204NoContent)
         .Produces(StatusCodes.Status404NotFound)
         .ProducesValidationProblem();
+
+        group.MapPost("/{id:guid}/complete", async (
+            Guid id,
+            IDispatcher dispatcher,
+            CancellationToken ct) =>
+        {
+            var command = new CompleteInstallationCommand(id);
+            await dispatcher.Send(command, ct);
+            return Results.NoContent();
+        })
+        .RequireAuthorization(AuthPolicies.RequireUser)
+        .WithName("CompleteInstallation")
+        .WithSummary("Installation als abgeschlossen markieren")
+        .Produces(StatusCodes.Status204NoContent)
+        .Produces(StatusCodes.Status404NotFound);
+
+        group.MapDelete("/{id:guid}", async (
+            Guid id,
+            IDispatcher dispatcher,
+            CancellationToken ct) =>
+        {
+            var command = new DeleteInstallationCommand(id);
+            await dispatcher.Send(command, ct);
+            return Results.NoContent();
+        })
+        .RequireAuthorization(AuthPolicies.RequireAdmin)
+        .WithName("DeleteInstallation")
+        .WithSummary("Installation loeschen")
+        .Produces(StatusCodes.Status204NoContent)
+        .Produces(StatusCodes.Status404NotFound);
     }
 }
