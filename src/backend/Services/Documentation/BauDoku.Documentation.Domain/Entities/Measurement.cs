@@ -9,11 +9,11 @@ public sealed class Measurement : Entity<MeasurementIdentifier>
     public MeasurementValue Value { get; private set; } = default!;
     public MeasurementResult Result { get; private set; } = default!;
     public DateTime MeasuredAt { get; private set; }
-    public string? Notes { get; private set; }
+    public Notes? Notes { get; private set; }
 
     private Measurement() { }
 
-    internal static Measurement Create(MeasurementIdentifier id, MeasurementType type, MeasurementValue value, string? notes)
+    internal static Measurement Create(MeasurementIdentifier id, MeasurementType type, MeasurementValue value, Notes? notes)
     {
         var result = Evaluate(value);
 

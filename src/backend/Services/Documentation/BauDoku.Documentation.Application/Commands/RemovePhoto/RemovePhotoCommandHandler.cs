@@ -24,7 +24,7 @@ public sealed class RemovePhotoCommandHandler(IInstallationRepository installati
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        await photoStorage.DeleteAsync(photo.BlobUrl, cancellationToken);
+        await photoStorage.DeleteAsync(photo.BlobUrl.Value, cancellationToken);
 
         DocumentationMetrics.PhotosRemoved.Add(1);
     }

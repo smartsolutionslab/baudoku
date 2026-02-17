@@ -53,9 +53,16 @@ public sealed class InstallationConfiguration : IEntityTypeConfiguration<Install
             pos.Property(p => p.Longitude).HasColumnName("gps_longitude").IsRequired();
             pos.Property(p => p.Altitude).HasColumnName("gps_altitude");
             pos.Property(p => p.HorizontalAccuracy).HasColumnName("gps_horizontal_accuracy").IsRequired();
-            pos.Property(p => p.Source).HasColumnName("gps_source").HasMaxLength(20).IsRequired();
-            pos.Property(p => p.CorrectionService).HasColumnName("gps_correction_service").HasMaxLength(20);
-            pos.Property(p => p.RtkFixStatus).HasColumnName("gps_rtk_fix_status").HasMaxLength(10);
+            pos.Property(p => p.Source).HasColumnName("gps_source").HasMaxLength(GpsSource.MaxLength).IsRequired()
+                .HasConversion(s => s.Value, v => GpsSource.From(v));
+            pos.Property(p => p.CorrectionService).HasColumnName("gps_correction_service").HasMaxLength(CorrectionService.MaxLength)
+                .HasConversion(
+                    s => s != null ? s.Value : null,
+                    v => v != null ? CorrectionService.From(v) : null);
+            pos.Property(p => p.RtkFixStatus).HasColumnName("gps_rtk_fix_status").HasMaxLength(RtkFixStatus.MaxLength)
+                .HasConversion(
+                    s => s != null ? s.Value : null,
+                    v => v != null ? RtkFixStatus.From(v) : null);
             pos.Property(p => p.SatelliteCount).HasColumnName("gps_satellite_count");
             pos.Property(p => p.Hdop).HasColumnName("gps_hdop");
             pos.Property(p => p.CorrectionAge).HasColumnName("gps_correction_age");
@@ -80,9 +87,16 @@ public sealed class InstallationConfiguration : IEntityTypeConfiguration<Install
 
         builder.OwnsOne(i => i.CableSpec, cable =>
         {
-            cable.Property(c => c.CableType).HasColumnName("cable_type").HasMaxLength(CableSpec.MaxCableTypeLength);
-            cable.Property(c => c.CrossSection).HasColumnName("cable_cross_section").HasColumnType("decimal(5,2)");
-            cable.Property(c => c.Color).HasColumnName("cable_color").HasMaxLength(CableSpec.MaxColorLength);
+            cable.Property(c => c.CableType).HasColumnName("cable_type").HasMaxLength(CableType.MaxLength)
+                .HasConversion(ct => ct.Value, v => CableType.From(v));
+            cable.Property(c => c.CrossSection).HasColumnName("cable_cross_section").HasColumnType("decimal(5,2)")
+                .HasConversion(
+                    cs => cs != null ? cs.Value : (decimal?)null,
+                    v => v.HasValue ? CrossSection.From(v.Value) : null);
+            cable.Property(c => c.Color).HasColumnName("cable_color").HasMaxLength(CableColor.MaxLength)
+                .HasConversion(
+                    c => c != null ? c.Value : null,
+                    v => v != null ? CableColor.From(v) : null);
             cable.Property(c => c.ConductorCount).HasColumnName("cable_conductor_count");
         });
 

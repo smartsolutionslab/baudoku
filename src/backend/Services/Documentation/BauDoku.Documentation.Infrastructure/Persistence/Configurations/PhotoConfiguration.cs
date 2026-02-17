@@ -18,22 +18,26 @@ public sealed class PhotoConfiguration : IEntityTypeConfiguration<Photo>
 
         builder.Property(p => p.FileName)
             .HasColumnName("file_name")
-            .HasMaxLength(255)
-            .IsRequired();
+            .HasMaxLength(FileName.MaxLength)
+            .IsRequired()
+            .HasConversion(fn => fn.Value, value => FileName.From(value));
 
         builder.Property(p => p.BlobUrl)
             .HasColumnName("blob_url")
-            .HasMaxLength(2000)
-            .IsRequired();
+            .HasMaxLength(BlobUrl.MaxLength)
+            .IsRequired()
+            .HasConversion(bu => bu.Value, value => BlobUrl.From(value));
 
         builder.Property(p => p.ContentType)
             .HasColumnName("content_type")
-            .HasMaxLength(50)
-            .IsRequired();
+            .HasMaxLength(ContentType.MaxLength)
+            .IsRequired()
+            .HasConversion(ct => ct.Value, value => ContentType.From(value));
 
         builder.Property(p => p.FileSize)
             .HasColumnName("file_size")
-            .IsRequired();
+            .IsRequired()
+            .HasConversion(fs => fs.Value, value => FileSize.From(value));
 
         builder.Property(p => p.PhotoType)
             .HasColumnName("photo_type")
@@ -61,9 +65,16 @@ public sealed class PhotoConfiguration : IEntityTypeConfiguration<Photo>
             pos.Property(p => p.Longitude).HasColumnName("gps_longitude");
             pos.Property(p => p.Altitude).HasColumnName("gps_altitude");
             pos.Property(p => p.HorizontalAccuracy).HasColumnName("gps_horizontal_accuracy");
-            pos.Property(p => p.Source).HasColumnName("gps_source").HasMaxLength(20);
-            pos.Property(p => p.CorrectionService).HasColumnName("gps_correction_service").HasMaxLength(20);
-            pos.Property(p => p.RtkFixStatus).HasColumnName("gps_rtk_fix_status").HasMaxLength(10);
+            pos.Property(p => p.Source).HasColumnName("gps_source").HasMaxLength(GpsSource.MaxLength)
+                .HasConversion(s => s.Value, v => GpsSource.From(v));
+            pos.Property(p => p.CorrectionService).HasColumnName("gps_correction_service").HasMaxLength(CorrectionService.MaxLength)
+                .HasConversion(
+                    s => s != null ? s.Value : null,
+                    v => v != null ? CorrectionService.From(v) : null);
+            pos.Property(p => p.RtkFixStatus).HasColumnName("gps_rtk_fix_status").HasMaxLength(RtkFixStatus.MaxLength)
+                .HasConversion(
+                    s => s != null ? s.Value : null,
+                    v => v != null ? RtkFixStatus.From(v) : null);
             pos.Property(p => p.SatelliteCount).HasColumnName("gps_satellite_count");
             pos.Property(p => p.Hdop).HasColumnName("gps_hdop");
             pos.Property(p => p.CorrectionAge).HasColumnName("gps_correction_age");

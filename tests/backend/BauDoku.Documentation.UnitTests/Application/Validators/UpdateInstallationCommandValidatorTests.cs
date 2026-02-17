@@ -70,7 +70,7 @@ public sealed class UpdateInstallationCommandValidatorTests
     [Fact]
     public void CableType_WhenTooLong_ShouldHaveError()
     {
-        var cmd = CreateValidCommand() with { CableType = new string('a', CableSpec.MaxCableTypeLength + 1) };
+        var cmd = CreateValidCommand() with { CableType = new string('a', CableType.MaxLength + 1) };
         validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.CableType);
     }
 

@@ -26,7 +26,7 @@ public sealed class UpdateInstallationCommandValidator : AbstractValidator<Updat
             .When(x => x.Description is not null);
 
         RuleFor(x => x.CableType)
-            .MaximumLength(CableSpec.MaxCableTypeLength)
+            .MaximumLength(CableType.MaxLength)
             .When(x => x.CableType is not null);
 
         RuleFor(x => x.CrossSection)

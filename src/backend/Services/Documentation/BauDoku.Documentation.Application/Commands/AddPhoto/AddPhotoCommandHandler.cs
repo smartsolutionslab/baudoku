@@ -18,7 +18,7 @@ public sealed class AddPhotoCommandHandler(IInstallationRepository installations
             InstallationIdentifier.From(installationId), cancellationToken)
             ?? throw new KeyNotFoundException($"Installation mit ID {installationId} nicht gefunden.");
 
-        var blobUrl = await photoStorage.UploadAsync(stream, fileName, contentType, cancellationToken);
+        var blobUrlString = await photoStorage.UploadAsync(stream, fileName, contentType, cancellationToken);
 
         var photoId = PhotoIdentifier.New();
         var photoType = PhotoType.From(photoTypeName);
@@ -34,7 +34,7 @@ public sealed class AddPhotoCommandHandler(IInstallationRepository installations
         }
 
         installation.AddPhoto(
-            photoId, fileName, blobUrl, contentType, fileSize,
+            photoId, FileName.From(fileName), BlobUrl.From(blobUrlString), ContentType.From(contentType), FileSize.From(fileSize),
             photoType, caption, description, position, takenAt);
 
         try
@@ -43,7 +43,7 @@ public sealed class AddPhotoCommandHandler(IInstallationRepository installations
         }
         catch
         {
-            await photoStorage.DeleteAsync(blobUrl, cancellationToken);
+            await photoStorage.DeleteAsync(blobUrlString, cancellationToken);
             throw;
         }
 

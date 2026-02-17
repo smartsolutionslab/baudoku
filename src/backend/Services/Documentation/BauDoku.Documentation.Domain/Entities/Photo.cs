@@ -5,10 +5,10 @@ namespace BauDoku.Documentation.Domain.Entities;
 
 public sealed class Photo : Entity<PhotoIdentifier>
 {
-    public string FileName { get; private set; } = default!;
-    public string BlobUrl { get; private set; } = default!;
-    public string ContentType { get; private set; } = default!;
-    public long FileSize { get; private set; }
+    public FileName FileName { get; private set; } = default!;
+    public BlobUrl BlobUrl { get; private set; } = default!;
+    public ContentType ContentType { get; private set; } = default!;
+    public FileSize FileSize { get; private set; } = default!;
     public PhotoType PhotoType { get; private set; } = default!;
     public Caption? Caption { get; private set; }
     public Description? Description { get; private set; }
@@ -19,10 +19,10 @@ public sealed class Photo : Entity<PhotoIdentifier>
 
     internal static Photo Create(
         PhotoIdentifier id,
-        string fileName,
-        string blobUrl,
-        string contentType,
-        long fileSize,
+        FileName fileName,
+        BlobUrl blobUrl,
+        ContentType contentType,
+        FileSize fileSize,
         PhotoType photoType,
         Caption? caption,
         Description? description,

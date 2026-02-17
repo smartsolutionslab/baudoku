@@ -11,7 +11,7 @@ public sealed class MeasurementValueExtendedTests
         var value = MeasurementValue.Create(5.0, "mA", 1.0, 10.0);
 
         value.Value.Should().Be(5.0);
-        value.Unit.Should().Be("mA");
+        value.Unit.Value.Should().Be("mA");
         value.MinThreshold.Should().Be(1.0);
         value.MaxThreshold.Should().Be(10.0);
     }
@@ -53,7 +53,7 @@ public sealed class MeasurementValueExtendedTests
     [Fact]
     public void Create_WithUnitExceedingMaxLength_ShouldThrow()
     {
-        var act = () => MeasurementValue.Create(5.0, new string('x', MeasurementValue.MaxUnitLength + 1));
+        var act = () => MeasurementValue.Create(5.0, new string('x', MeasurementUnit.MaxLength + 1));
         act.Should().Throw<ArgumentException>();
     }
 }

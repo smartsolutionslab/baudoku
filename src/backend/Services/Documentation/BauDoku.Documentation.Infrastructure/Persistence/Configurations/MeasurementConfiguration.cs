@@ -25,7 +25,8 @@ public sealed class MeasurementConfiguration : IEntityTypeConfiguration<Measurem
         builder.OwnsOne(m => m.Value, val =>
         {
             val.Property(v => v.Value).HasColumnName("measurement_value").IsRequired();
-            val.Property(v => v.Unit).HasColumnName("measurement_unit").HasMaxLength(MeasurementValue.MaxUnitLength).IsRequired();
+            val.Property(v => v.Unit).HasColumnName("measurement_unit").HasMaxLength(MeasurementUnit.MaxLength).IsRequired()
+                .HasConversion(u => u.Value, v => MeasurementUnit.From(v));
             val.Property(v => v.MinThreshold).HasColumnName("min_threshold");
             val.Property(v => v.MaxThreshold).HasColumnName("max_threshold");
         });
@@ -44,7 +45,10 @@ public sealed class MeasurementConfiguration : IEntityTypeConfiguration<Measurem
 
         builder.Property(m => m.Notes)
             .HasColumnName("notes")
-            .HasMaxLength(500);
+            .HasMaxLength(Notes.MaxLength)
+            .HasConversion(
+                n => n != null ? n.Value : null,
+                v => v != null ? Notes.From(v) : null);
 
         builder.Property<InstallationIdentifier>("InstallationId")
             .HasColumnName("installation_id")

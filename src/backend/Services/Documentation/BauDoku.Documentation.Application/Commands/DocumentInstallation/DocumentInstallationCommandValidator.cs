@@ -16,7 +16,7 @@ public sealed class DocumentInstallationCommandValidator : AbstractValidator<Doc
 
         RuleFor(x => x.Description).MaximumLength(Description.MaxLength)
             .When(x => x.Description is not null);
-        RuleFor(x => x.CableType).MaximumLength(CableSpec.MaxCableTypeLength)
+        RuleFor(x => x.CableType).MaximumLength(CableType.MaxLength)
             .When(x => x.CableType is not null);
         RuleFor(x => x.Manufacturer).MaximumLength(Domain.ValueObjects.Manufacturer.MaxLength)
             .When(x => x.Manufacturer is not null);

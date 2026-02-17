@@ -9,9 +9,9 @@ public sealed class CableSpecTests
     public void Create_WithValidCableSpec_ShouldSucceed()
     {
         var spec = CableSpec.Create("NYM-J 5x2.5", 25, "grey", 5);
-        spec.CableType.Should().Be("NYM-J 5x2.5");
-        spec.CrossSection.Should().Be(25);
-        spec.Color.Should().Be("grey");
+        spec.CableType.Value.Should().Be("NYM-J 5x2.5");
+        spec.CrossSection!.Value.Should().Be(25);
+        spec.Color!.Value.Should().Be("grey");
         spec.ConductorCount.Should().Be(5);
     }
 

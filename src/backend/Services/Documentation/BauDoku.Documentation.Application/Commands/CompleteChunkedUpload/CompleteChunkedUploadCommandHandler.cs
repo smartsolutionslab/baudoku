@@ -39,7 +39,7 @@ public sealed class CompleteChunkedUploadCommandHandler(IChunkedUploadStorage ch
                 session.GpsSource);
         }
 
-        installation.AddPhoto(photoId, session.FileName, blobUrl, session.ContentType, session.TotalSize, photoType, caption, description, position);
+        installation.AddPhoto(photoId, FileName.From(session.FileName), BlobUrl.From(blobUrl), ContentType.From(session.ContentType), FileSize.From(session.TotalSize), photoType, caption, description, position);
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
 

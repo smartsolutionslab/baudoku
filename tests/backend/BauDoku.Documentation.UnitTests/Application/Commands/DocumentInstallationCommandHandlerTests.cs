@@ -65,7 +65,7 @@ public sealed class DocumentInstallationCommandHandlerTests
 
         captured.Should().NotBeNull();
         captured!.Description!.Value.Should().Be("Testbeschreibung");
-        captured.CableSpec!.CableType.Should().Be("NYM");
+        captured.CableSpec!.CableType.Value.Should().Be("NYM");
         captured.Depth!.ValueInMillimeters.Should().Be(600);
         captured.Manufacturer!.Value.Should().Be("Siemens");
     }
