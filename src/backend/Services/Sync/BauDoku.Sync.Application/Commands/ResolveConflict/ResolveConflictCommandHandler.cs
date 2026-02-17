@@ -24,13 +24,13 @@ public sealed class ResolveConflictCommandHandler(ISyncBatchRepository syncBatch
         if (strategy == ConflictResolutionStrategy.ClientWins || strategy == ConflictResolutionStrategy.ManualMerge)
         {
             var resolvedPayload = conflict.ResolvedPayload!;
-            var (entityType, entityId) = conflict.EntityRef;
-            var currentVersion = await entityVersionStore.GetCurrentVersionAsync(entityType, entityId, cancellationToken);
+            var entityRef = conflict.EntityRef;
+            var currentVersion = await entityVersionStore.GetCurrentVersionAsync(entityRef.EntityType, entityRef.EntityId, cancellationToken);
             var newVersion = currentVersion.Increment();
 
             await entityVersionStore.SetVersionAsync(
-                conflict.EntityRef.EntityType,
-                conflict.EntityRef.EntityId,
+                entityRef.EntityType,
+                entityRef.EntityId,
                 newVersion,
                 resolvedPayload.Value,
                 batch.DeviceId,

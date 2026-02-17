@@ -21,9 +21,4 @@ public sealed record EntityReference : ValueObject
         return new EntityReference(entityType, entityId);
     }
 
-    public void Deconstruct(out EntityType entityType, out Guid entityId)
-    {
-       entityType = EntityType;
-       entityId = EntityId;
-    }
 }
