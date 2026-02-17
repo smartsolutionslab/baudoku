@@ -3,9 +3,7 @@ using FluentValidation;
 
 namespace BauDoku.BuildingBlocks.Application.Behaviors;
 
-public sealed class ValidationBehaviorVoid<TCommand>(
-    ICommandHandler<TCommand> inner,
-    IEnumerable<IValidator<TCommand>> validators)
+public sealed class ValidationBehaviorVoid<TCommand>(ICommandHandler<TCommand> inner, IEnumerable<IValidator<TCommand>> validators)
     : ICommandHandler<TCommand>
     where TCommand : ICommand
 {

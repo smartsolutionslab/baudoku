@@ -10,8 +10,7 @@ public sealed class LocalFilePhotoStorage : IPhotoStorage
     public LocalFilePhotoStorage(IOptions<PhotoStorageOptions> options)
     {
         basePath = options.Value.LocalPath;
-        if (!Path.IsPathRooted(basePath))
-            basePath = Path.Combine(Directory.GetCurrentDirectory(), basePath);
+        if (!Path.IsPathRooted(basePath)) basePath = Path.Combine(Directory.GetCurrentDirectory(), basePath);
         Directory.CreateDirectory(basePath);
     }
 
@@ -38,8 +37,7 @@ public sealed class LocalFilePhotoStorage : IPhotoStorage
     public Task DeleteAsync(string blobUrl, CancellationToken ct = default)
     {
         var filePath = SafeResolvePath(blobUrl);
-        if (File.Exists(filePath))
-            File.Delete(filePath);
+        if (File.Exists(filePath)) File.Delete(filePath);
 
         return Task.CompletedTask;
     }

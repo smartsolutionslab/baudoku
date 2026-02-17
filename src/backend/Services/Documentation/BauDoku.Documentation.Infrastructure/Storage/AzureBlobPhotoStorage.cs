@@ -12,8 +12,7 @@ public sealed class AzureBlobPhotoStorage : IPhotoStorage
     public AzureBlobPhotoStorage(IOptions<PhotoStorageOptions> options)
     {
         var config = options.Value;
-        var connectionString = config.AzureConnectionString
-            ?? throw new InvalidOperationException("PhotoStorage:AzureConnectionString is not configured.");
+        var connectionString = config.AzureConnectionString ?? throw new InvalidOperationException("PhotoStorage:AzureConnectionString is not configured.");
 
         containerClient = new BlobContainerClient(connectionString, config.AzureContainerName);
         containerClient.CreateIfNotExists();

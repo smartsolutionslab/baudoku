@@ -12,8 +12,7 @@ namespace BauDoku.Documentation.Infrastructure;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddDocumentationInfrastructure(
-        this IServiceCollection services, string connectionString, IConfiguration configuration)
+    public static IServiceCollection AddDocumentationInfrastructure(this IServiceCollection services, string connectionString, IConfiguration configuration)
     {
         services.AddDbContext<DocumentationDbContext>(options =>
             options.UseNpgsql(connectionString, o => o.UseNetTopologySuite()));

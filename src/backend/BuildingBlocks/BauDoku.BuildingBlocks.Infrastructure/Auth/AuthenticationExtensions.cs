@@ -10,8 +10,7 @@ namespace BauDoku.BuildingBlocks.Infrastructure.Auth;
 
 public static class AuthenticationExtensions
 {
-    public static IServiceCollection AddBauDokuAuthentication(
-        this IServiceCollection services, IConfiguration configuration, IHostEnvironment environment)
+    public static IServiceCollection AddBauDokuAuthentication(this IServiceCollection services, IConfiguration configuration, IHostEnvironment environment)
     {
         services.AddTransient<IClaimsTransformation, KeycloakClaimsTransformation>();
 

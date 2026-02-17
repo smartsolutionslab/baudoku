@@ -4,9 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace BauDoku.BuildingBlocks.Application.Behaviors;
 
-public sealed class LoggingBehavior<TCommand, TResult>(
-    ICommandHandler<TCommand, TResult> inner,
-    ILogger<LoggingBehavior<TCommand, TResult>> logger)
+public sealed class LoggingBehavior<TCommand, TResult>(ICommandHandler<TCommand, TResult> inner, ILogger<LoggingBehavior<TCommand, TResult>> logger)
     : ICommandHandler<TCommand, TResult>
     where TCommand : ICommand<TResult>
 {
