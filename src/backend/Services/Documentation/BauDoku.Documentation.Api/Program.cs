@@ -26,7 +26,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddBauDokuAuthentication(builder.Configuration, builder.Environment);
 
 builder.Services.AddApplication(BauDoku.Documentation.Application.DependencyInjection.Assembly);
-builder.Services.AddDocumentationInfrastructure(connectionString);
+builder.Services.AddDocumentationInfrastructure(connectionString, builder.Configuration);
 
 var app = builder.Build();
 

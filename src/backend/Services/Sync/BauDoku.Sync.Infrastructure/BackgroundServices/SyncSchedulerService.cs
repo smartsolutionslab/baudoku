@@ -1,29 +1,18 @@
 using BauDoku.BuildingBlocks.Application.Persistence;
 using BauDoku.Sync.Application.Contracts;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace BauDoku.Sync.Infrastructure.BackgroundServices;
 
-public sealed class SyncSchedulerService : BackgroundService
+public sealed class SyncSchedulerService(
+    IServiceScopeFactory scopeFactory,
+    ILogger<SyncSchedulerService> logger,
+    IOptions<SyncOptions> syncOptions) : BackgroundService
 {
-    private readonly IServiceScopeFactory scopeFactory;
-    private readonly ILogger<SyncSchedulerService> logger;
-    private readonly TimeSpan interval;
-
-    public SyncSchedulerService(
-        IServiceScopeFactory scopeFactory,
-        ILogger<SyncSchedulerService> logger,
-        IConfiguration configuration)
-    {
-        this.scopeFactory = scopeFactory;
-        this.logger = logger;
-
-        var seconds = configuration.GetValue("Sync:SchedulerIntervalSeconds", 30);
-        interval = TimeSpan.FromSeconds(seconds);
-    }
+    private readonly TimeSpan interval = TimeSpan.FromSeconds(syncOptions.Value.SchedulerIntervalSeconds);
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {

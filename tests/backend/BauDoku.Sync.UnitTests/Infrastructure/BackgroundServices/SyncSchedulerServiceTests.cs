@@ -4,9 +4,9 @@ using BauDoku.Sync.Application.Contracts;
 using BauDoku.Sync.Domain.Aggregates;
 using BauDoku.Sync.Domain.ValueObjects;
 using BauDoku.Sync.Infrastructure.BackgroundServices;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 
@@ -35,14 +35,9 @@ public sealed class SyncSchedulerServiceTests
         var scopeFactory = Substitute.For<IServiceScopeFactory>();
         scopeFactory.CreateScope().Returns(scope);
 
-        var config = new ConfigurationBuilder()
-            .AddInMemoryCollection(new Dictionary<string, string?>
-            {
-                ["Sync:SchedulerIntervalSeconds"] = "1"
-            })
-            .Build();
+        var options = Options.Create(new SyncOptions { SchedulerIntervalSeconds = 1 });
 
-        service = new SyncSchedulerService(scopeFactory, logger, config);
+        service = new SyncSchedulerService(scopeFactory, logger, options);
     }
 
     [Fact]
@@ -112,26 +107,20 @@ public sealed class SyncSchedulerServiceTests
     [Fact]
     public void Constructor_ShouldUseConfiguredInterval()
     {
-        var config = new ConfigurationBuilder()
-            .AddInMemoryCollection(new Dictionary<string, string?>
-            {
-                ["Sync:SchedulerIntervalSeconds"] = "60"
-            })
-            .Build();
-
+        var options = Options.Create(new SyncOptions { SchedulerIntervalSeconds = 60 });
         var scopeFactory = Substitute.For<IServiceScopeFactory>();
 
-        var service = new SyncSchedulerService(scopeFactory, logger, config);
+        var service = new SyncSchedulerService(scopeFactory, logger, options);
         service.Should().NotBeNull();
     }
 
     [Fact]
-    public void Constructor_WithoutConfig_ShouldDefaultTo30Seconds()
+    public void Constructor_WithDefaultOptions_ShouldDefaultTo30Seconds()
     {
-        var config = new ConfigurationBuilder().Build();
+        var options = Options.Create(new SyncOptions());
         var scopeFactory = Substitute.For<IServiceScopeFactory>();
 
-        var service = new SyncSchedulerService(scopeFactory, logger, config);
+        var service = new SyncSchedulerService(scopeFactory, logger, options);
         service.Should().NotBeNull();
     }
 }
