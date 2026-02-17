@@ -1,4 +1,5 @@
 using BauDoku.BuildingBlocks.Application.Dispatcher;
+using BauDoku.BuildingBlocks.Application.Responses;
 using BauDoku.BuildingBlocks.Infrastructure.Auth;
 using BauDoku.Documentation.Application.Commands.AddPhoto;
 using BauDoku.Documentation.Application.Commands.RemovePhoto;
@@ -49,13 +50,13 @@ public static class PhotoEndpoints
                 takenAt);
 
             var photoId = await dispatcher.Send(command, ct);
-            return Results.Created($"/api/documentation/photos/{photoId}", new { id = photoId });
+            return Results.Created($"/api/documentation/photos/{photoId}", new CreatedResponse(photoId));
         })
         .RequireAuthorization(AuthPolicies.RequireUser)
         .DisableAntiforgery()
         .WithName("AddPhoto")
         .WithSummary("Foto zu einer Installation hinzufuegen")
-        .Produces<object>(StatusCodes.Status201Created)
+        .Produces<CreatedResponse>(StatusCodes.Status201Created)
         .ProducesValidationProblem();
 
         group.MapGet("/installations/{installationId:guid}/photos", async (

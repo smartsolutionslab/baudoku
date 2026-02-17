@@ -11,7 +11,7 @@ public sealed class CompleteChunkedUploadCommandHandler(IChunkedUploadStorage ch
 {
     public async Task<Guid> Handle(CompleteChunkedUploadCommand command, CancellationToken cancellationToken = default)
     {
-        var session = await chunkedUploadStorage.GetSessionAsync(command.SessionId, cancellationToken) ?? throw new InvalidOperationException($"Upload-Session mit ID {command.SessionId} nicht gefunden.");
+        var session = await chunkedUploadStorage.GetSessionAsync(command.SessionId, cancellationToken) ?? throw new KeyNotFoundException($"Upload-Session mit ID {command.SessionId} nicht gefunden.");
 
         var uploadedChunks = await chunkedUploadStorage.GetUploadedChunkCountAsync(command.SessionId, cancellationToken);
         if (uploadedChunks != session.TotalChunks) throw new InvalidOperationException($"Upload unvollständig: {uploadedChunks}/{session.TotalChunks} Chunks hochgeladen.");
@@ -21,7 +21,7 @@ public sealed class CompleteChunkedUploadCommandHandler(IChunkedUploadStorage ch
         var blobUrl = await photoStorage.UploadAsync(assembledStream, session.FileName, session.ContentType, cancellationToken);
 
         var installationId = InstallationIdentifier.From(session.InstallationId);
-        var installation = await installations.GetByIdAsync(installationId, cancellationToken) ?? throw new InvalidOperationException($"Installation mit ID {session.InstallationId} nicht gefunden.");
+        var installation = await installations.GetByIdAsync(installationId, cancellationToken) ?? throw new KeyNotFoundException($"Installation mit ID {session.InstallationId} nicht gefunden.");
 
         var photoId = PhotoIdentifier.New();
         var photoType = PhotoType.From(session.PhotoType);

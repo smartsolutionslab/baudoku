@@ -64,6 +64,6 @@ public sealed class RemoveMeasurementCommandHandlerTests
 
         var act = () => handler.Handle(command, CancellationToken.None);
 
-        await act.Should().ThrowAsync<InvalidOperationException>();
+        await act.Should().ThrowAsync<KeyNotFoundException>();
     }
 }

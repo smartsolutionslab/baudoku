@@ -64,7 +64,7 @@ public sealed class AddPhotoCommandHandlerTests
 
         var act = () => handler.Handle(command, CancellationToken.None);
 
-        await act.Should().ThrowAsync<InvalidOperationException>();
+        await act.Should().ThrowAsync<KeyNotFoundException>();
     }
 
     [Fact]

@@ -1,5 +1,6 @@
 using BauDoku.BuildingBlocks.Application.Dispatcher;
 using BauDoku.BuildingBlocks.Application.Pagination;
+using BauDoku.BuildingBlocks.Application.Responses;
 using BauDoku.BuildingBlocks.Infrastructure.Auth;
 using BauDoku.Projects.Application.Commands.AddZone;
 using BauDoku.Projects.Application.Commands.CreateProject;
@@ -18,12 +19,12 @@ public static class ProjectEndpoints
         group.MapPost("/", async (CreateProjectCommand command, IDispatcher dispatcher, CancellationToken ct) =>
         {
             var projectId = await dispatcher.Send<Guid>(command, ct);
-            return Results.Created($"/api/projects/{projectId}", new { id = projectId });
+            return Results.Created($"/api/projects/{projectId}", new CreatedResponse(projectId));
         })
         .RequireAuthorization(AuthPolicies.RequireUser)
         .WithName("CreateProject")
         .WithSummary("Neues Projekt erstellen")
-        .Produces<object>(StatusCodes.Status201Created)
+        .Produces<CreatedResponse>(StatusCodes.Status201Created)
         .ProducesValidationProblem();
 
         group.MapGet("/", async (string? search, int? page, int? pageSize, IDispatcher dispatcher, CancellationToken ct) =>

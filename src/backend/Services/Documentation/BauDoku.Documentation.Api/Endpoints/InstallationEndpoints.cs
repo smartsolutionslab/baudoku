@@ -1,5 +1,6 @@
 using BauDoku.BuildingBlocks.Application.Dispatcher;
 using BauDoku.BuildingBlocks.Application.Pagination;
+using BauDoku.BuildingBlocks.Application.Responses;
 using BauDoku.BuildingBlocks.Infrastructure.Auth;
 using BauDoku.Documentation.Application.Commands.DocumentInstallation;
 using BauDoku.Documentation.Application.Commands.UpdateInstallation;
@@ -23,12 +24,12 @@ public static class InstallationEndpoints
             CancellationToken ct) =>
         {
             var id = await dispatcher.Send(command, ct);
-            return Results.Created($"/api/documentation/installations/{id}", new { id });
+            return Results.Created($"/api/documentation/installations/{id}", new CreatedResponse(id));
         })
         .RequireAuthorization(AuthPolicies.RequireUser)
         .WithName("DocumentInstallation")
         .WithSummary("Neue Installation dokumentieren")
-        .Produces<object>(StatusCodes.Status201Created)
+        .Produces<CreatedResponse>(StatusCodes.Status201Created)
         .ProducesValidationProblem();
 
         group.MapGet("/", async (

@@ -1,4 +1,5 @@
 using BauDoku.BuildingBlocks.Application.Dispatcher;
+using BauDoku.BuildingBlocks.Application.Responses;
 using BauDoku.BuildingBlocks.Infrastructure.Auth;
 using BauDoku.Documentation.Application.Commands.RecordMeasurement;
 using BauDoku.Documentation.Application.Commands.RemoveMeasurement;
@@ -30,12 +31,12 @@ public static class MeasurementEndpoints
 
             var measurementId = await dispatcher.Send(command, ct);
             return Results.Created(
-                $"/api/documentation/installations/{installationId}/measurements", new { id = measurementId });
+                $"/api/documentation/installations/{installationId}/measurements", new CreatedResponse(measurementId));
         })
         .RequireAuthorization(AuthPolicies.RequireUser)
         .WithName("RecordMeasurement")
         .WithSummary("Messung zu einer Installation hinzufuegen")
-        .Produces<object>(StatusCodes.Status201Created)
+        .Produces<CreatedResponse>(StatusCodes.Status201Created)
         .ProducesValidationProblem();
 
         group.MapGet("/installations/{installationId:guid}/measurements", async (

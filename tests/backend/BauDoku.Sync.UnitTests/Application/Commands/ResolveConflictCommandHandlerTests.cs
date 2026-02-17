@@ -109,7 +109,7 @@ public sealed class ResolveConflictCommandHandlerTests
 
         var act = () => handler.Handle(command);
 
-        await act.Should().ThrowAsync<InvalidOperationException>();
+        await act.Should().ThrowAsync<KeyNotFoundException>();
     }
 
     [Fact]

@@ -8,7 +8,7 @@ public sealed class UploadChunkCommandHandler(IChunkedUploadStorage chunkedUploa
 {
     public async Task Handle(UploadChunkCommand command, CancellationToken cancellationToken = default)
     {
-        var session = await chunkedUploadStorage.GetSessionAsync(command.SessionId, cancellationToken) ?? throw new InvalidOperationException($"Upload-Session mit ID {command.SessionId} nicht gefunden.");
+        var session = await chunkedUploadStorage.GetSessionAsync(command.SessionId, cancellationToken) ?? throw new KeyNotFoundException($"Upload-Session mit ID {command.SessionId} nicht gefunden.");
 
         if (command.ChunkIndex >= session.TotalChunks) throw new InvalidOperationException($"ChunkIndex {command.ChunkIndex} ist ungültig. Erwartet: 0-{session.TotalChunks - 1}.");
 
