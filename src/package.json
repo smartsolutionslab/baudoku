@@ -1,9 +1,0 @@
-{
-  "name": "baudoku",
-  "private": true,
-  "workspaces": [
-    "frontend",
-    "web",
-    "packages/*"
-  ]
-}

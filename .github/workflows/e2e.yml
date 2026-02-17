@@ -73,14 +73,14 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: src/package-lock.json
+          cache-dependency-path: src/frontend/package-lock.json
 
       - name: Install frontend dependencies
-        working-directory: src
+        working-directory: src/frontend
         run: npm ci
 
       - name: Expo prebuild
-        working-directory: src/frontend
+        working-directory: src/frontend/mobile-app
         run: npx expo prebuild --platform android --no-install
 
       - name: Install Maestro
@@ -89,7 +89,7 @@ jobs:
           echo "$HOME/.maestro/bin" >> $GITHUB_PATH
 
       - name: Build debug APK
-        working-directory: src/frontend/android
+        working-directory: src/frontend/mobile-app/android
         run: ./gradlew assembleDebug -PbundleInDebug=true --no-daemon
 
       - name: Run Maestro flows
@@ -99,7 +99,7 @@ jobs:
           arch: x86_64
           emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect
           script: |
-            adb install src/frontend/android/app/build/outputs/apk/debug/app-debug.apk
+            adb install src/frontend/mobile-app/android/app/build/outputs/apk/debug/app-debug.apk
             maestro test e2e/flows/
 
       - name: Upload test results
