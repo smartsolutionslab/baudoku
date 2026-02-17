@@ -1,4 +1,5 @@
 using BauDoku.BuildingBlocks.Application.Dispatcher;
+using BauDoku.BuildingBlocks.Application.Pagination;
 using BauDoku.BuildingBlocks.Infrastructure.Auth;
 using BauDoku.Documentation.Application.Commands.DocumentInstallation;
 using BauDoku.Documentation.Application.Commands.UpdateInstallation;
@@ -50,7 +51,7 @@ public static class InstallationEndpoints
         .RequireAuthorization()
         .WithName("ListInstallations")
         .WithSummary("Installationen auflisten und filtern")
-        .Produces<object>(StatusCodes.Status200OK);
+        .Produces<PagedResult<InstallationListItemDto>>(StatusCodes.Status200OK);
 
         group.MapGet("/nearby", async (
             double latitude,
@@ -70,7 +71,7 @@ public static class InstallationEndpoints
         .RequireAuthorization()
         .WithName("GetInstallationsNearby")
         .WithSummary("Installationen im Umkreis suchen")
-        .Produces<object>(StatusCodes.Status200OK);
+        .Produces<PagedResult<NearbyInstallationDto>>(StatusCodes.Status200OK);
 
         group.MapGet("/in-area", async (
             double minLatitude,
@@ -91,7 +92,7 @@ public static class InstallationEndpoints
         .RequireAuthorization()
         .WithName("GetInstallationsInArea")
         .WithSummary("Installationen in einem Gebiet suchen")
-        .Produces<object>(StatusCodes.Status200OK);
+        .Produces<PagedResult<InstallationListItemDto>>(StatusCodes.Status200OK);
 
         group.MapGet("/{id:guid}", async (
             Guid id,
