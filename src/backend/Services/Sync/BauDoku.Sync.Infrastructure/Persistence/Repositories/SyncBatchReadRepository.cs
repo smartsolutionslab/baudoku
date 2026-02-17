@@ -1,4 +1,5 @@
 using BauDoku.Sync.Application.Contracts;
+using BauDoku.Sync.Application.Mapping;
 using BauDoku.Sync.Application.Queries.Dtos;
 using BauDoku.Sync.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
@@ -25,16 +26,7 @@ public sealed class SyncBatchReadRepository(SyncDbContext context) : ISyncBatchR
         var conflicts = batches
             .SelectMany(b => b.Conflicts)
             .Where(c => status is null || c.Status == status)
-            .Select(c => new ConflictDto(
-                c.Id.Value,
-                c.EntityRef.EntityType.Value,
-                c.EntityRef.EntityId,
-                c.ClientPayload.Value,
-                c.ServerPayload.Value,
-                c.ClientVersion.Value,
-                c.ServerVersion.Value,
-                c.Status.Value,
-                c.DetectedAt))
+            .Select(c => c.ToDto())
             .ToList();
 
         return conflicts;

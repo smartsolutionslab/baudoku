@@ -2,6 +2,7 @@ using BauDoku.BuildingBlocks.Application.Commands;
 using BauDoku.BuildingBlocks.Application.Persistence;
 using BauDoku.Sync.Application.Contracts;
 using BauDoku.Sync.Application.Diagnostics;
+using BauDoku.Sync.Application.Mapping;
 using BauDoku.Sync.Application.Queries.Dtos;
 using BauDoku.Sync.Domain.Aggregates;
 using BauDoku.Sync.Domain.ValueObjects;
@@ -66,16 +67,7 @@ public sealed class ProcessSyncBatchCommandHandler(ISyncBatchRepository syncBatc
                     clientBaseVersion,
                     currentServerVersion);
 
-                conflicts.Add(new ConflictDto(
-                    conflict.Id.Value,
-                    entityType.Value,
-                    deltaDto.EntityId,
-                    deltaDto.Payload,
-                    serverPayload.Value,
-                    clientBaseVersion.Value,
-                    currentServerVersion.Value,
-                    conflict.Status.Value,
-                    conflict.DetectedAt));
+                conflicts.Add(conflict.ToDto());
             }
         }
 
