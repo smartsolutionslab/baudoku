@@ -12,10 +12,8 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddProjectsInfrastructure(this IServiceCollection services, string connectionString)
     {
-        services.AddDbContext<ProjectsDbContext>((sp, options) =>
-        {
-            options.UseNpgsql(connectionString);
-        });
+        services.AddDbContext<ProjectsDbContext>(options =>
+            options.UseNpgsql(connectionString));
 
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<ProjectsDbContext>());
         services.AddScoped<IProjectRepository, ProjectRepository>();

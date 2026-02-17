@@ -51,7 +51,8 @@ public static class MeasurementEndpoints
         .RequireAuthorization()
         .WithName("GetMeasurements")
         .WithSummary("Messungen einer Installation auflisten")
-        .Produces<IReadOnlyList<MeasurementDto>>(StatusCodes.Status200OK);
+        .Produces<IReadOnlyList<MeasurementDto>>(StatusCodes.Status200OK)
+        .Produces(StatusCodes.Status404NotFound);
 
         group.MapDelete("/installations/{installationId:guid}/measurements/{measurementId:guid}", async (
             Guid measurementId,
