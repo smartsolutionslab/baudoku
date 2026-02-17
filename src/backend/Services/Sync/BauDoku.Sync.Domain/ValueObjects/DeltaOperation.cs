@@ -3,7 +3,7 @@ using BauDoku.BuildingBlocks.Domain.Guards;
 
 namespace BauDoku.Sync.Domain.ValueObjects;
 
-public sealed record DeltaOperation : ValueObject
+public sealed record DeltaOperation : IValueObject
 {
     private static readonly HashSet<string> ValidValues = ["create", "update", "delete"];
 

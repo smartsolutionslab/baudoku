@@ -3,7 +3,7 @@ using BauDoku.BuildingBlocks.Domain.Guards;
 
 namespace BauDoku.Sync.Domain.ValueObjects;
 
-public sealed record ConflictStatus : ValueObject
+public sealed record ConflictStatus : IValueObject
 {
     private static readonly HashSet<string> ValidValues = ["unresolved", "client_wins", "server_wins", "merged"];
 

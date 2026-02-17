@@ -10,15 +10,15 @@ namespace BauDoku.Documentation.UnitTests.Application.Commands;
 
 public sealed class DocumentInstallationCommandHandlerTests
 {
-    private readonly IInstallationRepository repository;
+    private readonly IInstallationRepository installations;
     private readonly IUnitOfWork unitOfWork;
     private readonly DocumentInstallationCommandHandler handler;
 
     public DocumentInstallationCommandHandlerTests()
     {
-        repository = Substitute.For<IInstallationRepository>();
+        installations = Substitute.For<IInstallationRepository>();
         unitOfWork = Substitute.For<IUnitOfWork>();
-        handler = new DocumentInstallationCommandHandler(repository, unitOfWork);
+        handler = new DocumentInstallationCommandHandler(installations, unitOfWork);
     }
 
     private static DocumentInstallationCommand CreateValidCommand() =>
@@ -35,7 +35,7 @@ public sealed class DocumentInstallationCommandHandlerTests
         var result = await handler.Handle(command, CancellationToken.None);
 
         result.Should().NotBe(Guid.Empty);
-        await repository.Received(1).AddAsync(Arg.Any<Installation>(), Arg.Any<CancellationToken>());
+        await installations.Received(1).AddAsync(Arg.Any<Installation>(), Arg.Any<CancellationToken>());
         await unitOfWork.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
@@ -44,7 +44,7 @@ public sealed class DocumentInstallationCommandHandlerTests
     {
         var command = CreateValidCommand();
         Installation? captured = null;
-        await repository.AddAsync(Arg.Do<Installation>(i => captured = i), Arg.Any<CancellationToken>());
+        await installations.AddAsync(Arg.Do<Installation>(i => captured = i), Arg.Any<CancellationToken>());
 
         await handler.Handle(command, CancellationToken.None);
 
@@ -59,7 +59,7 @@ public sealed class DocumentInstallationCommandHandlerTests
     {
         var command = CreateValidCommand();
         Installation? captured = null;
-        await repository.AddAsync(Arg.Do<Installation>(i => captured = i), Arg.Any<CancellationToken>());
+        await installations.AddAsync(Arg.Do<Installation>(i => captured = i), Arg.Any<CancellationToken>());
 
         await handler.Handle(command, CancellationToken.None);
 
@@ -80,7 +80,7 @@ public sealed class DocumentInstallationCommandHandlerTests
             null, null, null, null, null, null, null, null, null);
 
         Installation? captured = null;
-        await repository.AddAsync(Arg.Do<Installation>(i => captured = i), Arg.Any<CancellationToken>());
+        await installations.AddAsync(Arg.Do<Installation>(i => captured = i), Arg.Any<CancellationToken>());
 
         await handler.Handle(command, CancellationToken.None);
 

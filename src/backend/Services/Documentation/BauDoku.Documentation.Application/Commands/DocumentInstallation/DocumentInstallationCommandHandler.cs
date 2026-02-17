@@ -15,8 +15,7 @@ public sealed class DocumentInstallationCommandHandler(IInstallationRepository i
         var installationId = InstallationIdentifier.New();
 
         var projectId = ProjectIdentifier.From(command.ProjectId);
-        var zoneId = command.ZoneId is not null
-            ? ZoneIdentifier.From(command.ZoneId.Value) : null;
+        var zoneId = command.ZoneId is not null ? ZoneIdentifier.From(command.ZoneId.Value) : null;
 
         var position = GpsPosition.Create(
             command.Latitude,
@@ -30,23 +29,17 @@ public sealed class DocumentInstallationCommandHandler(IInstallationRepository i
             command.Hdop,
             command.CorrectionAge);
 
-        var description = command.Description is not null
-            ? Description.From(command.Description) : null;
+        var description = command.Description is not null ? Description.From(command.Description) : null;
 
-        var cableSpec = command.CableType is not null
-            ? CableSpec.Create(command.CableType, command.CrossSection, command.CableColor, command.ConductorCount) : null;
+        var cableSpec = command.CableType is not null ? CableSpec.Create(command.CableType, command.CrossSection, command.CableColor, command.ConductorCount) : null;
 
-        var depth = command.DepthMm is not null
-            ? Depth.From(command.DepthMm.Value) : null;
+        var depth = command.DepthMm is not null ? Depth.From(command.DepthMm.Value) : null;
 
-        var manufacturer = command.Manufacturer is not null
-            ? Manufacturer.From(command.Manufacturer) : null;
+        var manufacturer = command.Manufacturer is not null ? Manufacturer.From(command.Manufacturer) : null;
 
-        var modelName = command.ModelName is not null
-            ? ModelName.From(command.ModelName) : null;
+        var modelName = command.ModelName is not null ? ModelName.From(command.ModelName) : null;
 
-        var serialNumber = command.SerialNumber is not null
-            ? SerialNumber.From(command.SerialNumber) : null;
+        var serialNumber = command.SerialNumber is not null ? SerialNumber.From(command.SerialNumber) : null;
 
         var installation = Installation.Create(
             installationId,

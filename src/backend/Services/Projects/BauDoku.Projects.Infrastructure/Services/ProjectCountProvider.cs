@@ -9,8 +9,6 @@ public sealed class ProjectCountProvider(ProjectsDbContext dbContext) : IProject
 {
     public async Task<int> GetActiveCountAsync(CancellationToken ct = default)
     {
-        return await dbContext.Projects
-            .Where(p => p.Status == ProjectStatus.Active)
-            .CountAsync(ct);
+        return await dbContext.Projects.Where(p => p.Status == ProjectStatus.Active).CountAsync(ct);
     }
 }

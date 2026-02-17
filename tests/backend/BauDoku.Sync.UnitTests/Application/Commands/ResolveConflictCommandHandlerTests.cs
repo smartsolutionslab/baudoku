@@ -10,17 +10,17 @@ namespace BauDoku.Sync.UnitTests.Application.Commands;
 
 public sealed class ResolveConflictCommandHandlerTests
 {
-    private readonly ISyncBatchRepository syncBatchRepository;
+    private readonly ISyncBatchRepository syncBatches;
     private readonly IEntityVersionStore entityVersionStore;
     private readonly IUnitOfWork unitOfWork;
     private readonly ResolveConflictCommandHandler handler;
 
     public ResolveConflictCommandHandlerTests()
     {
-        syncBatchRepository = Substitute.For<ISyncBatchRepository>();
+        syncBatches = Substitute.For<ISyncBatchRepository>();
         entityVersionStore = Substitute.For<IEntityVersionStore>();
         unitOfWork = Substitute.For<IUnitOfWork>();
-        handler = new ResolveConflictCommandHandler(syncBatchRepository, entityVersionStore, unitOfWork);
+        handler = new ResolveConflictCommandHandler(syncBatches, entityVersionStore, unitOfWork);
     }
 
     private static (SyncBatch batch, ConflictRecordIdentifier conflictId) CreateBatchWithConflict()
@@ -46,7 +46,7 @@ public sealed class ResolveConflictCommandHandlerTests
     public async Task Handle_ClientWins_ShouldResolveAndUpdateVersion()
     {
         var (batch, conflictId) = CreateBatchWithConflict();
-        syncBatchRepository.GetByConflictIdAsync(Arg.Any<ConflictRecordIdentifier>(), Arg.Any<CancellationToken>())
+        syncBatches.GetByConflictIdAsync(Arg.Any<ConflictRecordIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(batch);
         entityVersionStore.GetCurrentVersionAsync(Arg.Any<EntityType>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>())
             .Returns(SyncVersion.From(3));
@@ -66,7 +66,7 @@ public sealed class ResolveConflictCommandHandlerTests
     public async Task Handle_ServerWins_ShouldResolveWithoutUpdatingVersion()
     {
         var (batch, conflictId) = CreateBatchWithConflict();
-        syncBatchRepository.GetByConflictIdAsync(Arg.Any<ConflictRecordIdentifier>(), Arg.Any<CancellationToken>())
+        syncBatches.GetByConflictIdAsync(Arg.Any<ConflictRecordIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(batch);
 
         var command = new ResolveConflictCommand(conflictId.Value, "server_wins", null);
@@ -83,7 +83,7 @@ public sealed class ResolveConflictCommandHandlerTests
     public async Task Handle_ManualMerge_ShouldResolveWithMergedPayloadAndUpdateVersion()
     {
         var (batch, conflictId) = CreateBatchWithConflict();
-        syncBatchRepository.GetByConflictIdAsync(Arg.Any<ConflictRecordIdentifier>(), Arg.Any<CancellationToken>())
+        syncBatches.GetByConflictIdAsync(Arg.Any<ConflictRecordIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(batch);
         entityVersionStore.GetCurrentVersionAsync(Arg.Any<EntityType>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>())
             .Returns(SyncVersion.From(3));
@@ -102,7 +102,7 @@ public sealed class ResolveConflictCommandHandlerTests
     [Fact]
     public async Task Handle_WhenBatchNotFound_ShouldThrow()
     {
-        syncBatchRepository.GetByConflictIdAsync(Arg.Any<ConflictRecordIdentifier>(), Arg.Any<CancellationToken>())
+        syncBatches.GetByConflictIdAsync(Arg.Any<ConflictRecordIdentifier>(), Arg.Any<CancellationToken>())
             .Returns((SyncBatch?)null);
 
         var command = new ResolveConflictCommand(Guid.NewGuid(), "client_wins", null);
@@ -116,7 +116,7 @@ public sealed class ResolveConflictCommandHandlerTests
     public async Task Handle_WhenConflictNotFoundInBatch_ShouldThrow()
     {
         var (batch, _) = CreateBatchWithConflict();
-        syncBatchRepository.GetByConflictIdAsync(Arg.Any<ConflictRecordIdentifier>(), Arg.Any<CancellationToken>())
+        syncBatches.GetByConflictIdAsync(Arg.Any<ConflictRecordIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(batch);
 
         var command = new ResolveConflictCommand(Guid.NewGuid(), "client_wins", null);

@@ -24,8 +24,7 @@ public sealed class ProjectRepository(ProjectsDbContext context) : IProjectRepos
 
     public async Task<bool> ExistsByNameAsync(ProjectName name, CancellationToken ct = default)
     {
-        return await context.Projects
-            .AnyAsync(p => p.Name == name, ct);
+        return await context.Projects.AnyAsync(p => p.Name == name, ct);
     }
 
     public async Task AddAsync(Project aggregate, CancellationToken cancellationToken = default)

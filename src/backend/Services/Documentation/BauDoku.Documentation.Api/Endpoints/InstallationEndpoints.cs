@@ -14,8 +14,7 @@ public static class InstallationEndpoints
 {
     public static void MapInstallationEndpoints(this IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/api/documentation/installations")
-            .WithTags("Installations");
+        var group = app.MapGroup("/api/documentation/installations").WithTags("Installations");
 
         group.MapPost("/", async (
             DocumentInstallationCommand command,
@@ -145,21 +144,3 @@ public static class InstallationEndpoints
         .ProducesValidationProblem();
     }
 }
-
-public sealed record UpdateInstallationRequest(
-    double? Latitude,
-    double? Longitude,
-    double? Altitude,
-    double? HorizontalAccuracy,
-    string? GpsSource,
-    string? CorrectionService,
-    string? RtkFixStatus,
-    int? SatelliteCount,
-    double? Hdop,
-    double? CorrectionAge,
-    string? Description,
-    string? CableType,
-    decimal? CrossSection,
-    string? CableColor,
-    int? ConductorCount,
-    int? DepthMm);

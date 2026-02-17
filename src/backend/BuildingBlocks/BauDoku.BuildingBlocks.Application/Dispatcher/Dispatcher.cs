@@ -46,8 +46,7 @@ public sealed class Dispatcher(IServiceProvider serviceProvider, ILogger<Dispatc
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Fehler im DomainEventHandler {HandlerType} für {EventType}",
-                    handler!.GetType().Name, domainEvent.GetType().Name);
+                logger.LogError(ex, "Fehler im DomainEventHandler {HandlerType} für {EventType}", handler!.GetType().Name, domainEvent.GetType().Name);
             }
         }
     }

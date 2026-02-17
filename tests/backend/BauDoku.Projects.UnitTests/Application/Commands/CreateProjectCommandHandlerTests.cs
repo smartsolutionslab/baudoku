@@ -11,15 +11,15 @@ namespace BauDoku.Projects.UnitTests.Application.Commands;
 
 public sealed class CreateProjectCommandHandlerTests
 {
-    private readonly IProjectRepository repository;
+    private readonly IProjectRepository projects;
     private readonly IUnitOfWork unitOfWork;
     private readonly CreateProjectCommandHandler handler;
 
     public CreateProjectCommandHandlerTests()
     {
-        repository = Substitute.For<IProjectRepository>();
+        projects = Substitute.For<IProjectRepository>();
         unitOfWork = Substitute.For<IUnitOfWork>();
-        handler = new CreateProjectCommandHandler(repository, unitOfWork);
+        handler = new CreateProjectCommandHandler(projects, unitOfWork);
     }
 
     private static CreateProjectCommand CreateValidCommand(string name = "Neues Projekt") =>
@@ -28,32 +28,32 @@ public sealed class CreateProjectCommandHandlerTests
     [Fact]
     public async Task Handle_WithUniqueName_ShouldCreateProjectAndReturnId()
     {
-        repository.ExistsByNameAsync(Arg.Any<ProjectName>(), Arg.Any<CancellationToken>())
+        projects.ExistsByNameAsync(Arg.Any<ProjectName>(), Arg.Any<CancellationToken>())
             .Returns(false);
 
         var result = await handler.Handle(CreateValidCommand());
 
         result.Should().NotBe(Guid.Empty);
-        await repository.Received(1).AddAsync(Arg.Any<Project>(), Arg.Any<CancellationToken>());
+        await projects.Received(1).AddAsync(Arg.Any<Project>(), Arg.Any<CancellationToken>());
         await unitOfWork.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task Handle_WithDuplicateName_ShouldThrowBusinessRuleException()
     {
-        repository.ExistsByNameAsync(Arg.Any<ProjectName>(), Arg.Any<CancellationToken>())
+        projects.ExistsByNameAsync(Arg.Any<ProjectName>(), Arg.Any<CancellationToken>())
             .Returns(true);
 
         var act = () => handler.Handle(CreateValidCommand());
 
         await act.Should().ThrowAsync<BusinessRuleException>();
-        await repository.DidNotReceive().AddAsync(Arg.Any<Project>(), Arg.Any<CancellationToken>());
+        await projects.DidNotReceive().AddAsync(Arg.Any<Project>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task Handle_WithDuplicateName_ShouldNotCallSaveChanges()
     {
-        repository.ExistsByNameAsync(Arg.Any<ProjectName>(), Arg.Any<CancellationToken>())
+        projects.ExistsByNameAsync(Arg.Any<ProjectName>(), Arg.Any<CancellationToken>())
             .Returns(true);
 
         try { await handler.Handle(CreateValidCommand()); } catch { }

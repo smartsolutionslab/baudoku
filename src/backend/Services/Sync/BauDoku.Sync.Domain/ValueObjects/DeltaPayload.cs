@@ -3,7 +3,7 @@ using BauDoku.BuildingBlocks.Domain.Guards;
 
 namespace BauDoku.Sync.Domain.ValueObjects;
 
-public sealed record DeltaPayload : ValueObject
+public sealed record DeltaPayload : IValueObject
 {
     public const int MaxLength = 1_048_576; // 1 MB
 

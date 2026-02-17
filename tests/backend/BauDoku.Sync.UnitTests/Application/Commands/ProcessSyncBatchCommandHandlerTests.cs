@@ -11,17 +11,17 @@ namespace BauDoku.Sync.UnitTests.Application.Commands;
 
 public sealed class ProcessSyncBatchCommandHandlerTests
 {
-    private readonly ISyncBatchRepository syncBatchRepository;
+    private readonly ISyncBatchRepository syncBatches;
     private readonly IEntityVersionStore entityVersionStore;
     private readonly IUnitOfWork unitOfWork;
     private readonly ProcessSyncBatchCommandHandler handler;
 
     public ProcessSyncBatchCommandHandlerTests()
     {
-        syncBatchRepository = Substitute.For<ISyncBatchRepository>();
+        syncBatches = Substitute.For<ISyncBatchRepository>();
         entityVersionStore = Substitute.For<IEntityVersionStore>();
         unitOfWork = Substitute.For<IUnitOfWork>();
-        handler = new ProcessSyncBatchCommandHandler(syncBatchRepository, entityVersionStore, unitOfWork);
+        handler = new ProcessSyncBatchCommandHandler(syncBatches, entityVersionStore, unitOfWork);
     }
 
     private static SyncDeltaDto CreateDelta(Guid? entityId = null, long baseVersion = 0) =>
@@ -43,7 +43,7 @@ public sealed class ProcessSyncBatchCommandHandlerTests
         result.BatchId.Should().NotBe(Guid.Empty);
         await entityVersionStore.Received(1).SetVersionAsync(
             Arg.Any<EntityType>(), entityId, Arg.Any<SyncVersion>(), Arg.Any<string>(), Arg.Any<DeviceIdentifier>(), Arg.Any<CancellationToken>());
-        await syncBatchRepository.Received(1).AddAsync(Arg.Any<SyncBatch>(), Arg.Any<CancellationToken>());
+        await syncBatches.Received(1).AddAsync(Arg.Any<SyncBatch>(), Arg.Any<CancellationToken>());
         await unitOfWork.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 

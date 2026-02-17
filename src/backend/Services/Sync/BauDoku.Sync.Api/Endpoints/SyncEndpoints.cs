@@ -71,5 +71,3 @@ public static class SyncEndpoints
         .ProducesValidationProblem();
     }
 }
-
-public sealed record ResolveConflictRequest(string Strategy, string? MergedPayload);

@@ -35,8 +35,7 @@ public static class AuthenticationExtensions
                 options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
                 {
                     ValidateAudience = true,
-                    ValidAudiences = keycloak.GetSection("Audiences").Get<string[]>()
-                        ?? [keycloak["Audience"] ?? "baudoku-api"],
+                    ValidAudiences = keycloak.GetSection("Audiences").Get<string[]>() ?? [keycloak["Audience"] ?? "baudoku-api"],
                     ValidateIssuer = true,
                     ValidIssuers = validIssuers,
                     RoleClaimType = ClaimTypes.Role,

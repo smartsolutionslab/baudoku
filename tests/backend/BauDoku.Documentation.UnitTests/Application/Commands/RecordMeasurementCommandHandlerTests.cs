@@ -10,15 +10,15 @@ namespace BauDoku.Documentation.UnitTests.Application.Commands;
 
 public sealed class RecordMeasurementCommandHandlerTests
 {
-    private readonly IInstallationRepository repository;
+    private readonly IInstallationRepository installations;
     private readonly IUnitOfWork unitOfWork;
     private readonly RecordMeasurementCommandHandler handler;
 
     public RecordMeasurementCommandHandlerTests()
     {
-        repository = Substitute.For<IInstallationRepository>();
+        installations = Substitute.For<IInstallationRepository>();
         unitOfWork = Substitute.For<IUnitOfWork>();
-        handler = new RecordMeasurementCommandHandler(repository, unitOfWork);
+        handler = new RecordMeasurementCommandHandler(installations, unitOfWork);
     }
 
     private static Installation CreateValidInstallation() =>
@@ -33,7 +33,7 @@ public sealed class RecordMeasurementCommandHandlerTests
     public async Task Handle_WithValidCommand_ShouldRecordMeasurementAndReturnId()
     {
         var installation = CreateValidInstallation();
-        repository.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
+        installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
 
         var command = new RecordMeasurementCommand(
@@ -49,7 +49,7 @@ public sealed class RecordMeasurementCommandHandlerTests
     [Fact]
     public async Task Handle_WhenInstallationNotFound_ShouldThrow()
     {
-        repository.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
+        installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns((Installation?)null);
 
         var command = new RecordMeasurementCommand(

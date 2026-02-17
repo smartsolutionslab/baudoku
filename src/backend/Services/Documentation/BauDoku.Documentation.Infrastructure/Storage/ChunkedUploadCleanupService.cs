@@ -61,7 +61,9 @@ public sealed class ChunkedUploadCleanupService(IConfiguration configuration, IL
         }
 
         if (cleaned > 0)
+        {
             logger.LogInformation("Chunked-Upload-Cleanup: {Count} abgelaufene Sessions entfernt", cleaned);
+        }
     }
 
     private void TryDeleteDirectory(string path)

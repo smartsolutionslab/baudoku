@@ -16,28 +16,28 @@ public sealed class ValueObjectJsonConverterFactoryTests
     }
 
     // Test ValueObjects for serialization tests
-    private sealed record TestStringVo : ValueObject
+    private sealed record TestStringVo : IValueObject
     {
         public string Value { get; }
         private TestStringVo(string value) => Value = value;
         public static TestStringVo From(string value) => new(value);
     }
 
-    private sealed record TestGuidVo : ValueObject
+    private sealed record TestGuidVo : IValueObject
     {
         public Guid Value { get; }
         private TestGuidVo(Guid value) => Value = value;
         public static TestGuidVo From(Guid value) => new(value);
     }
 
-    private sealed record TestIntVo : ValueObject
+    private sealed record TestIntVo : IValueObject
     {
         public int Value { get; }
         private TestIntVo(int value) => Value = value;
         public static TestIntVo From(int value) => new(value);
     }
 
-    private sealed record TestConstructorOnlyVo(string Value) : ValueObject;
+    private sealed record TestConstructorOnlyVo(string Value) : IValueObject;
 
     private sealed record TestDto(TestStringVo Name, TestGuidVo Id, TestIntVo Count);
 
@@ -59,7 +59,7 @@ public sealed class ValueObjectJsonConverterFactoryTests
     public void CanConvert_WithAbstractValueObject_ReturnsFalse()
     {
         var factory = new ValueObjectJsonConverterFactory();
-        factory.CanConvert(typeof(ValueObject)).Should().BeFalse();
+        factory.CanConvert(typeof(IValueObject)).Should().BeFalse();
     }
 
     [Fact]

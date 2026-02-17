@@ -29,7 +29,7 @@ public sealed class SyncBatchPersistenceTests(PostgreSqlFixture fixture)
                 .FirstOrDefaultAsync(b => b.Id == batchId);
 
             loaded.Should().NotBeNull();
-            loaded!.DeviceId.Value.Should().Be("device-persist");
+            loaded.DeviceId.Value.Should().Be("device-persist");
             loaded.Status.Should().Be(BatchStatus.Pending);
             loaded.Deltas.Should().BeEmpty();
             loaded.Conflicts.Should().BeEmpty();
@@ -99,7 +99,7 @@ public sealed class SyncBatchPersistenceTests(PostgreSqlFixture fixture)
                 .FirstOrDefaultAsync(b => b.Id == batchId);
 
             loaded.Should().NotBeNull();
-            loaded!.Conflicts.Should().ContainSingle();
+            loaded.Conflicts.Should().ContainSingle();
             loaded.Conflicts[0].ClientPayload.Value.Should().Be("""{"client":"v1"}""");
             loaded.Conflicts[0].ServerPayload.Value.Should().Be("""{"server":"v2"}""");
             loaded.Conflicts[0].Status.Should().Be(ConflictStatus.Unresolved);
@@ -136,7 +136,7 @@ public sealed class SyncBatchPersistenceTests(PostgreSqlFixture fixture)
                 .FirstOrDefaultAsync(b => b.Conflicts.Any(c => c.Id == conflictId));
 
             loaded.Should().NotBeNull();
-            loaded!.Id.Should().Be(batchId);
+            loaded.Id.Should().Be(batchId);
             loaded.Conflicts.Should().Contain(c => c.Id == conflictId);
         }
     }

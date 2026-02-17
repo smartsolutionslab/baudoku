@@ -1,6 +1,5 @@
 using BauDoku.BuildingBlocks.Application.Commands;
 using FluentValidation;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace BauDoku.BuildingBlocks.Application.Behaviors;
 
@@ -26,32 +25,5 @@ public sealed class ValidationBehavior<TCommand, TResult>(ICommandHandler<TComma
         }
 
         return await inner.Handle(command, cancellationToken);
-    }
-}
-
-public sealed class ValidationBehaviorVoid<TCommand>(
-    ICommandHandler<TCommand> inner,
-    IEnumerable<IValidator<TCommand>> validators)
-    : ICommandHandler<TCommand>
-    where TCommand : ICommand
-{
-    public async Task Handle(TCommand command, CancellationToken cancellationToken = default)
-    {
-        if (validators.Any())
-        {
-            var context = new ValidationContext<TCommand>(command);
-            var validationResults = await Task.WhenAll(
-                validators.Select(v => v.ValidateAsync(context, cancellationToken)));
-
-            var failures = validationResults
-                .SelectMany(r => r.Errors)
-                .Where(f => f is not null)
-                .ToList();
-
-            if (failures.Count != 0)
-                throw new ValidationException(failures);
-        }
-
-        await inner.Handle(command, cancellationToken);
     }
 }

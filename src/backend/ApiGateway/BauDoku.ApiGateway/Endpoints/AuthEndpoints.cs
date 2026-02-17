@@ -48,5 +48,3 @@ public static class AuthEndpoints
         .AllowAnonymous();
     }
 }
-
-public sealed record LogoutRequest(string RefreshToken);

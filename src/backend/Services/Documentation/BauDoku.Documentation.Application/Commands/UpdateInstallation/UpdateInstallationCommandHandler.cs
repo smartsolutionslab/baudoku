@@ -11,11 +11,9 @@ public sealed class UpdateInstallationCommandHandler(IInstallationRepository ins
     public async Task Handle(UpdateInstallationCommand command, CancellationToken cancellationToken)
     {
         var installationId = InstallationIdentifier.From(command.InstallationId);
-        var installation = await installations.GetByIdAsync(installationId, cancellationToken)
-            ?? throw new InvalidOperationException($"Installation mit ID {command.InstallationId} nicht gefunden.");
+        var installation = await installations.GetByIdAsync(installationId, cancellationToken) ?? throw new InvalidOperationException($"Installation mit ID {command.InstallationId} nicht gefunden.");
 
-        if (command.Latitude.HasValue && command.Longitude.HasValue
-            && command.HorizontalAccuracy.HasValue && command.GpsSource is not null)
+        if (command.Latitude.HasValue && command.Longitude.HasValue && command.HorizontalAccuracy.HasValue && command.GpsSource is not null)
         {
             var position = GpsPosition.Create(
                 command.Latitude.Value,
@@ -39,8 +37,7 @@ public sealed class UpdateInstallationCommandHandler(IInstallationRepository ins
 
         if (command.CableType is not null)
         {
-            installation.UpdateCableSpec(
-                CableSpec.Create(command.CableType, command.CrossSection, command.CableColor, command.ConductorCount));
+            installation.UpdateCableSpec(CableSpec.Create(command.CableType, command.CrossSection, command.CableColor, command.ConductorCount));
         }
 
         if (command.DepthMm.HasValue)

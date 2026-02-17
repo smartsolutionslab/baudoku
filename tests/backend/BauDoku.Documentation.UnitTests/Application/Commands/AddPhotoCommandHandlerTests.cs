@@ -10,17 +10,17 @@ namespace BauDoku.Documentation.UnitTests.Application.Commands;
 
 public sealed class AddPhotoCommandHandlerTests
 {
-    private readonly IInstallationRepository repository;
+    private readonly IInstallationRepository installations;
     private readonly IPhotoStorage photoStorage;
     private readonly IUnitOfWork unitOfWork;
     private readonly AddPhotoCommandHandler handler;
 
     public AddPhotoCommandHandlerTests()
     {
-        repository = Substitute.For<IInstallationRepository>();
+        installations = Substitute.For<IInstallationRepository>();
         photoStorage = Substitute.For<IPhotoStorage>();
         unitOfWork = Substitute.For<IUnitOfWork>();
-        handler = new AddPhotoCommandHandler(repository, photoStorage, unitOfWork);
+        handler = new AddPhotoCommandHandler(installations, photoStorage, unitOfWork);
     }
 
     private static Installation CreateValidInstallation() =>
@@ -39,7 +39,7 @@ public sealed class AddPhotoCommandHandlerTests
     public async Task Handle_WithValidCommand_ShouldUploadAndAddPhoto()
     {
         var installation = CreateValidInstallation();
-        repository.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
+        installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
         photoStorage.UploadAsync(Arg.Any<Stream>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
             .Returns("https://blob.storage/photo.jpg");
@@ -57,7 +57,7 @@ public sealed class AddPhotoCommandHandlerTests
     [Fact]
     public async Task Handle_WhenInstallationNotFound_ShouldThrow()
     {
-        repository.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
+        installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns((Installation?)null);
 
         var command = CreateValidCommand(Guid.NewGuid());
@@ -71,7 +71,7 @@ public sealed class AddPhotoCommandHandlerTests
     public async Task Handle_WithGpsPosition_ShouldSetPhotoPosition()
     {
         var installation = CreateValidInstallation();
-        repository.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
+        installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
         photoStorage.UploadAsync(Arg.Any<Stream>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
             .Returns("https://blob.storage/photo.jpg");
@@ -91,7 +91,7 @@ public sealed class AddPhotoCommandHandlerTests
     public async Task Handle_WithoutGpsPosition_ShouldNotSetPhotoPosition()
     {
         var installation = CreateValidInstallation();
-        repository.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
+        installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
         photoStorage.UploadAsync(Arg.Any<Stream>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
             .Returns("https://blob.storage/photo.jpg");

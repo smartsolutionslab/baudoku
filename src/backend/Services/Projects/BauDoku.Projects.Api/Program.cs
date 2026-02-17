@@ -8,16 +8,14 @@ using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("ProjectsDb")
-    ?? throw new InvalidOperationException("Connection string 'ProjectsDb' not found.");
+var connectionString = builder.Configuration.GetConnectionString("ProjectsDb") ?? throw new InvalidOperationException("Connection string 'ProjectsDb' not found.");
 
 builder.AddServiceDefaults(health =>
 {
     health.AddNpgSql(connectionString, name: "postgresql", tags: ["ready"]);
 });
 
-builder.Services.ConfigureHttpJsonOptions(options =>
-    options.SerializerOptions.Converters.Add(new ValueObjectJsonConverterFactory()));
+builder.Services.ConfigureHttpJsonOptions(options => options.SerializerOptions.Converters.Add(new ValueObjectJsonConverterFactory()));
 
 builder.Services.AddOpenApi();
 
