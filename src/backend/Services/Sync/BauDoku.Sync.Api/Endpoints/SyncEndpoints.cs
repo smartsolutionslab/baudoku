@@ -1,7 +1,7 @@
 using BauDoku.BuildingBlocks.Application.Dispatcher;
 using BauDoku.BuildingBlocks.Infrastructure.Auth;
+using BauDoku.Sync.Api.Mapping;
 using BauDoku.Sync.Application.Commands.ProcessSyncBatch;
-using BauDoku.Sync.Application.Commands.ResolveConflict;
 using BauDoku.Sync.Application.Queries.Dtos;
 using BauDoku.Sync.Application.Queries.GetChangesSince;
 using BauDoku.Sync.Application.Queries.GetConflicts;
@@ -65,7 +65,7 @@ public static class SyncEndpoints
             IDispatcher dispatcher,
             CancellationToken ct) =>
         {
-            var command = new ResolveConflictCommand(id, request.Strategy, request.MergedPayload);
+            var command = request.ToCommand(id);
             await dispatcher.Send(command, ct);
             return Results.NoContent();
         })

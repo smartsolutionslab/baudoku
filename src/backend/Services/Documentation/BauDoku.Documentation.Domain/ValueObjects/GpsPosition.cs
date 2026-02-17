@@ -9,9 +9,9 @@ public sealed record GpsPosition : IValueObject
     public double Longitude { get; }
     public double? Altitude { get; }
     public double HorizontalAccuracy { get; }
-    public string Source { get; }
-    public string? CorrectionService { get; }
-    public string? RtkFixStatus { get; }
+    public GpsSource Source { get; }
+    public CorrectionService? CorrectionService { get; }
+    public RtkFixStatus? RtkFixStatus { get; }
     public int? SatelliteCount { get; }
     public double? Hdop { get; }
     public double? CorrectionAge { get; }
@@ -21,9 +21,9 @@ public sealed record GpsPosition : IValueObject
         double longitude,
         double? altitude,
         double horizontalAccuracy,
-        string source,
-        string? correctionService,
-        string? rtkFixStatus,
+        GpsSource source,
+        CorrectionService? correctionService,
+        RtkFixStatus? rtkFixStatus,
         int? satelliteCount,
         double? hdop,
         double? correctionAge)
@@ -55,9 +55,13 @@ public sealed record GpsPosition : IValueObject
         Ensure.That(latitude).IsBetween(-90.0, 90.0, "Breitengrad muss zwischen -90 und 90 liegen.");
         Ensure.That(longitude).IsBetween(-180.0, 180.0, "Laengengrad muss zwischen -180 und 180 liegen.");
         Ensure.That(horizontalAccuracy).IsPositive("Horizontale Genauigkeit muss groesser als 0 sein.");
-        Ensure.That(source).IsNotNullOrWhiteSpace("GPS-Quelle darf nicht leer sein.");
-        return new GpsPosition(latitude, longitude, altitude, horizontalAccuracy, source,
-            correctionService, rtkFixStatus, satelliteCount, hdop, correctionAge);
+
+        return new GpsPosition(
+            latitude, longitude, altitude, horizontalAccuracy,
+            GpsSource.From(source),
+            correctionService is not null ? ValueObjects.CorrectionService.From(correctionService) : null,
+            rtkFixStatus is not null ? ValueObjects.RtkFixStatus.From(rtkFixStatus) : null,
+            satelliteCount, hdop, correctionAge);
     }
 
     public GpsQualityGrade CalculateQualityGrade()

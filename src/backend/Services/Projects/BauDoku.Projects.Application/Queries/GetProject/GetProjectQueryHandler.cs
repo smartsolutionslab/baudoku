@@ -1,5 +1,6 @@
 using BauDoku.BuildingBlocks.Application.Queries;
 using BauDoku.Projects.Application.Contracts;
+using BauDoku.Projects.Application.Mapping;
 using BauDoku.Projects.Application.Queries.Dtos;
 using BauDoku.Projects.Domain.ValueObjects;
 
@@ -12,26 +13,6 @@ public sealed class GetProjectQueryHandler(IProjectRepository projects) : IQuery
         var projectId = ProjectIdentifier.From(query.ProjectId);
         var project = await projects.GetByIdReadOnlyAsync(projectId, cancellationToken);
 
-        if (project is null)
-            return null;
-
-        var zones = project.Zones.Select(z => new ZoneDto(
-            z.Id.Value,
-            z.Name.Value,
-            z.Type.Value,
-            z.ParentZoneIdentifier?.Value)).ToList();
-
-        return new ProjectDto(
-            project.Id.Value,
-            project.Name.Value,
-            project.Status.Value,
-            project.Address.Street,
-            project.Address.City,
-            project.Address.ZipCode,
-            project.Client.Name,
-            project.Client.Email,
-            project.Client.Phone,
-            project.CreatedAt,
-            zones);
+        return project?.ToDto();
     }
 }

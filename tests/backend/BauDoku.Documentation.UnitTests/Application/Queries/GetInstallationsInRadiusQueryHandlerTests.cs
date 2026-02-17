@@ -29,7 +29,10 @@ public sealed class GetInstallationsInRadiusQueryHandlerTests
         var expected = new PagedResult<NearbyInstallationDto>(items, 1, 1, 20);
 
         readRepository.SearchInRadiusAsync(
-                48.0, 11.0, 500.0, null, 1, 20, Arg.Any<CancellationToken>())
+                new SearchRadius(48.0, 11.0, 500.0),
+                null,
+                new PaginationParams(1, 20),
+                Arg.Any<CancellationToken>())
             .Returns(expected);
 
         var query = new GetInstallationsInRadiusQuery(48.0, 11.0, 500.0);
@@ -47,7 +50,10 @@ public sealed class GetInstallationsInRadiusQueryHandlerTests
         var expected = new PagedResult<NearbyInstallationDto>([], 0, 1, 20);
 
         readRepository.SearchInRadiusAsync(
-                48.0, 11.0, 1000.0, projectId, 1, 20, Arg.Any<CancellationToken>())
+                new SearchRadius(48.0, 11.0, 1000.0),
+                projectId,
+                new PaginationParams(1, 20),
+                Arg.Any<CancellationToken>())
             .Returns(expected);
 
         var query = new GetInstallationsInRadiusQuery(48.0, 11.0, 1000.0, projectId);
@@ -55,7 +61,10 @@ public sealed class GetInstallationsInRadiusQueryHandlerTests
 
         result.Should().BeSameAs(expected);
         await readRepository.Received(1).SearchInRadiusAsync(
-            48.0, 11.0, 1000.0, projectId, 1, 20, Arg.Any<CancellationToken>());
+            new SearchRadius(48.0, 11.0, 1000.0),
+            projectId,
+            new PaginationParams(1, 20),
+            Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -64,7 +73,10 @@ public sealed class GetInstallationsInRadiusQueryHandlerTests
         var expected = new PagedResult<NearbyInstallationDto>([], 0, 3, 10);
 
         readRepository.SearchInRadiusAsync(
-                48.0, 11.0, 500.0, null, 3, 10, Arg.Any<CancellationToken>())
+                new SearchRadius(48.0, 11.0, 500.0),
+                null,
+                new PaginationParams(3, 10),
+                Arg.Any<CancellationToken>())
             .Returns(expected);
 
         var query = new GetInstallationsInRadiusQuery(48.0, 11.0, 500.0, Page: 3, PageSize: 10);

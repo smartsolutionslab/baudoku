@@ -9,24 +9,27 @@ public sealed class InitChunkedUploadCommandHandler(IInstallationRepository inst
 {
     public async Task<Guid> Handle(InitChunkedUploadCommand command, CancellationToken cancellationToken = default)
     {
-        var installationId = InstallationIdentifier.From(command.InstallationId);
-        _ = await installations.GetByIdAsync(installationId, cancellationToken) ?? throw new KeyNotFoundException($"Installation mit ID {command.InstallationId} nicht gefunden.");
+        var (installationId, fileName, contentType, totalSize, totalChunks, photoType,
+             caption, description, latitude, longitude, altitude, horizontalAccuracy, gpsSource) = command;
+
+        _ = await installations.GetByIdAsync(InstallationIdentifier.From(installationId), cancellationToken)
+            ?? throw new KeyNotFoundException($"Installation mit ID {installationId} nicht gefunden.");
 
         var session = new ChunkedUploadSession(
             SessionId: Guid.NewGuid(),
-            InstallationId: command.InstallationId,
-            FileName: command.FileName,
-            ContentType: command.ContentType,
-            TotalSize: command.TotalSize,
-            TotalChunks: command.TotalChunks,
-            PhotoType: command.PhotoType,
-            Caption: command.Caption,
-            Description: command.Description,
-            Latitude: command.Latitude,
-            Longitude: command.Longitude,
-            Altitude: command.Altitude,
-            HorizontalAccuracy: command.HorizontalAccuracy,
-            GpsSource: command.GpsSource,
+            InstallationId: installationId,
+            FileName: fileName,
+            ContentType: contentType,
+            TotalSize: totalSize,
+            TotalChunks: totalChunks,
+            PhotoType: photoType,
+            Caption: caption,
+            Description: description,
+            Latitude: latitude,
+            Longitude: longitude,
+            Altitude: altitude,
+            HorizontalAccuracy: horizontalAccuracy,
+            GpsSource: gpsSource,
             CreatedAt: DateTime.UtcNow);
 
         var sessionId = await chunkedUploadStorage.InitSessionAsync(session, cancellationToken);

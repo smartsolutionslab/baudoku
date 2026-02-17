@@ -49,11 +49,11 @@ public sealed class InstallationPersistenceTests(PostgreSqlFixture fixture)
             loaded.Position.Longitude.Should().Be(11.5820);
             loaded.Position.Altitude.Should().Be(520.0);
             loaded.Position.HorizontalAccuracy.Should().Be(3.5);
-            loaded.Position.Source.Should().Be("internal_gps");
+            loaded.Position.Source.Value.Should().Be("internal_gps");
             loaded.Description!.Value.Should().Be("Test installation");
-            loaded.CableSpec!.CableType.Should().Be("NYM-J 5x2.5");
-            loaded.CableSpec.CrossSection.Should().Be(25);
-            loaded.CableSpec.Color.Should().Be("grey");
+            loaded.CableSpec!.CableType.Value.Should().Be("NYM-J 5x2.5");
+            loaded.CableSpec.CrossSection!.Value.Should().Be(25);
+            loaded.CableSpec.Color!.Value.Should().Be("grey");
             loaded.CableSpec.ConductorCount.Should().Be(5);
             loaded.Depth!.ValueInMillimeters.Should().Be(600);
             loaded.Manufacturer!.Value.Should().Be("Hager");
@@ -120,8 +120,8 @@ public sealed class InstallationPersistenceTests(PostgreSqlFixture fixture)
             var loaded = await readContext.Installations.FirstOrDefaultAsync(i => i.Id == installation.Id);
 
             loaded.Should().NotBeNull();
-            loaded!.Position.CorrectionService.Should().Be("sapos_heps");
-            loaded.Position.RtkFixStatus.Should().Be("fix");
+            loaded!.Position.CorrectionService!.Value.Should().Be("sapos_heps");
+            loaded.Position.RtkFixStatus!.Value.Should().Be("fix");
             loaded.Position.SatelliteCount.Should().Be(14);
             loaded.Position.Hdop.Should().Be(0.8);
             loaded.Position.CorrectionAge.Should().Be(1.2);

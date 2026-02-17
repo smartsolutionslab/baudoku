@@ -8,15 +8,13 @@ namespace BauDoku.Documentation.Infrastructure.Persistence.Repositories;
 public sealed class InstallationReadRepository(DocumentationDbContext context) : IInstallationReadRepository
 {
     public async Task<PagedResult<InstallationListItemDto>> ListAsync(
-        Guid? projectId,
-        Guid? zoneId,
-        string? type,
-        string? status,
-        string? search,
-        int page,
-        int pageSize,
+        InstallationListFilter filter,
+        PaginationParams pagination,
         CancellationToken cancellationToken = default)
     {
+        var (projectId, zoneId, type, status, search) = filter;
+        var (page, pageSize) = pagination;
+
         var query = context.Installations.AsNoTracking();
 
         if (projectId.HasValue)
@@ -59,14 +57,14 @@ public sealed class InstallationReadRepository(DocumentationDbContext context) :
     }
 
     public async Task<PagedResult<NearbyInstallationDto>> SearchInRadiusAsync(
-        double latitude,
-        double longitude,
-        double radiusMeters,
+        SearchRadius radius,
         Guid? projectId,
-        int page,
-        int pageSize,
+        PaginationParams pagination,
         CancellationToken cancellationToken = default)
     {
+        var (latitude, longitude, radiusMeters) = radius;
+        var (page, pageSize) = pagination;
+
         var baseQuery = context.Database.SqlQuery<NearbyInstallationDto>(
             $"""
             SELECT
@@ -107,15 +105,14 @@ public sealed class InstallationReadRepository(DocumentationDbContext context) :
     }
 
     public async Task<PagedResult<InstallationListItemDto>> SearchInBoundingBoxAsync(
-        double minLatitude,
-        double minLongitude,
-        double maxLatitude,
-        double maxLongitude,
+        BoundingBox boundingBox,
         Guid? projectId,
-        int page,
-        int pageSize,
+        PaginationParams pagination,
         CancellationToken cancellationToken = default)
     {
+        var (minLatitude, minLongitude, maxLatitude, maxLongitude) = boundingBox;
+        var (page, pageSize) = pagination;
+
         var query = context.Installations
             .FromSqlInterpolated(
                 $"""

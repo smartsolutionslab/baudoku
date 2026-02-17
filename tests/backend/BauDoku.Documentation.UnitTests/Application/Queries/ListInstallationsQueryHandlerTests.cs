@@ -28,7 +28,10 @@ public sealed class ListInstallationsQueryHandlerTests
         };
         var expected = new PagedResult<InstallationListItemDto>(items, 1, 1, 20);
 
-        readRepository.ListAsync(projectId, null, null, null, null, 1, 20, Arg.Any<CancellationToken>())
+        readRepository.ListAsync(
+                new InstallationListFilter(projectId),
+                new PaginationParams(1, 20),
+                Arg.Any<CancellationToken>())
             .Returns(expected);
 
         var result = await handler.Handle(new ListInstallationsQuery(projectId), CancellationToken.None);
@@ -44,7 +47,10 @@ public sealed class ListInstallationsQueryHandlerTests
         var zoneId = Guid.NewGuid();
         var expected = new PagedResult<InstallationListItemDto>([], 0, 2, 10);
 
-        readRepository.ListAsync(projectId, zoneId, "cable_tray", "in_progress", "test", 2, 10, Arg.Any<CancellationToken>())
+        readRepository.ListAsync(
+                new InstallationListFilter(projectId, zoneId, "cable_tray", "in_progress", "test"),
+                new PaginationParams(2, 10),
+                Arg.Any<CancellationToken>())
             .Returns(expected);
 
         var query = new ListInstallationsQuery(projectId, zoneId, "cable_tray", "in_progress", "test", 2, 10);

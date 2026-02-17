@@ -2,10 +2,10 @@ using BauDoku.BuildingBlocks.Application.Dispatcher;
 using BauDoku.BuildingBlocks.Application.Pagination;
 using BauDoku.BuildingBlocks.Application.Responses;
 using BauDoku.BuildingBlocks.Infrastructure.Auth;
+using BauDoku.Documentation.Api.Mapping;
 using BauDoku.Documentation.Application.Commands.CompleteInstallation;
 using BauDoku.Documentation.Application.Commands.DeleteInstallation;
 using BauDoku.Documentation.Application.Commands.DocumentInstallation;
-using BauDoku.Documentation.Application.Commands.UpdateInstallation;
 using BauDoku.Documentation.Application.Queries.Dtos;
 using BauDoku.Documentation.Application.Queries.GetInstallation;
 using BauDoku.Documentation.Application.Queries.GetInstallationsInBoundingBox;
@@ -118,27 +118,7 @@ public static class InstallationEndpoints
             IDispatcher dispatcher,
             CancellationToken ct) =>
         {
-            var command = new UpdateInstallationCommand(
-                id,
-                request.Latitude,
-                request.Longitude,
-                request.Altitude,
-                request.HorizontalAccuracy,
-                request.GpsSource,
-                request.CorrectionService,
-                request.RtkFixStatus,
-                request.SatelliteCount,
-                request.Hdop,
-                request.CorrectionAge,
-                request.Description,
-                request.CableType,
-                request.CrossSection,
-                request.CableColor,
-                request.ConductorCount,
-                request.DepthMm,
-                request.Manufacturer,
-                request.ModelName,
-                request.SerialNumber);
+            var command = request.ToCommand(id);
 
             await dispatcher.Send(command, ct);
             return Results.NoContent();

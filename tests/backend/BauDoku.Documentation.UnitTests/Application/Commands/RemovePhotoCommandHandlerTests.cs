@@ -33,7 +33,7 @@ public sealed class RemovePhotoCommandHandlerTests
             GpsPosition.Create(48.137154, 11.576124, null, 3.5, "gps"));
 
         photoId = PhotoIdentifier.New();
-        installation.AddPhoto(photoId, "photo.jpg", "https://blob/photo.jpg", "image/jpeg", 1024,
+        installation.AddPhoto(photoId, FileName.From("photo.jpg"), BlobUrl.From("https://blob/photo.jpg"), ContentType.From("image/jpeg"), FileSize.From(1024),
             PhotoType.Before);
 
         return installation;

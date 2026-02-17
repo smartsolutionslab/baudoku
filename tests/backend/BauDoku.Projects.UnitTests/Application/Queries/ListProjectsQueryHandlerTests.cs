@@ -27,7 +27,7 @@ public sealed class ListProjectsQueryHandlerTests
         };
         var expected = new PagedResult<ProjectListItemDto>(items, 1, 1, 20);
 
-        readRepository.ListAsync("test", 1, 20, Arg.Any<CancellationToken>())
+        readRepository.ListAsync("test", new PaginationParams(1, 20), Arg.Any<CancellationToken>())
             .Returns(expected);
 
         var result = await handler.Handle(new ListProjectsQuery("test", 1, 20));
@@ -41,7 +41,7 @@ public sealed class ListProjectsQueryHandlerTests
     {
         var expected = new PagedResult<ProjectListItemDto>([], 0, 2, 10);
 
-        readRepository.ListAsync(null, 2, 10, Arg.Any<CancellationToken>())
+        readRepository.ListAsync(null, new PaginationParams(2, 10), Arg.Any<CancellationToken>())
             .Returns(expected);
 
         var result = await handler.Handle(new ListProjectsQuery(null, 2, 10));

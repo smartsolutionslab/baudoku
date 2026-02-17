@@ -10,9 +10,10 @@ public sealed class GetConflictsQueryHandler(ISyncBatchReadRepository syncBatche
 {
     public async Task<List<ConflictDto>> Handle(GetConflictsQuery query, CancellationToken cancellationToken = default)
     {
-        var deviceId = query.DeviceId is not null ? DeviceIdentifier.From(query.DeviceId) : null;
-        var status = query.Status is not null ? ConflictStatus.From(query.Status) : null;
-
-        return await syncBatches.GetConflictsAsync(deviceId, status, cancellationToken);
+        var (deviceId, status) = query;
+        return await syncBatches.GetConflictsAsync(
+            deviceId is not null ? DeviceIdentifier.From(deviceId) : null,
+            status is not null ? ConflictStatus.From(status) : null,
+            cancellationToken);
     }
 }

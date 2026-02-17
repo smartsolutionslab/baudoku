@@ -112,8 +112,8 @@ public sealed class UpdateInstallationCommandHandlerTests
         await handler.Handle(command, CancellationToken.None);
 
         installation.CableSpec.Should().NotBeNull();
-        installation.CableSpec!.CableType.Should().Be("NYM-J");
-        installation.CableSpec.CrossSection.Should().Be(2.5m);
+        installation.CableSpec!.CableType.Value.Should().Be("NYM-J");
+        installation.CableSpec.CrossSection!.Value.Should().Be(2.5m);
         await unitOfWork.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 

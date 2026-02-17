@@ -22,10 +22,10 @@ public sealed class InstallationPhotoPersistenceTests(PostgreSqlFixture fixture)
         var photoId = PhotoIdentifier.New();
         installation.AddPhoto(
             photoId,
-            "test-photo.jpg",
-            "uploads/abc123.jpg",
-            "image/jpeg",
-            2048,
+            FileName.From("test-photo.jpg"),
+            BlobUrl.From("uploads/abc123.jpg"),
+            ContentType.From("image/jpeg"),
+            FileSize.From(2048),
             PhotoType.Before,
             Caption.From("Vorher-Bild"),
             Description.From("Detailansicht der Kabeltrasse"),
@@ -48,10 +48,10 @@ public sealed class InstallationPhotoPersistenceTests(PostgreSqlFixture fixture)
 
             var photo = loaded.Photos[0];
             photo.Id.Should().Be(photoId);
-            photo.FileName.Should().Be("test-photo.jpg");
-            photo.BlobUrl.Should().Be("uploads/abc123.jpg");
-            photo.ContentType.Should().Be("image/jpeg");
-            photo.FileSize.Should().Be(2048);
+            photo.FileName.Value.Should().Be("test-photo.jpg");
+            photo.BlobUrl.Value.Should().Be("uploads/abc123.jpg");
+            photo.ContentType.Value.Should().Be("image/jpeg");
+            photo.FileSize.Value.Should().Be(2048);
             photo.PhotoType.Should().Be(PhotoType.Before);
             photo.Caption!.Value.Should().Be("Vorher-Bild");
             photo.Description!.Value.Should().Be("Detailansicht der Kabeltrasse");
@@ -73,10 +73,10 @@ public sealed class InstallationPhotoPersistenceTests(PostgreSqlFixture fixture)
 
         installation.AddPhoto(
             PhotoIdentifier.New(),
-            "minimal.png",
-            "uploads/min.png",
-            "image/png",
-            512,
+            FileName.From("minimal.png"),
+            BlobUrl.From("uploads/min.png"),
+            ContentType.From("image/png"),
+            FileSize.From(512),
             PhotoType.Other);
 
         await using (var writeContext = fixture.CreateContext())
@@ -110,9 +110,9 @@ public sealed class InstallationPhotoPersistenceTests(PostgreSqlFixture fixture)
             InstallationType.Grounding,
             GpsPosition.Create(48.0, 11.0, null, 5.0, "internal_gps"));
 
-        installation.AddPhoto(PhotoIdentifier.New(), "before.jpg", "url1", "image/jpeg", 1024, PhotoType.Before);
-        installation.AddPhoto(PhotoIdentifier.New(), "after.jpg", "url2", "image/jpeg", 2048, PhotoType.After);
-        installation.AddPhoto(PhotoIdentifier.New(), "detail.png", "url3", "image/png", 4096, PhotoType.Detail);
+        installation.AddPhoto(PhotoIdentifier.New(), FileName.From("before.jpg"), BlobUrl.From("url1"), ContentType.From("image/jpeg"), FileSize.From(1024), PhotoType.Before);
+        installation.AddPhoto(PhotoIdentifier.New(), FileName.From("after.jpg"), BlobUrl.From("url2"), ContentType.From("image/jpeg"), FileSize.From(2048), PhotoType.After);
+        installation.AddPhoto(PhotoIdentifier.New(), FileName.From("detail.png"), BlobUrl.From("url3"), ContentType.From("image/png"), FileSize.From(4096), PhotoType.Detail);
 
         await using (var writeContext = fixture.CreateContext())
         {

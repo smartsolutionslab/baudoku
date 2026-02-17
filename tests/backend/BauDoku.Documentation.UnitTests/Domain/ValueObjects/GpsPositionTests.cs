@@ -13,7 +13,7 @@ public sealed class GpsPositionTests
         position.Longitude.Should().Be(11.5820);
         position.Altitude.Should().Be(520.0);
         position.HorizontalAccuracy.Should().Be(3.5);
-        position.Source.Should().Be("internal_gps");
+        position.Source.Value.Should().Be("internal_gps");
     }
 
     [Fact]
@@ -23,8 +23,8 @@ public sealed class GpsPositionTests
             48.1351, 11.5820, 520.0, 0.03, "rtk",
             "sapos_heps", "fix", 14, 0.8, 1.2);
 
-        position.CorrectionService.Should().Be("sapos_heps");
-        position.RtkFixStatus.Should().Be("fix");
+        position.CorrectionService!.Value.Should().Be("sapos_heps");
+        position.RtkFixStatus!.Value.Should().Be("fix");
         position.SatelliteCount.Should().Be(14);
         position.Hdop.Should().Be(0.8);
         position.CorrectionAge.Should().Be(1.2);

@@ -10,6 +10,6 @@ public sealed class RecordMeasurementCommandValidator : AbstractValidator<Record
         RuleFor(x => x.InstallationId).NotEmpty();
         RuleFor(x => x.Type).NotEmpty();
         RuleFor(x => x.Value).GreaterThan(0);
-        RuleFor(x => x.Unit).NotEmpty().MaximumLength(MeasurementValue.MaxUnitLength);
+        RuleFor(x => x.Unit).NotEmpty().MaximumLength(MeasurementUnit.MaxLength);
     }
 }

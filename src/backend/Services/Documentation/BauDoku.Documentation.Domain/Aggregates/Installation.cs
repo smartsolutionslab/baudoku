@@ -76,10 +76,10 @@ public sealed class Installation : AggregateRoot<InstallationIdentifier>
 
     public void AddPhoto(
         PhotoIdentifier photoId,
-        string fileName,
-        string blobUrl,
-        string contentType,
-        long fileSize,
+        FileName fileName,
+        BlobUrl blobUrl,
+        ContentType contentType,
+        FileSize fileSize,
         PhotoType photoType,
         Caption? caption = null,
         Description? description = null,
@@ -113,7 +113,7 @@ public sealed class Installation : AggregateRoot<InstallationIdentifier>
         MeasurementIdentifier measurementId,
         MeasurementType type,
         MeasurementValue value,
-        string? notes = null)
+        Notes? notes = null)
     {
         CheckRule(new CompletedInstallationCannotBeModified(Status));
         CheckRule(new MeasurementValueMustBeNonNegative(value));

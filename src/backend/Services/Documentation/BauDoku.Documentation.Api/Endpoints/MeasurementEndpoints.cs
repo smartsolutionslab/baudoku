@@ -1,7 +1,7 @@
 using BauDoku.BuildingBlocks.Application.Dispatcher;
 using BauDoku.BuildingBlocks.Application.Responses;
 using BauDoku.BuildingBlocks.Infrastructure.Auth;
-using BauDoku.Documentation.Application.Commands.RecordMeasurement;
+using BauDoku.Documentation.Api.Mapping;
 using BauDoku.Documentation.Application.Commands.RemoveMeasurement;
 using BauDoku.Documentation.Application.Queries.Dtos;
 using BauDoku.Documentation.Application.Queries.GetMeasurements;
@@ -20,14 +20,7 @@ public static class MeasurementEndpoints
             IDispatcher dispatcher,
             CancellationToken ct) =>
         {
-            var command = new RecordMeasurementCommand(
-                installationId,
-                request.Type,
-                request.Value,
-                request.Unit,
-                request.MinThreshold,
-                request.MaxThreshold,
-                request.Notes);
+            var command = request.ToCommand(installationId);
 
             var measurementId = await dispatcher.Send(command, ct);
             return Results.Created(

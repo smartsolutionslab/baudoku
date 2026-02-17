@@ -11,15 +11,17 @@ public sealed class ResolveConflictCommandHandler(ISyncBatchRepository syncBatch
 {
     public async Task Handle(ResolveConflictCommand command, CancellationToken cancellationToken = default)
     {
-        var conflictId = ConflictRecordIdentifier.From(command.ConflictId);
-        var batch = await syncBatches.GetByConflictIdAsync(conflictId, cancellationToken) ?? throw new KeyNotFoundException($"Batch fuer Konflikt {command.ConflictId} nicht gefunden.");
+        var (conflictId, strategyName, mergedPayloadJson) = command;
+        var conflictIdentifier = ConflictRecordIdentifier.From(conflictId);
+        var batch = await syncBatches.GetByConflictIdAsync(conflictIdentifier, cancellationToken)
+            ?? throw new KeyNotFoundException($"Batch fuer Konflikt {conflictId} nicht gefunden.");
 
-        var strategy = ConflictResolutionStrategy.From(command.Strategy);
-        var mergedPayload = command.MergedPayload is not null ? DeltaPayload.From(command.MergedPayload) : null;
+        var strategy = ConflictResolutionStrategy.From(strategyName);
+        var mergedPayload = mergedPayloadJson is not null ? DeltaPayload.From(mergedPayloadJson) : null;
 
-        batch.ResolveConflict(conflictId, strategy, mergedPayload);
+        batch.ResolveConflict(conflictIdentifier, strategy, mergedPayload);
 
-        var conflict = batch.Conflicts.First(c => c.Id == conflictId);
+        var conflict = batch.Conflicts.First(c => c.Id == conflictIdentifier);
 
         if (strategy == ConflictResolutionStrategy.ClientWins || strategy == ConflictResolutionStrategy.ManualMerge)
         {

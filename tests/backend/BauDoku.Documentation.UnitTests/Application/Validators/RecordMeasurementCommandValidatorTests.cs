@@ -49,7 +49,7 @@ public sealed class RecordMeasurementCommandValidatorTests
     [Fact]
     public void Unit_WhenTooLong_ShouldHaveError()
     {
-        var cmd = CreateValidCommand() with { Unit = new string('a', MeasurementValue.MaxUnitLength + 1) };
+        var cmd = CreateValidCommand() with { Unit = new string('a', MeasurementUnit.MaxLength + 1) };
         validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.Unit);
     }
 }

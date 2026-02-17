@@ -2,7 +2,7 @@ using BauDoku.BuildingBlocks.Application.Dispatcher;
 using BauDoku.BuildingBlocks.Application.Pagination;
 using BauDoku.BuildingBlocks.Application.Responses;
 using BauDoku.BuildingBlocks.Infrastructure.Auth;
-using BauDoku.Projects.Application.Commands.AddZone;
+using BauDoku.Projects.Api.Mapping;
 using BauDoku.Projects.Application.Commands.CreateProject;
 using BauDoku.Projects.Application.Commands.DeleteProject;
 using BauDoku.Projects.Application.Queries.Dtos;
@@ -53,7 +53,7 @@ public static class ProjectEndpoints
 
         group.MapPost("/{id:guid}/zones", async (Guid id, AddZoneRequest request, IDispatcher dispatcher, CancellationToken ct) =>
         {
-            var command = new AddZoneCommand(id, request.Name, request.Type, request.ParentZoneId);
+            var command = request.ToCommand(id);
             await dispatcher.Send(command, ct);
             return Results.NoContent();
         })

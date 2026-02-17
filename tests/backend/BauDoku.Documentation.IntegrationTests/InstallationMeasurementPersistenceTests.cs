@@ -24,7 +24,7 @@ public sealed class InstallationMeasurementPersistenceTests(PostgreSqlFixture fi
             measurementId,
             MeasurementType.Voltage,
             MeasurementValue.Create(230.0, "V", 220.0, 240.0),
-            "Spannungsmessung Phase L1");
+            Notes.From("Spannungsmessung Phase L1"));
 
         await using (var writeContext = fixture.CreateContext())
         {
@@ -45,11 +45,11 @@ public sealed class InstallationMeasurementPersistenceTests(PostgreSqlFixture fi
             measurement.Id.Should().Be(measurementId);
             measurement.Type.Should().Be(MeasurementType.Voltage);
             measurement.Value.Value.Should().Be(230.0);
-            measurement.Value.Unit.Should().Be("V");
+            measurement.Value.Unit.Value.Should().Be("V");
             measurement.Value.MinThreshold.Should().Be(220.0);
             measurement.Value.MaxThreshold.Should().Be(240.0);
             measurement.Result.Should().Be(MeasurementResult.Passed);
-            measurement.Notes.Should().Be("Spannungsmessung Phase L1");
+            measurement.Notes!.Value.Should().Be("Spannungsmessung Phase L1");
             measurement.MeasuredAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromMinutes(1));
         }
     }
@@ -87,6 +87,7 @@ public sealed class InstallationMeasurementPersistenceTests(PostgreSqlFixture fi
             measurement.Value.MaxThreshold.Should().BeNull();
             measurement.Result.Should().Be(MeasurementResult.Passed);
             measurement.Notes.Should().BeNull();
+
         }
     }
 

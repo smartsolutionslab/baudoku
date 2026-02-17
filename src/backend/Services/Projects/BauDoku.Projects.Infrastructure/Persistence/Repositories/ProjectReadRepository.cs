@@ -7,8 +7,10 @@ namespace BauDoku.Projects.Infrastructure.Persistence.Repositories;
 
 public sealed class ProjectReadRepository(ProjectsDbContext context) : IProjectReadRepository
 {
-    public async Task<PagedResult<ProjectListItemDto>> ListAsync(string? search, int page, int pageSize, CancellationToken cancellationToken = default)
+    public async Task<PagedResult<ProjectListItemDto>> ListAsync(string? search, PaginationParams pagination, CancellationToken cancellationToken = default)
     {
+        var (page, pageSize) = pagination;
+
         var query = context.Projects.AsNoTracking();
 
         if (!string.IsNullOrWhiteSpace(search))
