@@ -114,9 +114,55 @@ public sealed class KeycloakAuthTests : IDisposable
         response.StatusCode.Should().Be(HttpStatusCode.Created);
     }
 
+    [Fact]
+    public async Task DeleteProject_WithAdminToken_Returns204()
+    {
+        var token = await fixture.GetTokenAsync("admin@test.de", "test");
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        // Create a project first
+        var createResponse = await client.PostAsJsonAsync("/api/projects", new
+        {
+            Name = "Project To Delete",
+            Street = "Löschstraße 1",
+            City = "Berlin",
+            ZipCode = "10115",
+            ClientName = "Delete Client"
+        });
+        var created = await createResponse.Content.ReadFromJsonAsync<IdResponse>();
+
+        var response = await client.DeleteAsync($"/api/projects/{created!.Id}");
+
+        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+    }
+
+    [Fact]
+    public async Task DeleteProject_WithUserToken_Returns403()
+    {
+        var token = await fixture.GetTokenAsync("user@test.de", "test");
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        var response = await client.DeleteAsync($"/api/projects/{Guid.NewGuid()}");
+
+        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+    }
+
+    [Fact]
+    public async Task DeleteProject_WithInspectorToken_Returns403()
+    {
+        var token = await fixture.GetTokenAsync("inspector@test.de", "test");
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        var response = await client.DeleteAsync($"/api/projects/{Guid.NewGuid()}");
+
+        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+    }
+
     public void Dispose()
     {
         client.Dispose();
         factory.Dispose();
     }
+
+    private sealed record IdResponse(Guid Id);
 }
