@@ -3,7 +3,7 @@ using BauDoku.BuildingBlocks.Domain.Guards;
 
 namespace BauDoku.Documentation.Domain.ValueObjects;
 
-public sealed record PhotoType : ValueObject
+public sealed record PhotoType : IValueObject
 {
     private static readonly HashSet<string> ValidValues = ["before", "after", "detail", "overview", "document", "other"];
 

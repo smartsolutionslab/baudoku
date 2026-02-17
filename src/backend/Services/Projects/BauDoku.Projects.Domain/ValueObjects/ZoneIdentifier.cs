@@ -3,7 +3,7 @@ using BauDoku.BuildingBlocks.Domain.Guards;
 
 namespace BauDoku.Projects.Domain.ValueObjects;
 
-public sealed record ZoneIdentifier : ValueObject
+public sealed record ZoneIdentifier : IValueObject
 {
     public Guid Value { get; }
 

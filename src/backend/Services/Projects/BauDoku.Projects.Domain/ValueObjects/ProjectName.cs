@@ -3,7 +3,7 @@ using BauDoku.BuildingBlocks.Domain.Guards;
 
 namespace BauDoku.Projects.Domain.ValueObjects;
 
-public sealed record ProjectName : ValueObject
+public sealed record ProjectName : IValueObject
 {
     public const int MaxLength = 200;
     public string Value { get; }

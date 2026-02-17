@@ -3,7 +3,7 @@ using BauDoku.BuildingBlocks.Domain.Guards;
 
 namespace BauDoku.Documentation.Domain.ValueObjects;
 
-public sealed record Depth : ValueObject
+public sealed record Depth : IValueObject
 {
     public int ValueInMillimeters { get; }
 

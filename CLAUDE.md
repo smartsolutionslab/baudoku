@@ -29,12 +29,11 @@ Mobile App zur Dokumentation elektrischer Installationen auf Baustellen. Zielgru
 ### ValueObject-Pattern
 
 ```csharp
-// Basis: abstract record mit IValueObject Marker-Interface
+// Marker-Interface für alle ValueObjects
 public interface IValueObject;
-public abstract record ValueObject : IValueObject;
 
 // Konkretes ValueObject: sealed record, private Konstruktor, statische Factory-Methode, Guard-Validierung
-public sealed record ProjectName : ValueObject
+public sealed record ProjectName : IValueObject
 {
     public const int MaxLength = 200;
     public string Value { get; }
@@ -51,7 +50,7 @@ public sealed record ProjectName : ValueObject
 }
 
 // ID-ValueObject (Namenskonvention: *Identifier, nicht *Id)
-public sealed record ProjectIdentifier : ValueObject
+public sealed record ProjectIdentifier : IValueObject
 {
     public Guid Value { get; }
     private ProjectIdentifier(Guid value) => Value = value;
@@ -65,7 +64,7 @@ public sealed record ProjectIdentifier : ValueObject
 }
 
 // Enum-artige ValueObjects (statt C# enums)
-public sealed record InstallationStatus : ValueObject
+public sealed record InstallationStatus : IValueObject
 {
     private static readonly HashSet<string> ValidValues = ["in_progress", "completed", "inspected"];
 
@@ -108,12 +107,12 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 ### Entity + AggregateRoot
 
 ```csharp
-public abstract class Entity<TId> where TId : ValueObject
+public abstract class Entity<TId> where TId : IValueObject
 {
     public TId Id { get; protected set; } = default!;
 }
 
-public abstract class AggregateRoot<TId> : Entity<TId>, IAggregateRoot where TId : ValueObject
+public abstract class AggregateRoot<TId> : Entity<TId>, IAggregateRoot where TId : IValueObject
 {
     private readonly List<IDomainEvent> domainEvents = [];  // kein Underscore-Prefix!
     public IReadOnlyList<IDomainEvent> DomainEvents => domainEvents.AsReadOnly();
@@ -202,7 +201,7 @@ src/
 │       └── shared-logic/                         # @baudoku/shared-logic
 ├── backend/
 │   ├── BuildingBlocks/
-│   │   ├── BauDoku.BuildingBlocks.Domain/        # ValueObject, IValueObject, Entity, AggregateRoot, Guards/Ensure, IDomainEvent, IBusinessRule
+│   │   ├── BauDoku.BuildingBlocks.Domain/        # IValueObject, Entity, AggregateRoot, Guards/Ensure, IDomainEvent, IBusinessRule
 │   │   ├── BauDoku.BuildingBlocks.Application/   # Dispatcher, ICommand/IQuery, Behaviors (Validation, Logging, Transaction)
 │   │   ├── BauDoku.BuildingBlocks.Infrastructure/ # BaseDbContext, UnitOfWork, Messaging, ValueObjectJsonConverterFactory
 │   │   └── BauDoku.ServiceDefaults/              # Aspire ServiceDefaults (OpenTelemetry, Health Checks, Service Discovery)

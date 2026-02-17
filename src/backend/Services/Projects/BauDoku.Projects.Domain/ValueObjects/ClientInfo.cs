@@ -3,7 +3,7 @@ using BauDoku.BuildingBlocks.Domain.Guards;
 
 namespace BauDoku.Projects.Domain.ValueObjects;
 
-public sealed record ClientInfo : ValueObject
+public sealed record ClientInfo : IValueObject
 {
     public const int MaxNameLength = 200;
     public const int MaxEmailLength = 254;

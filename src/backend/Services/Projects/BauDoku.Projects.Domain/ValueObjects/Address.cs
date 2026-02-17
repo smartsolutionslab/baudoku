@@ -3,7 +3,7 @@ using BauDoku.BuildingBlocks.Domain.Guards;
 
 namespace BauDoku.Projects.Domain.ValueObjects;
 
-public sealed record Address : ValueObject
+public sealed record Address : IValueObject
 {
     public const int MaxStreetLength = 200;
     public const int MaxCityLength = 100;

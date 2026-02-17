@@ -2,7 +2,7 @@ namespace BauDoku.BuildingBlocks.Domain;
 
 public interface IRepository<T, in TId>
     where T : AggregateRoot<TId>
-    where TId : ValueObject
+    where TId : IValueObject
 {
     Task<T?> GetByIdAsync(TId id, CancellationToken cancellationToken = default);
     Task<T?> GetByIdReadOnlyAsync(TId id, CancellationToken cancellationToken = default) => GetByIdAsync(id, cancellationToken);

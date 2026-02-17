@@ -1,6 +1,6 @@
 namespace BauDoku.BuildingBlocks.Domain;
 
-public abstract class AggregateRoot<TId> : Entity<TId>, IAggregateRoot where TId : ValueObject
+public abstract class AggregateRoot<TId> : Entity<TId>, IAggregateRoot where TId : IValueObject
 {
     private readonly List<IDomainEvent> domainEvents = [];
 

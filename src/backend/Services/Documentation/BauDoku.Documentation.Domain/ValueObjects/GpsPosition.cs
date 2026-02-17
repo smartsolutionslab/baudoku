@@ -3,7 +3,7 @@ using BauDoku.BuildingBlocks.Domain.Guards;
 
 namespace BauDoku.Documentation.Domain.ValueObjects;
 
-public sealed record GpsPosition : ValueObject
+public sealed record GpsPosition : IValueObject
 {
     public double Latitude { get; }
     public double Longitude { get; }

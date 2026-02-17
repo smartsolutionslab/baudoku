@@ -3,7 +3,7 @@ using BauDoku.BuildingBlocks.Domain.Guards;
 
 namespace BauDoku.Sync.Domain.ValueObjects;
 
-public sealed record EntityReference : ValueObject
+public sealed record EntityReference : IValueObject
 {
     public EntityType EntityType { get; }
     public Guid EntityId { get; }

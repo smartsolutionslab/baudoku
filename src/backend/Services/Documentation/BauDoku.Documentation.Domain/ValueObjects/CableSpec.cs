@@ -3,7 +3,7 @@ using BauDoku.BuildingBlocks.Domain.Guards;
 
 namespace BauDoku.Documentation.Domain.ValueObjects;
 
-public sealed record CableSpec : ValueObject
+public sealed record CableSpec : IValueObject
 {
     public const int MaxCableTypeLength = 100;
     public const int MaxColorLength = 50;

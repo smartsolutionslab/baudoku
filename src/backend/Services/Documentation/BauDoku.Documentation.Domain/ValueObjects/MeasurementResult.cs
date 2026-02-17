@@ -3,7 +3,7 @@ using BauDoku.BuildingBlocks.Domain.Guards;
 
 namespace BauDoku.Documentation.Domain.ValueObjects;
 
-public sealed record MeasurementResult : ValueObject
+public sealed record MeasurementResult : IValueObject
 {
     private static readonly HashSet<string> ValidValues = ["passed", "failed", "warning"];
 

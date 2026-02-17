@@ -3,7 +3,7 @@ using BauDoku.BuildingBlocks.Domain.Guards;
 
 namespace BauDoku.Sync.Domain.ValueObjects;
 
-public sealed record DeviceIdentifier : ValueObject
+public sealed record DeviceIdentifier : IValueObject
 {
     public const int MaxLength = 200;
 

@@ -3,7 +3,7 @@ using BauDoku.BuildingBlocks.Domain.Guards;
 
 namespace BauDoku.Documentation.Domain.ValueObjects;
 
-public sealed record InstallationStatus : ValueObject
+public sealed record InstallationStatus : IValueObject
 {
     private static readonly HashSet<string> ValidValues = ["in_progress", "completed", "inspected"];
 
