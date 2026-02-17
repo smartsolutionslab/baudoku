@@ -4,6 +4,7 @@ using BauDoku.BuildingBlocks.Application.Responses;
 using BauDoku.BuildingBlocks.Infrastructure.Auth;
 using BauDoku.Projects.Application.Commands.AddZone;
 using BauDoku.Projects.Application.Commands.CreateProject;
+using BauDoku.Projects.Application.Commands.DeleteProject;
 using BauDoku.Projects.Application.Queries.Dtos;
 using BauDoku.Projects.Application.Queries.GetProject;
 using BauDoku.Projects.Application.Queries.ListProjects;
@@ -61,5 +62,17 @@ public static class ProjectEndpoints
         .WithSummary("Zone zu einem Projekt hinzufuegen")
         .Produces(StatusCodes.Status204NoContent)
         .ProducesValidationProblem();
+
+        group.MapDelete("/{id:guid}", async (Guid id, IDispatcher dispatcher, CancellationToken ct) =>
+        {
+            var command = new DeleteProjectCommand(id);
+            await dispatcher.Send(command, ct);
+            return Results.NoContent();
+        })
+        .RequireAuthorization(AuthPolicies.RequireAdmin)
+        .WithName("DeleteProject")
+        .WithSummary("Projekt loeschen")
+        .Produces(StatusCodes.Status204NoContent)
+        .Produces(StatusCodes.Status404NotFound);
     }
 }

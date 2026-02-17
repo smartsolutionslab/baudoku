@@ -35,6 +35,11 @@ public sealed class Project : AggregateRoot<ProjectIdentifier>
         return project;
     }
 
+    public void Delete()
+    {
+        AddDomainEvent(new ProjectDeleted(Id, DateTime.UtcNow));
+    }
+
     public void AddZone(ZoneIdentifier zoneId, ZoneName name, ZoneType type, ZoneIdentifier? parentZoneIdentifier = null)
     {
         if (parentZoneIdentifier is not null && zones.All(z => z.Id != parentZoneIdentifier))

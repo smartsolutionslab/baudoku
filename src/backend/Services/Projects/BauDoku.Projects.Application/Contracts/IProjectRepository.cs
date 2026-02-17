@@ -7,4 +7,5 @@ namespace BauDoku.Projects.Application.Contracts;
 public interface IProjectRepository : IRepository<Project, ProjectIdentifier>
 {
     Task<bool> ExistsByNameAsync(ProjectName name, CancellationToken ct = default);
+    void Remove(Project project);
 }
