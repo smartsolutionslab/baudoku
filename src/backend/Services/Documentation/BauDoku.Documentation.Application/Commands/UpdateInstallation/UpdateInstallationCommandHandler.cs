@@ -8,7 +8,7 @@ namespace BauDoku.Documentation.Application.Commands.UpdateInstallation;
 public sealed class UpdateInstallationCommandHandler(IInstallationRepository installations, IUnitOfWork unitOfWork)
     : ICommandHandler<UpdateInstallationCommand>
 {
-    public async Task Handle(UpdateInstallationCommand command, CancellationToken cancellationToken)
+    public async Task Handle(UpdateInstallationCommand command, CancellationToken cancellationToken = default)
     {
         var installationId = InstallationIdentifier.From(command.InstallationId);
         var installation = await installations.GetByIdAsync(installationId, cancellationToken) ?? throw new InvalidOperationException($"Installation mit ID {command.InstallationId} nicht gefunden.");

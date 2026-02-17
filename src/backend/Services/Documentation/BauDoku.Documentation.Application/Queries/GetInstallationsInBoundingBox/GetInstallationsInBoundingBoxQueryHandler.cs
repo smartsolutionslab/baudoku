@@ -8,7 +8,7 @@ namespace BauDoku.Documentation.Application.Queries.GetInstallationsInBoundingBo
 public sealed class GetInstallationsInBoundingBoxQueryHandler(IInstallationReadRepository installations)
     : IQueryHandler<GetInstallationsInBoundingBoxQuery, PagedResult<InstallationListItemDto>>
 {
-    public async Task<PagedResult<InstallationListItemDto>> Handle(GetInstallationsInBoundingBoxQuery query, CancellationToken cancellationToken)
+    public async Task<PagedResult<InstallationListItemDto>> Handle(GetInstallationsInBoundingBoxQuery query, CancellationToken cancellationToken = default)
     {
         return await installations.SearchInBoundingBoxAsync(
             query.MinLatitude,

@@ -6,7 +6,7 @@ namespace BauDoku.Documentation.Application.Queries.GetPhoto;
 
 public sealed class GetPhotoQueryHandler(IPhotoReadRepository photos) : IQueryHandler<GetPhotoQuery, PhotoDto?>
 {
-    public async Task<PhotoDto?> Handle(GetPhotoQuery query, CancellationToken cancellationToken)
+    public async Task<PhotoDto?> Handle(GetPhotoQuery query, CancellationToken cancellationToken = default)
     {
         return await photos.GetByIdAsync(query.PhotoId, cancellationToken);
     }

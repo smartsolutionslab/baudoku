@@ -9,7 +9,7 @@ namespace BauDoku.Documentation.Application.Commands.RemovePhoto;
 public sealed class RemovePhotoCommandHandler(IInstallationRepository installations, IPhotoStorage photoStorage, IUnitOfWork unitOfWork)
     : ICommandHandler<RemovePhotoCommand>
 {
-    public async Task Handle(RemovePhotoCommand command, CancellationToken cancellationToken)
+    public async Task Handle(RemovePhotoCommand command, CancellationToken cancellationToken = default)
     {
         var installationId = InstallationIdentifier.From(command.InstallationId);
         var installation = await installations.GetByIdAsync(installationId, cancellationToken) ?? throw new InvalidOperationException($"Installation mit ID {command.InstallationId} nicht gefunden.");

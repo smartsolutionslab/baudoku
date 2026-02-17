@@ -9,7 +9,7 @@ namespace BauDoku.Documentation.Application.Commands.CompleteChunkedUpload;
 public sealed class CompleteChunkedUploadCommandHandler(IChunkedUploadStorage chunkedUploadStorage, IPhotoStorage photoStorage, IInstallationRepository installations, IUnitOfWork unitOfWork)
     : ICommandHandler<CompleteChunkedUploadCommand, Guid>
 {
-    public async Task<Guid> Handle(CompleteChunkedUploadCommand command, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(CompleteChunkedUploadCommand command, CancellationToken cancellationToken = default)
     {
         var session = await chunkedUploadStorage.GetSessionAsync(command.SessionId, cancellationToken) ?? throw new InvalidOperationException($"Upload-Session mit ID {command.SessionId} nicht gefunden.");
 

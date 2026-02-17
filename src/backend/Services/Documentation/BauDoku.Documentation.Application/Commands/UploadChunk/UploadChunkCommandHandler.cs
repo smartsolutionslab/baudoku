@@ -6,7 +6,7 @@ namespace BauDoku.Documentation.Application.Commands.UploadChunk;
 public sealed class UploadChunkCommandHandler(IChunkedUploadStorage chunkedUploadStorage)
     : ICommandHandler<UploadChunkCommand>
 {
-    public async Task Handle(UploadChunkCommand command, CancellationToken cancellationToken)
+    public async Task Handle(UploadChunkCommand command, CancellationToken cancellationToken = default)
     {
         var session = await chunkedUploadStorage.GetSessionAsync(command.SessionId, cancellationToken) ?? throw new InvalidOperationException($"Upload-Session mit ID {command.SessionId} nicht gefunden.");
 

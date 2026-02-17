@@ -9,7 +9,7 @@ namespace BauDoku.Documentation.Application.Commands.RemoveMeasurement;
 public sealed class RemoveMeasurementCommandHandler(IInstallationRepository installations, IUnitOfWork unitOfWork)
     : ICommandHandler<RemoveMeasurementCommand>
 {
-    public async Task Handle(RemoveMeasurementCommand command, CancellationToken cancellationToken)
+    public async Task Handle(RemoveMeasurementCommand command, CancellationToken cancellationToken = default)
     {
         var installationId = InstallationIdentifier.From(command.InstallationId);
         var installation = await installations.GetByIdAsync(installationId, cancellationToken) ?? throw new InvalidOperationException($"Installation mit ID {command.InstallationId} nicht gefunden.");
