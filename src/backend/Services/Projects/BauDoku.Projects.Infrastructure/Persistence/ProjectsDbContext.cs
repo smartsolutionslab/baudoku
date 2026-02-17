@@ -6,15 +6,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BauDoku.Projects.Infrastructure.Persistence;
 
-public sealed class ProjectsDbContext : BaseDbContext
+public sealed class ProjectsDbContext(DbContextOptions<ProjectsDbContext> options, IDispatcher dispatcher)
+    : BaseDbContext(options, dispatcher)
 {
     public DbSet<Project> Projects => Set<Project>();
     public DbSet<Zone> Zones => Set<Zone>();
-
-    public ProjectsDbContext(DbContextOptions<ProjectsDbContext> options, IDispatcher dispatcher)
-        : base(options, dispatcher)
-    {
-    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

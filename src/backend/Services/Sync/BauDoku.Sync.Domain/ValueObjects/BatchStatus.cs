@@ -3,7 +3,7 @@ using BauDoku.BuildingBlocks.Domain.Guards;
 
 namespace BauDoku.Sync.Domain.ValueObjects;
 
-public sealed record BatchStatus : ValueObject
+public sealed record BatchStatus : IValueObject
 {
     private static readonly HashSet<string> ValidValues =
         ["pending", "processing", "completed", "partial_conflict", "failed"];

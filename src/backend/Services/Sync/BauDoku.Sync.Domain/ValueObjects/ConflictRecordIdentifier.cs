@@ -3,7 +3,7 @@ using BauDoku.BuildingBlocks.Domain.Guards;
 
 namespace BauDoku.Sync.Domain.ValueObjects;
 
-public sealed record ConflictRecordIdentifier : ValueObject
+public sealed record ConflictRecordIdentifier : IValueObject
 {
     public Guid Value { get; }
 

@@ -16,6 +16,7 @@
     <ProjectReference Include="..\..\Services\Documentation\BauDoku.Documentation.Api\BauDoku.Documentation.Api.csproj" />
     <ProjectReference Include="..\..\Services\Sync\BauDoku.Sync.Api\BauDoku.Sync.Api.csproj" />
     <ProjectReference Include="..\..\ApiGateway\BauDoku.ApiGateway\BauDoku.ApiGateway.csproj" />
+    <ProjectReference Include="..\..\Tools\BauDoku.MigrationRunner\BauDoku.MigrationRunner.csproj" />
   </ItemGroup>
 
 </Project>

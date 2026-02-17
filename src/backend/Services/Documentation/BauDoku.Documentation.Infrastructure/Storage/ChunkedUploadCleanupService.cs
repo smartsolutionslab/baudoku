@@ -20,6 +20,7 @@ public sealed class ChunkedUploadCleanupService(IOptions<PhotoStorageOptions> op
         return Path.Combine(Directory.GetCurrentDirectory(), chunkedPath);
     }
 
+
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         while (!stoppingToken.IsCancellationRequested)
@@ -66,7 +67,9 @@ public sealed class ChunkedUploadCleanupService(IOptions<PhotoStorageOptions> op
         }
 
         if (cleaned > 0)
+        {
             logger.LogInformation("Chunked-Upload-Cleanup: {Count} abgelaufene Sessions entfernt", cleaned);
+        }
     }
 
     private void TryDeleteDirectory(string path)

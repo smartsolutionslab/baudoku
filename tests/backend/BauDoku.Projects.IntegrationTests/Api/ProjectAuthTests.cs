@@ -8,13 +8,13 @@ namespace BauDoku.Projects.IntegrationTests.Api;
 [Collection(PostgreSqlCollection.Name)]
 public sealed class ProjectAuthTests : IDisposable
 {
-    private readonly ProjectsApiFactory _factory;
-    private readonly HttpClient _client;
+    private readonly ProjectsApiFactory factory;
+    private readonly HttpClient client;
 
     public ProjectAuthTests(PostgreSqlFixture fixture)
     {
-        _factory = new ProjectsApiFactory(fixture);
-        _client = _factory.CreateClient();
+        factory = new ProjectsApiFactory(fixture);
+        client = factory.CreateClient();
     }
 
     [Fact]
@@ -23,7 +23,7 @@ public sealed class ProjectAuthTests : IDisposable
         TestAuthHandler.Roles = ["user"];
         try
         {
-            var response = await _client.PostAsJsonAsync("/api/projects", new
+            var response = await client.PostAsJsonAsync("/api/projects", new
             {
                 Name = "Auth Test Project",
                 Street = "Teststraße 1",
@@ -46,7 +46,7 @@ public sealed class ProjectAuthTests : IDisposable
         TestAuthHandler.Roles = ["inspector"];
         try
         {
-            var response = await _client.PostAsJsonAsync("/api/projects", new
+            var response = await client.PostAsJsonAsync("/api/projects", new
             {
                 Name = "Auth Test Project",
                 Street = "Teststraße 1",
@@ -69,7 +69,7 @@ public sealed class ProjectAuthTests : IDisposable
         TestAuthHandler.Roles = ["inspector"];
         try
         {
-            var response = await _client.GetAsync("/api/projects");
+            var response = await client.GetAsync("/api/projects");
 
             response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
@@ -81,7 +81,7 @@ public sealed class ProjectAuthTests : IDisposable
 
     public void Dispose()
     {
-        _client.Dispose();
-        _factory.Dispose();
+        client.Dispose();
+        factory.Dispose();
     }
 }

@@ -1,0 +1,112 @@
+import { useEffect, useRef } from "react";
+import {
+  Animated,
+  Text,
+  StyleSheet,
+  Pressable,
+} from "react-native";
+import { Colors, Spacing, FontSize, Radius, Shadows } from "../../styles/tokens";
+import { useToastStore, type ToastType } from "../../store";
+
+const backgroundColors: Record<ToastType, string> = {
+  success: Colors.success,
+  error: Colors.danger,
+  warning: Colors.warning,
+  info: Colors.primary,
+};
+
+type ToastProps = {
+  id: string;
+  message: string;
+  type: ToastType;
+  duration: number;
+};
+
+export function Toast({ id, message, type, duration }: ToastProps) {
+  const dismiss = useToastStore((s) => s.dismiss);
+  const opacity = useRef(new Animated.Value(0)).current;
+  const translateY = useRef(new Animated.Value(20)).current;
+  const dismissTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(opacity, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+      Animated.timing(translateY, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+    ]).start();
+
+    dismissTimer.current = setTimeout(() => {
+      Animated.parallel([
+        Animated.timing(opacity, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+        Animated.timing(translateY, {
+          toValue: 20,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+      ]).start(() => dismiss(id));
+    }, duration);
+
+    return () => {
+      if (dismissTimer.current) clearTimeout(dismissTimer.current);
+    };
+  }, [id, duration, dismiss, opacity, translateY]);
+
+  const handlePress = () => {
+    if (dismissTimer.current) clearTimeout(dismissTimer.current);
+    Animated.parallel([
+      Animated.timing(opacity, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+      Animated.timing(translateY, {
+        toValue: 20,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+    ]).start(() => dismiss(id));
+  };
+
+  return (
+    <Animated.View
+      style={[
+        styles.container,
+        { backgroundColor: backgroundColors[type], opacity, transform: [{ translateY }] },
+      ]}
+      accessibilityRole="alert"
+      accessibilityLiveRegion="polite"
+    >
+      <Pressable onPress={handlePress} style={styles.pressable}>
+        <Text style={styles.text}>{message}</Text>
+      </Pressable>
+    </Animated.View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    borderRadius: Radius.md,
+    marginBottom: Spacing.sm,
+    ...Shadows.floating,
+  },
+  pressable: {
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.lg,
+  },
+  text: {
+    color: Colors.white,
+    fontSize: FontSize.body,
+    fontWeight: "500",
+  },
+});

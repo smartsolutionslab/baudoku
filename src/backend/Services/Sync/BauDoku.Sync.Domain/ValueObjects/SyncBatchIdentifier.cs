@@ -3,7 +3,7 @@ using BauDoku.BuildingBlocks.Domain.Guards;
 
 namespace BauDoku.Sync.Domain.ValueObjects;
 
-public sealed record SyncBatchIdentifier : ValueObject
+public sealed record SyncBatchIdentifier : IValueObject
 {
     public Guid Value { get; }
 

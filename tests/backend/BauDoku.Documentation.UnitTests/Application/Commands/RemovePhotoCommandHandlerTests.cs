@@ -10,17 +10,17 @@ namespace BauDoku.Documentation.UnitTests.Application.Commands;
 
 public sealed class RemovePhotoCommandHandlerTests
 {
-    private readonly IInstallationRepository repository;
+    private readonly IInstallationRepository installations;
     private readonly IPhotoStorage photoStorage;
     private readonly IUnitOfWork unitOfWork;
     private readonly RemovePhotoCommandHandler handler;
 
     public RemovePhotoCommandHandlerTests()
     {
-        repository = Substitute.For<IInstallationRepository>();
+        installations = Substitute.For<IInstallationRepository>();
         photoStorage = Substitute.For<IPhotoStorage>();
         unitOfWork = Substitute.For<IUnitOfWork>();
-        handler = new RemovePhotoCommandHandler(repository, photoStorage, unitOfWork);
+        handler = new RemovePhotoCommandHandler(installations, photoStorage, unitOfWork);
     }
 
     private static Installation CreateInstallationWithPhoto(out PhotoIdentifier photoId)
@@ -43,7 +43,7 @@ public sealed class RemovePhotoCommandHandlerTests
     public async Task Handle_WithValidCommand_ShouldDeleteBlobAndRemovePhoto()
     {
         var installation = CreateInstallationWithPhoto(out var photoId);
-        repository.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
+        installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
 
         var command = new RemovePhotoCommand(installation.Id.Value, photoId.Value);
@@ -58,7 +58,7 @@ public sealed class RemovePhotoCommandHandlerTests
     [Fact]
     public async Task Handle_WhenInstallationNotFound_ShouldThrow()
     {
-        repository.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
+        installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns((Installation?)null);
 
         var command = new RemovePhotoCommand(Guid.NewGuid(), Guid.NewGuid());
@@ -72,7 +72,7 @@ public sealed class RemovePhotoCommandHandlerTests
     public async Task Handle_WhenPhotoNotFound_ShouldThrow()
     {
         var installation = CreateInstallationWithPhoto(out _);
-        repository.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
+        installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
 
         var command = new RemovePhotoCommand(installation.Id.Value, Guid.NewGuid());

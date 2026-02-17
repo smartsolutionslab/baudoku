@@ -7,15 +7,8 @@ using Microsoft.EntityFrameworkCore;
 namespace BauDoku.Documentation.IntegrationTests;
 
 [Collection(PostgreSqlCollection.Name)]
-public sealed class InstallationPhotoPersistenceTests
+public sealed class InstallationPhotoPersistenceTests(PostgreSqlFixture fixture)
 {
-    private readonly PostgreSqlFixture fixture;
-
-    public InstallationPhotoPersistenceTests(PostgreSqlFixture fixture)
-    {
-        this.fixture = fixture;
-    }
-
     [Fact]
     public async Task AddPhoto_ShouldPersistAndLoad()
     {

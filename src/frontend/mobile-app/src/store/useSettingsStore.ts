@@ -1,0 +1,34 @@
+import { create } from "zustand";
+import * as SecureStore from "expo-secure-store";
+
+const MOCK_LOCATION_KEY = "baudoku_settings_mockLocation";
+
+type SettingsState = {
+  allowMockLocation: boolean;
+  setAllowMockLocation: (allow: boolean) => void;
+  hydrate: () => Promise<void>;
+};
+
+export const useSettingsStore = create<SettingsState>((set) => ({
+  allowMockLocation: true,
+
+  setAllowMockLocation: (allow) => {
+    set({ allowMockLocation: allow });
+    try {
+      SecureStore.setItemAsync(MOCK_LOCATION_KEY, JSON.stringify(allow));
+    } catch {
+      // non-critical setting, ignore write errors
+    }
+  },
+
+  hydrate: async () => {
+    try {
+      const stored = await SecureStore.getItemAsync(MOCK_LOCATION_KEY);
+      if (stored !== null) {
+        set({ allowMockLocation: JSON.parse(stored) });
+      }
+    } catch {
+      // non-critical setting, ignore read errors
+    }
+  },
+}));

@@ -41,8 +41,8 @@ public sealed class ConflictRecord : Entity<ConflictRecordIdentifier>
 
     public void Resolve(ConflictResolutionStrategy strategy, DeltaPayload? mergedPayload = null)
     {
-        if (new ConflictMustBeUnresolved(Status).IsBroken())
-            throw new BusinessRuleException(new ConflictMustBeUnresolved(Status));
+        var rule = new ConflictMustBeUnresolved(Status);
+        if (rule.IsBroken()) throw new BusinessRuleException(rule);
 
         Status = strategy == ConflictResolutionStrategy.ClientWins
             ? ConflictStatus.ClientWins

@@ -9,13 +9,13 @@ namespace BauDoku.Projects.UnitTests.Application.Queries;
 
 public sealed class GetProjectQueryHandlerTests
 {
-    private readonly IProjectRepository repository;
+    private readonly IProjectRepository projects;
     private readonly GetProjectQueryHandler handler;
 
     public GetProjectQueryHandlerTests()
     {
-        repository = Substitute.For<IProjectRepository>();
-        handler = new GetProjectQueryHandler(repository);
+        projects = Substitute.For<IProjectRepository>();
+        handler = new GetProjectQueryHandler(projects);
     }
 
     [Fact]
@@ -27,7 +27,7 @@ public sealed class GetProjectQueryHandlerTests
             Address.Create("Musterstraße 1", "Berlin", "10115"),
             ClientInfo.Create("Max Mustermann", "max@example.com", "+49 30 12345"));
 
-        repository.GetByIdReadOnlyAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>())
+        projects.GetByIdReadOnlyAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(project);
 
         var result = await handler.Handle(new GetProjectQuery(project.Id.Value));
@@ -43,7 +43,7 @@ public sealed class GetProjectQueryHandlerTests
     [Fact]
     public async Task Handle_WhenProjectNotFound_ShouldReturnNull()
     {
-        repository.GetByIdReadOnlyAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>())
+        projects.GetByIdReadOnlyAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>())
             .Returns((Project?)null);
 
         var result = await handler.Handle(new GetProjectQuery(Guid.NewGuid()));
@@ -62,7 +62,7 @@ public sealed class GetProjectQueryHandlerTests
 
         project.AddZone(ZoneIdentifier.New(), ZoneName.From("Erdgeschoss"), ZoneType.Floor);
 
-        repository.GetByIdReadOnlyAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>())
+        projects.GetByIdReadOnlyAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(project);
 
         var result = await handler.Handle(new GetProjectQuery(project.Id.Value));

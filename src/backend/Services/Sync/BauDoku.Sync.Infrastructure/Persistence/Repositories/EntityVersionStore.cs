@@ -5,15 +5,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BauDoku.Sync.Infrastructure.Persistence.Repositories;
 
-public sealed class EntityVersionStore : IEntityVersionStore, IEntityVersionReadStore
+public sealed class EntityVersionStore(SyncDbContext context) : IEntityVersionStore, IEntityVersionReadStore
 {
-    private readonly SyncDbContext context;
-
-    public EntityVersionStore(SyncDbContext context)
-    {
-        this.context = context;
-    }
-
     public async Task<SyncVersion> GetCurrentVersionAsync(
         EntityType entityType,
         Guid entityId,

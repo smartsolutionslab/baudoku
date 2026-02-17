@@ -6,18 +6,11 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace BauDoku.Sync.IntegrationTests.Api;
 
-public sealed class SyncApiFactory : WebApplicationFactory<Program>
+public sealed class SyncApiFactory(PostgreSqlFixture fixture) : WebApplicationFactory<Program>
 {
-    private readonly PostgreSqlFixture _fixture;
-
-    public SyncApiFactory(PostgreSqlFixture fixture)
-    {
-        _fixture = fixture;
-    }
-
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        builder.UseSetting("ConnectionStrings:SyncDb", _fixture.ConnectionString);
+        builder.UseSetting("ConnectionStrings:SyncDb", fixture.ConnectionString);
 
         builder.ConfigureServices(services =>
         {

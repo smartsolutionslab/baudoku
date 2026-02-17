@@ -3,7 +3,7 @@ using BauDoku.BuildingBlocks.Domain.Guards;
 
 namespace BauDoku.Documentation.Domain.ValueObjects;
 
-public sealed record PhotoIdentifier : ValueObject
+public sealed record PhotoIdentifier : IValueObject
 {
     public Guid Value { get; }
 

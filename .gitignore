@@ -15,7 +15,7 @@ project.lock.json
 *.nuget.props
 *.nuget.targets
 packages/
-!src/packages/
+!src/frontend/packages/
 *.nupkg
 
 # ---- Rider / IntelliJ ----
@@ -29,9 +29,9 @@ yarn-debug.log*
 yarn-error.log*
 
 # ---- Expo / React Native ----
-src/frontend/.expo/
-src/frontend/dist/
-src/frontend/web-build/
+src/frontend/mobile-app/.expo/
+src/frontend/mobile-app/dist/
+src/frontend/mobile-app/web-build/
 *.jks
 *.p8
 *.p12
@@ -71,7 +71,7 @@ docker-compose.override.yml
 .aspire/
 
 # ---- Web App (Vite) ----
-src/web/dist/
+src/frontend/web/dist/
 
 # ---- Claude Code ----
 .claude/

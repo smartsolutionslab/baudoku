@@ -6,13 +6,13 @@ namespace BauDoku.ArchitectureTests;
 public sealed class DependencyTests
 {
     private static readonly Assembly BuildingBlocksDomain =
-        typeof(BauDoku.BuildingBlocks.Domain.ValueObject).Assembly;
+        typeof(BauDoku.BuildingBlocks.Domain.IValueObject).Assembly;
 
     private static readonly Assembly BuildingBlocksApplication =
         typeof(BauDoku.BuildingBlocks.Application.DependencyInjection).Assembly;
 
     private static readonly Assembly BuildingBlocksInfrastructure =
-        typeof(BauDoku.BuildingBlocks.Infrastructure.DependencyInjection).Assembly;
+        typeof(BauDoku.BuildingBlocks.Infrastructure.Persistence.BaseDbContext).Assembly;
 
     private static Assembly LoadAssembly(string name) => Assembly.Load(name);
 
@@ -140,20 +140,19 @@ public sealed class DependencyTests
     {
         var assembly = LoadAssembly(assemblyName);
 
-        var valueObjectBase = typeof(BauDoku.BuildingBlocks.Domain.ValueObject);
         var iValueObject = typeof(BauDoku.BuildingBlocks.Domain.IValueObject);
 
         var valueObjectTypes = assembly.GetTypes()
-            .Where(t => t.IsClass && !t.IsAbstract && valueObjectBase.IsAssignableFrom(t))
+            .Where(t => !t.IsAbstract && !t.IsInterface && iValueObject.IsAssignableFrom(t))
             .ToList();
 
         valueObjectTypes.Should().NotBeEmpty(
-            $"Assembly {assemblyName} should contain at least one ValueObject");
+            $"Assembly {assemblyName} should contain at least one IValueObject implementation");
 
         foreach (var voType in valueObjectTypes)
         {
-            iValueObject.IsAssignableFrom(voType).Should().BeTrue(
-                $"{voType.Name} inherits from ValueObject and should implement IValueObject");
+            voType.IsSealed.Should().BeTrue(
+                $"{voType.Name} implements IValueObject and should be sealed");
         }
     }
 }

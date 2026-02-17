@@ -27,7 +27,7 @@ public static class AuthEndpoints
             {
                 ["client_id"] = keycloak.ClientId,
                 ["token"] = request.RefreshToken,
-                ["token_type_hint"] = "refresh_token",
+                ["token_type_hint"] = "refresh_token"
             });
 
             try
@@ -51,5 +51,3 @@ public static class AuthEndpoints
         .AllowAnonymous();
     }
 }
-
-public sealed record LogoutRequest(string RefreshToken);

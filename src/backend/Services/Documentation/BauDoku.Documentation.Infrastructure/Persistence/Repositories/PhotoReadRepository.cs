@@ -4,15 +4,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BauDoku.Documentation.Infrastructure.Persistence.Repositories;
 
-public sealed class PhotoReadRepository : IPhotoReadRepository
+public sealed class PhotoReadRepository(DocumentationDbContext context) : IPhotoReadRepository
 {
-    private readonly DocumentationDbContext context;
-
-    public PhotoReadRepository(DocumentationDbContext context)
-    {
-        this.context = context;
-    }
-
     public async Task<PhotoDto?> GetByIdAsync(Guid photoId, CancellationToken cancellationToken = default)
     {
         return await context.Photos

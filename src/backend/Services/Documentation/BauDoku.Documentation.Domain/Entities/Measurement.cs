@@ -30,14 +30,11 @@ public sealed class Measurement : Entity<MeasurementIdentifier>
 
     private static MeasurementResult Evaluate(MeasurementValue value)
     {
-        if (value.MinThreshold is null && value.MaxThreshold is null)
-            return MeasurementResult.Passed;
+        if (value.MinThreshold is null && value.MaxThreshold is null) return MeasurementResult.Passed;
 
-        if (value.MinThreshold.HasValue && value.Value < value.MinThreshold.Value)
-            return MeasurementResult.Failed;
+        if (value.MinThreshold.HasValue && value.Value < value.MinThreshold.Value) return MeasurementResult.Failed;
 
-        if (value.MaxThreshold.HasValue && value.Value > value.MaxThreshold.Value)
-            return MeasurementResult.Failed;
+        if (value.MaxThreshold.HasValue && value.Value > value.MaxThreshold.Value) return MeasurementResult.Failed;
 
         return MeasurementResult.Passed;
     }

@@ -3,7 +3,10 @@ using BauDoku.Documentation.Domain.ValueObjects;
 
 namespace BauDoku.Documentation.Domain.Rules;
 
-public sealed class MeasurementTypeMustMatchInstallationType : IBusinessRule
+public sealed class MeasurementTypeMustMatchInstallationType(
+    InstallationType installationType,
+    MeasurementType measurementType)
+    : IBusinessRule
 {
     private static readonly HashSet<string> ElectricalInstallationTypes =
     [
@@ -25,24 +28,11 @@ public sealed class MeasurementTypeMustMatchInstallationType : IBusinessRule
         "loop_impedance"
     ];
 
-    private readonly InstallationType installationType;
-    private readonly MeasurementType measurementType;
-
-    public MeasurementTypeMustMatchInstallationType(
-        InstallationType installationType,
-        MeasurementType measurementType)
-    {
-        this.installationType = installationType;
-        this.measurementType = measurementType;
-    }
-
     public bool IsBroken()
     {
-        if (RestrictedToElectricalOnly.Contains(measurementType.Value))
-            return !ElectricalInstallationTypes.Contains(installationType.Value);
+        if (RestrictedToElectricalOnly.Contains(measurementType.Value)) return !ElectricalInstallationTypes.Contains(installationType.Value);
 
-        if (RestrictedToElectricalWithGrounding.Contains(measurementType.Value))
-            return !ElectricalWithGroundingTypes.Contains(installationType.Value);
+        if (RestrictedToElectricalWithGrounding.Contains(measurementType.Value)) return !ElectricalWithGroundingTypes.Contains(installationType.Value);
 
         return false;
     }

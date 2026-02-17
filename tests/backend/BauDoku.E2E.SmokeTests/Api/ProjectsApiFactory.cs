@@ -8,15 +8,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace BauDoku.E2E.SmokeTests.Api;
 
-public sealed class ProjectsApiFactory : WebApplicationFactory<ProjectsApi::Program>
+public sealed class ProjectsApiFactory(E2EFixture fixture) : WebApplicationFactory<ProjectsApi::Program>
 {
-    private readonly E2EFixture fixture;
-
-    public ProjectsApiFactory(E2EFixture fixture)
-    {
-        this.fixture = fixture;
-    }
-
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.UseSetting("ConnectionStrings:ProjectsDb", fixture.ProjectsConnectionString);

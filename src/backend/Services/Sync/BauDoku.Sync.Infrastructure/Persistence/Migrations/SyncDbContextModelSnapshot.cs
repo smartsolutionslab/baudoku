@@ -170,6 +170,12 @@ namespace BauDoku.Sync.Infrastructure.Persistence.Migrations
                         .HasColumnType("text")
                         .HasColumnName("payload");
 
+                    b.Property<uint>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
                     b.Property<long>("Version")
                         .HasColumnType("bigint")
                         .HasColumnName("version");

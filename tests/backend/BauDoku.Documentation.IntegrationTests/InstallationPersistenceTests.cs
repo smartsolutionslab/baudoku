@@ -7,15 +7,8 @@ using Microsoft.EntityFrameworkCore;
 namespace BauDoku.Documentation.IntegrationTests;
 
 [Collection(PostgreSqlCollection.Name)]
-public sealed class InstallationPersistenceTests
+public sealed class InstallationPersistenceTests(PostgreSqlFixture fixture)
 {
-    private readonly PostgreSqlFixture fixture;
-
-    public InstallationPersistenceTests(PostgreSqlFixture fixture)
-    {
-        this.fixture = fixture;
-    }
-
     [Fact]
     public async Task CreateInstallation_ShouldPersistAndLoad()
     {
@@ -124,8 +117,7 @@ public sealed class InstallationPersistenceTests
 
         await using (var readContext = fixture.CreateContext())
         {
-            var loaded = await readContext.Installations
-                .FirstOrDefaultAsync(i => i.Id == installation.Id);
+            var loaded = await readContext.Installations.FirstOrDefaultAsync(i => i.Id == installation.Id);
 
             loaded.Should().NotBeNull();
             loaded!.Position.CorrectionService.Should().Be("sapos_heps");

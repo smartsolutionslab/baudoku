@@ -6,19 +6,12 @@ using Microsoft.Extensions.Options;
 
 namespace BauDoku.E2E.SmokeTests.Fixtures;
 
-public sealed class TestAuthHandler : AuthenticationHandler<AuthenticationSchemeOptions>
+public sealed class TestAuthHandler(IOptionsMonitor<AuthenticationSchemeOptions> options, ILoggerFactory logger, UrlEncoder encoder)
+    : AuthenticationHandler<AuthenticationSchemeOptions>(options, logger, encoder)
 {
     public const string SchemeName = "TestScheme";
 
     public static string[] Roles { get; set; } = ["user", "admin"];
-
-    public TestAuthHandler(
-        IOptionsMonitor<AuthenticationSchemeOptions> options,
-        ILoggerFactory logger,
-        UrlEncoder encoder)
-        : base(options, logger, encoder)
-    {
-    }
 
     protected override Task<AuthenticateResult> HandleAuthenticateAsync()
     {
@@ -26,13 +19,9 @@ public sealed class TestAuthHandler : AuthenticationHandler<AuthenticationScheme
         {
             new(ClaimTypes.NameIdentifier, "test-user-id"),
             new(ClaimTypes.Name, "Test User"),
-            new(ClaimTypes.Email, "test@example.com"),
+            new(ClaimTypes.Email, "test@example.com")
         };
-
-        foreach (var role in Roles)
-        {
-            claims.Add(new Claim(ClaimTypes.Role, role));
-        }
+        claims.AddRange(Roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
         var identity = new ClaimsIdentity(claims, SchemeName);
         var principal = new ClaimsPrincipal(identity);

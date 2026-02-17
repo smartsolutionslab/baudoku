@@ -8,13 +8,13 @@ namespace BauDoku.Documentation.IntegrationTests.Api;
 [Collection(PostgreSqlCollection.Name)]
 public sealed class MeasurementEndpointTests : IDisposable
 {
-    private readonly DocumentationApiFactory _factory;
-    private readonly HttpClient _client;
+    private readonly DocumentationApiFactory factory;
+    private readonly HttpClient client;
 
     public MeasurementEndpointTests(PostgreSqlFixture fixture)
     {
-        _factory = new DocumentationApiFactory(fixture);
-        _client = _factory.CreateClient();
+        factory = new DocumentationApiFactory(fixture);
+        client = factory.CreateClient();
     }
 
     private async Task<Guid> CreateInstallationAsync()
@@ -28,7 +28,7 @@ public sealed class MeasurementEndpointTests : IDisposable
             HorizontalAccuracy = 3.5,
             GpsSource = "internal_gps"
         };
-        var response = await _client.PostAsJsonAsync("/api/documentation/installations", command);
+        var response = await client.PostAsJsonAsync("/api/documentation/installations", command);
         response.EnsureSuccessStatusCode();
         var body = await response.Content.ReadFromJsonAsync<IdResponse>();
         return body!.Id;
@@ -46,7 +46,7 @@ public sealed class MeasurementEndpointTests : IDisposable
             Unit = "MΩ"
         };
 
-        var response = await _client.PostAsJsonAsync(
+        var response = await client.PostAsJsonAsync(
             $"/api/documentation/installations/{installationId}/measurements", request);
 
         response.StatusCode.Should().Be(HttpStatusCode.Created);
@@ -59,7 +59,7 @@ public sealed class MeasurementEndpointTests : IDisposable
     {
         var installationId = await CreateInstallationAsync();
 
-        var response = await _client.GetAsync(
+        var response = await client.GetAsync(
             $"/api/documentation/installations/{installationId}/measurements");
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -77,12 +77,12 @@ public sealed class MeasurementEndpointTests : IDisposable
             Value = 500.0,
             Unit = "MΩ"
         };
-        var createResponse = await _client.PostAsJsonAsync(
+        var createResponse = await client.PostAsJsonAsync(
             $"/api/documentation/installations/{installationId}/measurements", request);
         var created = await createResponse.Content.ReadFromJsonAsync<IdResponse>();
 
         // Delete it
-        var response = await _client.DeleteAsync(
+        var response = await client.DeleteAsync(
             $"/api/documentation/installations/{installationId}/measurements/{created!.Id}");
 
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
@@ -90,8 +90,8 @@ public sealed class MeasurementEndpointTests : IDisposable
 
     public void Dispose()
     {
-        _client.Dispose();
-        _factory.Dispose();
+        client.Dispose();
+        factory.Dispose();
     }
 
     private sealed record IdResponse(Guid Id);

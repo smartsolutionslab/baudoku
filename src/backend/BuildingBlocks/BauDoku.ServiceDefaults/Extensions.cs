@@ -18,9 +18,7 @@ namespace BauDoku.ServiceDefaults;
 
 public static class Extensions
 {
-    public static IHostApplicationBuilder AddServiceDefaults(
-        this IHostApplicationBuilder builder,
-        Action<IHealthChecksBuilder>? configureHealthChecks = null)
+    public static IHostApplicationBuilder AddServiceDefaults(this IHostApplicationBuilder builder, Action<IHealthChecksBuilder>? configureHealthChecks = null)
     {
         builder.ConfigureSerilog();
 
@@ -159,12 +157,9 @@ public static class Extensions
         }
     }
 
-    private static IHostApplicationBuilder AddDefaultHealthChecks(
-        this IHostApplicationBuilder builder,
-        Action<IHealthChecksBuilder>? configureHealthChecks)
+    private static IHostApplicationBuilder AddDefaultHealthChecks(this IHostApplicationBuilder builder, Action<IHealthChecksBuilder>? configureHealthChecks)
     {
-        var healthChecks = builder.Services.AddHealthChecks()
-            .AddCheck("self", () => HealthCheckResult.Healthy(), ["live"]);
+        var healthChecks = builder.Services.AddHealthChecks().AddCheck("self", () => HealthCheckResult.Healthy(), ["live"]);
 
         configureHealthChecks?.Invoke(healthChecks);
 
@@ -172,18 +167,15 @@ public static class Extensions
         if (!string.IsNullOrWhiteSpace(rabbitConnection))
         {
             var rabbitUri = new Uri(rabbitConnection);
-            var lazyConnection = new Lazy<Task<IConnection>>(() =>
-                new ConnectionFactory { Uri = rabbitUri }.CreateConnectionAsync());
+            var lazyConnection = new Lazy<Task<IConnection>>(() => new ConnectionFactory { Uri = rabbitUri }.CreateConnectionAsync());
 
-            healthChecks.AddRabbitMQ(sp => lazyConnection.Value,
-                name: "rabbitmq", failureStatus: HealthStatus.Degraded, tags: ["ready"]);
+            healthChecks.AddRabbitMQ(sp => lazyConnection.Value, name: "rabbitmq", failureStatus: HealthStatus.Degraded, tags: ["ready"]);
         }
 
         var redisConnection = builder.Configuration.GetConnectionString("redis");
         if (!string.IsNullOrWhiteSpace(redisConnection))
         {
-            healthChecks.AddRedis(redisConnection, name: "redis",
-                failureStatus: HealthStatus.Degraded, tags: ["ready"]);
+            healthChecks.AddRedis(redisConnection, name: "redis", failureStatus: HealthStatus.Degraded, tags: ["ready"]);
         }
 
         return builder;

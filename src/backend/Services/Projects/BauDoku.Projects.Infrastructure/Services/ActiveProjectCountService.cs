@@ -6,20 +6,10 @@ using Microsoft.Extensions.Logging;
 
 namespace BauDoku.Projects.Infrastructure.Services;
 
-public sealed class ActiveProjectCountService : BackgroundService
+public sealed class ActiveProjectCountService(IServiceScopeFactory scopeFactory, ILogger<ActiveProjectCountService> logger)
+    : BackgroundService
 {
     private static readonly TimeSpan Interval = TimeSpan.FromSeconds(60);
-
-    private readonly IServiceScopeFactory scopeFactory;
-    private readonly ILogger<ActiveProjectCountService> logger;
-
-    public ActiveProjectCountService(
-        IServiceScopeFactory scopeFactory,
-        ILogger<ActiveProjectCountService> logger)
-    {
-        this.scopeFactory = scopeFactory;
-        this.logger = logger;
-    }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {

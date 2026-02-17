@@ -5,15 +5,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BauDoku.Sync.Infrastructure.Persistence.Repositories;
 
-public sealed class SyncBatchReadRepository : ISyncBatchReadRepository
+public sealed class SyncBatchReadRepository(SyncDbContext context) : ISyncBatchReadRepository
 {
-    private readonly SyncDbContext context;
-
-    public SyncBatchReadRepository(SyncDbContext context)
-    {
-        this.context = context;
-    }
-
     public async Task<List<ConflictDto>> GetConflictsAsync(
         DeviceIdentifier? deviceId,
         ConflictStatus? status,
