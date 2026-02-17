@@ -30,7 +30,8 @@ public sealed class ProcessSyncBatchCommandHandler(ISyncBatchRepository syncBatc
             var clientBaseVersion = SyncVersion.From(deltaDto.BaseVersion);
             var payload = DeltaPayload.From(deltaDto.Payload);
 
-            var currentServerVersion = await entityVersionStore.GetCurrentVersionAsync(entityType, deltaDto.EntityId, cancellationToken);
+            var currentServerVersion = await entityVersionStore.GetCurrentVersionAsync(
+                entityType, deltaDto.EntityId, cancellationToken);
 
             if (clientBaseVersion.Value == currentServerVersion.Value)
             {
@@ -45,13 +46,16 @@ public sealed class ProcessSyncBatchCommandHandler(ISyncBatchRepository syncBatc
                     payload,
                     deltaDto.Timestamp);
 
-                await entityVersionStore.SetVersionAsync(entityType, deltaDto.EntityId, newVersion, deltaDto.Payload, deviceId, cancellationToken);
+                await entityVersionStore.SetVersionAsync(
+                    entityType, deltaDto.EntityId, newVersion,
+                    deltaDto.Payload, deviceId, cancellationToken);
 
                 appliedCount++;
             }
             else
             {
-                var serverPayloadJson = await entityVersionStore.GetCurrentPayloadAsync(entityType, deltaDto.EntityId, cancellationToken);
+                var serverPayloadJson = await entityVersionStore.GetCurrentPayloadAsync(
+                    entityType, deltaDto.EntityId, cancellationToken);
                 var serverPayload = DeltaPayload.From(serverPayloadJson ?? "{}");
 
                 var conflict = batch.AddConflict(
@@ -76,17 +80,11 @@ public sealed class ProcessSyncBatchCommandHandler(ISyncBatchRepository syncBatc
         }
 
         if (conflicts.Count == 0)
-        {
             batch.MarkCompleted();
-        }
         else if (appliedCount > 0)
-        {
             batch.MarkPartialConflict();
-        }
         else
-        {
             batch.MarkFailed();
-        }
 
         await syncBatches.AddAsync(batch, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
