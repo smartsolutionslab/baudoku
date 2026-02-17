@@ -8,8 +8,7 @@ using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("ProjectsDb")
-    ?? throw new InvalidOperationException("Connection string 'ProjectsDb' not found.");
+var connectionString = builder.Configuration.GetConnectionString("ProjectsDb") ?? throw new InvalidOperationException("Connection string 'ProjectsDb' not found.");
 
 builder.AddServiceDefaults(health =>
 {

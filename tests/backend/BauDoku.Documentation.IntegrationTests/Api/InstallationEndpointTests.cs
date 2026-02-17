@@ -8,13 +8,13 @@ namespace BauDoku.Documentation.IntegrationTests.Api;
 [Collection(PostgreSqlCollection.Name)]
 public sealed class InstallationEndpointTests : IDisposable
 {
-    private readonly DocumentationApiFactory _factory;
-    private readonly HttpClient _client;
+    private readonly DocumentationApiFactory factory;
+    private readonly HttpClient client;
 
     public InstallationEndpointTests(PostgreSqlFixture fixture)
     {
-        _factory = new DocumentationApiFactory(fixture);
-        _client = _factory.CreateClient();
+        factory = new DocumentationApiFactory(fixture);
+        client = factory.CreateClient();
     }
 
     [Fact]
@@ -32,7 +32,7 @@ public sealed class InstallationEndpointTests : IDisposable
             Description = "Kabeltrasse Test"
         };
 
-        var response = await _client.PostAsJsonAsync("/api/documentation/installations", command);
+        var response = await client.PostAsJsonAsync("/api/documentation/installations", command);
 
         response.StatusCode.Should().Be(HttpStatusCode.Created);
         var body = await response.Content.ReadFromJsonAsync<IdResponse>();
@@ -42,7 +42,7 @@ public sealed class InstallationEndpointTests : IDisposable
     [Fact]
     public async Task ListInstallations_ShouldReturn200()
     {
-        var response = await _client.GetAsync("/api/documentation/installations");
+        var response = await client.GetAsync("/api/documentation/installations");
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
@@ -60,10 +60,10 @@ public sealed class InstallationEndpointTests : IDisposable
             HorizontalAccuracy = 5.0,
             GpsSource = "internal_gps"
         };
-        var createResponse = await _client.PostAsJsonAsync("/api/documentation/installations", command);
+        var createResponse = await client.PostAsJsonAsync("/api/documentation/installations", command);
         var created = await createResponse.Content.ReadFromJsonAsync<IdResponse>();
 
-        var response = await _client.GetAsync($"/api/documentation/installations/{created!.Id}");
+        var response = await client.GetAsync($"/api/documentation/installations/{created!.Id}");
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
@@ -71,7 +71,7 @@ public sealed class InstallationEndpointTests : IDisposable
     [Fact]
     public async Task GetInstallation_WithNonExistentId_ShouldReturn404()
     {
-        var response = await _client.GetAsync($"/api/documentation/installations/{Guid.NewGuid()}");
+        var response = await client.GetAsync($"/api/documentation/installations/{Guid.NewGuid()}");
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
@@ -89,7 +89,7 @@ public sealed class InstallationEndpointTests : IDisposable
             HorizontalAccuracy = 5.0,
             GpsSource = "internal_gps"
         };
-        var createResponse = await _client.PostAsJsonAsync("/api/documentation/installations", createCommand);
+        var createResponse = await client.PostAsJsonAsync("/api/documentation/installations", createCommand);
         var created = await createResponse.Content.ReadFromJsonAsync<IdResponse>();
 
         // Update
@@ -98,7 +98,7 @@ public sealed class InstallationEndpointTests : IDisposable
             Description = "Aktualisierte Beschreibung",
             DepthMm = 450
         };
-        var response = await _client.PutAsJsonAsync(
+        var response = await client.PutAsJsonAsync(
             $"/api/documentation/installations/{created!.Id}", updateRequest);
 
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
@@ -111,7 +111,7 @@ public sealed class InstallationEndpointTests : IDisposable
         {
             Description = "Test"
         };
-        var response = await _client.PutAsJsonAsync(
+        var response = await client.PutAsJsonAsync(
             $"/api/documentation/installations/{Guid.NewGuid()}", updateRequest);
 
         response.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
@@ -119,8 +119,8 @@ public sealed class InstallationEndpointTests : IDisposable
 
     public void Dispose()
     {
-        _client.Dispose();
-        _factory.Dispose();
+        client.Dispose();
+        factory.Dispose();
     }
 
     private sealed record IdResponse(Guid Id);

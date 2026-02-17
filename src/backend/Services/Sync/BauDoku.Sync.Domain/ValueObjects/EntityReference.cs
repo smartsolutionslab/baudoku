@@ -20,4 +20,10 @@ public sealed record EntityReference : ValueObject
         Ensure.That(entityId).IsNotEmpty("Entity-ID darf nicht leer sein.");
         return new EntityReference(entityType, entityId);
     }
+
+    public void Deconstruct(out EntityType entityType, out Guid entityId)
+    {
+       entityType = EntityType;
+       entityId = EntityId;
+    }
 }
