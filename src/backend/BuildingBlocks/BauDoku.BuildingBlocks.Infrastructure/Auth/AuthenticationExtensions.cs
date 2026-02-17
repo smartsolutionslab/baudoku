@@ -50,7 +50,12 @@ public static class AuthenticationExtensions
                             .GetRequiredService<ILoggerFactory>()
                             .CreateLogger("BauDoku.Auth");
                         var userId = context.Principal?.FindFirstValue(ClaimTypes.NameIdentifier);
-                        logger.LogDebug("Token validated for user {UserId}", userId);
+                        var roles = context.Principal?.FindAll(ClaimTypes.Role)
+                            .Select(c => c.Value).ToArray() ?? [];
+                        var ipAddress = context.HttpContext.Connection.RemoteIpAddress;
+                        logger.LogInformation(
+                            "User authenticated: {UserId}, Roles: [{Roles}], IP: {IpAddress}",
+                            userId, string.Join(", ", roles), ipAddress);
                         return Task.CompletedTask;
                     },
                     OnAuthenticationFailed = context =>

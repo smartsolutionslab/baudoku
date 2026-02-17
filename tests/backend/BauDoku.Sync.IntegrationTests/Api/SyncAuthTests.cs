@@ -86,6 +86,22 @@ public sealed class SyncAuthTests : IDisposable
         }
     }
 
+    [Fact]
+    public async Task GetChanges_WithoutAuthentication_Returns401()
+    {
+        TestAuthHandler.IsAuthenticated = false;
+        try
+        {
+            var response = await client.GetAsync("/api/sync/changes?deviceId=test-device-auth");
+
+            response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        }
+        finally
+        {
+            TestAuthHandler.IsAuthenticated = true;
+        }
+    }
+
     public void Dispose()
     {
         client.Dispose();
