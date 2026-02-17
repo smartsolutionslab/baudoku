@@ -1,7 +1,6 @@
 using AwesomeAssertions;
 using BauDoku.Documentation.Infrastructure.Storage;
-using Microsoft.Extensions.Configuration;
-using NSubstitute;
+using Microsoft.Extensions.Options;
 
 namespace BauDoku.Documentation.UnitTests.Infrastructure.Storage;
 
@@ -15,9 +14,8 @@ public sealed class LocalFilePhotoStorageTests : IDisposable
         tempDir = Path.Combine(Path.GetTempPath(), $"baudoku_test_{Guid.NewGuid():N}");
         Directory.CreateDirectory(tempDir);
 
-        var configuration = Substitute.For<IConfiguration>();
-        configuration["PhotoStorage:LocalPath"].Returns(tempDir);
-        storage = new LocalFilePhotoStorage(configuration);
+        var options = Options.Create(new PhotoStorageOptions { LocalPath = tempDir });
+        storage = new LocalFilePhotoStorage(options);
     }
 
     [Fact]

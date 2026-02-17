@@ -15,27 +15,29 @@ public static class AuthenticationExtensions
     {
         services.AddTransient<IClaimsTransformation, KeycloakClaimsTransformation>();
 
+        var keycloakSection = configuration.GetSection("Authentication:Keycloak");
+        services.Configure<KeycloakOptions>(keycloakSection);
+
+        var keycloak = keycloakSection.Get<KeycloakOptions>() ?? new KeycloakOptions();
+
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
-                var keycloak = configuration.GetSection("Authentication:Keycloak");
-                options.Authority = keycloak["Authority"];
+                options.Authority = keycloak.Authority;
                 options.RequireHttpsMetadata = !environment.IsDevelopment();
 
-                var authority = keycloak["Authority"]!;
-                var validIssuers = new List<string> { authority };
+                var validIssuers = new List<string> { keycloak.Authority };
 
                 // In Development, also accept tokens issued via LAN IP (for mobile device testing)
-                var additionalIssuers = keycloak.GetSection("AdditionalIssuers").Get<string[]>();
-                if (additionalIssuers is { Length: > 0 })
+                if (keycloak.AdditionalIssuers is { Length: > 0 })
                 {
-                    validIssuers.AddRange(additionalIssuers);
+                    validIssuers.AddRange(keycloak.AdditionalIssuers);
                 }
 
                 options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
                 {
                     ValidateAudience = true,
-                    ValidAudiences = keycloak.GetSection("Audiences").Get<string[]>() ?? [keycloak["Audience"] ?? "baudoku-api"],
+                    ValidAudiences = keycloak.Audiences ?? [keycloak.Audience],
                     ValidateIssuer = true,
                     ValidIssuers = validIssuers,
                     RoleClaimType = ClaimTypes.Role,

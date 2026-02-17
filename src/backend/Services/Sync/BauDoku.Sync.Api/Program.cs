@@ -4,6 +4,7 @@ using BauDoku.BuildingBlocks.Infrastructure.Serialization;
 using BauDoku.ServiceDefaults;
 using BauDoku.Sync.Api.Endpoints;
 using BauDoku.Sync.Infrastructure;
+using BauDoku.Sync.Infrastructure.BackgroundServices;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,6 +21,8 @@ builder.Services.ConfigureHttpJsonOptions(options => options.SerializerOptions.C
 builder.Services.AddOpenApi();
 
 builder.Services.AddBauDokuAuthentication(builder.Configuration, builder.Environment);
+
+builder.Services.Configure<SyncOptions>(builder.Configuration.GetSection("Sync"));
 
 builder.Services.AddApplication(BauDoku.Sync.Application.DependencyInjection.Assembly);
 builder.Services.AddSyncInfrastructure(connectionString);
