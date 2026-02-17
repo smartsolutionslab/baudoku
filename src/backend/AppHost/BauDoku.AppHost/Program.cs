@@ -34,14 +34,14 @@ var projectsApi = builder.AddProject("projects-api", @"..\..\Services\Projects\B
     .WithReference(rabbitmq)
     .WaitFor(projectsDb)
     .WaitFor(rabbitmq)
-    .WaitFor(migrationRunner);
+    .WaitFor(keycloak);
 
 var documentationApi = builder.AddProject("documentation-api", @"..\..\Services\Documentation\BauDoku.Documentation.Api\BauDoku.Documentation.Api.csproj")
     .WithReference(documentationDb)
     .WithReference(rabbitmq)
     .WaitFor(documentationDb)
     .WaitFor(rabbitmq)
-    .WaitFor(migrationRunner);
+    .WaitFor(keycloak);
 
 var syncApi = builder.AddProject("sync-api", @"..\..\Services\Sync\BauDoku.Sync.Api\BauDoku.Sync.Api.csproj")
     .WithReference(syncDb)
@@ -50,7 +50,7 @@ var syncApi = builder.AddProject("sync-api", @"..\..\Services\Sync\BauDoku.Sync.
     .WaitFor(syncDb)
     .WaitFor(redis)
     .WaitFor(rabbitmq)
-    .WaitFor(migrationRunner);
+    .WaitFor(keycloak);
 
 var apiGateway = builder.AddProject("api-gateway", @"..\..\ApiGateway\BauDoku.ApiGateway\BauDoku.ApiGateway.csproj")
     .WithReference(projectsApi)
@@ -61,9 +61,10 @@ var apiGateway = builder.AddProject("api-gateway", @"..\..\ApiGateway\BauDoku.Ap
     .WaitFor(documentationApi)
     .WaitFor(syncApi);
 
-builder.AddViteApp("web", @"..\..\..\..\src\web")
+builder.AddViteApp("web", @"..\..\..\..\src\frontend\web")
     .WithReference(apiGateway)
     .WithHttpEndpoint(port: 5173, name: "vite", env: "PORT")
+    .WaitFor(keycloak)
     .WithExternalHttpEndpoints();
 
 builder.Build().Run();
