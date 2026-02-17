@@ -117,8 +117,7 @@ public sealed class InstallationPersistenceTests(PostgreSqlFixture fixture)
 
         await using (var readContext = fixture.CreateContext())
         {
-            var loaded = await readContext.Installations
-                .FirstOrDefaultAsync(i => i.Id == installation.Id);
+            var loaded = await readContext.Installations.FirstOrDefaultAsync(i => i.Id == installation.Id);
 
             loaded.Should().NotBeNull();
             loaded!.Position.CorrectionService.Should().Be("sapos_heps");

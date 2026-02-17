@@ -19,13 +19,9 @@ public sealed class TestAuthHandler(IOptionsMonitor<AuthenticationSchemeOptions>
         {
             new(ClaimTypes.NameIdentifier, "test-user-id"),
             new(ClaimTypes.Name, "Test User"),
-            new(ClaimTypes.Email, "test@example.com"),
+            new(ClaimTypes.Email, "test@example.com")
         };
-
-        foreach (var role in Roles)
-        {
-            claims.Add(new Claim(ClaimTypes.Role, role));
-        }
+        claims.AddRange(Roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
         var identity = new ClaimsIdentity(claims, SchemeName);
         var principal = new ClaimsPrincipal(identity);

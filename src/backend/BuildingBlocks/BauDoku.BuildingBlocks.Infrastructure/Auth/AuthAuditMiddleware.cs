@@ -17,9 +17,7 @@ public sealed class AuthAuditMiddleware(RequestDelegate next, ILogger<AuthAuditM
             var method = context.Request.Method;
             var path = context.Request.Path;
 
-            logger.LogWarning(
-                "Auth {StatusCode}: User={UserId} Method={Method} Path={Path}",
-                context.Response.StatusCode, userId, method, path);
+            logger.LogWarning("Auth {StatusCode}: User={UserId} Method={Method} Path={Path}", context.Response.StatusCode, userId, method, path);
         }
     }
 }

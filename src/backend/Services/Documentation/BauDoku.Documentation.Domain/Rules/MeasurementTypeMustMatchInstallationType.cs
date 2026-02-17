@@ -30,11 +30,9 @@ public sealed class MeasurementTypeMustMatchInstallationType(
 
     public bool IsBroken()
     {
-        if (RestrictedToElectricalOnly.Contains(measurementType.Value))
-            return !ElectricalInstallationTypes.Contains(installationType.Value);
+        if (RestrictedToElectricalOnly.Contains(measurementType.Value)) return !ElectricalInstallationTypes.Contains(installationType.Value);
 
-        if (RestrictedToElectricalWithGrounding.Contains(measurementType.Value))
-            return !ElectricalWithGroundingTypes.Contains(installationType.Value);
+        if (RestrictedToElectricalWithGrounding.Contains(measurementType.Value)) return !ElectricalWithGroundingTypes.Contains(installationType.Value);
 
         return false;
     }

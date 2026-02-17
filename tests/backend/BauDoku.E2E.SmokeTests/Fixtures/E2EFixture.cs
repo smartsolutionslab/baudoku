@@ -38,9 +38,11 @@ public sealed class E2EFixture : IAsyncLifetime
                 await cmd.ExecuteNonQueryAsync();
         }
 
-        var builder = new NpgsqlConnectionStringBuilder(defaultConnStr);
+        var builder = new NpgsqlConnectionStringBuilder(defaultConnStr)
+        {
+            Database = "projects_e2e"
+        };
 
-        builder.Database = "projects_e2e";
         ProjectsConnectionString = builder.ConnectionString;
 
         builder.Database = "documentation_e2e";

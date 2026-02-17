@@ -9,16 +9,13 @@ public sealed class KeycloakClaimsTransformation : IClaimsTransformation
     public Task<ClaimsPrincipal> TransformAsync(ClaimsPrincipal principal)
     {
         var identity = principal.Identity as ClaimsIdentity;
-        if (identity is null || !identity.IsAuthenticated)
-            return Task.FromResult(principal);
+        if (identity is null || !identity.IsAuthenticated) return Task.FromResult(principal);
 
         var realmAccessClaim = principal.FindFirst("realm_access");
-        if (realmAccessClaim is null)
-            return Task.FromResult(principal);
+        if (realmAccessClaim is null) return Task.FromResult(principal);
 
         using var doc = JsonDocument.Parse(realmAccessClaim.Value);
-        if (!doc.RootElement.TryGetProperty("roles", out var rolesElement))
-            return Task.FromResult(principal);
+        if (!doc.RootElement.TryGetProperty("roles", out var rolesElement)) return Task.FromResult(principal);
 
         foreach (var role in rolesElement.EnumerateArray())
         {

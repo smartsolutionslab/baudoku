@@ -20,13 +20,9 @@ public sealed class ProjectsDbContextFactory : IDesignTimeDbContextFactory<Proje
 
     private sealed class NullDispatcher : IDispatcher
     {
-        public Task<TResult> Send<TResult>(ICommand<TResult> command, CancellationToken cancellationToken = default) =>
-            throw new NotSupportedException();
-        public Task Send(ICommand command, CancellationToken cancellationToken = default) =>
-            throw new NotSupportedException();
-        public Task<TResult> Query<TResult>(IQuery<TResult> query, CancellationToken cancellationToken = default) =>
-            throw new NotSupportedException();
-        public Task Publish(IDomainEvent domainEvent, CancellationToken cancellationToken = default) =>
-            Task.CompletedTask;
+        public Task<TResult> Send<TResult>(ICommand<TResult> command, CancellationToken cancellationToken = default) => throw new NotSupportedException();
+        public Task Send(ICommand command, CancellationToken cancellationToken = default) => throw new NotSupportedException();
+        public Task<TResult> Query<TResult>(IQuery<TResult> query, CancellationToken cancellationToken = default) => throw new NotSupportedException();
+        public Task Publish(IDomainEvent domainEvent, CancellationToken cancellationToken = default) => Task.CompletedTask;
     }
 }

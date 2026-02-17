@@ -13,8 +13,7 @@ public sealed class GetInstallationQueryHandler(IInstallationRepository installa
         var installationId = InstallationIdentifier.From(query.InstallationId);
         var installation = await installations.GetByIdReadOnlyAsync(installationId, cancellationToken);
 
-        if (installation is null)
-            return null;
+        if (installation is null) return null;
 
         var photos = installation.Photos.Select(p => new PhotoDto(
             p.Id.Value,

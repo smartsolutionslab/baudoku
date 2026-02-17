@@ -12,7 +12,6 @@ public abstract class AggregateRoot<TId> : Entity<TId>, IAggregateRoot where TId
 
     protected static void CheckRule(IBusinessRule rule)
     {
-        if (rule.IsBroken())
-            throw new BusinessRuleException(rule);
+        if (rule.IsBroken()) throw new BusinessRuleException(rule);
     }
 }

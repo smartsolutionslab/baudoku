@@ -19,8 +19,7 @@ public sealed class CreateProjectCommandHandler(IProjectRepository projects, IUn
 
         var nameExists = await projects.ExistsByNameAsync(name, cancellationToken);
         var rule = new ProjectMustHaveUniqueName(nameExists);
-        if (rule.IsBroken())
-            throw new BusinessRuleException(rule);
+        if (rule.IsBroken()) throw new BusinessRuleException(rule);
 
         var address = Address.Create(command.Street, command.City, command.ZipCode);
         var client = ClientInfo.Create(command.ClientName, command.ClientEmail, command.ClientPhone);

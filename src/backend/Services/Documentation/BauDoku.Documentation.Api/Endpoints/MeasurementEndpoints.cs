@@ -11,8 +11,7 @@ public static class MeasurementEndpoints
 {
     public static void MapMeasurementEndpoints(this IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/api/documentation")
-            .WithTags("Measurements");
+        var group = app.MapGroup("/api/documentation").WithTags("Measurements");
 
         group.MapPost("/installations/{installationId:guid}/measurements", async (
             Guid installationId,
@@ -70,11 +69,3 @@ public static class MeasurementEndpoints
         .Produces(StatusCodes.Status404NotFound);
     }
 }
-
-public sealed record RecordMeasurementRequest(
-    string Type,
-    double Value,
-    string Unit,
-    double? MinThreshold,
-    double? MaxThreshold,
-    string? Notes);
