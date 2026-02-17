@@ -5,5 +5,5 @@ namespace BauDoku.Projects.Application.Contracts;
 
 public interface IProjectReadRepository
 {
-    Task<PagedResult<ProjectListItemDto>> ListAsync(string? search, int page, int pageSize, CancellationToken cancellationToken = default);
+    Task<PagedResult<ProjectListItemDto>> ListAsync(string? search, PaginationParams pagination, CancellationToken cancellationToken = default);
 }

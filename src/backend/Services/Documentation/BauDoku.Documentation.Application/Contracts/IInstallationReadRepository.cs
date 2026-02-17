@@ -6,31 +6,19 @@ namespace BauDoku.Documentation.Application.Contracts;
 public interface IInstallationReadRepository
 {
     Task<PagedResult<InstallationListItemDto>> ListAsync(
-        Guid? projectId,
-        Guid? zoneId,
-        string? type,
-        string? status,
-        string? search,
-        int page,
-        int pageSize,
+        InstallationListFilter filter,
+        PaginationParams pagination,
         CancellationToken cancellationToken = default);
 
     Task<PagedResult<NearbyInstallationDto>> SearchInRadiusAsync(
-        double latitude,
-        double longitude,
-        double radiusMeters,
+        SearchRadius radius,
         Guid? projectId,
-        int page,
-        int pageSize,
+        PaginationParams pagination,
         CancellationToken cancellationToken = default);
 
     Task<PagedResult<InstallationListItemDto>> SearchInBoundingBoxAsync(
-        double minLatitude,
-        double minLongitude,
-        double maxLatitude,
-        double maxLongitude,
+        BoundingBox boundingBox,
         Guid? projectId,
-        int page,
-        int pageSize,
+        PaginationParams pagination,
         CancellationToken cancellationToken = default);
 }

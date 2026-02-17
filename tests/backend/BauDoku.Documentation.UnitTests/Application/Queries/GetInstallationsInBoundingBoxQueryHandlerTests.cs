@@ -29,7 +29,10 @@ public sealed class GetInstallationsInBoundingBoxQueryHandlerTests
         var expected = new PagedResult<InstallationListItemDto>(items, 1, 1, 20);
 
         readRepository.SearchInBoundingBoxAsync(
-                47.0, 10.0, 49.0, 12.0, null, 1, 20, Arg.Any<CancellationToken>())
+                new BoundingBox(47.0, 10.0, 49.0, 12.0),
+                null,
+                new PaginationParams(1, 20),
+                Arg.Any<CancellationToken>())
             .Returns(expected);
 
         var query = new GetInstallationsInBoundingBoxQuery(47.0, 10.0, 49.0, 12.0);
@@ -46,7 +49,10 @@ public sealed class GetInstallationsInBoundingBoxQueryHandlerTests
         var expected = new PagedResult<InstallationListItemDto>([], 0, 1, 20);
 
         readRepository.SearchInBoundingBoxAsync(
-                47.0, 10.0, 49.0, 12.0, projectId, 1, 20, Arg.Any<CancellationToken>())
+                new BoundingBox(47.0, 10.0, 49.0, 12.0),
+                projectId,
+                new PaginationParams(1, 20),
+                Arg.Any<CancellationToken>())
             .Returns(expected);
 
         var query = new GetInstallationsInBoundingBoxQuery(47.0, 10.0, 49.0, 12.0, projectId);
@@ -54,7 +60,10 @@ public sealed class GetInstallationsInBoundingBoxQueryHandlerTests
 
         result.Should().BeSameAs(expected);
         await readRepository.Received(1).SearchInBoundingBoxAsync(
-            47.0, 10.0, 49.0, 12.0, projectId, 1, 20, Arg.Any<CancellationToken>());
+            new BoundingBox(47.0, 10.0, 49.0, 12.0),
+            projectId,
+            new PaginationParams(1, 20),
+            Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -63,7 +72,10 @@ public sealed class GetInstallationsInBoundingBoxQueryHandlerTests
         var expected = new PagedResult<InstallationListItemDto>([], 0, 2, 15);
 
         readRepository.SearchInBoundingBoxAsync(
-                47.0, 10.0, 49.0, 12.0, null, 2, 15, Arg.Any<CancellationToken>())
+                new BoundingBox(47.0, 10.0, 49.0, 12.0),
+                null,
+                new PaginationParams(2, 15),
+                Arg.Any<CancellationToken>())
             .Returns(expected);
 
         var query = new GetInstallationsInBoundingBoxQuery(47.0, 10.0, 49.0, 12.0, Page: 2, PageSize: 15);
