@@ -11,12 +11,13 @@ public sealed class CompleteChunkedUploadCommandHandler(IChunkedUploadStorage ch
 {
     public async Task<Guid> Handle(CompleteChunkedUploadCommand command, CancellationToken cancellationToken = default)
     {
-        var session = await chunkedUploadStorage.GetSessionAsync(command.SessionId, cancellationToken) ?? throw new KeyNotFoundException($"Upload-Session mit ID {command.SessionId} nicht gefunden.");
+        var sessionIdentifier = UploadSessionIdentifier.From(command.SessionId);
+        var session = await chunkedUploadStorage.GetSessionAsync(sessionIdentifier, cancellationToken) ?? throw new KeyNotFoundException($"Upload-Session mit ID {command.SessionId} nicht gefunden.");
 
-        var uploadedChunks = await chunkedUploadStorage.GetUploadedChunkCountAsync(command.SessionId, cancellationToken);
+        var uploadedChunks = await chunkedUploadStorage.GetUploadedChunkCountAsync(sessionIdentifier, cancellationToken);
         if (uploadedChunks != session.TotalChunks) throw new InvalidOperationException($"Upload unvollständig: {uploadedChunks}/{session.TotalChunks} Chunks hochgeladen.");
 
-        await using var assembledStream = await chunkedUploadStorage.AssembleAsync(command.SessionId, cancellationToken);
+        await using var assembledStream = await chunkedUploadStorage.AssembleAsync(sessionIdentifier, cancellationToken);
 
         var fileNameVo = FileName.From(session.FileName);
         var contentTypeVo = ContentType.From(session.ContentType);
@@ -48,7 +49,7 @@ public sealed class CompleteChunkedUploadCommandHandler(IChunkedUploadStorage ch
         DocumentationMetrics.PhotosAdded.Add(1);
         DocumentationMetrics.PhotoFileSize.Record(session.TotalSize);
 
-        await chunkedUploadStorage.CleanupSessionAsync(command.SessionId, cancellationToken);
+        await chunkedUploadStorage.CleanupSessionAsync(sessionIdentifier, cancellationToken);
 
         return photoId.Value;
     }

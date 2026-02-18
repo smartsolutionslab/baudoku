@@ -14,8 +14,9 @@ public sealed class InitChunkedUploadCommandHandler(IInstallationRepository inst
 
         _ = await installations.GetByIdAsync(InstallationIdentifier.From(installationId), cancellationToken);
 
+        var sessionIdentifier = UploadSessionIdentifier.New();
         var session = new ChunkedUploadSession(
-            SessionId: Guid.NewGuid(),
+            SessionId: sessionIdentifier.Value,
             InstallationId: installationId,
             FileName: fileName,
             ContentType: contentType,
@@ -31,7 +32,7 @@ public sealed class InitChunkedUploadCommandHandler(IInstallationRepository inst
             GpsSource: gpsSource,
             CreatedAt: DateTime.UtcNow);
 
-        var sessionId = await chunkedUploadStorage.InitSessionAsync(session, cancellationToken);
-        return sessionId;
+        await chunkedUploadStorage.InitSessionAsync(session, cancellationToken);
+        return sessionIdentifier.Value;
     }
 }

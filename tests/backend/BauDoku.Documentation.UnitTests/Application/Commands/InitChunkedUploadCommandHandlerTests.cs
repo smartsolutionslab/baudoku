@@ -37,11 +37,10 @@ public sealed class InitChunkedUploadCommandHandlerTests
     public async Task Handle_WithValidCommand_ShouldInitSession()
     {
         var installation = CreateValidInstallation();
-        var expectedSessionId = Guid.NewGuid();
         installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
         chunkedUploadStorage.InitSessionAsync(Arg.Any<ChunkedUploadSession>(), Arg.Any<CancellationToken>())
-            .Returns(expectedSessionId);
+            .Returns(callInfo => UploadSessionIdentifier.From(callInfo.Arg<ChunkedUploadSession>().SessionId));
 
         var command = CreateValidCommand(installation.Id.Value);
 
