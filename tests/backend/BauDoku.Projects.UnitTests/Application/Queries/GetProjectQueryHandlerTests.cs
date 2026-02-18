@@ -25,7 +25,7 @@ public sealed class GetProjectQueryHandlerTests
         var project = Project.Create(
             ProjectIdentifier.New(),
             ProjectName.From("Testprojekt"),
-            Address.Create("Musterstraße 1", "Berlin", "10115"),
+            Address.Create(Street.From("Musterstraße 1"), City.From("Berlin"), ZipCode.From("10115")),
             ClientInfo.Create("Max Mustermann", "max@example.com", "+49 30 12345"));
 
         projects.GetByIdReadOnlyAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>())
@@ -58,7 +58,7 @@ public sealed class GetProjectQueryHandlerTests
         var project = Project.Create(
             ProjectIdentifier.New(),
             ProjectName.From("Testprojekt"),
-            Address.Create("Musterstraße 1", "Berlin", "10115"),
+            Address.Create(Street.From("Musterstraße 1"), City.From("Berlin"), ZipCode.From("10115")),
             ClientInfo.Create("Max Mustermann"));
 
         project.AddZone(ZoneIdentifier.New(), ZoneName.From("Erdgeschoss"), ZoneType.Floor);

@@ -17,4 +17,6 @@ public sealed record Manufacturer : IValueObject
             .MaxLengthIs(MaxLength, $"Hersteller darf max. {MaxLength} Zeichen lang sein.");
         return new Manufacturer(value);
     }
+
+    public static Manufacturer? FromNullable(string? value) => value is not null ? From(value) : null;
 }

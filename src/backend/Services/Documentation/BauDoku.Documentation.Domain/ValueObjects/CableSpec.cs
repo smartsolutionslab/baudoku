@@ -23,8 +23,8 @@ public sealed record CableSpec : IValueObject
         Ensure.That(conductorCount).IsPositive("Leiteranzahl muss größer als 0 sein.");
         return new CableSpec(
             CableType.From(cableType),
-            crossSection.HasValue ? CrossSection.From(crossSection.Value) : null,
-            color is not null ? CableColor.From(color) : null,
+            CrossSection.FromNullable(crossSection),
+            CableColor.FromNullable(color),
             conductorCount);
     }
 }

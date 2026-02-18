@@ -23,4 +23,6 @@ public sealed record ConflictStatus : IValueObject
             .IsOneOf(ValidValues, $"Ungültiger Konflikt-Status: {value}.");
         return new ConflictStatus(value);
     }
+
+    public static ConflictStatus? FromNullable(string? value) => value is not null ? From(value) : null;
 }

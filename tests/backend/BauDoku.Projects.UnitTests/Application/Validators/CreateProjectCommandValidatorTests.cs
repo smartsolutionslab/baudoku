@@ -45,7 +45,7 @@ public sealed class CreateProjectCommandValidatorTests
     [Fact]
     public void Street_WhenTooLong_ShouldHaveError()
     {
-        var cmd = CreateValidCommand() with { Street = new string('a', Address.MaxStreetLength + 1) };
+        var cmd = CreateValidCommand() with { Street = new string('a', Street.MaxLength + 1) };
         validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.Street);
     }
 
@@ -59,7 +59,7 @@ public sealed class CreateProjectCommandValidatorTests
     [Fact]
     public void City_WhenTooLong_ShouldHaveError()
     {
-        var cmd = CreateValidCommand() with { City = new string('a', Address.MaxCityLength + 1) };
+        var cmd = CreateValidCommand() with { City = new string('a', City.MaxLength + 1) };
         validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.City);
     }
 
@@ -73,7 +73,7 @@ public sealed class CreateProjectCommandValidatorTests
     [Fact]
     public void ZipCode_WhenTooLong_ShouldHaveError()
     {
-        var cmd = CreateValidCommand() with { ZipCode = new string('1', Address.MaxZipCodeLength + 1) };
+        var cmd = CreateValidCommand() with { ZipCode = new string('1', ZipCode.MaxLength + 1) };
         validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.ZipCode);
     }
 

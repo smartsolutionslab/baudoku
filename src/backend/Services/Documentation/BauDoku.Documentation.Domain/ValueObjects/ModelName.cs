@@ -17,4 +17,6 @@ public sealed record ModelName : IValueObject
             .MaxLengthIs(MaxLength, $"Modellname darf max. {MaxLength} Zeichen lang sein.");
         return new ModelName(value);
     }
+
+    public static ModelName? FromNullable(string? value) => value is not null ? From(value) : null;
 }

@@ -13,10 +13,10 @@ public sealed class ListInstallationsQueryHandler(IInstallationReadRepository in
     {
         var (projectId, zoneId, type, status, search, page, pageSize) = query;
         var filter = new InstallationListFilter(
-            projectId.HasValue ? ProjectIdentifier.From(projectId.Value) : null,
-            zoneId.HasValue ? ZoneIdentifier.From(zoneId.Value) : null,
-            type is not null ? InstallationType.From(type) : null,
-            status is not null ? InstallationStatus.From(status) : null,
+            ProjectIdentifier.FromNullable(projectId),
+            ZoneIdentifier.FromNullable(zoneId),
+            InstallationType.FromNullable(type),
+            InstallationStatus.FromNullable(status),
             search);
         var pagination = new PaginationParams(page, pageSize);
         return await installations.ListAsync(filter, pagination, cancellationToken);

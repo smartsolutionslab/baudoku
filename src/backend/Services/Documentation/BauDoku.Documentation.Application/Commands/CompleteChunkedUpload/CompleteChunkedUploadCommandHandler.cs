@@ -28,8 +28,8 @@ public sealed class CompleteChunkedUploadCommandHandler(IChunkedUploadStorage ch
 
         var photoId = PhotoIdentifier.New();
         var photoType = PhotoType.From(session.PhotoType);
-        var caption = session.Caption is not null ? Caption.From(session.Caption) : null;
-        var description = session.Description is not null ? Description.From(session.Description) : null;
+        var caption = Caption.FromNullable(session.Caption);
+        var description = Description.FromNullable(session.Description);
 
         GpsPosition? position = null;
         if (session.Latitude.HasValue && session.Longitude.HasValue && session.HorizontalAccuracy.HasValue && session.GpsSource is not null)

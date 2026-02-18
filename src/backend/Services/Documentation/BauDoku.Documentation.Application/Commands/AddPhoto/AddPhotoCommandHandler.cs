@@ -23,8 +23,8 @@ public sealed class AddPhotoCommandHandler(IInstallationRepository installations
 
         var photoId = PhotoIdentifier.New();
         var photoType = PhotoType.From(photoTypeName);
-        var caption = captionText is not null ? Caption.From(captionText) : null;
-        var description = descriptionText is not null ? Description.From(descriptionText) : null;
+        var caption = Caption.FromNullable(captionText);
+        var description = Description.FromNullable(descriptionText);
 
         GpsPosition? position = null;
         if (latitude.HasValue && longitude.HasValue

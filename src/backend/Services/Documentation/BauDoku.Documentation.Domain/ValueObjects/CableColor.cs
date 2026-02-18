@@ -17,4 +17,6 @@ public sealed record CableColor : IValueObject
             .MaxLengthIs(MaxLength, $"Kabelfarbe darf max. {MaxLength} Zeichen lang sein.");
         return new CableColor(value);
     }
+
+    public static CableColor? FromNullable(string? value) => value is not null ? From(value) : null;
 }

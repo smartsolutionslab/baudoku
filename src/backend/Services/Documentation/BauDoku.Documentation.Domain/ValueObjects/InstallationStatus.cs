@@ -21,4 +21,6 @@ public sealed record InstallationStatus : IValueObject
             .IsOneOf(ValidValues, $"Ungültiger Installationsstatus: {value}.");
         return new InstallationStatus(value);
     }
+
+    public static InstallationStatus? FromNullable(string? value) => value is not null ? From(value) : null;
 }

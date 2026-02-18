@@ -17,7 +17,7 @@ public sealed class ProjectPersistenceTests(PostgreSqlFixture fixture)
         var project = Project.Create(
             projectId,
             ProjectName.From("Testprojekt Persistence"),
-            Address.Create("Berliner Str. 1", "Hamburg", "20095"),
+            Address.Create(Street.From("Berliner Str. 1"), City.From("Hamburg"), ZipCode.From("20095")),
             ClientInfo.Create("Testfirma GmbH", "test@example.com"));
 
         // Act
@@ -37,8 +37,8 @@ public sealed class ProjectPersistenceTests(PostgreSqlFixture fixture)
             loaded.Should().NotBeNull();
             loaded!.Name.Value.Should().Be("Testprojekt Persistence");
             loaded.Status.Should().Be(ProjectStatus.Draft);
-            loaded.Address.Street.Should().Be("Berliner Str. 1");
-            loaded.Address.City.Should().Be("Hamburg");
+            loaded.Address.Street.Value.Should().Be("Berliner Str. 1");
+            loaded.Address.City.Value.Should().Be("Hamburg");
             loaded.Client.Name.Should().Be("Testfirma GmbH");
             loaded.Client.Email.Should().Be("test@example.com");
             loaded.Zones.Should().BeEmpty();
@@ -53,7 +53,7 @@ public sealed class ProjectPersistenceTests(PostgreSqlFixture fixture)
         var project = Project.Create(
             projectId,
             ProjectName.From("Zonenprojekt"),
-            Address.Create("Hauptstraße 10", "München", "80331"),
+            Address.Create(Street.From("Hauptstraße 10"), City.From("München"), ZipCode.From("80331")),
             ClientInfo.Create("Bau AG"));
 
         var buildingId = ZoneIdentifier.New();

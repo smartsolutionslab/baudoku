@@ -16,7 +16,7 @@ public sealed class ProjectReadRepository(ProjectsDbContext context) : IProjectR
         if (!string.IsNullOrWhiteSpace(search))
         {
             query = query.Where(p => EF.Functions.ILike(p.Name.Value, $"%{search}%")
-                || EF.Functions.ILike(p.Address.City, $"%{search}%")
+                || EF.Functions.ILike(p.Address.City.Value, $"%{search}%")
                 || EF.Functions.ILike(p.Client.Name, $"%{search}%"));
         }
 
@@ -30,7 +30,7 @@ public sealed class ProjectReadRepository(ProjectsDbContext context) : IProjectR
                 p.Id.Value,
                 p.Name.Value,
                 p.Status.Value,
-                p.Address.City,
+                p.Address.City.Value,
                 p.Client.Name,
                 p.CreatedAt,
                 p.Zones.Count))
