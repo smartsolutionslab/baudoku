@@ -88,9 +88,9 @@ jobs:
           curl -Ls "https://get.maestro.mobile.dev" | bash
           echo "$HOME/.maestro/bin" >> $GITHUB_PATH
 
-      - name: Build debug APK
+      - name: Build release APK
         working-directory: src/frontend/mobile-app/android
-        run: ./gradlew assembleDebug -PbundleInDebug=true --no-daemon
+        run: ./gradlew assembleRelease --no-daemon
 
       - name: Run Maestro flows
         uses: reactivecircus/android-emulator-runner@v2
@@ -99,7 +99,7 @@ jobs:
           arch: x86_64
           emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect
           script: |
-            adb install src/frontend/mobile-app/android/app/build/outputs/apk/debug/app-debug.apk
+            adb install src/frontend/mobile-app/android/app/build/outputs/apk/release/app-release.apk
             maestro test e2e/flows/
 
       - name: Upload test results
