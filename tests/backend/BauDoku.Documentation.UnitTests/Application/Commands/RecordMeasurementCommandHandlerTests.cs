@@ -5,6 +5,7 @@ using BauDoku.Documentation.Application.Contracts;
 using BauDoku.Documentation.Domain.Aggregates;
 using BauDoku.Documentation.Domain.ValueObjects;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 
 namespace BauDoku.Documentation.UnitTests.Application.Commands;
 
@@ -27,7 +28,7 @@ public sealed class RecordMeasurementCommandHandlerTests
             ProjectIdentifier.New(),
             null,
             InstallationType.CableTray,
-            GpsPosition.Create(48.137154, 11.576124, null, 3.5, "gps"));
+            GpsPosition.Create(Latitude.From(48.137154), Longitude.From(11.576124), null, HorizontalAccuracy.From(3.5), GpsSource.From("gps")));
 
     [Fact]
     public async Task Handle_WithValidCommand_ShouldRecordMeasurementAndReturnId()
@@ -50,7 +51,7 @@ public sealed class RecordMeasurementCommandHandlerTests
     public async Task Handle_WhenInstallationNotFound_ShouldThrow()
     {
         installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
-            .Returns((Installation?)null);
+            .Throws(new KeyNotFoundException());
 
         var command = new RecordMeasurementCommand(
             Guid.NewGuid(), "insulation_resistance", 500.0, "MΩ", null, null, null);

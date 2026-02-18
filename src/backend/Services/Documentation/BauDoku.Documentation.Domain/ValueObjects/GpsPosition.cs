@@ -1,14 +1,13 @@
 using BauDoku.BuildingBlocks.Domain;
-using BauDoku.BuildingBlocks.Domain.Guards;
 
 namespace BauDoku.Documentation.Domain.ValueObjects;
 
 public sealed record GpsPosition : IValueObject
 {
-    public double Latitude { get; }
-    public double Longitude { get; }
+    public Latitude Latitude { get; }
+    public Longitude Longitude { get; }
     public double? Altitude { get; }
-    public double HorizontalAccuracy { get; }
+    public HorizontalAccuracy HorizontalAccuracy { get; }
     public GpsSource Source { get; }
     public CorrectionService? CorrectionService { get; }
     public RtkFixStatus? RtkFixStatus { get; }
@@ -17,10 +16,10 @@ public sealed record GpsPosition : IValueObject
     public double? CorrectionAge { get; }
 
     private GpsPosition(
-        double latitude,
-        double longitude,
+        Latitude latitude,
+        Longitude longitude,
         double? altitude,
-        double horizontalAccuracy,
+        HorizontalAccuracy horizontalAccuracy,
         GpsSource source,
         CorrectionService? correctionService,
         RtkFixStatus? rtkFixStatus,
@@ -41,32 +40,25 @@ public sealed record GpsPosition : IValueObject
     }
 
     public static GpsPosition Create(
-        double latitude,
-        double longitude,
+        Latitude latitude,
+        Longitude longitude,
         double? altitude,
-        double horizontalAccuracy,
-        string source,
-        string? correctionService = null,
-        string? rtkFixStatus = null,
+        HorizontalAccuracy horizontalAccuracy,
+        GpsSource source,
+        CorrectionService? correctionService = null,
+        RtkFixStatus? rtkFixStatus = null,
         int? satelliteCount = null,
         double? hdop = null,
         double? correctionAge = null)
     {
-        Ensure.That(latitude).IsBetween(-90.0, 90.0, "Breitengrad muss zwischen -90 und 90 liegen.");
-        Ensure.That(longitude).IsBetween(-180.0, 180.0, "Laengengrad muss zwischen -180 und 180 liegen.");
-        Ensure.That(horizontalAccuracy).IsPositive("Horizontale Genauigkeit muss groesser als 0 sein.");
-
         return new GpsPosition(
-            latitude, longitude, altitude, horizontalAccuracy,
-            GpsSource.From(source),
-            correctionService is not null ? ValueObjects.CorrectionService.From(correctionService) : null,
-            rtkFixStatus is not null ? ValueObjects.RtkFixStatus.From(rtkFixStatus) : null,
-            satelliteCount, hdop, correctionAge);
+            latitude, longitude, altitude, horizontalAccuracy, source,
+            correctionService, rtkFixStatus, satelliteCount, hdop, correctionAge);
     }
 
     public GpsQualityGrade CalculateQualityGrade()
     {
-        var baseGrade = HorizontalAccuracy switch
+        var baseGrade = HorizontalAccuracy.Value switch
         {
             < 1.0 => 0,
             < 5.0 => 1,

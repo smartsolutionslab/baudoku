@@ -12,13 +12,12 @@ public sealed class AddZoneCommandHandler(IProjectRepository projects, IUnitOfWo
     public async Task Handle(AddZoneCommand command, CancellationToken cancellationToken = default)
     {
         var (projectId, name, type, parentZoneId) = command;
-        var project = await projects.GetByIdAsync(ProjectIdentifier.From(projectId), cancellationToken)
-            ?? throw new KeyNotFoundException($"Projekt mit ID '{projectId}' wurde nicht gefunden.");
+        var project = await projects.GetByIdAsync(ProjectIdentifier.From(projectId), cancellationToken);
 
         var zoneId = ZoneIdentifier.New();
         var zoneName = ZoneName.From(name);
         var zoneType = ZoneType.From(type);
-        var parentZoneIdentifier = parentZoneId.HasValue ? ZoneIdentifier.From(parentZoneId.Value) : null;
+        var parentZoneIdentifier = ZoneIdentifier.FromNullable(parentZoneId);
 
         project.AddZone(zoneId, zoneName, zoneType, parentZoneIdentifier);
 

@@ -3,6 +3,7 @@ using BauDoku.BuildingBlocks.Application.Pagination;
 using BauDoku.Documentation.Application.Contracts;
 using BauDoku.Documentation.Application.Queries.Dtos;
 using BauDoku.Documentation.Application.Queries.GetInstallationsInRadius;
+using BauDoku.Documentation.Domain.ValueObjects;
 using NSubstitute;
 
 namespace BauDoku.Documentation.UnitTests.Application.Queries;
@@ -30,7 +31,7 @@ public sealed class GetInstallationsInRadiusQueryHandlerTests
 
         readRepository.SearchInRadiusAsync(
                 new SearchRadius(48.0, 11.0, 500.0),
-                null,
+                (ProjectIdentifier?)null,
                 new PaginationParams(1, 20),
                 Arg.Any<CancellationToken>())
             .Returns(expected);
@@ -51,7 +52,7 @@ public sealed class GetInstallationsInRadiusQueryHandlerTests
 
         readRepository.SearchInRadiusAsync(
                 new SearchRadius(48.0, 11.0, 1000.0),
-                projectId,
+                ProjectIdentifier.From(projectId),
                 new PaginationParams(1, 20),
                 Arg.Any<CancellationToken>())
             .Returns(expected);
@@ -62,7 +63,7 @@ public sealed class GetInstallationsInRadiusQueryHandlerTests
         result.Should().BeSameAs(expected);
         await readRepository.Received(1).SearchInRadiusAsync(
             new SearchRadius(48.0, 11.0, 1000.0),
-            projectId,
+            ProjectIdentifier.From(projectId),
             new PaginationParams(1, 20),
             Arg.Any<CancellationToken>());
     }
@@ -74,7 +75,7 @@ public sealed class GetInstallationsInRadiusQueryHandlerTests
 
         readRepository.SearchInRadiusAsync(
                 new SearchRadius(48.0, 11.0, 500.0),
-                null,
+                (ProjectIdentifier?)null,
                 new PaginationParams(3, 10),
                 Arg.Any<CancellationToken>())
             .Returns(expected);

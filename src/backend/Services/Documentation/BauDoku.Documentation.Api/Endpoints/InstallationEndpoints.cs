@@ -104,7 +104,7 @@ public static class InstallationEndpoints
         {
             var query = new GetInstallationQuery(id);
             var result = await dispatcher.Query(query, ct);
-            return result is not null ? Results.Ok(result) : Results.NotFound();
+            return Results.Ok(result);
         })
         .RequireAuthorization()
         .WithName("GetInstallation")

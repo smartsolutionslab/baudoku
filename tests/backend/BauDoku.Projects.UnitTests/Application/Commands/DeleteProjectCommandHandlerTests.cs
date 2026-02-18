@@ -5,6 +5,7 @@ using BauDoku.Projects.Application.Contracts;
 using BauDoku.Projects.Domain.Aggregates;
 using BauDoku.Projects.Domain.ValueObjects;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 
 namespace BauDoku.Projects.UnitTests.Application.Commands;
 
@@ -25,7 +26,7 @@ public sealed class DeleteProjectCommandHandlerTests
         Project.Create(
             ProjectIdentifier.New(),
             ProjectName.From("Test Projekt"),
-            Address.Create("Musterstraße 1", "Berlin", "10115"),
+            Address.Create(Street.From("Musterstraße 1"), City.From("Berlin"), ZipCode.From("10115")),
             ClientInfo.Create("Max Mustermann", "max@example.com", "+49 30 12345"));
 
     [Fact]
@@ -62,7 +63,7 @@ public sealed class DeleteProjectCommandHandlerTests
     public async Task Handle_WhenProjectNotFound_ShouldThrow()
     {
         projects.GetByIdAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>())
-            .Returns((Project?)null);
+            .Throws(new KeyNotFoundException());
 
         var command = new DeleteProjectCommand(Guid.NewGuid());
 
@@ -75,7 +76,7 @@ public sealed class DeleteProjectCommandHandlerTests
     public async Task Handle_WhenProjectNotFound_ShouldNotCallSaveChanges()
     {
         projects.GetByIdAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>())
-            .Returns((Project?)null);
+            .Throws(new KeyNotFoundException());
 
         try { await handler.Handle(new DeleteProjectCommand(Guid.NewGuid())); } catch { }
 

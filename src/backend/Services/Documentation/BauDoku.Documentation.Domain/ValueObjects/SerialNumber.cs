@@ -17,4 +17,6 @@ public sealed record SerialNumber : IValueObject
             .MaxLengthIs(MaxLength, $"Seriennummer darf max. {MaxLength} Zeichen lang sein.");
         return new SerialNumber(value);
     }
+
+    public static SerialNumber? FromNullable(string? value) => value is not null ? From(value) : null;
 }

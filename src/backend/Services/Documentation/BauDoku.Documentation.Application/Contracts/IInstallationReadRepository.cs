@@ -1,5 +1,6 @@
 using BauDoku.BuildingBlocks.Application.Pagination;
 using BauDoku.Documentation.Application.Queries.Dtos;
+using BauDoku.Documentation.Domain.ValueObjects;
 
 namespace BauDoku.Documentation.Application.Contracts;
 
@@ -12,13 +13,13 @@ public interface IInstallationReadRepository
 
     Task<PagedResult<NearbyInstallationDto>> SearchInRadiusAsync(
         SearchRadius radius,
-        Guid? projectId,
+        ProjectIdentifier? projectId,
         PaginationParams pagination,
         CancellationToken cancellationToken = default);
 
     Task<PagedResult<InstallationListItemDto>> SearchInBoundingBoxAsync(
         BoundingBox boundingBox,
-        Guid? projectId,
+        ProjectIdentifier? projectId,
         PaginationParams pagination,
         CancellationToken cancellationToken = default);
 }

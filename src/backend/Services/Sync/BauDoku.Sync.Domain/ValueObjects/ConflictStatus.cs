@@ -20,7 +20,9 @@ public sealed record ConflictStatus : IValueObject
     {
         Ensure.That(value)
             .IsNotNullOrWhiteSpace("Konflikt-Status darf nicht leer sein.")
-            .IsOneOf(ValidValues, $"Ungueltiger Konflikt-Status: {value}.");
+            .IsOneOf(ValidValues, $"Ungültiger Konflikt-Status: {value}.");
         return new ConflictStatus(value);
     }
+
+    public static ConflictStatus? FromNullable(string? value) => value is not null ? From(value) : null;
 }

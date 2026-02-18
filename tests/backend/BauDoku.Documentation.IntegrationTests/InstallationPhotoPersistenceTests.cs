@@ -17,7 +17,7 @@ public sealed class InstallationPhotoPersistenceTests(PostgreSqlFixture fixture)
             ProjectIdentifier.New(),
             null,
             InstallationType.CableTray,
-            GpsPosition.Create(48.1351, 11.5820, 520.0, 3.5, "internal_gps"));
+            GpsPosition.Create(Latitude.From(48.1351), Longitude.From(11.5820), 520.0, HorizontalAccuracy.From(3.5), GpsSource.From("internal_gps")));
 
         var photoId = PhotoIdentifier.New();
         installation.AddPhoto(
@@ -29,7 +29,7 @@ public sealed class InstallationPhotoPersistenceTests(PostgreSqlFixture fixture)
             PhotoType.Before,
             Caption.From("Vorher-Bild"),
             Description.From("Detailansicht der Kabeltrasse"),
-            GpsPosition.Create(48.1351, 11.5820, 520.0, 3.5, "internal_gps"));
+            GpsPosition.Create(Latitude.From(48.1351), Longitude.From(11.5820), 520.0, HorizontalAccuracy.From(3.5), GpsSource.From("internal_gps")));
 
         await using (var writeContext = fixture.CreateContext())
         {
@@ -56,7 +56,7 @@ public sealed class InstallationPhotoPersistenceTests(PostgreSqlFixture fixture)
             photo.Caption!.Value.Should().Be("Vorher-Bild");
             photo.Description!.Value.Should().Be("Detailansicht der Kabeltrasse");
             photo.Position.Should().NotBeNull();
-            photo.Position!.Latitude.Should().Be(48.1351);
+            photo.Position!.Latitude.Value.Should().Be(48.1351);
             photo.TakenAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromMinutes(1));
         }
     }
@@ -69,7 +69,7 @@ public sealed class InstallationPhotoPersistenceTests(PostgreSqlFixture fixture)
             ProjectIdentifier.New(),
             null,
             InstallationType.JunctionBox,
-            GpsPosition.Create(48.0, 11.0, null, 5.0, "internal_gps"));
+            GpsPosition.Create(Latitude.From(48.0), Longitude.From(11.0), null, HorizontalAccuracy.From(5.0), GpsSource.From("internal_gps")));
 
         installation.AddPhoto(
             PhotoIdentifier.New(),
@@ -108,7 +108,7 @@ public sealed class InstallationPhotoPersistenceTests(PostgreSqlFixture fixture)
             ProjectIdentifier.New(),
             null,
             InstallationType.Grounding,
-            GpsPosition.Create(48.0, 11.0, null, 5.0, "internal_gps"));
+            GpsPosition.Create(Latitude.From(48.0), Longitude.From(11.0), null, HorizontalAccuracy.From(5.0), GpsSource.From("internal_gps")));
 
         installation.AddPhoto(PhotoIdentifier.New(), FileName.From("before.jpg"), BlobUrl.From("url1"), ContentType.From("image/jpeg"), FileSize.From(1024), PhotoType.Before);
         installation.AddPhoto(PhotoIdentifier.New(), FileName.From("after.jpg"), BlobUrl.From("url2"), ContentType.From("image/jpeg"), FileSize.From(2048), PhotoType.After);

@@ -1,4 +1,5 @@
 using BauDoku.Documentation.Application.Contracts;
+using BauDoku.Documentation.Domain.ValueObjects;
 using Microsoft.Extensions.Options;
 
 namespace BauDoku.Documentation.Infrastructure.Storage;
@@ -14,29 +15,29 @@ public sealed class LocalFilePhotoStorage : IPhotoStorage
         Directory.CreateDirectory(basePath);
     }
 
-    public async Task<string> UploadAsync(Stream stream, string fileName, string contentType, CancellationToken ct = default)
+    public async Task<BlobUrl> UploadAsync(Stream stream, FileName fileName, ContentType contentType, CancellationToken ct = default)
     {
-        var uniqueName = $"{Guid.NewGuid()}{Path.GetExtension(fileName)}";
+        var uniqueName = $"{Guid.NewGuid()}{Path.GetExtension(fileName.Value)}";
         var filePath = Path.Combine(basePath, uniqueName);
 
         await using var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write);
         await stream.CopyToAsync(fileStream, ct);
 
-        return uniqueName;
+        return BlobUrl.From(uniqueName);
     }
 
-    public Task<Stream> DownloadAsync(string blobUrl, CancellationToken ct = default)
+    public Task<Stream> DownloadAsync(BlobUrl blobUrl, CancellationToken ct = default)
     {
-        var filePath = SafeResolvePath(blobUrl);
-        if (!File.Exists(filePath)) throw new FileNotFoundException($"Foto nicht gefunden: {blobUrl}");
+        var filePath = SafeResolvePath(blobUrl.Value);
+        if (!File.Exists(filePath)) throw new FileNotFoundException($"Foto nicht gefunden: {blobUrl.Value}");
 
         Stream stream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
         return Task.FromResult(stream);
     }
 
-    public Task DeleteAsync(string blobUrl, CancellationToken ct = default)
+    public Task DeleteAsync(BlobUrl blobUrl, CancellationToken ct = default)
     {
-        var filePath = SafeResolvePath(blobUrl);
+        var filePath = SafeResolvePath(blobUrl.Value);
         if (File.Exists(filePath)) File.Delete(filePath);
 
         return Task.CompletedTask;

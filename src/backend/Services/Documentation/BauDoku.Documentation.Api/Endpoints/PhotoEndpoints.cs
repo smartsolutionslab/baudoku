@@ -1,11 +1,12 @@
 using BauDoku.BuildingBlocks.Application.Dispatcher;
 using BauDoku.BuildingBlocks.Application.Responses;
 using BauDoku.BuildingBlocks.Infrastructure.Auth;
-using BauDoku.Documentation.Application.Commands.AddPhoto;
+using BauDoku.Documentation.Api.Mapping;
 using BauDoku.Documentation.Application.Commands.RemovePhoto;
 using BauDoku.Documentation.Application.Contracts;
 using BauDoku.Documentation.Application.Queries.Dtos;
 using BauDoku.Documentation.Application.Queries.GetPhoto;
+using BauDoku.Documentation.Domain.ValueObjects;
 
 namespace BauDoku.Documentation.Api.Endpoints;
 
@@ -19,36 +20,12 @@ public static class PhotoEndpoints
         group.MapPost("/installations/{installationId:guid}/photos", async (
             Guid installationId,
             IFormFile file,
+            [AsParameters] AddPhotoRequest request,
             IDispatcher dispatcher,
-            CancellationToken ct,
-            string? photoType,
-            string? caption,
-            string? description,
-            double? latitude,
-            double? longitude,
-            double? altitude,
-            double? horizontalAccuracy,
-            string? gpsSource,
-            DateTime? takenAt) =>
+            CancellationToken ct) =>
         {
             await using var stream = file.OpenReadStream();
-
-            var command = new AddPhotoCommand(
-                installationId,
-                file.FileName,
-                file.ContentType,
-                file.Length,
-                photoType ?? "other",
-                caption,
-                description,
-                latitude,
-                longitude,
-                altitude,
-                horizontalAccuracy,
-                gpsSource,
-                stream,
-                takenAt);
-
+            var command = request.ToCommand(installationId, file, stream);
             var photoId = await dispatcher.Send(command, ct);
             return Results.Created($"/api/documentation/photos/{photoId}", new CreatedResponse(photoId));
         })
@@ -64,7 +41,7 @@ public static class PhotoEndpoints
             IPhotoReadRepository photos,
             CancellationToken ct) =>
         {
-            var photoList = await photos.ListByInstallationIdAsync(installationId, ct);
+            var photoList = await photos.ListByInstallationIdAsync(InstallationIdentifier.From(installationId), ct);
             return Results.Ok(photoList);
         })
         .RequireAuthorization()
@@ -79,7 +56,7 @@ public static class PhotoEndpoints
         {
             var query = new GetPhotoQuery(photoId);
             var result = await dispatcher.Query(query, ct);
-            return result is not null ? Results.Ok(result) : Results.NotFound();
+            return Results.Ok(result);
         })
         .RequireAuthorization()
         .WithName("GetPhoto")

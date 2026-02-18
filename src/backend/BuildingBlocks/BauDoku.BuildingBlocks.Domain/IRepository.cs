@@ -1,10 +1,10 @@
 namespace BauDoku.BuildingBlocks.Domain;
 
-public interface IRepository<T, in TId>
-    where T : AggregateRoot<TId>
-    where TId : IValueObject
+public interface IRepository<TAggregateRoot, in TIdentifier>
+    where TAggregateRoot : AggregateRoot<TIdentifier>
+    where TIdentifier : IValueObject
 {
-    Task<T?> GetByIdAsync(TId id, CancellationToken cancellationToken = default);
-    Task<T?> GetByIdReadOnlyAsync(TId id, CancellationToken cancellationToken = default) => GetByIdAsync(id, cancellationToken);
-    Task AddAsync(T aggregate, CancellationToken cancellationToken = default);
+    Task<TAggregateRoot> GetByIdAsync(TIdentifier id, CancellationToken cancellationToken = default);
+    Task<TAggregateRoot> GetByIdReadOnlyAsync(TIdentifier id, CancellationToken cancellationToken = default) => GetByIdAsync(id, cancellationToken);
+    Task AddAsync(TAggregateRoot aggregate, CancellationToken cancellationToken = default);
 }

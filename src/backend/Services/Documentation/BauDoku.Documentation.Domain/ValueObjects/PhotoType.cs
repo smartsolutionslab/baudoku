@@ -21,7 +21,7 @@ public sealed record PhotoType : IValueObject
     public static PhotoType From(string value)
     {
         Ensure.That(value).IsNotNullOrWhiteSpace("Fototyp darf nicht leer sein.")
-            .IsOneOf(ValidValues, $"Ungueltiger Fototyp: {value}.");
+            .IsOneOf(ValidValues, $"Ungültiger Fototyp: {value}.");
         return new PhotoType(value);
     }
 }

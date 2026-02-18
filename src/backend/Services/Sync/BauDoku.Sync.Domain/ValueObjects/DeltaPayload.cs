@@ -18,4 +18,6 @@ public sealed record DeltaPayload : IValueObject
             .MaxLengthIs(MaxLength, $"Delta-Payload darf max. {MaxLength} Zeichen lang sein.");
         return new DeltaPayload(value);
     }
+
+    public static DeltaPayload? FromNullable(string? value) => value is not null ? From(value) : null;
 }

@@ -15,8 +15,7 @@ public sealed class SyncApiFactory(PostgreSqlFixture fixture) : WebApplicationFa
         builder.ConfigureServices(services =>
         {
             services.AddAuthentication(TestAuthHandler.SchemeName)
-                .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>(
-                    TestAuthHandler.SchemeName, _ => { });
+                .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>(TestAuthHandler.SchemeName, _ => { });
         });
 
         builder.UseEnvironment("Development");

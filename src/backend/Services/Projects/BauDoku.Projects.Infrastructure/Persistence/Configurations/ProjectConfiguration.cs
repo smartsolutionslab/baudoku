@@ -34,15 +34,18 @@ public sealed class ProjectConfiguration : IEntityTypeConfiguration<Project>
         {
             address.Property(a => a.Street)
                 .HasColumnName("address_street")
-                .HasMaxLength(Address.MaxStreetLength);
+                .HasMaxLength(Street.MaxLength)
+                .HasConversion(s => s.Value, value => Street.From(value));
 
             address.Property(a => a.City)
                 .HasColumnName("address_city")
-                .HasMaxLength(Address.MaxCityLength);
+                .HasMaxLength(City.MaxLength)
+                .HasConversion(c => c.Value, value => City.From(value));
 
             address.Property(a => a.ZipCode)
                 .HasColumnName("address_zip_code")
-                .HasMaxLength(Address.MaxZipCodeLength);
+                .HasMaxLength(ZipCode.MaxLength)
+                .HasConversion(z => z.Value, value => ZipCode.From(value));
         });
 
         builder.OwnsOne(p => p.Client, client =>

@@ -5,6 +5,7 @@ using BauDoku.Documentation.Application.Contracts;
 using BauDoku.Documentation.Domain.Aggregates;
 using BauDoku.Documentation.Domain.ValueObjects;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 
 namespace BauDoku.Documentation.UnitTests.Application.Commands;
 
@@ -27,7 +28,7 @@ public sealed class UpdateInstallationCommandHandlerTests
             ProjectIdentifier.New(),
             null,
             InstallationType.CableTray,
-            GpsPosition.Create(48.137154, 11.576124, null, 3.5, "gps"));
+            GpsPosition.Create(Latitude.From(48.137154), Longitude.From(11.576124), null, HorizontalAccuracy.From(3.5), GpsSource.From("gps")));
 
     [Fact]
     public async Task Handle_WithGpsUpdate_ShouldUpdatePosition()
@@ -58,8 +59,8 @@ public sealed class UpdateInstallationCommandHandlerTests
 
         await handler.Handle(command, CancellationToken.None);
 
-        installation.Position.Latitude.Should().Be(52.520008);
-        installation.Position.Longitude.Should().Be(13.404954);
+        installation.Position.Latitude.Value.Should().Be(52.520008);
+        installation.Position.Longitude.Value.Should().Be(13.404954);
         await unitOfWork.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
@@ -147,7 +148,7 @@ public sealed class UpdateInstallationCommandHandlerTests
     public async Task Handle_WhenInstallationNotFound_ShouldThrow()
     {
         installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
-            .Returns((Installation?)null);
+            .Throws(new KeyNotFoundException());
 
         var command = new UpdateInstallationCommand(
             Guid.NewGuid(),

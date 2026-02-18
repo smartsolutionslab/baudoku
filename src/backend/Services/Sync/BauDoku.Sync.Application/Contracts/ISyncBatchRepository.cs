@@ -6,6 +6,6 @@ namespace BauDoku.Sync.Application.Contracts;
 
 public interface ISyncBatchRepository : IRepository<SyncBatch, SyncBatchIdentifier>
 {
-    Task<SyncBatch?> GetByConflictIdAsync(ConflictRecordIdentifier conflictId, CancellationToken cancellationToken = default);
+    Task<SyncBatch> GetByConflictIdAsync(ConflictRecordIdentifier conflictId, CancellationToken cancellationToken = default);
     Task<List<SyncBatch>> GetPendingBatchesAsync(int limit, CancellationToken cancellationToken = default);
 }

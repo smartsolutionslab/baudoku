@@ -12,8 +12,7 @@ public sealed class DeleteProjectCommandHandler(IProjectRepository projects, IUn
     public async Task Handle(DeleteProjectCommand command, CancellationToken cancellationToken = default)
     {
         var projectId = ProjectIdentifier.From(command.ProjectId);
-        var project = await projects.GetByIdAsync(projectId, cancellationToken)
-            ?? throw new KeyNotFoundException($"Projekt mit ID '{command.ProjectId}' wurde nicht gefunden.");
+        var project = await projects.GetByIdAsync(projectId, cancellationToken);
 
         project.Delete();
         projects.Remove(project);

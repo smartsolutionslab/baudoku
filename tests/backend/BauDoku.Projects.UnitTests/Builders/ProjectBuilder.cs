@@ -7,7 +7,7 @@ internal sealed class ProjectBuilder
 {
     private ProjectIdentifier id = ProjectIdentifier.New();
     private ProjectName name = ProjectName.From("Testprojekt");
-    private Address address = Address.Create("Musterstraße 1", "Berlin", "10115");
+    private Address address = Address.Create(Street.From("Musterstraße 1"), City.From("Berlin"), ZipCode.From("10115"));
     private ClientInfo client = ClientInfo.Create("Max Mustermann", "max@example.com", "+49 30 12345");
 
     public ProjectBuilder WithId(ProjectIdentifier value) { id = value; return this; }

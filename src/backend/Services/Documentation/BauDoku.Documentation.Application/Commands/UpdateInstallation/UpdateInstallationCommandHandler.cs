@@ -14,15 +14,17 @@ public sealed class UpdateInstallationCommandHandler(IInstallationRepository ins
              correctionService, rtkFixStatus, satelliteCount, hdop, correctionAge, description,
              cableType, crossSection, cableColor, conductorCount, depthMm, manufacturer, modelName, serialNumber) = command;
 
-        var installation = await installations.GetByIdAsync(
-            InstallationIdentifier.From(installationId), cancellationToken)
-            ?? throw new KeyNotFoundException($"Installation mit ID {installationId} nicht gefunden.");
+        var installationIdentifier = InstallationIdentifier.From(installationId);
+        var installation = await installations.GetByIdAsync(installationIdentifier, cancellationToken);
 
         if (latitude.HasValue && longitude.HasValue && horizontalAccuracy.HasValue && gpsSource is not null)
         {
             var position = GpsPosition.Create(
-                latitude.Value, longitude.Value, altitude, horizontalAccuracy.Value, gpsSource,
-                correctionService, rtkFixStatus, satelliteCount, hdop, correctionAge);
+                Latitude.From(latitude.Value), Longitude.From(longitude.Value), altitude,
+                HorizontalAccuracy.From(horizontalAccuracy.Value), GpsSource.From(gpsSource),
+                CorrectionService.FromNullable(correctionService),
+                RtkFixStatus.FromNullable(rtkFixStatus),
+                satelliteCount, hdop, correctionAge);
 
             installation.UpdatePosition(position);
         }
@@ -45,9 +47,9 @@ public sealed class UpdateInstallationCommandHandler(IInstallationRepository ins
         if (manufacturer is not null || modelName is not null || serialNumber is not null)
         {
             installation.UpdateDeviceInfo(
-                manufacturer is not null ? Manufacturer.From(manufacturer) : null,
-                modelName is not null ? ModelName.From(modelName) : null,
-                serialNumber is not null ? SerialNumber.From(serialNumber) : null);
+                Manufacturer.FromNullable(manufacturer),
+                ModelName.FromNullable(modelName),
+                SerialNumber.FromNullable(serialNumber));
         }
 
         await unitOfWork.SaveChangesAsync(cancellationToken);

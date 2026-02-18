@@ -4,6 +4,7 @@ using BauDoku.Documentation.Application.Queries.GetInstallation;
 using BauDoku.Documentation.Domain.Aggregates;
 using BauDoku.Documentation.Domain.ValueObjects;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 
 namespace BauDoku.Documentation.UnitTests.Application.Queries;
 
@@ -26,7 +27,7 @@ public sealed class GetInstallationQueryHandlerTests
             ProjectIdentifier.New(),
             null,
             InstallationType.CableTray,
-            GpsPosition.Create(48.137154, 11.576124, 520.0, 3.5, "gps"),
+            GpsPosition.Create(Latitude.From(48.137154), Longitude.From(11.576124), 520.0, HorizontalAccuracy.From(3.5), GpsSource.From("gps")),
             Description.From("Testbeschreibung"));
 
         installation.AddPhoto(
@@ -44,7 +45,7 @@ public sealed class GetInstallationQueryHandlerTests
         var result = await handler.Handle(new GetInstallationQuery(installation.Id.Value), CancellationToken.None);
 
         result.Should().NotBeNull();
-        result!.Type.Should().Be("cable_tray");
+        result.Type.Should().Be("cable_tray");
         result.Description.Should().Be("Testbeschreibung");
         result.Latitude.Should().Be(48.137154);
         result.Photos.Should().ContainSingle();
@@ -54,14 +55,14 @@ public sealed class GetInstallationQueryHandlerTests
     }
 
     [Fact]
-    public async Task Handle_WhenNotFound_ShouldReturnNull()
+    public async Task Handle_WhenNotFound_ShouldThrow()
     {
         installations.GetByIdReadOnlyAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
-            .Returns((Installation?)null);
+            .Throws(new KeyNotFoundException());
 
-        var result = await handler.Handle(new GetInstallationQuery(Guid.NewGuid()), CancellationToken.None);
+        var act = () => handler.Handle(new GetInstallationQuery(Guid.NewGuid()), CancellationToken.None);
 
-        result.Should().BeNull();
+        await act.Should().ThrowAsync<KeyNotFoundException>();
     }
 
     [Fact]
@@ -72,7 +73,7 @@ public sealed class GetInstallationQueryHandlerTests
             ProjectIdentifier.New(),
             ZoneIdentifier.New(),
             InstallationType.JunctionBox,
-            GpsPosition.Create(48.0, 11.0, 500.0, 2.5, "dgnss", "SAPOS-EPS", "fix", 12, 0.8, 1.5));
+            GpsPosition.Create(Latitude.From(48.0), Longitude.From(11.0), 500.0, HorizontalAccuracy.From(2.5), GpsSource.From("dgnss"), CorrectionService.From("SAPOS-EPS"), RtkFixStatus.From("fix"), 12, 0.8, 1.5));
 
         installations.GetByIdReadOnlyAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
@@ -80,7 +81,7 @@ public sealed class GetInstallationQueryHandlerTests
         var result = await handler.Handle(new GetInstallationQuery(installation.Id.Value), CancellationToken.None);
 
         result.Should().NotBeNull();
-        result!.GpsSource.Should().Be("dgnss");
+        result.GpsSource.Should().Be("dgnss");
         result.CorrectionService.Should().Be("SAPOS-EPS");
         result.RtkFixStatus.Should().Be("fix");
         result.SatelliteCount.Should().Be(12);

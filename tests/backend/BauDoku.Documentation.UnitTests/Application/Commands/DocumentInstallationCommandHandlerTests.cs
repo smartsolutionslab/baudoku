@@ -49,9 +49,9 @@ public sealed class DocumentInstallationCommandHandlerTests
         await handler.Handle(command, CancellationToken.None);
 
         captured.Should().NotBeNull();
-        captured!.Position.Latitude.Should().Be(48.137154);
-        captured.Position.Longitude.Should().Be(11.576124);
-        captured.Position.HorizontalAccuracy.Should().Be(3.5);
+        captured!.Position.Latitude.Value.Should().Be(48.137154);
+        captured.Position.Longitude.Value.Should().Be(11.576124);
+        captured.Position.HorizontalAccuracy.Value.Should().Be(3.5);
     }
 
     [Fact]

@@ -15,5 +15,7 @@ public sealed record ProjectIdentifier : IValueObject
         return new ProjectIdentifier(value);
     }
 
+    public static ProjectIdentifier? FromNullable(Guid? value) => value.HasValue ? From(value.Value) : null;
+
     public static ProjectIdentifier New() => new(Guid.NewGuid());
 }

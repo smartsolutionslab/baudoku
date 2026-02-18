@@ -17,4 +17,6 @@ public sealed record Description : IValueObject
         Ensure.That(value).MaxLengthIs(MaxLength, $"Beschreibung darf max. {MaxLength} Zeichen lang sein.");
         return new Description(value);
     }
+
+    public static Description? FromNullable(string? value) => value is not null ? From(value) : null;
 }

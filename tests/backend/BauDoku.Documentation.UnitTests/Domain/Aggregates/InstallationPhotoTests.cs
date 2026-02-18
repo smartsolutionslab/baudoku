@@ -27,7 +27,7 @@ public sealed class InstallationPhotoTests
             PhotoType.Before,
             Caption.From("Vorher-Bild"),
             Description.From("Detailansicht"),
-            GpsPosition.Create(48.1351, 11.5820, 520.0, 3.5, "internal_gps"));
+            GpsPosition.Create(Latitude.From(48.1351), Longitude.From(11.5820), 520.0, HorizontalAccuracy.From(3.5), GpsSource.From("internal_gps")));
 
         installation.Photos.Should().ContainSingle();
         var photo = installation.Photos[0];

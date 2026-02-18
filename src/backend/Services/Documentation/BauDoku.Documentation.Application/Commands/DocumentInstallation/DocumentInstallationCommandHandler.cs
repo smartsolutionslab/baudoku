@@ -19,21 +19,24 @@ public sealed class DocumentInstallationCommandHandler(IInstallationRepository i
         var installationId = InstallationIdentifier.New();
 
         var position = GpsPosition.Create(
-            latitude, longitude, altitude, horizontalAccuracy, gpsSource,
-            correctionService, rtkFixStatus, satelliteCount, hdop, correctionAge);
+            Latitude.From(latitude), Longitude.From(longitude), altitude,
+            HorizontalAccuracy.From(horizontalAccuracy), GpsSource.From(gpsSource),
+            CorrectionService.FromNullable(correctionService),
+            RtkFixStatus.FromNullable(rtkFixStatus),
+            satelliteCount, hdop, correctionAge);
 
         var installation = Installation.Create(
             installationId,
             ProjectIdentifier.From(projectId),
-            zoneId is not null ? ZoneIdentifier.From(zoneId.Value) : null,
+            ZoneIdentifier.FromNullable(zoneId),
             InstallationType.From(type),
             position,
-            description is not null ? Description.From(description) : null,
+            Description.FromNullable(description),
             cableType is not null ? CableSpec.Create(cableType, crossSection, cableColor, conductorCount) : null,
-            depthMm is not null ? Depth.From(depthMm.Value) : null,
-            manufacturer is not null ? Manufacturer.From(manufacturer) : null,
-            modelName is not null ? ModelName.From(modelName) : null,
-            serialNumber is not null ? SerialNumber.From(serialNumber) : null);
+            Depth.FromNullable(depthMm),
+            Manufacturer.FromNullable(manufacturer),
+            ModelName.FromNullable(modelName),
+            SerialNumber.FromNullable(serialNumber));
 
         await installations.AddAsync(installation, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);

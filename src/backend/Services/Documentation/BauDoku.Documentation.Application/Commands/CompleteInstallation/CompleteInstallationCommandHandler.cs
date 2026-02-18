@@ -12,8 +12,7 @@ public sealed class CompleteInstallationCommandHandler(IInstallationRepository i
     public async Task Handle(CompleteInstallationCommand command, CancellationToken cancellationToken = default)
     {
         var installationId = InstallationIdentifier.From(command.InstallationId);
-        var installation = await installations.GetByIdAsync(installationId, cancellationToken)
-            ?? throw new KeyNotFoundException($"Installation mit ID {command.InstallationId} nicht gefunden.");
+        var installation = await installations.GetByIdAsync(installationId, cancellationToken);
 
         installation.MarkAsCompleted();
 

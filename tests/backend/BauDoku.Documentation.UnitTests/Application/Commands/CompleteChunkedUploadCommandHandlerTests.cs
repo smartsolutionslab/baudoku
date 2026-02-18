@@ -5,6 +5,7 @@ using BauDoku.Documentation.Application.Contracts;
 using BauDoku.Documentation.Domain.Aggregates;
 using BauDoku.Documentation.Domain.ValueObjects;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 
 namespace BauDoku.Documentation.UnitTests.Application.Commands;
 
@@ -32,7 +33,7 @@ public sealed class CompleteChunkedUploadCommandHandlerTests
             ProjectIdentifier.New(),
             null,
             InstallationType.CableTray,
-            GpsPosition.Create(48.137154, 11.576124, null, 3.5, "gps"));
+            GpsPosition.Create(Latitude.From(48.137154), Longitude.From(11.576124), null, HorizontalAccuracy.From(3.5), GpsSource.From("gps")));
 
     private static ChunkedUploadSession CreateValidSession(Guid sessionId, Guid installationId) =>
         new(sessionId, installationId, "photo.jpg", "image/jpeg",
@@ -44,16 +45,17 @@ public sealed class CompleteChunkedUploadCommandHandlerTests
     {
         var installation = CreateValidInstallation();
         var sessionId = Guid.NewGuid();
+        var sessionIdentifier = UploadSessionIdentifier.From(sessionId);
         var session = CreateValidSession(sessionId, installation.Id.Value);
 
-        chunkedUploadStorage.GetSessionAsync(sessionId, Arg.Any<CancellationToken>())
+        chunkedUploadStorage.GetSessionAsync(sessionIdentifier, Arg.Any<CancellationToken>())
             .Returns(session);
-        chunkedUploadStorage.GetUploadedChunkCountAsync(sessionId, Arg.Any<CancellationToken>())
+        chunkedUploadStorage.GetUploadedChunkCountAsync(sessionIdentifier, Arg.Any<CancellationToken>())
             .Returns(5);
-        chunkedUploadStorage.AssembleAsync(sessionId, Arg.Any<CancellationToken>())
+        chunkedUploadStorage.AssembleAsync(sessionIdentifier, Arg.Any<CancellationToken>())
             .Returns(new MemoryStream([1, 2, 3]));
-        photoStorage.UploadAsync(Arg.Any<Stream>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
-            .Returns("https://blob.storage/photo.jpg");
+        photoStorage.UploadAsync(Arg.Any<Stream>(), Arg.Any<FileName>(), Arg.Any<ContentType>(), Arg.Any<CancellationToken>())
+            .Returns(BlobUrl.From("https://blob.storage/photo.jpg"));
         installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
 
@@ -63,16 +65,16 @@ public sealed class CompleteChunkedUploadCommandHandlerTests
 
         result.Should().NotBe(Guid.Empty);
         installation.Photos.Should().ContainSingle();
-        await photoStorage.Received(1).UploadAsync(Arg.Any<Stream>(), "photo.jpg", "image/jpeg", Arg.Any<CancellationToken>());
+        await photoStorage.Received(1).UploadAsync(Arg.Any<Stream>(), FileName.From("photo.jpg"), ContentType.From("image/jpeg"), Arg.Any<CancellationToken>());
         await unitOfWork.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
-        await chunkedUploadStorage.Received(1).CleanupSessionAsync(sessionId, Arg.Any<CancellationToken>());
+        await chunkedUploadStorage.Received(1).CleanupSessionAsync(sessionIdentifier, Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task Handle_WhenSessionNotFound_ShouldThrow()
     {
-        chunkedUploadStorage.GetSessionAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
-            .Returns((ChunkedUploadSession?)null);
+        chunkedUploadStorage.GetSessionAsync(Arg.Any<UploadSessionIdentifier>(), Arg.Any<CancellationToken>())
+            .Throws(new KeyNotFoundException("Upload-Session nicht gefunden."));
 
         var command = new CompleteChunkedUploadCommand(Guid.NewGuid());
 
@@ -85,11 +87,12 @@ public sealed class CompleteChunkedUploadCommandHandlerTests
     public async Task Handle_WhenChunksIncomplete_ShouldThrow()
     {
         var sessionId = Guid.NewGuid();
+        var sessionIdentifier = UploadSessionIdentifier.From(sessionId);
         var session = CreateValidSession(sessionId, Guid.NewGuid());
 
-        chunkedUploadStorage.GetSessionAsync(sessionId, Arg.Any<CancellationToken>())
+        chunkedUploadStorage.GetSessionAsync(sessionIdentifier, Arg.Any<CancellationToken>())
             .Returns(session);
-        chunkedUploadStorage.GetUploadedChunkCountAsync(sessionId, Arg.Any<CancellationToken>())
+        chunkedUploadStorage.GetUploadedChunkCountAsync(sessionIdentifier, Arg.Any<CancellationToken>())
             .Returns(3);
 
         var command = new CompleteChunkedUploadCommand(sessionId);
@@ -105,19 +108,20 @@ public sealed class CompleteChunkedUploadCommandHandlerTests
     {
         var installation = CreateValidInstallation();
         var sessionId = Guid.NewGuid();
+        var sessionIdentifier = UploadSessionIdentifier.From(sessionId);
         var session = new ChunkedUploadSession(
             sessionId, installation.Id.Value, "photo.jpg", "image/jpeg",
             5 * 1024 * 1024, 5, "before", null, null,
             48.0, 11.0, 500.0, 5.0, "gps", DateTime.UtcNow);
 
-        chunkedUploadStorage.GetSessionAsync(sessionId, Arg.Any<CancellationToken>())
+        chunkedUploadStorage.GetSessionAsync(sessionIdentifier, Arg.Any<CancellationToken>())
             .Returns(session);
-        chunkedUploadStorage.GetUploadedChunkCountAsync(sessionId, Arg.Any<CancellationToken>())
+        chunkedUploadStorage.GetUploadedChunkCountAsync(sessionIdentifier, Arg.Any<CancellationToken>())
             .Returns(5);
-        chunkedUploadStorage.AssembleAsync(sessionId, Arg.Any<CancellationToken>())
+        chunkedUploadStorage.AssembleAsync(sessionIdentifier, Arg.Any<CancellationToken>())
             .Returns(new MemoryStream([1, 2, 3]));
-        photoStorage.UploadAsync(Arg.Any<Stream>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
-            .Returns("https://blob.storage/photo.jpg");
+        photoStorage.UploadAsync(Arg.Any<Stream>(), Arg.Any<FileName>(), Arg.Any<ContentType>(), Arg.Any<CancellationToken>())
+            .Returns(BlobUrl.From("https://blob.storage/photo.jpg"));
         installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
 
@@ -127,7 +131,7 @@ public sealed class CompleteChunkedUploadCommandHandlerTests
 
         installation.Photos.Should().ContainSingle();
         installation.Photos[0].Position.Should().NotBeNull();
-        installation.Photos[0].Position!.Latitude.Should().Be(48.0);
+        installation.Photos[0].Position!.Latitude.Value.Should().Be(48.0);
     }
 
     [Fact]
@@ -135,16 +139,17 @@ public sealed class CompleteChunkedUploadCommandHandlerTests
     {
         var installation = CreateValidInstallation();
         var sessionId = Guid.NewGuid();
+        var sessionIdentifier = UploadSessionIdentifier.From(sessionId);
         var session = CreateValidSession(sessionId, installation.Id.Value);
 
-        chunkedUploadStorage.GetSessionAsync(sessionId, Arg.Any<CancellationToken>())
+        chunkedUploadStorage.GetSessionAsync(sessionIdentifier, Arg.Any<CancellationToken>())
             .Returns(session);
-        chunkedUploadStorage.GetUploadedChunkCountAsync(sessionId, Arg.Any<CancellationToken>())
+        chunkedUploadStorage.GetUploadedChunkCountAsync(sessionIdentifier, Arg.Any<CancellationToken>())
             .Returns(5);
-        chunkedUploadStorage.AssembleAsync(sessionId, Arg.Any<CancellationToken>())
+        chunkedUploadStorage.AssembleAsync(sessionIdentifier, Arg.Any<CancellationToken>())
             .Returns(new MemoryStream([1, 2, 3]));
-        photoStorage.UploadAsync(Arg.Any<Stream>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
-            .Returns("https://blob.storage/photo.jpg");
+        photoStorage.UploadAsync(Arg.Any<Stream>(), Arg.Any<FileName>(), Arg.Any<ContentType>(), Arg.Any<CancellationToken>())
+            .Returns(BlobUrl.From("https://blob.storage/photo.jpg"));
         installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
 
@@ -155,7 +160,7 @@ public sealed class CompleteChunkedUploadCommandHandlerTests
         Received.InOrder(() =>
         {
             unitOfWork.SaveChangesAsync(Arg.Any<CancellationToken>());
-            chunkedUploadStorage.CleanupSessionAsync(sessionId, Arg.Any<CancellationToken>());
+            chunkedUploadStorage.CleanupSessionAsync(sessionIdentifier, Arg.Any<CancellationToken>());
         });
     }
 }

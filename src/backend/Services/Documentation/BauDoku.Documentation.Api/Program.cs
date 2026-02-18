@@ -8,7 +8,7 @@ using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("DocumentationDb") ?? throw new InvalidOperationException("Connection string 'DocumentationDb' not found.");
+var connectionString = builder.Configuration.GetConnectionString("DocumentationDb") ?? throw new InvalidOperationException("Verbindungszeichenfolge 'DocumentationDb' nicht gefunden.");
 
 builder.AddServiceDefaults(health =>
 {

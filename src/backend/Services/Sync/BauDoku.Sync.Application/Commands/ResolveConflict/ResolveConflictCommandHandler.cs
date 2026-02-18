@@ -13,11 +13,10 @@ public sealed class ResolveConflictCommandHandler(ISyncBatchRepository syncBatch
     {
         var (conflictId, strategyName, mergedPayloadJson) = command;
         var conflictIdentifier = ConflictRecordIdentifier.From(conflictId);
-        var batch = await syncBatches.GetByConflictIdAsync(conflictIdentifier, cancellationToken)
-            ?? throw new KeyNotFoundException($"Batch fuer Konflikt {conflictId} nicht gefunden.");
+        var batch = await syncBatches.GetByConflictIdAsync(conflictIdentifier, cancellationToken);
 
         var strategy = ConflictResolutionStrategy.From(strategyName);
-        var mergedPayload = mergedPayloadJson is not null ? DeltaPayload.From(mergedPayloadJson) : null;
+        var mergedPayload = DeltaPayload.FromNullable(mergedPayloadJson);
 
         batch.ResolveConflict(conflictIdentifier, strategy, mergedPayload);
 
@@ -25,14 +24,13 @@ public sealed class ResolveConflictCommandHandler(ISyncBatchRepository syncBatch
 
         if (strategy == ConflictResolutionStrategy.ClientWins || strategy == ConflictResolutionStrategy.ManualMerge)
         {
+            var entityRef = conflict.EntityRef;
             var resolvedPayload = conflict.ResolvedPayload!;
-            var (entityType, entityId) = conflict.EntityRef;
-            var currentVersion = await entityVersionStore.GetCurrentVersionAsync(entityType, entityId, cancellationToken);
+            var currentVersion = await entityVersionStore.GetCurrentVersionAsync(entityRef, cancellationToken);
             var newVersion = currentVersion.Increment();
 
             await entityVersionStore.SetVersionAsync(
-                entityType,
-                entityId,
+                entityRef,
                 newVersion,
                 resolvedPayload.Value,
                 batch.DeviceId,

@@ -5,6 +5,7 @@ using BauDoku.Documentation.Application.Contracts;
 using BauDoku.Documentation.Domain.Aggregates;
 using BauDoku.Documentation.Domain.ValueObjects;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 
 namespace BauDoku.Documentation.UnitTests.Application.Commands;
 
@@ -27,7 +28,7 @@ public sealed class DeleteInstallationCommandHandlerTests
             ProjectIdentifier.New(),
             null,
             InstallationType.CableTray,
-            GpsPosition.Create(48.137154, 11.576124, null, 3.5, "gps"));
+            GpsPosition.Create(Latitude.From(48.137154), Longitude.From(11.576124), null, HorizontalAccuracy.From(3.5), GpsSource.From("gps")));
 
     [Fact]
     public async Task Handle_WithExistingInstallation_ShouldRemoveAndSave()
@@ -59,7 +60,7 @@ public sealed class DeleteInstallationCommandHandlerTests
     public async Task Handle_WhenInstallationNotFound_ShouldThrow()
     {
         installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
-            .Returns((Installation?)null);
+            .Throws(new KeyNotFoundException());
 
         var act = () => handler.Handle(new DeleteInstallationCommand(Guid.NewGuid()), CancellationToken.None);
 

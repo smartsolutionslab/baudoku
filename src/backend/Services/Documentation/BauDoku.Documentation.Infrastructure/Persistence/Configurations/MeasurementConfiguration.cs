@@ -48,7 +48,7 @@ public sealed class MeasurementConfiguration : IEntityTypeConfiguration<Measurem
             .HasMaxLength(Notes.MaxLength)
             .HasConversion(
                 n => n != null ? n.Value : null,
-                v => v != null ? Notes.From(v) : null);
+                v => Notes.FromNullable(v));
 
         builder.Property<InstallationIdentifier>("InstallationId")
             .HasColumnName("installation_id")

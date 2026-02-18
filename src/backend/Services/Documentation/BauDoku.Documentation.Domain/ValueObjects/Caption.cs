@@ -18,4 +18,6 @@ public sealed record Caption : IValueObject
             .MaxLengthIs(MaxLength, $"Bildunterschrift darf max. {MaxLength} Zeichen lang sein.");
         return new Caption(value);
     }
+
+    public static Caption? FromNullable(string? value) => value is not null ? From(value) : null;
 }

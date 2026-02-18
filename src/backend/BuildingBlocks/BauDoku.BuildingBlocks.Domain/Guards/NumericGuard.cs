@@ -15,7 +15,7 @@ public readonly ref struct NumericGuard<T> where T : struct, INumber<T>
 
     public NumericGuard<T> IsGreaterThan(T min, string? message = null)
     {
-        if (value <= min) throw new ArgumentOutOfRangeException(paramName, message ?? $"{paramName} muss groesser als {min} sein.");
+        if (value <= min) throw new ArgumentOutOfRangeException(paramName, message ?? $"{paramName} muss größer als {min} sein.");
         return this;
     }
 
@@ -27,7 +27,7 @@ public readonly ref struct NumericGuard<T> where T : struct, INumber<T>
 
     public NumericGuard<T> IsPositive(string? message = null)
     {
-        if (value <= T.Zero) throw new ArgumentOutOfRangeException(paramName, message ?? $"{paramName} muss groesser als 0 sein.");
+        if (value <= T.Zero) throw new ArgumentOutOfRangeException(paramName, message ?? $"{paramName} muss größer als 0 sein.");
         return this;
     }
 

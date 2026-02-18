@@ -11,7 +11,9 @@ public sealed record CrossSection : IValueObject
 
     public static CrossSection From(decimal value)
     {
-        Ensure.That(value).IsPositive("Querschnitt muss groesser als 0 sein.");
+        Ensure.That(value).IsPositive("Querschnitt muss größer als 0 sein.");
         return new CrossSection(value);
     }
+
+    public static CrossSection? FromNullable(decimal? value) => value.HasValue ? From(value.Value) : null;
 }

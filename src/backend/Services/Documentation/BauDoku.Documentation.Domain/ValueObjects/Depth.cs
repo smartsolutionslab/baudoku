@@ -14,4 +14,6 @@ public sealed record Depth : IValueObject
         Ensure.That(valueInMillimeters).IsNotNegative("Tiefe darf nicht negativ sein.");
         return new Depth(valueInMillimeters);
     }
+
+    public static Depth? FromNullable(int? value) => value.HasValue ? From(value.Value) : null;
 }

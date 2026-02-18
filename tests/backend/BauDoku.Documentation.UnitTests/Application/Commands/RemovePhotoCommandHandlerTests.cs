@@ -5,6 +5,7 @@ using BauDoku.Documentation.Application.Contracts;
 using BauDoku.Documentation.Domain.Aggregates;
 using BauDoku.Documentation.Domain.ValueObjects;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 
 namespace BauDoku.Documentation.UnitTests.Application.Commands;
 
@@ -30,7 +31,7 @@ public sealed class RemovePhotoCommandHandlerTests
             ProjectIdentifier.New(),
             null,
             InstallationType.CableTray,
-            GpsPosition.Create(48.137154, 11.576124, null, 3.5, "gps"));
+            GpsPosition.Create(Latitude.From(48.137154), Longitude.From(11.576124), null, HorizontalAccuracy.From(3.5), GpsSource.From("gps")));
 
         photoId = PhotoIdentifier.New();
         installation.AddPhoto(photoId, FileName.From("photo.jpg"), BlobUrl.From("https://blob/photo.jpg"), ContentType.From("image/jpeg"), FileSize.From(1024),
@@ -51,7 +52,7 @@ public sealed class RemovePhotoCommandHandlerTests
         await handler.Handle(command, CancellationToken.None);
 
         installation.Photos.Should().BeEmpty();
-        await photoStorage.Received(1).DeleteAsync("https://blob/photo.jpg", Arg.Any<CancellationToken>());
+        await photoStorage.Received(1).DeleteAsync(BlobUrl.From("https://blob/photo.jpg"), Arg.Any<CancellationToken>());
         await unitOfWork.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
@@ -59,7 +60,7 @@ public sealed class RemovePhotoCommandHandlerTests
     public async Task Handle_WhenInstallationNotFound_ShouldThrow()
     {
         installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
-            .Returns((Installation?)null);
+            .Throws(new KeyNotFoundException());
 
         var command = new RemovePhotoCommand(Guid.NewGuid(), Guid.NewGuid());
 

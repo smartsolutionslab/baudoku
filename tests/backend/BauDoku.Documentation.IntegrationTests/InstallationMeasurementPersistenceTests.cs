@@ -17,7 +17,7 @@ public sealed class InstallationMeasurementPersistenceTests(PostgreSqlFixture fi
             ProjectIdentifier.New(),
             null,
             InstallationType.CableTray,
-            GpsPosition.Create(48.1351, 11.5820, 520.0, 3.5, "internal_gps"));
+            GpsPosition.Create(Latitude.From(48.1351), Longitude.From(11.5820), 520.0, HorizontalAccuracy.From(3.5), GpsSource.From("internal_gps")));
 
         var measurementId = MeasurementIdentifier.New();
         installation.RecordMeasurement(
@@ -62,7 +62,7 @@ public sealed class InstallationMeasurementPersistenceTests(PostgreSqlFixture fi
             ProjectIdentifier.New(),
             null,
             InstallationType.JunctionBox,
-            GpsPosition.Create(48.0, 11.0, null, 5.0, "internal_gps"));
+            GpsPosition.Create(Latitude.From(48.0), Longitude.From(11.0), null, HorizontalAccuracy.From(5.0), GpsSource.From("internal_gps")));
 
         installation.RecordMeasurement(
             MeasurementIdentifier.New(),
@@ -99,7 +99,7 @@ public sealed class InstallationMeasurementPersistenceTests(PostgreSqlFixture fi
             ProjectIdentifier.New(),
             null,
             InstallationType.Grounding,
-            GpsPosition.Create(48.0, 11.0, null, 5.0, "internal_gps"));
+            GpsPosition.Create(Latitude.From(48.0), Longitude.From(11.0), null, HorizontalAccuracy.From(5.0), GpsSource.From("internal_gps")));
 
         installation.RecordMeasurement(
             MeasurementIdentifier.New(),
@@ -131,7 +131,7 @@ public sealed class InstallationMeasurementPersistenceTests(PostgreSqlFixture fi
             ProjectIdentifier.New(),
             null,
             InstallationType.Switchgear,
-            GpsPosition.Create(48.0, 11.0, null, 5.0, "internal_gps"));
+            GpsPosition.Create(Latitude.From(48.0), Longitude.From(11.0), null, HorizontalAccuracy.From(5.0), GpsSource.From("internal_gps")));
 
         installation.RecordMeasurement(MeasurementIdentifier.New(), MeasurementType.Voltage, MeasurementValue.Create(230.0, "V", 220.0, 240.0));
         installation.RecordMeasurement(MeasurementIdentifier.New(), MeasurementType.Continuity, MeasurementValue.Create(0.3, "Ohm"));

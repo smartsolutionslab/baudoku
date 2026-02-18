@@ -42,8 +42,7 @@ public sealed class Project : AggregateRoot<ProjectIdentifier>
 
     public void AddZone(ZoneIdentifier zoneId, ZoneName name, ZoneType type, ZoneIdentifier? parentZoneIdentifier = null)
     {
-        if (parentZoneIdentifier is not null && zones.All(z => z.Id != parentZoneIdentifier))
-            throw new InvalidOperationException($"Elternzone {parentZoneIdentifier.Value} nicht gefunden.");
+        if (parentZoneIdentifier is not null && zones.All(z => z.Id != parentZoneIdentifier)) throw new InvalidOperationException($"Elternzone {parentZoneIdentifier.Value} nicht gefunden.");
 
         CheckRule(new ZoneNameMustBeUniqueWithinProject(zones, name, parentZoneIdentifier));
 

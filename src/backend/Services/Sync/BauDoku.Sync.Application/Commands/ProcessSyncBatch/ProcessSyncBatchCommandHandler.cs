@@ -31,8 +31,7 @@ public sealed class ProcessSyncBatchCommandHandler(ISyncBatchRepository syncBatc
             var clientBaseVersion = SyncVersion.From(baseVersion);
             var payload = DeltaPayload.From(payloadJson);
 
-            var currentServerVersion = await entityVersionStore.GetCurrentVersionAsync(
-                entityType, entityId, cancellationToken);
+            var currentServerVersion = await entityVersionStore.GetCurrentVersionAsync(entityRef, cancellationToken);
 
             if (clientBaseVersion.Value == currentServerVersion.Value)
             {
@@ -48,16 +47,15 @@ public sealed class ProcessSyncBatchCommandHandler(ISyncBatchRepository syncBatc
                     timestamp);
 
                 await entityVersionStore.SetVersionAsync(
-                    entityType, entityId, newVersion,
+                    entityRef, newVersion,
                     payloadJson, deviceId, cancellationToken);
 
                 appliedCount++;
             }
             else
             {
-                var serverPayloadJson = await entityVersionStore.GetCurrentPayloadAsync(
-                    entityType, entityId, cancellationToken);
-                var serverPayload = DeltaPayload.From(serverPayloadJson ?? "{}");
+                var serverPayloadJson = await entityVersionStore.GetCurrentPayloadAsync(entityRef, cancellationToken);
+                var serverPayload = DeltaPayload.From(serverPayloadJson);
 
                 var conflict = batch.AddConflict(
                     ConflictRecordIdentifier.New(),
@@ -72,11 +70,17 @@ public sealed class ProcessSyncBatchCommandHandler(ISyncBatchRepository syncBatc
         }
 
         if (conflicts.Count == 0)
+        {
             batch.MarkCompleted();
+        }
         else if (appliedCount > 0)
+        {
             batch.MarkPartialConflict();
+        }
         else
+        {
             batch.MarkFailed();
+        }
 
         await syncBatches.AddAsync(batch, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);

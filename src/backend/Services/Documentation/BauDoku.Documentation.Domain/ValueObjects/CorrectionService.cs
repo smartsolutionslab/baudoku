@@ -17,4 +17,6 @@ public sealed record CorrectionService : IValueObject
             .MaxLengthIs(MaxLength, $"Korrekturdienst darf max. {MaxLength} Zeichen lang sein.");
         return new CorrectionService(value);
     }
+
+    public static CorrectionService? FromNullable(string? value) => value is not null ? From(value) : null;
 }

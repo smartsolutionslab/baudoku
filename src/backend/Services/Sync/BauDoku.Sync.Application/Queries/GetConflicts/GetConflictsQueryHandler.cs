@@ -12,8 +12,8 @@ public sealed class GetConflictsQueryHandler(ISyncBatchReadRepository syncBatche
     {
         var (deviceId, status) = query;
         return await syncBatches.GetConflictsAsync(
-            deviceId is not null ? DeviceIdentifier.From(deviceId) : null,
-            status is not null ? ConflictStatus.From(status) : null,
+            DeviceIdentifier.FromNullable(deviceId),
+            ConflictStatus.FromNullable(status),
             cancellationToken);
     }
 }

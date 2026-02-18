@@ -18,4 +18,6 @@ public sealed record DeviceIdentifier : IValueObject
             .MaxLengthIs(MaxLength, $"Device-ID darf max. {MaxLength} Zeichen lang sein.");
         return new DeviceIdentifier(value);
     }
+
+    public static DeviceIdentifier? FromNullable(string? value) => value is not null ? From(value) : null;
 }

@@ -11,42 +11,45 @@ public sealed class CompleteChunkedUploadCommandHandler(IChunkedUploadStorage ch
 {
     public async Task<Guid> Handle(CompleteChunkedUploadCommand command, CancellationToken cancellationToken = default)
     {
-        var session = await chunkedUploadStorage.GetSessionAsync(command.SessionId, cancellationToken) ?? throw new KeyNotFoundException($"Upload-Session mit ID {command.SessionId} nicht gefunden.");
+        var sessionIdentifier = UploadSessionIdentifier.From(command.SessionId);
+        var session = await chunkedUploadStorage.GetSessionAsync(sessionIdentifier, cancellationToken);
 
-        var uploadedChunks = await chunkedUploadStorage.GetUploadedChunkCountAsync(command.SessionId, cancellationToken);
+        var uploadedChunks = await chunkedUploadStorage.GetUploadedChunkCountAsync(sessionIdentifier, cancellationToken);
         if (uploadedChunks != session.TotalChunks) throw new InvalidOperationException($"Upload unvollständig: {uploadedChunks}/{session.TotalChunks} Chunks hochgeladen.");
 
-        await using var assembledStream = await chunkedUploadStorage.AssembleAsync(command.SessionId, cancellationToken);
+        await using var assembledStream = await chunkedUploadStorage.AssembleAsync(sessionIdentifier, cancellationToken);
 
-        var blobUrl = await photoStorage.UploadAsync(assembledStream, session.FileName, session.ContentType, cancellationToken);
+        var fileNameVo = FileName.From(session.FileName);
+        var contentTypeVo = ContentType.From(session.ContentType);
+        var blobUrl = await photoStorage.UploadAsync(assembledStream, fileNameVo, contentTypeVo, cancellationToken);
 
         var installationId = InstallationIdentifier.From(session.InstallationId);
-        var installation = await installations.GetByIdAsync(installationId, cancellationToken) ?? throw new KeyNotFoundException($"Installation mit ID {session.InstallationId} nicht gefunden.");
+        var installation = await installations.GetByIdAsync(installationId, cancellationToken);
 
         var photoId = PhotoIdentifier.New();
         var photoType = PhotoType.From(session.PhotoType);
-        var caption = session.Caption is not null ? Caption.From(session.Caption) : null;
-        var description = session.Description is not null ? Description.From(session.Description) : null;
+        var caption = Caption.FromNullable(session.Caption);
+        var description = Description.FromNullable(session.Description);
 
         GpsPosition? position = null;
         if (session.Latitude.HasValue && session.Longitude.HasValue && session.HorizontalAccuracy.HasValue && session.GpsSource is not null)
         {
             position = GpsPosition.Create(
-                session.Latitude.Value,
-                session.Longitude.Value,
+                Latitude.From(session.Latitude.Value),
+                Longitude.From(session.Longitude.Value),
                 session.Altitude,
-                session.HorizontalAccuracy.Value,
-                session.GpsSource);
+                HorizontalAccuracy.From(session.HorizontalAccuracy.Value),
+                GpsSource.From(session.GpsSource));
         }
 
-        installation.AddPhoto(photoId, FileName.From(session.FileName), BlobUrl.From(blobUrl), ContentType.From(session.ContentType), FileSize.From(session.TotalSize), photoType, caption, description, position);
+        installation.AddPhoto(photoId, fileNameVo, blobUrl, contentTypeVo, FileSize.From(session.TotalSize), photoType, caption, description, position);
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         DocumentationMetrics.PhotosAdded.Add(1);
         DocumentationMetrics.PhotoFileSize.Record(session.TotalSize);
 
-        await chunkedUploadStorage.CleanupSessionAsync(command.SessionId, cancellationToken);
+        await chunkedUploadStorage.CleanupSessionAsync(sessionIdentifier, cancellationToken);
 
         return photoId.Value;
     }

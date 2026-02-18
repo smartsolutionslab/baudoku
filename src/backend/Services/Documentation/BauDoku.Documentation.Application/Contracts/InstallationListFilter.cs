@@ -1,8 +1,10 @@
+using BauDoku.Documentation.Domain.ValueObjects;
+
 namespace BauDoku.Documentation.Application.Contracts;
 
 public sealed record InstallationListFilter(
-    Guid? ProjectId = null,
-    Guid? ZoneId = null,
-    string? Type = null,
-    string? Status = null,
+    ProjectIdentifier? ProjectId = null,
+    ZoneIdentifier? ZoneId = null,
+    InstallationType? Type = null,
+    InstallationStatus? Status = null,
     string? Search = null);

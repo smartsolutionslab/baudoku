@@ -17,4 +17,6 @@ public sealed record RtkFixStatus : IValueObject
             .MaxLengthIs(MaxLength, $"RTK-Fix-Status darf max. {MaxLength} Zeichen lang sein.");
         return new RtkFixStatus(value);
     }
+
+    public static RtkFixStatus? FromNullable(string? value) => value is not null ? From(value) : null;
 }

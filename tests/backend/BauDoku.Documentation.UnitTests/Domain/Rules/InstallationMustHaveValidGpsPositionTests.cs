@@ -9,7 +9,7 @@ public sealed class InstallationMustHaveValidGpsPositionTests
     [Fact]
     public void IsBroken_WithGoodAccuracy_ShouldReturnFalse()
     {
-        var position = GpsPosition.Create(48.1351, 11.5820, 520.0, 5.0, "internal_gps");
+        var position = GpsPosition.Create(Latitude.From(48.1351), Longitude.From(11.5820), 520.0, HorizontalAccuracy.From(5.0), GpsSource.From("internal_gps"));
         var rule = new InstallationMustHaveValidGpsPosition(position);
 
         rule.IsBroken().Should().BeFalse();
@@ -18,7 +18,7 @@ public sealed class InstallationMustHaveValidGpsPositionTests
     [Fact]
     public void IsBroken_WithExactlyHundredAccuracy_ShouldReturnFalse()
     {
-        var position = GpsPosition.Create(48.1351, 11.5820, 520.0, 100.0, "internal_gps");
+        var position = GpsPosition.Create(Latitude.From(48.1351), Longitude.From(11.5820), 520.0, HorizontalAccuracy.From(100.0), GpsSource.From("internal_gps"));
         var rule = new InstallationMustHaveValidGpsPosition(position);
 
         rule.IsBroken().Should().BeFalse();
@@ -27,7 +27,7 @@ public sealed class InstallationMustHaveValidGpsPositionTests
     [Fact]
     public void IsBroken_WithSlightlyOverHundredAccuracy_ShouldReturnTrue()
     {
-        var position = GpsPosition.Create(48.1351, 11.5820, 520.0, 100.01, "internal_gps");
+        var position = GpsPosition.Create(Latitude.From(48.1351), Longitude.From(11.5820), 520.0, HorizontalAccuracy.From(100.01), GpsSource.From("internal_gps"));
         var rule = new InstallationMustHaveValidGpsPosition(position);
 
         rule.IsBroken().Should().BeTrue();
@@ -36,7 +36,7 @@ public sealed class InstallationMustHaveValidGpsPositionTests
     [Fact]
     public void IsBroken_WithPoorAccuracy_ShouldReturnTrue()
     {
-        var position = GpsPosition.Create(48.1351, 11.5820, 520.0, 150.0, "internal_gps");
+        var position = GpsPosition.Create(Latitude.From(48.1351), Longitude.From(11.5820), 520.0, HorizontalAccuracy.From(150.0), GpsSource.From("internal_gps"));
         var rule = new InstallationMustHaveValidGpsPosition(position);
 
         rule.IsBroken().Should().BeTrue();
@@ -45,7 +45,7 @@ public sealed class InstallationMustHaveValidGpsPositionTests
     [Fact]
     public void Message_ShouldContainExpectedText()
     {
-        var position = GpsPosition.Create(48.1351, 11.5820, 520.0, 150.0, "internal_gps");
+        var position = GpsPosition.Create(Latitude.From(48.1351), Longitude.From(11.5820), 520.0, HorizontalAccuracy.From(150.0), GpsSource.From("internal_gps"));
         var rule = new InstallationMustHaveValidGpsPosition(position);
 
         rule.Message.Should().Contain("GPS-Position");

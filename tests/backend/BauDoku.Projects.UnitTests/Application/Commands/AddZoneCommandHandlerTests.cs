@@ -5,6 +5,7 @@ using BauDoku.Projects.Application.Contracts;
 using BauDoku.Projects.Domain.Aggregates;
 using BauDoku.Projects.Domain.ValueObjects;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 
 namespace BauDoku.Projects.UnitTests.Application.Commands;
 
@@ -25,7 +26,7 @@ public sealed class AddZoneCommandHandlerTests
         Project.Create(
             ProjectIdentifier.New(),
             ProjectName.From("Testprojekt"),
-            Address.Create("Musterstraße 1", "Berlin", "10115"),
+            Address.Create(Street.From("Musterstraße 1"), City.From("Berlin"), ZipCode.From("10115")),
             ClientInfo.Create("Max Mustermann"));
 
     [Fact]
@@ -47,7 +48,7 @@ public sealed class AddZoneCommandHandlerTests
     public async Task Handle_WhenProjectNotFound_ShouldThrow()
     {
         projects.GetByIdAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>())
-            .Returns((Project?)null);
+            .Throws(new KeyNotFoundException());
 
         var command = new AddZoneCommand(Guid.NewGuid(), "Erdgeschoss", "floor", null);
 

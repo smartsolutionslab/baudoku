@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using BauDoku.Sync.Application.Contracts;
 using BauDoku.Sync.Application.Queries.Dtos;
 using BauDoku.Sync.Domain.ValueObjects;
@@ -7,36 +8,44 @@ namespace BauDoku.Sync.Infrastructure.Persistence.Repositories;
 
 public sealed class EntityVersionStore(SyncDbContext context) : IEntityVersionStore, IEntityVersionReadStore
 {
+    private static readonly Expression<Func<EntityVersionEntry, ServerDeltaDto>> toServerDelta = e => new ServerDeltaDto(
+        e.EntityType,
+        e.EntityId,
+        "update",
+        e.Version,
+        e.Payload,
+        e.LastModified);
+
     public async Task<SyncVersion> GetCurrentVersionAsync(
-        EntityType entityType,
-        Guid entityId,
+        EntityReference entityRef,
         CancellationToken cancellationToken = default)
     {
+        var (entityType, entityId) = entityRef;
         var entry = await context.EntityVersionEntries
             .FirstOrDefaultAsync(e => e.EntityType == entityType.Value && e.EntityId == entityId, cancellationToken);
 
         return entry is not null ? SyncVersion.From(entry.Version) : SyncVersion.Initial;
     }
 
-    public async Task<string?> GetCurrentPayloadAsync(
-        EntityType entityType,
-        Guid entityId,
+    public async Task<string> GetCurrentPayloadAsync(
+        EntityReference entityRef,
         CancellationToken cancellationToken = default)
     {
+        var (entityType, entityId) = entityRef;
         var entry = await context.EntityVersionEntries
             .FirstOrDefaultAsync(e => e.EntityType == entityType.Value && e.EntityId == entityId, cancellationToken);
 
-        return entry?.Payload;
+        return entry?.Payload ?? "{}";
     }
 
     public async Task SetVersionAsync(
-        EntityType entityType,
-        Guid entityId,
+        EntityReference entityRef,
         SyncVersion version,
         string payload,
         DeviceIdentifier deviceId,
         CancellationToken cancellationToken = default)
     {
+        var (entityType, entityId) = entityRef;
         var entry = await context.EntityVersionEntries
             .FirstOrDefaultAsync(e => e.EntityType == entityType.Value && e.EntityId == entityId, cancellationToken);
 
@@ -79,13 +88,7 @@ public sealed class EntityVersionStore(SyncDbContext context) : IEntityVersionSt
         return await query
             .OrderBy(e => e.LastModified)
             .Take(limit)
-            .Select(e => new ServerDeltaDto(
-                e.EntityType,
-                e.EntityId,
-                "update",
-                e.Version,
-                e.Payload,
-                e.LastModified))
+            .Select(toServerDelta)
             .ToListAsync(cancellationToken);
     }
 }

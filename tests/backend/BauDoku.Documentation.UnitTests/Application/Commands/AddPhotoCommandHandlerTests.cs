@@ -5,6 +5,7 @@ using BauDoku.Documentation.Application.Contracts;
 using BauDoku.Documentation.Domain.Aggregates;
 using BauDoku.Documentation.Domain.ValueObjects;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 
 namespace BauDoku.Documentation.UnitTests.Application.Commands;
 
@@ -29,7 +30,7 @@ public sealed class AddPhotoCommandHandlerTests
             ProjectIdentifier.New(),
             null,
             InstallationType.CableTray,
-            GpsPosition.Create(48.137154, 11.576124, null, 3.5, "gps"));
+            GpsPosition.Create(Latitude.From(48.137154), Longitude.From(11.576124), null, HorizontalAccuracy.From(3.5), GpsSource.From("gps")));
 
     private static AddPhotoCommand CreateValidCommand(Guid installationId) =>
         new(installationId, "photo.jpg", "image/jpeg", 1024 * 100, "before",
@@ -41,8 +42,8 @@ public sealed class AddPhotoCommandHandlerTests
         var installation = CreateValidInstallation();
         installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
-        photoStorage.UploadAsync(Arg.Any<Stream>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
-            .Returns("https://blob.storage/photo.jpg");
+        photoStorage.UploadAsync(Arg.Any<Stream>(), Arg.Any<FileName>(), Arg.Any<ContentType>(), Arg.Any<CancellationToken>())
+            .Returns(BlobUrl.From("https://blob.storage/photo.jpg"));
 
         var command = CreateValidCommand(installation.Id.Value);
 
@@ -50,7 +51,7 @@ public sealed class AddPhotoCommandHandlerTests
 
         result.Should().NotBe(Guid.Empty);
         installation.Photos.Should().ContainSingle();
-        await photoStorage.Received(1).UploadAsync(Arg.Any<Stream>(), "photo.jpg", "image/jpeg", Arg.Any<CancellationToken>());
+        await photoStorage.Received(1).UploadAsync(Arg.Any<Stream>(), FileName.From("photo.jpg"), ContentType.From("image/jpeg"), Arg.Any<CancellationToken>());
         await unitOfWork.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
@@ -58,7 +59,7 @@ public sealed class AddPhotoCommandHandlerTests
     public async Task Handle_WhenInstallationNotFound_ShouldThrow()
     {
         installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
-            .Returns((Installation?)null);
+            .Throws(new KeyNotFoundException());
 
         var command = CreateValidCommand(Guid.NewGuid());
 
@@ -73,8 +74,8 @@ public sealed class AddPhotoCommandHandlerTests
         var installation = CreateValidInstallation();
         installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
-        photoStorage.UploadAsync(Arg.Any<Stream>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
-            .Returns("https://blob.storage/photo.jpg");
+        photoStorage.UploadAsync(Arg.Any<Stream>(), Arg.Any<FileName>(), Arg.Any<ContentType>(), Arg.Any<CancellationToken>())
+            .Returns(BlobUrl.From("https://blob.storage/photo.jpg"));
 
         var command = new AddPhotoCommand(
             installation.Id.Value, "photo.jpg", "image/jpeg", 1024, "before",
@@ -84,7 +85,7 @@ public sealed class AddPhotoCommandHandlerTests
 
         installation.Photos.Should().ContainSingle();
         installation.Photos[0].Position.Should().NotBeNull();
-        installation.Photos[0].Position!.Latitude.Should().Be(48.0);
+        installation.Photos[0].Position!.Latitude.Value.Should().Be(48.0);
     }
 
     [Fact]
@@ -93,8 +94,8 @@ public sealed class AddPhotoCommandHandlerTests
         var installation = CreateValidInstallation();
         installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
-        photoStorage.UploadAsync(Arg.Any<Stream>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
-            .Returns("https://blob.storage/photo.jpg");
+        photoStorage.UploadAsync(Arg.Any<Stream>(), Arg.Any<FileName>(), Arg.Any<ContentType>(), Arg.Any<CancellationToken>())
+            .Returns(BlobUrl.From("https://blob.storage/photo.jpg"));
 
         var command = CreateValidCommand(installation.Id.Value);
 

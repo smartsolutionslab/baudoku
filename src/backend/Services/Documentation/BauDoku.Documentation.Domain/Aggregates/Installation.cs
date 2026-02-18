@@ -101,19 +101,14 @@ public sealed class Installation : AggregateRoot<InstallationIdentifier>
     {
         CheckRule(new CompletedInstallationCannotBeModified(Status));
 
-        var photo = photos.FirstOrDefault(p => p.Id == photoId)
-            ?? throw new InvalidOperationException($"Foto mit ID {photoId.Value} nicht gefunden.");
+        var photo = photos.FirstOrDefault(p => p.Id == photoId) ?? throw new InvalidOperationException($"Foto mit ID {photoId.Value} nicht gefunden.");
 
         photos.Remove(photo);
 
         AddDomainEvent(new PhotoRemoved(Id, photoId, DateTime.UtcNow));
     }
 
-    public void RecordMeasurement(
-        MeasurementIdentifier measurementId,
-        MeasurementType type,
-        MeasurementValue value,
-        Notes? notes = null)
+    public void RecordMeasurement(MeasurementIdentifier measurementId, MeasurementType type, MeasurementValue value, Notes? notes = null)
     {
         CheckRule(new CompletedInstallationCannotBeModified(Status));
         CheckRule(new MeasurementValueMustBeNonNegative(value));
@@ -129,8 +124,7 @@ public sealed class Installation : AggregateRoot<InstallationIdentifier>
     {
         CheckRule(new CompletedInstallationCannotBeModified(Status));
 
-        var measurement = measurements.FirstOrDefault(m => m.Id == measurementId)
-            ?? throw new InvalidOperationException($"Messung mit ID {measurementId.Value} nicht gefunden.");
+        var measurement = measurements.FirstOrDefault(m => m.Id == measurementId) ?? throw new InvalidOperationException($"Messung mit ID {measurementId.Value} nicht gefunden.");
 
         measurements.Remove(measurement);
 

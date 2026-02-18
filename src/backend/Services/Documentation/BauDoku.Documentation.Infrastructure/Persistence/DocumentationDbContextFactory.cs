@@ -10,9 +10,7 @@ public sealed class DocumentationDbContextFactory : IDesignTimeDbContextFactory<
     public DocumentationDbContext CreateDbContext(string[] args)
     {
         var optionsBuilder = new DbContextOptionsBuilder<DocumentationDbContext>();
-        optionsBuilder.UseNpgsql(
-            "Host=localhost;Database=baudoku_documentation;Username=postgres;Password=postgres",
-            o => o.UseNetTopologySuite());
+        optionsBuilder.UseNpgsql("Host=localhost;Database=baudoku_documentation;Username=postgres;Password=postgres", o => o.UseNetTopologySuite());
 
         return new DocumentationDbContext(optionsBuilder.Options, new NullDispatcher());
     }

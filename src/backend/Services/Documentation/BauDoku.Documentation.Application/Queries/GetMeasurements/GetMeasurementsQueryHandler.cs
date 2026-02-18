@@ -12,8 +12,7 @@ public sealed class GetMeasurementsQueryHandler(IInstallationRepository installa
     public async Task<IReadOnlyList<MeasurementDto>> Handle(GetMeasurementsQuery query, CancellationToken cancellationToken = default)
     {
         var installationId = InstallationIdentifier.From(query.InstallationId);
-        var installation = await installations.GetByIdAsync(installationId, cancellationToken)
-            ?? throw new KeyNotFoundException($"Installation mit ID {query.InstallationId} nicht gefunden.");
+        var installation = await installations.GetByIdAsync(installationId, cancellationToken);
 
         return installation.Measurements.Select(m => m.ToDto(installation.Id.Value)).ToList();
     }

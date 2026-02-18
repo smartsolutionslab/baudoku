@@ -17,4 +17,6 @@ public sealed record Notes : IValueObject
             .MaxLengthIs(MaxLength, $"Notizen duerfen max. {MaxLength} Zeichen lang sein.");
         return new Notes(value);
     }
+
+    public static Notes? FromNullable(string? value) => value is not null ? From(value) : null;
 }

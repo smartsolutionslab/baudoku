@@ -18,7 +18,9 @@ public sealed record InstallationStatus : IValueObject
     public static InstallationStatus From(string value)
     {
         Ensure.That(value).IsNotNullOrWhiteSpace("Installationsstatus darf nicht leer sein.")
-            .IsOneOf(ValidValues, $"Ungueltiger Installationsstatus: {value}.");
+            .IsOneOf(ValidValues, $"Ungültiger Installationsstatus: {value}.");
         return new InstallationStatus(value);
     }
+
+    public static InstallationStatus? FromNullable(string? value) => value is not null ? From(value) : null;
 }

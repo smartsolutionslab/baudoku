@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Http;
@@ -12,6 +13,7 @@ using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 using Serilog;
 using Serilog.Enrichers.Span;
+using Serilog.Events;
 using Serilog.Sinks.OpenTelemetry;
 
 namespace BauDoku.ServiceDefaults;
@@ -48,14 +50,19 @@ public static class Extensions
         {
             options.EnrichDiagnosticContext = static (diagnosticContext, httpContext) =>
             {
-                diagnosticContext.Set("ClientIP", httpContext.Connection.RemoteIpAddress?.ToString() ?? "-");
-                diagnosticContext.Set("UserAgent", httpContext.Request.Headers.UserAgent.ToString());
+                var remoteIpAddress = httpContext.Connection.RemoteIpAddress;
+                var userAgent = httpContext.Request.Headers.UserAgent;
+                diagnosticContext.Set("ClientIP", remoteIpAddress?.ToString() ?? "-");
+                diagnosticContext.Set("UserAgent", userAgent.ToString());
             };
             options.GetLevel = static (httpContext, _, _) =>
-                httpContext.Request.Path.StartsWithSegments("/health") ||
-                httpContext.Request.Path.StartsWithSegments("/alive")
-                    ? Serilog.Events.LogEventLevel.Verbose
-                    : Serilog.Events.LogEventLevel.Information;
+            {
+                var request = httpContext.Request;
+
+                return request.Path.StartsWithSegments("/health") || request.Path.StartsWithSegments("/alive")
+                    ? LogEventLevel.Verbose
+                    : LogEventLevel.Information;
+            };
         });
 
         app.MapHealthChecks("/health", new HealthCheckOptions
@@ -95,6 +102,7 @@ public static class Extensions
         }
 
         var otlpEndpoint = builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"];
+
         if (!string.IsNullOrWhiteSpace(otlpEndpoint))
         {
             configuration.WriteTo.OpenTelemetry(options =>
@@ -148,8 +156,7 @@ public static class Extensions
 
     private static void AddOpenTelemetryExporters(IHostApplicationBuilder builder)
     {
-        var useOtlpExporter = !string.IsNullOrWhiteSpace(
-            builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"]);
+        var useOtlpExporter = !string.IsNullOrWhiteSpace(builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"]);
 
         if (useOtlpExporter)
         {
@@ -203,7 +210,7 @@ public static class Extensions
         return context.Response.WriteAsJsonAsync(result, new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
         });
     }
 }
