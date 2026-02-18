@@ -52,7 +52,7 @@ public sealed class RemovePhotoCommandHandlerTests
         await handler.Handle(command, CancellationToken.None);
 
         installation.Photos.Should().BeEmpty();
-        await photoStorage.Received(1).DeleteAsync("https://blob/photo.jpg", Arg.Any<CancellationToken>());
+        await photoStorage.Received(1).DeleteAsync(BlobUrl.From("https://blob/photo.jpg"), Arg.Any<CancellationToken>());
         await unitOfWork.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 

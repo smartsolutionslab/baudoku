@@ -12,18 +12,19 @@ public sealed class EntityVersionStorePersistenceTests(PostgreSqlFixture fixture
     public async Task SetAndGetVersion_ShouldPersistAndRetrieve()
     {
         var entityId = Guid.NewGuid();
+        var entityRef = EntityReference.Create(EntityType.Project, entityId);
 
         await using (var context = fixture.CreateContext())
         {
             var store = new EntityVersionStore(context);
-            await store.SetVersionAsync(EntityType.Project, entityId, SyncVersion.From(1), """{"name":"Test"}""", DeviceIdentifier.From("device-001"));
+            await store.SetVersionAsync(entityRef, SyncVersion.From(1), """{"name":"Test"}""", DeviceIdentifier.From("device-001"));
             await context.SaveChangesAsync();
         }
 
         await using (var context = fixture.CreateContext())
         {
             var store = new EntityVersionStore(context);
-            var version = await store.GetCurrentVersionAsync(EntityType.Project, entityId);
+            var version = await store.GetCurrentVersionAsync(entityRef);
             version.Value.Should().Be(1);
         }
     }
@@ -32,28 +33,29 @@ public sealed class EntityVersionStorePersistenceTests(PostgreSqlFixture fixture
     public async Task SetVersion_WhenEntryExists_ShouldUpdate()
     {
         var entityId = Guid.NewGuid();
+        var entityRef = EntityReference.Create(EntityType.Project, entityId);
 
         await using (var context = fixture.CreateContext())
         {
             var store = new EntityVersionStore(context);
-            await store.SetVersionAsync(EntityType.Project, entityId, SyncVersion.From(1), """{"v":1}""", DeviceIdentifier.From("device-001"));
+            await store.SetVersionAsync(entityRef, SyncVersion.From(1), """{"v":1}""", DeviceIdentifier.From("device-001"));
             await context.SaveChangesAsync();
         }
 
         await using (var context = fixture.CreateContext())
         {
             var store = new EntityVersionStore(context);
-            await store.SetVersionAsync(EntityType.Project, entityId, SyncVersion.From(2), """{"v":2}""", DeviceIdentifier.From("device-002"));
+            await store.SetVersionAsync(entityRef, SyncVersion.From(2), """{"v":2}""", DeviceIdentifier.From("device-002"));
             await context.SaveChangesAsync();
         }
 
         await using (var context = fixture.CreateContext())
         {
             var store = new EntityVersionStore(context);
-            var version = await store.GetCurrentVersionAsync(EntityType.Project, entityId);
+            var version = await store.GetCurrentVersionAsync(entityRef);
             version.Value.Should().Be(2);
 
-            var payload = await store.GetCurrentPayloadAsync(EntityType.Project, entityId);
+            var payload = await store.GetCurrentPayloadAsync(entityRef);
             payload.Should().Be("""{"v":2}""");
         }
     }
@@ -64,7 +66,7 @@ public sealed class EntityVersionStorePersistenceTests(PostgreSqlFixture fixture
         await using var context = fixture.CreateContext();
         var store = new EntityVersionStore(context);
 
-        var version = await store.GetCurrentVersionAsync(EntityType.Project, Guid.NewGuid());
+        var version = await store.GetCurrentVersionAsync(EntityReference.Create(EntityType.Project, Guid.NewGuid()));
 
         version.Should().Be(SyncVersion.Initial);
         version.Value.Should().Be(0);
@@ -76,7 +78,7 @@ public sealed class EntityVersionStorePersistenceTests(PostgreSqlFixture fixture
         await using var context = fixture.CreateContext();
         var store = new EntityVersionStore(context);
 
-        var payload = await store.GetCurrentPayloadAsync(EntityType.Project, Guid.NewGuid());
+        var payload = await store.GetCurrentPayloadAsync(EntityReference.Create(EntityType.Project, Guid.NewGuid()));
 
         payload.Should().BeNull();
     }
@@ -85,18 +87,19 @@ public sealed class EntityVersionStorePersistenceTests(PostgreSqlFixture fixture
     public async Task GetCurrentPayload_WhenExists_ShouldReturnPayload()
     {
         var entityId = Guid.NewGuid();
+        var entityRef = EntityReference.Create(EntityType.Installation, entityId);
 
         await using (var context = fixture.CreateContext())
         {
             var store = new EntityVersionStore(context);
-            await store.SetVersionAsync(EntityType.Installation, entityId, SyncVersion.From(1), """{"data":"value"}""", DeviceIdentifier.From("device-001"));
+            await store.SetVersionAsync(entityRef, SyncVersion.From(1), """{"data":"value"}""", DeviceIdentifier.From("device-001"));
             await context.SaveChangesAsync();
         }
 
         await using (var context = fixture.CreateContext())
         {
             var store = new EntityVersionStore(context);
-            var payload = await store.GetCurrentPayloadAsync(EntityType.Installation, entityId);
+            var payload = await store.GetCurrentPayloadAsync(entityRef);
             payload.Should().Be("""{"data":"value"}""");
         }
     }
@@ -105,11 +108,12 @@ public sealed class EntityVersionStorePersistenceTests(PostgreSqlFixture fixture
     public async Task GetChangedSince_ShouldReturnRecentChanges()
     {
         var entityId = Guid.NewGuid();
+        var entityRef = EntityReference.Create(EntityType.Project, entityId);
 
         await using (var context = fixture.CreateContext())
         {
             var store = new EntityVersionStore(context);
-            await store.SetVersionAsync(EntityType.Project, entityId, SyncVersion.From(1), """{"name":"Recent"}""", DeviceIdentifier.From("device-recent"));
+            await store.SetVersionAsync(entityRef, SyncVersion.From(1), """{"name":"Recent"}""", DeviceIdentifier.From("device-recent"));
             await context.SaveChangesAsync();
         }
 

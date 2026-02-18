@@ -48,7 +48,7 @@ public sealed class ResolveConflictCommandHandlerTests
         var (batch, conflictId) = CreateBatchWithConflict();
         syncBatches.GetByConflictIdAsync(Arg.Any<ConflictRecordIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(batch);
-        entityVersionStore.GetCurrentVersionAsync(Arg.Any<EntityType>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>())
+        entityVersionStore.GetCurrentVersionAsync(Arg.Any<EntityReference>(), Arg.Any<CancellationToken>())
             .Returns(SyncVersion.From(3));
 
         var command = new ResolveConflictCommand(conflictId.Value, "client_wins", null);
@@ -58,7 +58,7 @@ public sealed class ResolveConflictCommandHandlerTests
         var conflict = batch.Conflicts.First(c => c.Id == conflictId);
         conflict.Status.Should().Be(ConflictStatus.ClientWins);
         await entityVersionStore.Received(1).SetVersionAsync(
-            Arg.Any<EntityType>(), Arg.Any<Guid>(), Arg.Any<SyncVersion>(), Arg.Any<string>(), Arg.Any<DeviceIdentifier>(), Arg.Any<CancellationToken>());
+            Arg.Any<EntityReference>(), Arg.Any<SyncVersion>(), Arg.Any<string>(), Arg.Any<DeviceIdentifier>(), Arg.Any<CancellationToken>());
         await unitOfWork.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
@@ -76,7 +76,7 @@ public sealed class ResolveConflictCommandHandlerTests
         var conflict = batch.Conflicts.First(c => c.Id == conflictId);
         conflict.Status.Should().Be(ConflictStatus.ServerWins);
         await entityVersionStore.DidNotReceive().SetVersionAsync(
-            Arg.Any<EntityType>(), Arg.Any<Guid>(), Arg.Any<SyncVersion>(), Arg.Any<string>(), Arg.Any<DeviceIdentifier>(), Arg.Any<CancellationToken>());
+            Arg.Any<EntityReference>(), Arg.Any<SyncVersion>(), Arg.Any<string>(), Arg.Any<DeviceIdentifier>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -85,7 +85,7 @@ public sealed class ResolveConflictCommandHandlerTests
         var (batch, conflictId) = CreateBatchWithConflict();
         syncBatches.GetByConflictIdAsync(Arg.Any<ConflictRecordIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(batch);
-        entityVersionStore.GetCurrentVersionAsync(Arg.Any<EntityType>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>())
+        entityVersionStore.GetCurrentVersionAsync(Arg.Any<EntityReference>(), Arg.Any<CancellationToken>())
             .Returns(SyncVersion.From(3));
 
         var command = new ResolveConflictCommand(conflictId.Value, "manual_merge", """{"merged":"data"}""");
@@ -96,7 +96,7 @@ public sealed class ResolveConflictCommandHandlerTests
         conflict.Status.Should().Be(ConflictStatus.Merged);
         conflict.ResolvedPayload!.Value.Should().Be("""{"merged":"data"}""");
         await entityVersionStore.Received(1).SetVersionAsync(
-            Arg.Any<EntityType>(), Arg.Any<Guid>(), Arg.Any<SyncVersion>(), """{"merged":"data"}""", Arg.Any<DeviceIdentifier>(), Arg.Any<CancellationToken>());
+            Arg.Any<EntityReference>(), Arg.Any<SyncVersion>(), """{"merged":"data"}""", Arg.Any<DeviceIdentifier>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]

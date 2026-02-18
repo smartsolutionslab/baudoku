@@ -18,7 +18,9 @@ public sealed class CompleteChunkedUploadCommandHandler(IChunkedUploadStorage ch
 
         await using var assembledStream = await chunkedUploadStorage.AssembleAsync(command.SessionId, cancellationToken);
 
-        var blobUrl = await photoStorage.UploadAsync(assembledStream, session.FileName, session.ContentType, cancellationToken);
+        var fileNameVo = FileName.From(session.FileName);
+        var contentTypeVo = ContentType.From(session.ContentType);
+        var blobUrl = await photoStorage.UploadAsync(assembledStream, fileNameVo, contentTypeVo, cancellationToken);
 
         var installationId = InstallationIdentifier.From(session.InstallationId);
         var installation = await installations.GetByIdAsync(installationId, cancellationToken);
@@ -39,7 +41,7 @@ public sealed class CompleteChunkedUploadCommandHandler(IChunkedUploadStorage ch
                 session.GpsSource);
         }
 
-        installation.AddPhoto(photoId, FileName.From(session.FileName), BlobUrl.From(blobUrl), ContentType.From(session.ContentType), FileSize.From(session.TotalSize), photoType, caption, description, position);
+        installation.AddPhoto(photoId, fileNameVo, blobUrl, contentTypeVo, FileSize.From(session.TotalSize), photoType, caption, description, position);
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
 

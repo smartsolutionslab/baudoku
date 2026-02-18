@@ -52,8 +52,8 @@ public sealed class CompleteChunkedUploadCommandHandlerTests
             .Returns(5);
         chunkedUploadStorage.AssembleAsync(sessionId, Arg.Any<CancellationToken>())
             .Returns(new MemoryStream([1, 2, 3]));
-        photoStorage.UploadAsync(Arg.Any<Stream>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
-            .Returns("https://blob.storage/photo.jpg");
+        photoStorage.UploadAsync(Arg.Any<Stream>(), Arg.Any<FileName>(), Arg.Any<ContentType>(), Arg.Any<CancellationToken>())
+            .Returns(BlobUrl.From("https://blob.storage/photo.jpg"));
         installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
 
@@ -63,7 +63,7 @@ public sealed class CompleteChunkedUploadCommandHandlerTests
 
         result.Should().NotBe(Guid.Empty);
         installation.Photos.Should().ContainSingle();
-        await photoStorage.Received(1).UploadAsync(Arg.Any<Stream>(), "photo.jpg", "image/jpeg", Arg.Any<CancellationToken>());
+        await photoStorage.Received(1).UploadAsync(Arg.Any<Stream>(), FileName.From("photo.jpg"), ContentType.From("image/jpeg"), Arg.Any<CancellationToken>());
         await unitOfWork.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
         await chunkedUploadStorage.Received(1).CleanupSessionAsync(sessionId, Arg.Any<CancellationToken>());
     }
@@ -116,8 +116,8 @@ public sealed class CompleteChunkedUploadCommandHandlerTests
             .Returns(5);
         chunkedUploadStorage.AssembleAsync(sessionId, Arg.Any<CancellationToken>())
             .Returns(new MemoryStream([1, 2, 3]));
-        photoStorage.UploadAsync(Arg.Any<Stream>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
-            .Returns("https://blob.storage/photo.jpg");
+        photoStorage.UploadAsync(Arg.Any<Stream>(), Arg.Any<FileName>(), Arg.Any<ContentType>(), Arg.Any<CancellationToken>())
+            .Returns(BlobUrl.From("https://blob.storage/photo.jpg"));
         installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
 
@@ -143,8 +143,8 @@ public sealed class CompleteChunkedUploadCommandHandlerTests
             .Returns(5);
         chunkedUploadStorage.AssembleAsync(sessionId, Arg.Any<CancellationToken>())
             .Returns(new MemoryStream([1, 2, 3]));
-        photoStorage.UploadAsync(Arg.Any<Stream>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
-            .Returns("https://blob.storage/photo.jpg");
+        photoStorage.UploadAsync(Arg.Any<Stream>(), Arg.Any<FileName>(), Arg.Any<ContentType>(), Arg.Any<CancellationToken>())
+            .Returns(BlobUrl.From("https://blob.storage/photo.jpg"));
         installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
 

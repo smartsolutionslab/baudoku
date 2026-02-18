@@ -31,8 +31,7 @@ public sealed class ProcessSyncBatchCommandHandler(ISyncBatchRepository syncBatc
             var clientBaseVersion = SyncVersion.From(baseVersion);
             var payload = DeltaPayload.From(payloadJson);
 
-            var currentServerVersion = await entityVersionStore.GetCurrentVersionAsync(
-                entityType, entityId, cancellationToken);
+            var currentServerVersion = await entityVersionStore.GetCurrentVersionAsync(entityRef, cancellationToken);
 
             if (clientBaseVersion.Value == currentServerVersion.Value)
             {
@@ -48,15 +47,14 @@ public sealed class ProcessSyncBatchCommandHandler(ISyncBatchRepository syncBatc
                     timestamp);
 
                 await entityVersionStore.SetVersionAsync(
-                    entityType, entityId, newVersion,
+                    entityRef, newVersion,
                     payloadJson, deviceId, cancellationToken);
 
                 appliedCount++;
             }
             else
             {
-                var serverPayloadJson = await entityVersionStore.GetCurrentPayloadAsync(
-                    entityType, entityId, cancellationToken);
+                var serverPayloadJson = await entityVersionStore.GetCurrentPayloadAsync(entityRef, cancellationToken);
                 var serverPayload = DeltaPayload.From(serverPayloadJson ?? "{}");
 
                 var conflict = batch.AddConflict(

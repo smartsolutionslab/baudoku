@@ -8,10 +8,10 @@ namespace BauDoku.Sync.Infrastructure.Persistence.Repositories;
 public sealed class EntityVersionStore(SyncDbContext context) : IEntityVersionStore, IEntityVersionReadStore
 {
     public async Task<SyncVersion> GetCurrentVersionAsync(
-        EntityType entityType,
-        Guid entityId,
+        EntityReference entityRef,
         CancellationToken cancellationToken = default)
     {
+        var (entityType, entityId) = entityRef;
         var entry = await context.EntityVersionEntries
             .FirstOrDefaultAsync(e => e.EntityType == entityType.Value && e.EntityId == entityId, cancellationToken);
 
@@ -19,10 +19,10 @@ public sealed class EntityVersionStore(SyncDbContext context) : IEntityVersionSt
     }
 
     public async Task<string?> GetCurrentPayloadAsync(
-        EntityType entityType,
-        Guid entityId,
+        EntityReference entityRef,
         CancellationToken cancellationToken = default)
     {
+        var (entityType, entityId) = entityRef;
         var entry = await context.EntityVersionEntries
             .FirstOrDefaultAsync(e => e.EntityType == entityType.Value && e.EntityId == entityId, cancellationToken);
 
@@ -30,13 +30,13 @@ public sealed class EntityVersionStore(SyncDbContext context) : IEntityVersionSt
     }
 
     public async Task SetVersionAsync(
-        EntityType entityType,
-        Guid entityId,
+        EntityReference entityRef,
         SyncVersion version,
         string payload,
         DeviceIdentifier deviceId,
         CancellationToken cancellationToken = default)
     {
+        var (entityType, entityId) = entityRef;
         var entry = await context.EntityVersionEntries
             .FirstOrDefaultAsync(e => e.EntityType == entityType.Value && e.EntityId == entityId, cancellationToken);
 

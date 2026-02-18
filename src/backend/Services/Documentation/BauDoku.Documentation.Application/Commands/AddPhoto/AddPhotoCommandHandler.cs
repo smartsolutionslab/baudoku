@@ -14,10 +14,12 @@ public sealed class AddPhotoCommandHandler(IInstallationRepository installations
         var (installationId, fileName, contentType, fileSize, photoTypeName, captionText, descriptionText,
              latitude, longitude, altitude, horizontalAccuracy, gpsSource, stream, takenAt) = command;
 
-        var installation = await installations.GetByIdAsync(
-            InstallationIdentifier.From(installationId), cancellationToken);
+        var installationIdentifier = InstallationIdentifier.From(installationId);
+        var installation = await installations.GetByIdAsync(installationIdentifier, cancellationToken);
 
-        var blobUrlString = await photoStorage.UploadAsync(stream, fileName, contentType, cancellationToken);
+        var fileNameVo = FileName.From(fileName);
+        var contentTypeVo = ContentType.From(contentType);
+        var blobUrl = await photoStorage.UploadAsync(stream, fileNameVo, contentTypeVo, cancellationToken);
 
         var photoId = PhotoIdentifier.New();
         var photoType = PhotoType.From(photoTypeName);
@@ -28,12 +30,11 @@ public sealed class AddPhotoCommandHandler(IInstallationRepository installations
         if (latitude.HasValue && longitude.HasValue
             && horizontalAccuracy.HasValue && gpsSource is not null)
         {
-            position = GpsPosition.Create(
-                latitude.Value, longitude.Value, altitude, horizontalAccuracy.Value, gpsSource);
+            position = GpsPosition.Create(latitude.Value, longitude.Value, altitude, horizontalAccuracy.Value, gpsSource);
         }
 
         installation.AddPhoto(
-            photoId, FileName.From(fileName), BlobUrl.From(blobUrlString), ContentType.From(contentType), FileSize.From(fileSize),
+            photoId, fileNameVo, blobUrl, contentTypeVo, FileSize.From(fileSize),
             photoType, caption, description, position, takenAt);
 
         try
@@ -42,7 +43,7 @@ public sealed class AddPhotoCommandHandler(IInstallationRepository installations
         }
         catch
         {
-            await photoStorage.DeleteAsync(blobUrlString, cancellationToken);
+            await photoStorage.DeleteAsync(blobUrl, cancellationToken);
             throw;
         }
 
