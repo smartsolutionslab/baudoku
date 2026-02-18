@@ -13,7 +13,7 @@ public sealed class GetInstallationsInRadiusQueryHandler(IInstallationReadReposi
     {
         var (latitude, longitude, radiusMeters, projectId, page, pageSize) = query;
         var radius = new SearchRadius(latitude, longitude, radiusMeters);
-        var projectIdentifier = projectId.HasValue ? ProjectIdentifier.From(projectId.Value) : null;
+        var projectIdentifier = ProjectIdentifier.FromNullable(projectId);
         var pagination = new PaginationParams(page, pageSize);
         return await installations.SearchInRadiusAsync(radius, projectIdentifier, pagination, cancellationToken);
     }

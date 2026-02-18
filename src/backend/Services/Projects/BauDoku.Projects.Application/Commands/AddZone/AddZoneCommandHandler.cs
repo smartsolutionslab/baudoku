@@ -17,7 +17,7 @@ public sealed class AddZoneCommandHandler(IProjectRepository projects, IUnitOfWo
         var zoneId = ZoneIdentifier.New();
         var zoneName = ZoneName.From(name);
         var zoneType = ZoneType.From(type);
-        var parentZoneIdentifier = parentZoneId.HasValue ? ZoneIdentifier.From(parentZoneId.Value) : null;
+        var parentZoneIdentifier = ZoneIdentifier.FromNullable(parentZoneId);
 
         project.AddZone(zoneId, zoneName, zoneType, parentZoneIdentifier);
 

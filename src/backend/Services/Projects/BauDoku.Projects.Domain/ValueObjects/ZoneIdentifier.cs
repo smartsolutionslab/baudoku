@@ -15,5 +15,7 @@ public sealed record ZoneIdentifier : IValueObject
         return new ZoneIdentifier(value);
     }
 
+    public static ZoneIdentifier? FromNullable(Guid? value) => value.HasValue ? From(value.Value) : null;
+
     public static ZoneIdentifier New() => new(Guid.NewGuid());
 }

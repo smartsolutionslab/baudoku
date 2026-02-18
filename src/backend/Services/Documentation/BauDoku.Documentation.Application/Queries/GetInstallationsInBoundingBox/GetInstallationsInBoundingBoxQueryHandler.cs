@@ -13,7 +13,7 @@ public sealed class GetInstallationsInBoundingBoxQueryHandler(IInstallationReadR
     {
         var (minLatitude, minLongitude, maxLatitude, maxLongitude, projectId, page, pageSize) = query;
         var boundingBox = new BoundingBox(minLatitude, minLongitude, maxLatitude, maxLongitude);
-        var projectIdentifier = projectId.HasValue ? ProjectIdentifier.From(projectId.Value) : null;
+        var projectIdentifier = ProjectIdentifier.FromNullable(projectId);
         var pagination = new PaginationParams(page, pageSize);
         return await installations.SearchInBoundingBoxAsync(boundingBox, projectIdentifier, pagination, cancellationToken);
     }

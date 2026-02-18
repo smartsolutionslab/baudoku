@@ -73,11 +73,11 @@ public sealed class PhotoConfiguration : IEntityTypeConfiguration<Photo>
             pos.Property(p => p.CorrectionService).HasColumnName("gps_correction_service").HasMaxLength(CorrectionService.MaxLength)
                 .HasConversion(
                     s => s != null ? s.Value : null,
-                    v => v != null ? CorrectionService.From(v) : null);
+                    v => CorrectionService.FromNullable(v));
             pos.Property(p => p.RtkFixStatus).HasColumnName("gps_rtk_fix_status").HasMaxLength(RtkFixStatus.MaxLength)
                 .HasConversion(
                     s => s != null ? s.Value : null,
-                    v => v != null ? RtkFixStatus.From(v) : null);
+                    v => RtkFixStatus.FromNullable(v));
             pos.Property(p => p.SatelliteCount).HasColumnName("gps_satellite_count");
             pos.Property(p => p.Hdop).HasColumnName("gps_hdop");
             pos.Property(p => p.CorrectionAge).HasColumnName("gps_correction_age");
