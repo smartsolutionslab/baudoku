@@ -4,4 +4,8 @@ appId: com.baudoku.app
 
 - launchApp
 
-- assertVisible: "Projekte"
+# CI emulator is slow (software rendering, cold boot) — app startup
+# (Hermes init + font loading + SQLite migrations) can take 30-40s
+- extendedWaitUntil:
+    visible: "Projekte"
+    timeout: 60000

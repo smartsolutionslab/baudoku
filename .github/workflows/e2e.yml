@@ -100,12 +100,22 @@ jobs:
           emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect
           script: |
             adb install src/frontend/mobile-app/android/app/build/outputs/apk/release/app-release.apk
+            adb logcat -c
+            adb logcat ReactNativeJS:* ReactNative:* *:S > /tmp/rn-logcat.txt &
+            LOGCAT_PID=$!
             maestro test e2e/flows/
+            MAESTRO_EXIT=$?
+            kill $LOGCAT_PID 2>/dev/null || true
+            echo "=== React Native Logcat ==="
+            cat /tmp/rn-logcat.txt
+            exit $MAESTRO_EXIT
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: e2e-results
-          path: ~/.maestro/tests/
+          path: |
+            ~/.maestro/tests/
+            /tmp/rn-logcat.txt
           retention-days: 14
