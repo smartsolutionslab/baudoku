@@ -56,7 +56,7 @@ public sealed class InstallationPhotoPersistenceTests(PostgreSqlFixture fixture)
             photo.Caption!.Value.Should().Be("Vorher-Bild");
             photo.Description!.Value.Should().Be("Detailansicht der Kabeltrasse");
             photo.Position.Should().NotBeNull();
-            photo.Position!.Latitude.Should().Be(48.1351);
+            photo.Position!.Latitude.Value.Should().Be(48.1351);
             photo.TakenAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromMinutes(1));
         }
     }

@@ -130,7 +130,7 @@ public sealed class CompleteChunkedUploadCommandHandlerTests
 
         installation.Photos.Should().ContainSingle();
         installation.Photos[0].Position.Should().NotBeNull();
-        installation.Photos[0].Position!.Latitude.Should().Be(48.0);
+        installation.Photos[0].Position!.Latitude.Value.Should().Be(48.0);
     }
 
     [Fact]

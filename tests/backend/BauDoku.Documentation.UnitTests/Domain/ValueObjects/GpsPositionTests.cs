@@ -9,10 +9,10 @@ public sealed class GpsPositionTests
     public void Create_WithValidPosition_ShouldSucceed()
     {
         var position = GpsPosition.Create(48.1351, 11.5820, 520.0, 3.5, "internal_gps");
-        position.Latitude.Should().Be(48.1351);
-        position.Longitude.Should().Be(11.5820);
+        position.Latitude.Value.Should().Be(48.1351);
+        position.Longitude.Value.Should().Be(11.5820);
         position.Altitude.Should().Be(520.0);
-        position.HorizontalAccuracy.Should().Be(3.5);
+        position.HorizontalAccuracy.Value.Should().Be(3.5);
         position.Source.Value.Should().Be("internal_gps");
     }
 

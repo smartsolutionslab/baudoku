@@ -59,8 +59,8 @@ public sealed class UpdateInstallationCommandHandlerTests
 
         await handler.Handle(command, CancellationToken.None);
 
-        installation.Position.Latitude.Should().Be(52.520008);
-        installation.Position.Longitude.Should().Be(13.404954);
+        installation.Position.Latitude.Value.Should().Be(52.520008);
+        installation.Position.Longitude.Value.Should().Be(13.404954);
         await unitOfWork.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 

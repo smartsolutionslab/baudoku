@@ -20,7 +20,7 @@ public sealed class InstallationTests
         installation.ProjectId.Should().NotBeNull();
         installation.ZoneId.Should().NotBeNull();
         installation.Type.Should().Be(InstallationType.CableTray);
-        installation.Position.Latitude.Should().Be(48.1351);
+        installation.Position.Latitude.Value.Should().Be(48.1351);
         installation.Description!.Value.Should().Be("Kabeltrasse im Erdgeschoss");
         installation.CableSpec!.CableType.Value.Should().Be("NYM-J 5x2.5");
         installation.Depth!.ValueInMillimeters.Should().Be(600);

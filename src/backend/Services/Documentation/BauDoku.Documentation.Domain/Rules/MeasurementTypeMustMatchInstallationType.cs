@@ -38,5 +38,5 @@ public sealed class MeasurementTypeMustMatchInstallationType(
     }
 
     public string Message =>
-        $"Messungstyp '{measurementType.Value}' ist fuer Installationstyp '{installationType.Value}' nicht zulaessig.";
+        $"Messungstyp '{measurementType.Value}' ist für Installationstyp '{installationType.Value}' nicht zulässig.";
 }

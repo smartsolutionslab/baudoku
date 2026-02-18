@@ -20,7 +20,7 @@ public sealed record ProjectStatus : IValueObject
     {
         Ensure.That(value)
             .IsNotNullOrWhiteSpace("Projektstatus darf nicht leer sein.")
-            .IsOneOf(ValidValues, $"Ungueltiger Projektstatus: {value}.");
+            .IsOneOf(ValidValues, $"Ungültiger Projektstatus: {value}.");
         return new ProjectStatus(value);
     }
 }

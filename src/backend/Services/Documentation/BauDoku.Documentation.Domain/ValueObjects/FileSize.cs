@@ -11,7 +11,7 @@ public sealed record FileSize : IValueObject
 
     public static FileSize From(long value)
     {
-        Ensure.That(value).IsPositive("Dateigroesse muss groesser als 0 sein.");
+        Ensure.That(value).IsPositive("Dateigröße muss größer als 0 sein.");
         return new FileSize(value);
     }
 }

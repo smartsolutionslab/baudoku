@@ -28,7 +28,7 @@ public sealed record InstallationType : IValueObject
     public static InstallationType From(string value)
     {
         Ensure.That(value).IsNotNullOrWhiteSpace("Installationstyp darf nicht leer sein.")
-            .IsOneOf(ValidValues, $"Ungueltiger Installationstyp: {value}.");
+            .IsOneOf(ValidValues, $"Ungültiger Installationstyp: {value}.");
         return new InstallationType(value);
     }
 }

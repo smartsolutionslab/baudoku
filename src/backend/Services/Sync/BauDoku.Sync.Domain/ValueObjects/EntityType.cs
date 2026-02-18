@@ -21,7 +21,7 @@ public sealed record EntityType : IValueObject
     {
         Ensure.That(value)
             .IsNotNullOrWhiteSpace("Entity-Typ darf nicht leer sein.")
-            .IsOneOf(ValidValues, $"Ungueltiger Entity-Typ: {value}.");
+            .IsOneOf(ValidValues, $"Ungültiger Entity-Typ: {value}.");
         return new EntityType(value);
     }
 }

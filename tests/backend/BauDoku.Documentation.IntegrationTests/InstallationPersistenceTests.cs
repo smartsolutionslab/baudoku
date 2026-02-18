@@ -45,10 +45,10 @@ public sealed class InstallationPersistenceTests(PostgreSqlFixture fixture)
             loaded.ZoneId.Should().Be(zoneId);
             loaded.Type.Should().Be(InstallationType.CableTray);
             loaded.Status.Should().Be(InstallationStatus.InProgress);
-            loaded.Position.Latitude.Should().Be(48.1351);
-            loaded.Position.Longitude.Should().Be(11.5820);
+            loaded.Position.Latitude.Value.Should().Be(48.1351);
+            loaded.Position.Longitude.Value.Should().Be(11.5820);
             loaded.Position.Altitude.Should().Be(520.0);
-            loaded.Position.HorizontalAccuracy.Should().Be(3.5);
+            loaded.Position.HorizontalAccuracy.Value.Should().Be(3.5);
             loaded.Position.Source.Value.Should().Be("internal_gps");
             loaded.Description!.Value.Should().Be("Test installation");
             loaded.CableSpec!.CableType.Value.Should().Be("NYM-J 5x2.5");

@@ -26,7 +26,7 @@ public sealed record MeasurementType : IValueObject
     public static MeasurementType From(string value)
     {
         Ensure.That(value).IsNotNullOrWhiteSpace("Messungstyp darf nicht leer sein.")
-            .IsOneOf(ValidValues, $"Ungueltiger Messungstyp: {value}.");
+            .IsOneOf(ValidValues, $"Ungültiger Messungstyp: {value}.");
         return new MeasurementType(value);
     }
 }

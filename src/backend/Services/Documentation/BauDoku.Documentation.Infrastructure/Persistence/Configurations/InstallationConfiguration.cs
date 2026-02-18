@@ -49,10 +49,13 @@ public sealed class InstallationConfiguration : IEntityTypeConfiguration<Install
 
         builder.OwnsOne(i => i.Position, pos =>
         {
-            pos.Property(p => p.Latitude).HasColumnName("gps_latitude").IsRequired();
-            pos.Property(p => p.Longitude).HasColumnName("gps_longitude").IsRequired();
+            pos.Property(p => p.Latitude).HasColumnName("gps_latitude").IsRequired()
+                .HasConversion(v => v.Value, v => Latitude.From(v));
+            pos.Property(p => p.Longitude).HasColumnName("gps_longitude").IsRequired()
+                .HasConversion(v => v.Value, v => Longitude.From(v));
             pos.Property(p => p.Altitude).HasColumnName("gps_altitude");
-            pos.Property(p => p.HorizontalAccuracy).HasColumnName("gps_horizontal_accuracy").IsRequired();
+            pos.Property(p => p.HorizontalAccuracy).HasColumnName("gps_horizontal_accuracy").IsRequired()
+                .HasConversion(v => v.Value, v => HorizontalAccuracy.From(v));
             pos.Property(p => p.Source).HasColumnName("gps_source").HasMaxLength(GpsSource.MaxLength).IsRequired()
                 .HasConversion(s => s.Value, v => GpsSource.From(v));
             pos.Property(p => p.CorrectionService).HasColumnName("gps_correction_service").HasMaxLength(CorrectionService.MaxLength)

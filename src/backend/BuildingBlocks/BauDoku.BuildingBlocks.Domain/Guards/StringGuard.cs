@@ -33,13 +33,13 @@ public readonly ref struct StringGuard
 
     public StringGuard IsOneOf(HashSet<string> validValues, string? message = null)
     {
-        if (value is not null && !validValues.Contains(value)) throw new ArgumentException(message ?? $"Ungueltiger Wert fuer {paramName}: {value}.", paramName);
+        if (value is not null && !validValues.Contains(value)) throw new ArgumentException(message ?? $"Ungültiger Wert für {paramName}: {value}.", paramName);
         return this;
     }
 
     public StringGuard MatchesPattern(Regex pattern, string? message = null)
     {
-        if (value is not null && !pattern.IsMatch(value)) throw new ArgumentException(message ?? $"{paramName} hat ein ungueltiges Format.", paramName);
+        if (value is not null && !pattern.IsMatch(value)) throw new ArgumentException(message ?? $"{paramName} hat ein ungültiges Format.", paramName);
         return this;
     }
 }

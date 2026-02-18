@@ -20,7 +20,7 @@ public sealed record CableSpec : IValueObject
 
     public static CableSpec Create(string cableType, decimal? crossSection = null, string? color = null, int? conductorCount = null)
     {
-        Ensure.That(conductorCount).IsPositive("Leiteranzahl muss groesser als 0 sein.");
+        Ensure.That(conductorCount).IsPositive("Leiteranzahl muss größer als 0 sein.");
         return new CableSpec(
             CableType.From(cableType),
             crossSection.HasValue ? CrossSection.From(crossSection.Value) : null,

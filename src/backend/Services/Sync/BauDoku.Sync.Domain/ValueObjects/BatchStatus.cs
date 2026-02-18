@@ -22,7 +22,7 @@ public sealed record BatchStatus : IValueObject
     {
         Ensure.That(value)
             .IsNotNullOrWhiteSpace("Batch-Status darf nicht leer sein.")
-            .IsOneOf(ValidValues, $"Ungueltiger Batch-Status: {value}.");
+            .IsOneOf(ValidValues, $"Ungültiger Batch-Status: {value}.");
         return new BatchStatus(value);
     }
 }

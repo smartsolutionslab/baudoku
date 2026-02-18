@@ -61,10 +61,13 @@ public sealed class PhotoConfiguration : IEntityTypeConfiguration<Photo>
 
         builder.OwnsOne(p => p.Position, pos =>
         {
-            pos.Property(p => p.Latitude).HasColumnName("gps_latitude");
-            pos.Property(p => p.Longitude).HasColumnName("gps_longitude");
+            pos.Property(p => p.Latitude).HasColumnName("gps_latitude")
+                .HasConversion(v => v.Value, v => Latitude.From(v));
+            pos.Property(p => p.Longitude).HasColumnName("gps_longitude")
+                .HasConversion(v => v.Value, v => Longitude.From(v));
             pos.Property(p => p.Altitude).HasColumnName("gps_altitude");
-            pos.Property(p => p.HorizontalAccuracy).HasColumnName("gps_horizontal_accuracy");
+            pos.Property(p => p.HorizontalAccuracy).HasColumnName("gps_horizontal_accuracy")
+                .HasConversion(v => v.Value, v => HorizontalAccuracy.From(v));
             pos.Property(p => p.Source).HasColumnName("gps_source").HasMaxLength(GpsSource.MaxLength)
                 .HasConversion(s => s.Value, v => GpsSource.From(v));
             pos.Property(p => p.CorrectionService).HasColumnName("gps_correction_service").HasMaxLength(CorrectionService.MaxLength)

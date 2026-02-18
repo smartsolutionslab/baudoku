@@ -20,7 +20,7 @@ public sealed record ZoneType : IValueObject
     {
         Ensure.That(value)
             .IsNotNullOrWhiteSpace("Zonentyp darf nicht leer sein.")
-            .IsOneOf(ValidValues, $"Ungueltiger Zonentyp: {value}.");
+            .IsOneOf(ValidValues, $"Ungültiger Zonentyp: {value}.");
         return new ZoneType(value);
     }
 }

@@ -33,7 +33,7 @@ public static class SyncEndpoints
         })
         .RequireAuthorization()
         .WithName("GetChangesSince")
-        .WithSummary("Aenderungen seit einem Zeitpunkt abrufen")
+        .WithSummary("Änderungen seit einem Zeitpunkt abrufen")
         .Produces<ChangeSetResult>(StatusCodes.Status200OK);
 
         group.MapGet("/conflicts", async (string? deviceId, string? status, IDispatcher dispatcher, CancellationToken ct) =>
@@ -55,7 +55,7 @@ public static class SyncEndpoints
         })
         .RequireAuthorization(AuthPolicies.RequireAdmin)
         .WithName("ResolveConflict")
-        .WithSummary("Sync-Konflikt manuell aufloesen")
+        .WithSummary("Sync-Konflikt manuell auflösen")
         .Produces(StatusCodes.Status204NoContent)
         .Produces(StatusCodes.Status404NotFound)
         .ProducesValidationProblem();
