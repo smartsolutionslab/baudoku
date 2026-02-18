@@ -2,6 +2,7 @@ using AwesomeAssertions;
 using BauDoku.Documentation.Application.Contracts;
 using BauDoku.Documentation.Application.Queries.Dtos;
 using BauDoku.Documentation.Application.Queries.GetPhoto;
+using BauDoku.Documentation.Domain.ValueObjects;
 using NSubstitute;
 
 namespace BauDoku.Documentation.UnitTests.Application.Queries;
@@ -43,7 +44,7 @@ public sealed class GetPhotoQueryHandlerTests
             null,
             DateTime.UtcNow);
 
-        readRepository.GetByIdAsync(photoId, Arg.Any<CancellationToken>())
+        readRepository.GetByIdAsync(Arg.Any<PhotoIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(expected);
 
         var result = await handler.Handle(new GetPhotoQuery(photoId), CancellationToken.None);
@@ -57,7 +58,7 @@ public sealed class GetPhotoQueryHandlerTests
     {
         var photoId = Guid.NewGuid();
 
-        readRepository.GetByIdAsync(photoId, Arg.Any<CancellationToken>())
+        readRepository.GetByIdAsync(Arg.Any<PhotoIdentifier>(), Arg.Any<CancellationToken>())
             .Returns((PhotoDto?)null);
 
         var result = await handler.Handle(new GetPhotoQuery(photoId), CancellationToken.None);
@@ -70,11 +71,13 @@ public sealed class GetPhotoQueryHandlerTests
     {
         var photoId = Guid.NewGuid();
 
-        readRepository.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
+        readRepository.GetByIdAsync(Arg.Any<PhotoIdentifier>(), Arg.Any<CancellationToken>())
             .Returns((PhotoDto?)null);
 
         await handler.Handle(new GetPhotoQuery(photoId), CancellationToken.None);
 
-        await readRepository.Received(1).GetByIdAsync(photoId, Arg.Any<CancellationToken>());
+        await readRepository.Received(1).GetByIdAsync(
+            Arg.Is<PhotoIdentifier>(p => p.Value == photoId),
+            Arg.Any<CancellationToken>());
     }
 }

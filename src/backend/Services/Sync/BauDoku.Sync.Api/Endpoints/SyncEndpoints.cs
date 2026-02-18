@@ -14,10 +14,7 @@ public static class SyncEndpoints
     {
         var group = app.MapGroup("/api/sync").WithTags("Sync");
 
-        group.MapPost("/batch", async (
-            ProcessSyncBatchCommand command,
-            IDispatcher dispatcher,
-            CancellationToken ct) =>
+        group.MapPost("/batch", async (ProcessSyncBatchCommand command, IDispatcher dispatcher, CancellationToken ct) =>
         {
             var result = await dispatcher.Send<ProcessSyncBatchResult>(command, ct);
             return Results.Ok(result);
@@ -28,12 +25,7 @@ public static class SyncEndpoints
         .Produces<ProcessSyncBatchResult>(StatusCodes.Status200OK)
         .ProducesValidationProblem();
 
-        group.MapGet("/changes", async (
-            string deviceId,
-            DateTime? since,
-            int? limit,
-            IDispatcher dispatcher,
-            CancellationToken ct) =>
+        group.MapGet("/changes", async (string deviceId, DateTime? since, int? limit, IDispatcher dispatcher, CancellationToken ct) =>
         {
             var query = new GetChangesSinceQuery(deviceId, since, limit);
             var result = await dispatcher.Query(query, ct);
@@ -44,11 +36,7 @@ public static class SyncEndpoints
         .WithSummary("Aenderungen seit einem Zeitpunkt abrufen")
         .Produces<ChangeSetResult>(StatusCodes.Status200OK);
 
-        group.MapGet("/conflicts", async (
-            string? deviceId,
-            string? status,
-            IDispatcher dispatcher,
-            CancellationToken ct) =>
+        group.MapGet("/conflicts", async (string? deviceId, string? status, IDispatcher dispatcher, CancellationToken ct) =>
         {
             var query = new GetConflictsQuery(deviceId, status);
             var result = await dispatcher.Query(query, ct);
@@ -59,11 +47,7 @@ public static class SyncEndpoints
         .WithSummary("Sync-Konflikte auflisten")
         .Produces<List<ConflictDto>>(StatusCodes.Status200OK);
 
-        group.MapPost("/conflicts/{id:guid}/resolve", async (
-            Guid id,
-            ResolveConflictRequest request,
-            IDispatcher dispatcher,
-            CancellationToken ct) =>
+        group.MapPost("/conflicts/{id:guid}/resolve", async (Guid id, ResolveConflictRequest request, IDispatcher dispatcher, CancellationToken ct) =>
         {
             var command = request.ToCommand(id);
             await dispatcher.Send(command, ct);

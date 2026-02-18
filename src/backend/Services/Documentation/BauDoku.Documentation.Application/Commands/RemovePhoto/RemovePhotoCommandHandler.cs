@@ -13,8 +13,7 @@ public sealed class RemovePhotoCommandHandler(IInstallationRepository installati
     {
         var (installationId, photoId) = command;
         var installation = await installations.GetByIdAsync(
-            InstallationIdentifier.From(installationId), cancellationToken)
-            ?? throw new KeyNotFoundException($"Installation mit ID {installationId} nicht gefunden.");
+            InstallationIdentifier.From(installationId), cancellationToken);
 
         var photoIdentifier = PhotoIdentifier.From(photoId);
         var photo = installation.Photos.FirstOrDefault(p => p.Id == photoIdentifier)

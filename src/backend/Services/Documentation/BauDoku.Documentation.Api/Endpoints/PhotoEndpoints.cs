@@ -6,6 +6,7 @@ using BauDoku.Documentation.Application.Commands.RemovePhoto;
 using BauDoku.Documentation.Application.Contracts;
 using BauDoku.Documentation.Application.Queries.Dtos;
 using BauDoku.Documentation.Application.Queries.GetPhoto;
+using BauDoku.Documentation.Domain.ValueObjects;
 
 namespace BauDoku.Documentation.Api.Endpoints;
 
@@ -64,7 +65,7 @@ public static class PhotoEndpoints
             IPhotoReadRepository photos,
             CancellationToken ct) =>
         {
-            var photoList = await photos.ListByInstallationIdAsync(installationId, ct);
+            var photoList = await photos.ListByInstallationIdAsync(InstallationIdentifier.From(installationId), ct);
             return Results.Ok(photoList);
         })
         .RequireAuthorization()

@@ -3,6 +3,7 @@ using BauDoku.BuildingBlocks.Application.Pagination;
 using BauDoku.Documentation.Application.Contracts;
 using BauDoku.Documentation.Application.Queries.Dtos;
 using BauDoku.Documentation.Application.Queries.GetInstallationsInBoundingBox;
+using BauDoku.Documentation.Domain.ValueObjects;
 using NSubstitute;
 
 namespace BauDoku.Documentation.UnitTests.Application.Queries;
@@ -50,7 +51,7 @@ public sealed class GetInstallationsInBoundingBoxQueryHandlerTests
 
         readRepository.SearchInBoundingBoxAsync(
                 new BoundingBox(47.0, 10.0, 49.0, 12.0),
-                projectId,
+                ProjectIdentifier.From(projectId),
                 new PaginationParams(1, 20),
                 Arg.Any<CancellationToken>())
             .Returns(expected);
@@ -61,7 +62,7 @@ public sealed class GetInstallationsInBoundingBoxQueryHandlerTests
         result.Should().BeSameAs(expected);
         await readRepository.Received(1).SearchInBoundingBoxAsync(
             new BoundingBox(47.0, 10.0, 49.0, 12.0),
-            projectId,
+            ProjectIdentifier.From(projectId),
             new PaginationParams(1, 20),
             Arg.Any<CancellationToken>());
     }

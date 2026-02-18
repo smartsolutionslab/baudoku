@@ -5,6 +5,7 @@ using BauDoku.Documentation.Application.Contracts;
 using BauDoku.Documentation.Domain.Aggregates;
 using BauDoku.Documentation.Domain.ValueObjects;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 
 namespace BauDoku.Documentation.UnitTests.Application.Commands;
 
@@ -59,7 +60,7 @@ public sealed class RemovePhotoCommandHandlerTests
     public async Task Handle_WhenInstallationNotFound_ShouldThrow()
     {
         installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
-            .Returns((Installation?)null);
+            .Throws(new KeyNotFoundException());
 
         var command = new RemovePhotoCommand(Guid.NewGuid(), Guid.NewGuid());
 

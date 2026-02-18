@@ -21,7 +21,7 @@ public sealed class CompleteChunkedUploadCommandHandler(IChunkedUploadStorage ch
         var blobUrl = await photoStorage.UploadAsync(assembledStream, session.FileName, session.ContentType, cancellationToken);
 
         var installationId = InstallationIdentifier.From(session.InstallationId);
-        var installation = await installations.GetByIdAsync(installationId, cancellationToken) ?? throw new KeyNotFoundException($"Installation mit ID {session.InstallationId} nicht gefunden.");
+        var installation = await installations.GetByIdAsync(installationId, cancellationToken);
 
         var photoId = PhotoIdentifier.New();
         var photoType = PhotoType.From(session.PhotoType);

@@ -4,6 +4,7 @@ using BauDoku.Documentation.Application.Queries.GetInstallation;
 using BauDoku.Documentation.Domain.Aggregates;
 using BauDoku.Documentation.Domain.ValueObjects;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 
 namespace BauDoku.Documentation.UnitTests.Application.Queries;
 
@@ -44,7 +45,7 @@ public sealed class GetInstallationQueryHandlerTests
         var result = await handler.Handle(new GetInstallationQuery(installation.Id.Value), CancellationToken.None);
 
         result.Should().NotBeNull();
-        result!.Type.Should().Be("cable_tray");
+        result.Type.Should().Be("cable_tray");
         result.Description.Should().Be("Testbeschreibung");
         result.Latitude.Should().Be(48.137154);
         result.Photos.Should().ContainSingle();
@@ -54,14 +55,14 @@ public sealed class GetInstallationQueryHandlerTests
     }
 
     [Fact]
-    public async Task Handle_WhenNotFound_ShouldReturnNull()
+    public async Task Handle_WhenNotFound_ShouldThrow()
     {
         installations.GetByIdReadOnlyAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
-            .Returns((Installation?)null);
+            .Throws(new KeyNotFoundException());
 
-        var result = await handler.Handle(new GetInstallationQuery(Guid.NewGuid()), CancellationToken.None);
+        var act = () => handler.Handle(new GetInstallationQuery(Guid.NewGuid()), CancellationToken.None);
 
-        result.Should().BeNull();
+        await act.Should().ThrowAsync<KeyNotFoundException>();
     }
 
     [Fact]
@@ -80,7 +81,7 @@ public sealed class GetInstallationQueryHandlerTests
         var result = await handler.Handle(new GetInstallationQuery(installation.Id.Value), CancellationToken.None);
 
         result.Should().NotBeNull();
-        result!.GpsSource.Should().Be("dgnss");
+        result.GpsSource.Should().Be("dgnss");
         result.CorrectionService.Should().Be("SAPOS-EPS");
         result.RtkFixStatus.Should().Be("fix");
         result.SatelliteCount.Should().Be(12);

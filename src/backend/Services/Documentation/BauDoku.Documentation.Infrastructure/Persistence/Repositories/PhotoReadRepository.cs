@@ -1,16 +1,17 @@
 using BauDoku.Documentation.Application.Contracts;
 using BauDoku.Documentation.Application.Queries.Dtos;
+using BauDoku.Documentation.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 
 namespace BauDoku.Documentation.Infrastructure.Persistence.Repositories;
 
 public sealed class PhotoReadRepository(DocumentationDbContext context) : IPhotoReadRepository
 {
-    public async Task<PhotoDto?> GetByIdAsync(Guid photoId, CancellationToken cancellationToken = default)
+    public async Task<PhotoDto?> GetByIdAsync(PhotoIdentifier photoId, CancellationToken cancellationToken = default)
     {
         return await context.Photos
             .AsNoTracking()
-            .Where(p => p.Id.Value == photoId)
+            .Where(p => p.Id.Value == photoId.Value)
             .Select(p => new PhotoDto(
                 p.Id.Value,
                 EF.Property<Domain.ValueObjects.InstallationIdentifier>(p, "InstallationId").Value,
@@ -35,15 +36,15 @@ public sealed class PhotoReadRepository(DocumentationDbContext context) : IPhoto
             .FirstOrDefaultAsync(cancellationToken);
     }
 
-    public async Task<IReadOnlyList<PhotoDto>> ListByInstallationIdAsync(Guid installationId, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<PhotoDto>> ListByInstallationIdAsync(InstallationIdentifier installationId, CancellationToken cancellationToken = default)
     {
         return await context.Photos
             .AsNoTracking()
-            .Where(p => EF.Property<Domain.ValueObjects.InstallationIdentifier>(p, "InstallationId").Value == installationId)
+            .Where(p => EF.Property<InstallationIdentifier>(p, "InstallationId").Value == installationId.Value)
             .OrderByDescending(p => p.TakenAt)
             .Select(p => new PhotoDto(
                 p.Id.Value,
-                installationId,
+                installationId.Value,
                 p.FileName.Value,
                 p.BlobUrl.Value,
                 p.ContentType.Value,

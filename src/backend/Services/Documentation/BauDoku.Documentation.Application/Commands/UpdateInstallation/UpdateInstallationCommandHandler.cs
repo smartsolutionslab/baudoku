@@ -15,8 +15,7 @@ public sealed class UpdateInstallationCommandHandler(IInstallationRepository ins
              cableType, crossSection, cableColor, conductorCount, depthMm, manufacturer, modelName, serialNumber) = command;
 
         var installation = await installations.GetByIdAsync(
-            InstallationIdentifier.From(installationId), cancellationToken)
-            ?? throw new KeyNotFoundException($"Installation mit ID {installationId} nicht gefunden.");
+            InstallationIdentifier.From(installationId), cancellationToken);
 
         if (latitude.HasValue && longitude.HasValue && horizontalAccuracy.HasValue && gpsSource is not null)
         {

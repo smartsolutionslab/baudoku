@@ -12,8 +12,7 @@ public sealed class InitChunkedUploadCommandHandler(IInstallationRepository inst
         var (installationId, fileName, contentType, totalSize, totalChunks, photoType,
              caption, description, latitude, longitude, altitude, horizontalAccuracy, gpsSource) = command;
 
-        _ = await installations.GetByIdAsync(InstallationIdentifier.From(installationId), cancellationToken)
-            ?? throw new KeyNotFoundException($"Installation mit ID {installationId} nicht gefunden.");
+        _ = await installations.GetByIdAsync(InstallationIdentifier.From(installationId), cancellationToken);
 
         var session = new ChunkedUploadSession(
             SessionId: Guid.NewGuid(),

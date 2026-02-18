@@ -13,8 +13,7 @@ public sealed class RecordMeasurementCommandHandler(IInstallationRepository inst
     {
         var (installationId, type, value, unit, minThreshold, maxThreshold, notesText) = command;
         var installation = await installations.GetByIdAsync(
-            InstallationIdentifier.From(installationId), cancellationToken)
-            ?? throw new KeyNotFoundException($"Installation mit ID {installationId} nicht gefunden.");
+            InstallationIdentifier.From(installationId), cancellationToken);
 
         var measurementId = MeasurementIdentifier.New();
         var measurementType = MeasurementType.From(type);

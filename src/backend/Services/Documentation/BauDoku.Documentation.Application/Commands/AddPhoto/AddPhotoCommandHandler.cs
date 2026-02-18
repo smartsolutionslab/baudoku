@@ -15,8 +15,7 @@ public sealed class AddPhotoCommandHandler(IInstallationRepository installations
              latitude, longitude, altitude, horizontalAccuracy, gpsSource, stream, takenAt) = command;
 
         var installation = await installations.GetByIdAsync(
-            InstallationIdentifier.From(installationId), cancellationToken)
-            ?? throw new KeyNotFoundException($"Installation mit ID {installationId} nicht gefunden.");
+            InstallationIdentifier.From(installationId), cancellationToken);
 
         var blobUrlString = await photoStorage.UploadAsync(stream, fileName, contentType, cancellationToken);
 

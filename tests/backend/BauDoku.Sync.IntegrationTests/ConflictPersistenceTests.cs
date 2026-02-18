@@ -91,8 +91,8 @@ public sealed class ConflictPersistenceTests(PostgreSqlFixture fixture)
     [Fact]
     public async Task FilterByDeviceId_ShouldReturnOnlyMatchingBatches()
     {
-        var deviceId = $"device-filter-{Guid.NewGuid():N}";
-        var batch = SyncBatch.Create(SyncBatchIdentifier.New(), DeviceIdentifier.From(deviceId), DateTime.UtcNow);
+        var deviceId = DeviceIdentifier.From($"device-filter-{Guid.NewGuid():N})");
+        var batch = SyncBatch.Create(SyncBatchIdentifier.New(), deviceId, DateTime.UtcNow);
 
         batch.AddConflict(
             ConflictRecordIdentifier.New(),
@@ -112,7 +112,7 @@ public sealed class ConflictPersistenceTests(PostgreSqlFixture fixture)
         {
             var batches = await readContext.SyncBatches
                 .Include(b => b.Conflicts)
-                .Where(b => b.DeviceId == DeviceIdentifier.From(deviceId))
+                .Where(b => b.DeviceId == deviceId)
                 .ToListAsync();
 
             batches.Should().ContainSingle();

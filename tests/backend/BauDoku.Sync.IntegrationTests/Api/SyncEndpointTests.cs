@@ -125,6 +125,20 @@ public sealed class SyncEndpointTests : IDisposable
         factory.Dispose();
     }
 
-    private sealed record BatchResultDto(Guid BatchId, int AppliedCount, int ConflictCount, List<ConflictItemDto> Conflicts);
-    private sealed record ConflictItemDto(Guid Id, string EntityType, Guid EntityId, string ClientPayload, string ServerPayload, long ClientVersion, long ServerVersion, string Status, DateTime DetectedAt);
+    private sealed record BatchResultDto(
+        Guid BatchId,
+        int AppliedCount,
+        int ConflictCount,
+        List<ConflictItemDto> Conflicts);
+
+    private sealed record ConflictItemDto(
+        Guid Id,
+        string EntityType,
+        Guid EntityId,
+        string ClientPayload,
+        string ServerPayload,
+        long ClientVersion,
+        long ServerVersion,
+        string Status,
+        DateTime DetectedAt);
 }

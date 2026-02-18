@@ -3,6 +3,7 @@ using BauDoku.BuildingBlocks.Application.Pagination;
 using BauDoku.Documentation.Application.Contracts;
 using BauDoku.Documentation.Application.Queries.Dtos;
 using BauDoku.Documentation.Application.Queries.ListInstallations;
+using BauDoku.Documentation.Domain.ValueObjects;
 using NSubstitute;
 
 namespace BauDoku.Documentation.UnitTests.Application.Queries;
@@ -29,7 +30,7 @@ public sealed class ListInstallationsQueryHandlerTests
         var expected = new PagedResult<InstallationListItemDto>(items, 1, 1, 20);
 
         readRepository.ListAsync(
-                new InstallationListFilter(projectId),
+                new InstallationListFilter(ProjectIdentifier.From(projectId)),
                 new PaginationParams(1, 20),
                 Arg.Any<CancellationToken>())
             .Returns(expected);
@@ -48,7 +49,12 @@ public sealed class ListInstallationsQueryHandlerTests
         var expected = new PagedResult<InstallationListItemDto>([], 0, 2, 10);
 
         readRepository.ListAsync(
-                new InstallationListFilter(projectId, zoneId, "cable_tray", "in_progress", "test"),
+                new InstallationListFilter(
+                    ProjectIdentifier.From(projectId),
+                    ZoneIdentifier.From(zoneId),
+                    InstallationType.From("cable_tray"),
+                    InstallationStatus.From("in_progress"),
+                    "test"),
                 new PaginationParams(2, 10),
                 Arg.Any<CancellationToken>())
             .Returns(expected);

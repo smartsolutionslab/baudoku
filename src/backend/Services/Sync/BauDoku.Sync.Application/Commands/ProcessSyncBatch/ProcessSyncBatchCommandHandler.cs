@@ -72,11 +72,17 @@ public sealed class ProcessSyncBatchCommandHandler(ISyncBatchRepository syncBatc
         }
 
         if (conflicts.Count == 0)
+        {
             batch.MarkCompleted();
+        }
         else if (appliedCount > 0)
+        {
             batch.MarkPartialConflict();
+        }
         else
+        {
             batch.MarkFailed();
+        }
 
         await syncBatches.AddAsync(batch, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
