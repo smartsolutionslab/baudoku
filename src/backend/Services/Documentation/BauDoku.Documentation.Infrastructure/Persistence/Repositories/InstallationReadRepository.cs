@@ -1,6 +1,8 @@
+using System.Linq.Expressions;
 using BauDoku.BuildingBlocks.Application.Pagination;
 using BauDoku.Documentation.Application.Contracts;
 using BauDoku.Documentation.Application.Queries.Dtos;
+using BauDoku.Documentation.Domain.Aggregates;
 using BauDoku.Documentation.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,6 +10,19 @@ namespace BauDoku.Documentation.Infrastructure.Persistence.Repositories;
 
 public sealed class InstallationReadRepository(DocumentationDbContext context) : IInstallationReadRepository
 {
+    private static readonly Expression<Func<Installation, InstallationListItemDto>> toInstallationListItem = i => new InstallationListItemDto(
+        i.Id.Value,
+        i.ProjectId.Value,
+        i.Type.Value,
+        i.Status.Value,
+        i.QualityGrade.Value,
+        i.Position.Latitude.Value,
+        i.Position.Longitude.Value,
+        i.Description != null ? i.Description.Value : null,
+        i.CreatedAt,
+        i.Photos.Count,
+        i.Measurements.Count);
+
     public async Task<PagedResult<InstallationListItemDto>> ListAsync(InstallationListFilter filter, PaginationParams pagination, CancellationToken cancellationToken = default)
     {
         var (projectId, zoneId, type, status, search) = filter;
@@ -37,18 +52,7 @@ public sealed class InstallationReadRepository(DocumentationDbContext context) :
             .OrderByDescending(i => i.CreatedAt)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
-            .Select(i => new InstallationListItemDto(
-                i.Id.Value,
-                i.ProjectId.Value,
-                i.Type.Value,
-                i.Status.Value,
-                i.QualityGrade.Value,
-                i.Position.Latitude.Value,
-                i.Position.Longitude.Value,
-                i.Description != null ? i.Description.Value : null,
-                i.CreatedAt,
-                i.Photos.Count,
-                i.Measurements.Count))
+            .Select(toInstallationListItem)
             .ToListAsync(cancellationToken);
 
         return new PagedResult<InstallationListItemDto>(items, totalCount, page, pageSize);
@@ -130,18 +134,7 @@ public sealed class InstallationReadRepository(DocumentationDbContext context) :
             .OrderByDescending(i => i.CreatedAt)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
-            .Select(i => new InstallationListItemDto(
-                i.Id.Value,
-                i.ProjectId.Value,
-                i.Type.Value,
-                i.Status.Value,
-                i.QualityGrade.Value,
-                i.Position.Latitude.Value,
-                i.Position.Longitude.Value,
-                i.Description != null ? i.Description.Value : null,
-                i.CreatedAt,
-                i.Photos.Count,
-                i.Measurements.Count))
+            .Select(toInstallationListItem)
             .ToListAsync(cancellationToken);
 
         return new PagedResult<InstallationListItemDto>(items, totalCount, page, pageSize);

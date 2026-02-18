@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using BauDoku.Sync.Application.Contracts;
 using BauDoku.Sync.Application.Queries.Dtos;
 using BauDoku.Sync.Domain.ValueObjects;
@@ -7,6 +8,14 @@ namespace BauDoku.Sync.Infrastructure.Persistence.Repositories;
 
 public sealed class EntityVersionStore(SyncDbContext context) : IEntityVersionStore, IEntityVersionReadStore
 {
+    private static readonly Expression<Func<EntityVersionEntry, ServerDeltaDto>> toServerDelta = e => new ServerDeltaDto(
+        e.EntityType,
+        e.EntityId,
+        "update",
+        e.Version,
+        e.Payload,
+        e.LastModified);
+
     public async Task<SyncVersion> GetCurrentVersionAsync(
         EntityReference entityRef,
         CancellationToken cancellationToken = default)
@@ -79,13 +88,7 @@ public sealed class EntityVersionStore(SyncDbContext context) : IEntityVersionSt
         return await query
             .OrderBy(e => e.LastModified)
             .Take(limit)
-            .Select(e => new ServerDeltaDto(
-                e.EntityType,
-                e.EntityId,
-                "update",
-                e.Version,
-                e.Payload,
-                e.LastModified))
+            .Select(toServerDelta)
             .ToListAsync(cancellationToken);
     }
 }
