@@ -101,7 +101,7 @@ jobs:
           script: |
             adb install src/frontend/mobile-app/android/app/build/outputs/apk/release/app-release.apk
             adb logcat -c
-            adb logcat ReactNativeJS:* ReactNative:* *:S > /tmp/rn-logcat.txt &
+            adb logcat *:W > /tmp/rn-logcat.txt &
             LOGCAT_PID=$!
             maestro test e2e/flows/
             MAESTRO_EXIT=$?
