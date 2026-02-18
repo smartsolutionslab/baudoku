@@ -39,8 +39,7 @@ public sealed class PhotoEndpointTests : IDisposable
     {
         var response = await client.GetAsync($"/api/documentation/photos/{Guid.NewGuid()}");
 
-        // PhotoReadRepository uses EF shadow property projection that may fail on some providers
-        response.StatusCode.Should().BeOneOf(HttpStatusCode.NotFound, HttpStatusCode.InternalServerError);
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
     [Fact]
