@@ -80,7 +80,7 @@ public static class PhotoEndpoints
         {
             var query = new GetPhotoQuery(photoId);
             var result = await dispatcher.Query(query, ct);
-            return result is not null ? Results.Ok(result) : Results.NotFound();
+            return Results.Ok(result);
         })
         .RequireAuthorization()
         .WithName("GetPhoto")

@@ -12,7 +12,7 @@ public sealed class CompleteChunkedUploadCommandHandler(IChunkedUploadStorage ch
     public async Task<Guid> Handle(CompleteChunkedUploadCommand command, CancellationToken cancellationToken = default)
     {
         var sessionIdentifier = UploadSessionIdentifier.From(command.SessionId);
-        var session = await chunkedUploadStorage.GetSessionAsync(sessionIdentifier, cancellationToken) ?? throw new KeyNotFoundException($"Upload-Session mit ID {command.SessionId} nicht gefunden.");
+        var session = await chunkedUploadStorage.GetSessionAsync(sessionIdentifier, cancellationToken);
 
         var uploadedChunks = await chunkedUploadStorage.GetUploadedChunkCountAsync(sessionIdentifier, cancellationToken);
         if (uploadedChunks != session.TotalChunks) throw new InvalidOperationException($"Upload unvollständig: {uploadedChunks}/{session.TotalChunks} Chunks hochgeladen.");

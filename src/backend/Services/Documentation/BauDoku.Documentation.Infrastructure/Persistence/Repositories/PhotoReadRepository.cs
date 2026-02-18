@@ -7,7 +7,7 @@ namespace BauDoku.Documentation.Infrastructure.Persistence.Repositories;
 
 public sealed class PhotoReadRepository(DocumentationDbContext context) : IPhotoReadRepository
 {
-    public async Task<PhotoDto?> GetByIdAsync(PhotoIdentifier photoId, CancellationToken cancellationToken = default)
+    public async Task<PhotoDto> GetByIdAsync(PhotoIdentifier photoId, CancellationToken cancellationToken = default)
     {
         return await context.Photos
             .AsNoTracking()
@@ -33,7 +33,8 @@ public sealed class PhotoReadRepository(DocumentationDbContext context) : IPhoto
                 p.Position != null ? p.Position.Hdop : null,
                 p.Position != null ? p.Position.CorrectionAge : null,
                 p.TakenAt))
-            .FirstOrDefaultAsync(cancellationToken);
+            .FirstOrDefaultAsync(cancellationToken)
+            ?? throw new KeyNotFoundException($"Foto mit ID '{photoId.Value}' nicht gefunden.");
     }
 
     public async Task<IReadOnlyList<PhotoDto>> ListByInstallationIdAsync(InstallationIdentifier installationId, CancellationToken cancellationToken = default)

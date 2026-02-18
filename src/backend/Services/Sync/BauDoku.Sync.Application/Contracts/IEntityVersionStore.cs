@@ -8,7 +8,7 @@ public interface IEntityVersionStore
         EntityReference entityRef,
         CancellationToken cancellationToken = default);
 
-    Task<string?> GetCurrentPayloadAsync(
+    Task<string> GetCurrentPayloadAsync(
         EntityReference entityRef,
         CancellationToken cancellationToken = default);
 

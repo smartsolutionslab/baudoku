@@ -40,14 +40,15 @@ public sealed class LocalChunkedUploadStorage : IChunkedUploadStorage
         await data.CopyToAsync(fileStream, ct);
     }
 
-    public Task<ChunkedUploadSession?> GetSessionAsync(UploadSessionIdentifier sessionId, CancellationToken ct = default)
+    public Task<ChunkedUploadSession> GetSessionAsync(UploadSessionIdentifier sessionId, CancellationToken ct = default)
     {
         var metadataPath = Path.Combine(basePath, sessionId.Value.ToString(), "metadata.json");
         if (!File.Exists(metadataPath))
-            return Task.FromResult<ChunkedUploadSession?>(null);
+            throw new KeyNotFoundException($"Upload-Session mit ID {sessionId.Value} nicht gefunden.");
 
         var json = File.ReadAllText(metadataPath);
-        var session = JsonSerializer.Deserialize<ChunkedUploadSession>(json);
+        var session = JsonSerializer.Deserialize<ChunkedUploadSession>(json)
+            ?? throw new KeyNotFoundException($"Upload-Session mit ID {sessionId.Value} nicht gefunden.");
         return Task.FromResult(session);
     }
 

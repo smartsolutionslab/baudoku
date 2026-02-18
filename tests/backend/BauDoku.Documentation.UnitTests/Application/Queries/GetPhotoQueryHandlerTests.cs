@@ -4,6 +4,7 @@ using BauDoku.Documentation.Application.Queries.Dtos;
 using BauDoku.Documentation.Application.Queries.GetPhoto;
 using BauDoku.Documentation.Domain.ValueObjects;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 
 namespace BauDoku.Documentation.UnitTests.Application.Queries;
 
@@ -54,25 +55,28 @@ public sealed class GetPhotoQueryHandlerTests
     }
 
     [Fact]
-    public async Task Handle_WhenPhotoNotFound_ShouldReturnNull()
+    public async Task Handle_WhenPhotoNotFound_ShouldThrow()
     {
         var photoId = Guid.NewGuid();
 
         readRepository.GetByIdAsync(Arg.Any<PhotoIdentifier>(), Arg.Any<CancellationToken>())
-            .Returns((PhotoDto?)null);
+            .Throws(new KeyNotFoundException("Foto nicht gefunden."));
 
-        var result = await handler.Handle(new GetPhotoQuery(photoId), CancellationToken.None);
+        var act = () => handler.Handle(new GetPhotoQuery(photoId), CancellationToken.None);
 
-        result.Should().BeNull();
+        await act.Should().ThrowAsync<KeyNotFoundException>();
     }
 
     [Fact]
     public async Task Handle_ShouldPassCorrectPhotoIdToRepository()
     {
         var photoId = Guid.NewGuid();
+        var expected = new PhotoDto(
+            photoId, Guid.NewGuid(), "photo.jpg", "https://blob/photo.jpg", "image/jpeg",
+            1024, "before", null, null, null, null, null, null, null, null, null, null, null, null, DateTime.UtcNow);
 
         readRepository.GetByIdAsync(Arg.Any<PhotoIdentifier>(), Arg.Any<CancellationToken>())
-            .Returns((PhotoDto?)null);
+            .Returns(expected);
 
         await handler.Handle(new GetPhotoQuery(photoId), CancellationToken.None);
 

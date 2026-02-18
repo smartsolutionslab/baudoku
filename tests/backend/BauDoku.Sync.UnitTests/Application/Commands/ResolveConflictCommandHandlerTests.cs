@@ -5,6 +5,7 @@ using BauDoku.Sync.Application.Contracts;
 using BauDoku.Sync.Domain.Aggregates;
 using BauDoku.Sync.Domain.ValueObjects;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 
 namespace BauDoku.Sync.UnitTests.Application.Commands;
 
@@ -103,7 +104,7 @@ public sealed class ResolveConflictCommandHandlerTests
     public async Task Handle_WhenBatchNotFound_ShouldThrow()
     {
         syncBatches.GetByConflictIdAsync(Arg.Any<ConflictRecordIdentifier>(), Arg.Any<CancellationToken>())
-            .Returns((SyncBatch?)null);
+            .Throws(new KeyNotFoundException("Batch nicht gefunden."));
 
         var command = new ResolveConflictCommand(Guid.NewGuid(), "client_wins", null);
 

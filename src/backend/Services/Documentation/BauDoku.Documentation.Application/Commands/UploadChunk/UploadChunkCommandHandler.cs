@@ -11,7 +11,7 @@ public sealed class UploadChunkCommandHandler(IChunkedUploadStorage chunkedUploa
         var (sessionId, chunkIndex, data) = command;
         var sessionIdentifier = UploadSessionIdentifier.From(sessionId);
 
-        var session = await chunkedUploadStorage.GetSessionAsync(sessionIdentifier, cancellationToken) ?? throw new KeyNotFoundException($"Upload-Session mit ID {sessionId} nicht gefunden.");
+        var session = await chunkedUploadStorage.GetSessionAsync(sessionIdentifier, cancellationToken);
 
         if (chunkIndex >= session.TotalChunks) throw new InvalidOperationException($"ChunkIndex {chunkIndex} ist ungültig. Erwartet: 0-{session.TotalChunks - 1}.");
 

@@ -55,7 +55,7 @@ public sealed class ProcessSyncBatchCommandHandler(ISyncBatchRepository syncBatc
             else
             {
                 var serverPayloadJson = await entityVersionStore.GetCurrentPayloadAsync(entityRef, cancellationToken);
-                var serverPayload = DeltaPayload.From(serverPayloadJson ?? "{}");
+                var serverPayload = DeltaPayload.From(serverPayloadJson);
 
                 var conflict = batch.AddConflict(
                     ConflictRecordIdentifier.New(),

@@ -133,13 +133,13 @@ public sealed class ProcessSyncBatchCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_NullServerPayload_ShouldUseEmptyJson()
+    public async Task Handle_NoExistingPayload_ShouldUseEmptyJson()
     {
         var entityId = Guid.NewGuid();
         entityVersionStore.GetCurrentVersionAsync(Arg.Is<EntityReference>(r => r.EntityId == entityId), Arg.Any<CancellationToken>())
             .Returns(SyncVersion.From(1));
         entityVersionStore.GetCurrentPayloadAsync(Arg.Is<EntityReference>(r => r.EntityId == entityId), Arg.Any<CancellationToken>())
-            .Returns((string?)null);
+            .Returns("{}");
 
         var command = new ProcessSyncBatchCommand("device-001", [CreateDelta(entityId, 0)]);
 

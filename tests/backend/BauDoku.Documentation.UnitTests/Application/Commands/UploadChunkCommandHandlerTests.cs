@@ -3,6 +3,7 @@ using BauDoku.Documentation.Application.Commands.UploadChunk;
 using BauDoku.Documentation.Application.Contracts;
 using BauDoku.Documentation.Domain.ValueObjects;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 
 namespace BauDoku.Documentation.UnitTests.Application.Commands;
 
@@ -43,7 +44,7 @@ public sealed class UploadChunkCommandHandlerTests
     public async Task Handle_WhenSessionNotFound_ShouldThrow()
     {
         chunkedUploadStorage.GetSessionAsync(Arg.Any<UploadSessionIdentifier>(), Arg.Any<CancellationToken>())
-            .Returns((ChunkedUploadSession?)null);
+            .Throws(new KeyNotFoundException("Upload-Session nicht gefunden."));
 
         var command = new UploadChunkCommand(Guid.NewGuid(), 0, new MemoryStream([1, 2, 3]));
 

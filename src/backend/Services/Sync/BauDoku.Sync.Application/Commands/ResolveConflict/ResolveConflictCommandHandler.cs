@@ -13,7 +13,7 @@ public sealed class ResolveConflictCommandHandler(ISyncBatchRepository syncBatch
     {
         var (conflictId, strategyName, mergedPayloadJson) = command;
         var conflictIdentifier = ConflictRecordIdentifier.From(conflictId);
-        var batch = await syncBatches.GetByConflictIdAsync(conflictIdentifier, cancellationToken) ?? throw new KeyNotFoundException($"Batch für Konflikt {conflictId} nicht gefunden.");
+        var batch = await syncBatches.GetByConflictIdAsync(conflictIdentifier, cancellationToken);
 
         var strategy = ConflictResolutionStrategy.From(strategyName);
         var mergedPayload = DeltaPayload.FromNullable(mergedPayloadJson);

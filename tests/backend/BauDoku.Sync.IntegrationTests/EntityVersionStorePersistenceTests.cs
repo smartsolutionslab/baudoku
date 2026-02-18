@@ -73,14 +73,14 @@ public sealed class EntityVersionStorePersistenceTests(PostgreSqlFixture fixture
     }
 
     [Fact]
-    public async Task GetCurrentPayload_WhenNotExists_ShouldReturnNull()
+    public async Task GetCurrentPayload_WhenNotExists_ShouldReturnEmptyJson()
     {
         await using var context = fixture.CreateContext();
         var store = new EntityVersionStore(context);
 
         var payload = await store.GetCurrentPayloadAsync(EntityReference.Create(EntityType.Project, Guid.NewGuid()));
 
-        payload.Should().BeNull();
+        payload.Should().Be("{}");
     }
 
     [Fact]

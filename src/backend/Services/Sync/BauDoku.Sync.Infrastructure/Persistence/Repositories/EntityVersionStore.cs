@@ -18,7 +18,7 @@ public sealed class EntityVersionStore(SyncDbContext context) : IEntityVersionSt
         return entry is not null ? SyncVersion.From(entry.Version) : SyncVersion.Initial;
     }
 
-    public async Task<string?> GetCurrentPayloadAsync(
+    public async Task<string> GetCurrentPayloadAsync(
         EntityReference entityRef,
         CancellationToken cancellationToken = default)
     {
@@ -26,7 +26,7 @@ public sealed class EntityVersionStore(SyncDbContext context) : IEntityVersionSt
         var entry = await context.EntityVersionEntries
             .FirstOrDefaultAsync(e => e.EntityType == entityType.Value && e.EntityId == entityId, cancellationToken);
 
-        return entry?.Payload;
+        return entry?.Payload ?? "{}";
     }
 
     public async Task SetVersionAsync(
