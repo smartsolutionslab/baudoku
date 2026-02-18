@@ -40,26 +40,20 @@ public sealed record GpsPosition : IValueObject
     }
 
     public static GpsPosition Create(
-        double latitude,
-        double longitude,
+        Latitude latitude,
+        Longitude longitude,
         double? altitude,
-        double horizontalAccuracy,
-        string source,
-        string? correctionService = null,
-        string? rtkFixStatus = null,
+        HorizontalAccuracy horizontalAccuracy,
+        GpsSource source,
+        CorrectionService? correctionService = null,
+        RtkFixStatus? rtkFixStatus = null,
         int? satelliteCount = null,
         double? hdop = null,
         double? correctionAge = null)
     {
         return new GpsPosition(
-            Latitude.From(latitude),
-            Longitude.From(longitude),
-            altitude,
-            HorizontalAccuracy.From(horizontalAccuracy),
-            GpsSource.From(source),
-            correctionService is not null ? ValueObjects.CorrectionService.From(correctionService) : null,
-            rtkFixStatus is not null ? ValueObjects.RtkFixStatus.From(rtkFixStatus) : null,
-            satelliteCount, hdop, correctionAge);
+            latitude, longitude, altitude, horizontalAccuracy, source,
+            correctionService, rtkFixStatus, satelliteCount, hdop, correctionAge);
     }
 
     public GpsQualityGrade CalculateQualityGrade()

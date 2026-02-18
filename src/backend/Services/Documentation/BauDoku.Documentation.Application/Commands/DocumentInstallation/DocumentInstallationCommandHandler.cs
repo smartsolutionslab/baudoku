@@ -19,8 +19,11 @@ public sealed class DocumentInstallationCommandHandler(IInstallationRepository i
         var installationId = InstallationIdentifier.New();
 
         var position = GpsPosition.Create(
-            latitude, longitude, altitude, horizontalAccuracy, gpsSource,
-            correctionService, rtkFixStatus, satelliteCount, hdop, correctionAge);
+            Latitude.From(latitude), Longitude.From(longitude), altitude,
+            HorizontalAccuracy.From(horizontalAccuracy), GpsSource.From(gpsSource),
+            correctionService is not null ? CorrectionService.From(correctionService) : null,
+            rtkFixStatus is not null ? RtkFixStatus.From(rtkFixStatus) : null,
+            satelliteCount, hdop, correctionAge);
 
         var installation = Installation.Create(
             installationId,

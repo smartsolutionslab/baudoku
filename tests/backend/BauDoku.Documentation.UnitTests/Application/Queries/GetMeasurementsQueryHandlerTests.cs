@@ -27,7 +27,7 @@ public sealed class GetMeasurementsQueryHandlerTests
             ProjectIdentifier.New(),
             null,
             InstallationType.CableTray,
-            GpsPosition.Create(48.0, 11.0, null, 3.5, "gps"));
+            GpsPosition.Create(Latitude.From(48.0), Longitude.From(11.0), null, HorizontalAccuracy.From(3.5), GpsSource.From("gps")));
 
         installation.RecordMeasurement(
             MeasurementIdentifier.New(),

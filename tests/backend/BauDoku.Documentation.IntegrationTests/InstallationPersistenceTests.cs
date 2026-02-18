@@ -19,7 +19,7 @@ public sealed class InstallationPersistenceTests(PostgreSqlFixture fixture)
             projectId,
             zoneId,
             InstallationType.CableTray,
-            GpsPosition.Create(48.1351, 11.5820, 520.0, 3.5, "internal_gps"),
+            GpsPosition.Create(Latitude.From(48.1351), Longitude.From(11.5820), 520.0, HorizontalAccuracy.From(3.5), GpsSource.From("internal_gps")),
             Description.From("Test installation"),
             CableSpec.Create("NYM-J 5x2.5", 25m, "grey", 5),
             Depth.From(600),
@@ -72,7 +72,7 @@ public sealed class InstallationPersistenceTests(PostgreSqlFixture fixture)
             ProjectIdentifier.New(),
             null,
             InstallationType.Grounding,
-            GpsPosition.Create(48.0, 11.0, null, 5.0, "internal_gps"));
+            GpsPosition.Create(Latitude.From(48.0), Longitude.From(11.0), null, HorizontalAccuracy.From(5.0), GpsSource.From("internal_gps")));
 
         await using (var writeContext = fixture.CreateContext())
         {
@@ -106,8 +106,8 @@ public sealed class InstallationPersistenceTests(PostgreSqlFixture fixture)
             null,
             InstallationType.CablePull,
             GpsPosition.Create(
-                48.1351, 11.5820, 520.0, 0.03, "rtk",
-                "sapos_heps", "fix", 14, 0.8, 1.2));
+                Latitude.From(48.1351), Longitude.From(11.5820), 520.0, HorizontalAccuracy.From(0.03), GpsSource.From("rtk"),
+                CorrectionService.From("sapos_heps"), RtkFixStatus.From("fix"), 14, 0.8, 1.2));
 
         await using (var writeContext = fixture.CreateContext())
         {

@@ -35,11 +35,11 @@ public sealed class CompleteChunkedUploadCommandHandler(IChunkedUploadStorage ch
         if (session.Latitude.HasValue && session.Longitude.HasValue && session.HorizontalAccuracy.HasValue && session.GpsSource is not null)
         {
             position = GpsPosition.Create(
-                session.Latitude.Value,
-                session.Longitude.Value,
+                Latitude.From(session.Latitude.Value),
+                Longitude.From(session.Longitude.Value),
                 session.Altitude,
-                session.HorizontalAccuracy.Value,
-                session.GpsSource);
+                HorizontalAccuracy.From(session.HorizontalAccuracy.Value),
+                GpsSource.From(session.GpsSource));
         }
 
         installation.AddPhoto(photoId, fileNameVo, blobUrl, contentTypeVo, FileSize.From(session.TotalSize), photoType, caption, description, position);

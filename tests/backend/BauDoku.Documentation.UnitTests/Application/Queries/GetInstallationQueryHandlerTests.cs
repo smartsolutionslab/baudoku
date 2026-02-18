@@ -27,7 +27,7 @@ public sealed class GetInstallationQueryHandlerTests
             ProjectIdentifier.New(),
             null,
             InstallationType.CableTray,
-            GpsPosition.Create(48.137154, 11.576124, 520.0, 3.5, "gps"),
+            GpsPosition.Create(Latitude.From(48.137154), Longitude.From(11.576124), 520.0, HorizontalAccuracy.From(3.5), GpsSource.From("gps")),
             Description.From("Testbeschreibung"));
 
         installation.AddPhoto(
@@ -73,7 +73,7 @@ public sealed class GetInstallationQueryHandlerTests
             ProjectIdentifier.New(),
             ZoneIdentifier.New(),
             InstallationType.JunctionBox,
-            GpsPosition.Create(48.0, 11.0, 500.0, 2.5, "dgnss", "SAPOS-EPS", "fix", 12, 0.8, 1.5));
+            GpsPosition.Create(Latitude.From(48.0), Longitude.From(11.0), 500.0, HorizontalAccuracy.From(2.5), GpsSource.From("dgnss"), CorrectionService.From("SAPOS-EPS"), RtkFixStatus.From("fix"), 12, 0.8, 1.5));
 
         installations.GetByIdReadOnlyAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);

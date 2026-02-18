@@ -20,8 +20,11 @@ public sealed class UpdateInstallationCommandHandler(IInstallationRepository ins
         if (latitude.HasValue && longitude.HasValue && horizontalAccuracy.HasValue && gpsSource is not null)
         {
             var position = GpsPosition.Create(
-                latitude.Value, longitude.Value, altitude, horizontalAccuracy.Value, gpsSource,
-                correctionService, rtkFixStatus, satelliteCount, hdop, correctionAge);
+                Latitude.From(latitude.Value), Longitude.From(longitude.Value), altitude,
+                HorizontalAccuracy.From(horizontalAccuracy.Value), GpsSource.From(gpsSource),
+                correctionService is not null ? CorrectionService.From(correctionService) : null,
+                rtkFixStatus is not null ? RtkFixStatus.From(rtkFixStatus) : null,
+                satelliteCount, hdop, correctionAge);
 
             installation.UpdatePosition(position);
         }

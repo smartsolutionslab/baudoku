@@ -32,7 +32,7 @@ public sealed class CompleteChunkedUploadCommandHandlerTests
             ProjectIdentifier.New(),
             null,
             InstallationType.CableTray,
-            GpsPosition.Create(48.137154, 11.576124, null, 3.5, "gps"));
+            GpsPosition.Create(Latitude.From(48.137154), Longitude.From(11.576124), null, HorizontalAccuracy.From(3.5), GpsSource.From("gps")));
 
     private static ChunkedUploadSession CreateValidSession(Guid sessionId, Guid installationId) =>
         new(sessionId, installationId, "photo.jpg", "image/jpeg",

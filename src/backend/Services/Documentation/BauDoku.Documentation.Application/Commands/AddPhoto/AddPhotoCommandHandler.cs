@@ -30,7 +30,9 @@ public sealed class AddPhotoCommandHandler(IInstallationRepository installations
         if (latitude.HasValue && longitude.HasValue
             && horizontalAccuracy.HasValue && gpsSource is not null)
         {
-            position = GpsPosition.Create(latitude.Value, longitude.Value, altitude, horizontalAccuracy.Value, gpsSource);
+            position = GpsPosition.Create(
+                Latitude.From(latitude.Value), Longitude.From(longitude.Value), altitude,
+                HorizontalAccuracy.From(horizontalAccuracy.Value), GpsSource.From(gpsSource));
         }
 
         installation.AddPhoto(
