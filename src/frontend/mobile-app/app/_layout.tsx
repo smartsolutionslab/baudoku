@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { useFonts } from "expo-font";
@@ -28,9 +28,12 @@ export default function RootLayout() {
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
     ...FontAwesome.font,
   });
+  const [timedOut, setTimedOut] = useState(false);
 
   useEffect(() => {
-    if (error) throw error;
+    if (error) {
+      console.warn("Font loading error:", error.message);
+    }
   }, [error]);
 
   useEffect(() => {
@@ -39,7 +42,20 @@ export default function RootLayout() {
     }
   }, [loaded]);
 
-  if (!loaded) {
+  // Safety timeout: dismiss splash and continue without custom fonts
+  // if font loading hangs (e.g. on CI emulators)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!loaded) {
+        console.warn("Font loading timed out after 10s, continuing without custom fonts");
+        SplashScreen.hideAsync();
+        setTimedOut(true);
+      }
+    }, 10000);
+    return () => clearTimeout(timer);
+  }, [loaded]);
+
+  if (!loaded && !timedOut) {
     return null;
   }
 
