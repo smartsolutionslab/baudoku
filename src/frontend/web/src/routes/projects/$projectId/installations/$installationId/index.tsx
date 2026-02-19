@@ -8,14 +8,11 @@ import {
   useDeletePhoto,
   useCreateMeasurement,
   useDeleteMeasurement,
-} from "../../../../../hooks/useInstallations";
-import { StatusBadge } from "../../../../../components/common/StatusBadge";
-import { PhotoGallery } from "../../../../../components/installations/PhotoGallery";
-import { PhotoCapture } from "../../../../../components/installations/PhotoCapture";
-import { MeasurementCard } from "../../../../../components/installations/MeasurementCard";
-import { MeasurementForm } from "../../../../../components/installations/MeasurementForm";
-import type { PhotoType } from "@baudoku/shared-types";
-import type { MeasurementFormData } from "@baudoku/shared-validation";
+} from "@/hooks/useInstallations";
+import { StatusBadge } from "@/components/common/StatusBadge";
+import { InfoTab } from "@/components/installations/InfoTab";
+import { PhotosTab } from "@/components/installations/PhotosTab";
+import { MeasurementsTab } from "@/components/installations/MeasurementsTab";
 
 type Tab = "info" | "photos" | "measurements";
 
@@ -35,7 +32,6 @@ export function InstallationDetailPage() {
   const deleteMeasurement = useDeleteMeasurement(installationId);
 
   const [activeTab, setActiveTab] = useState<Tab>("info");
-  const [showMeasurementForm, setShowMeasurementForm] = useState(false);
 
   if (isLoading) {
     return (
@@ -123,175 +119,26 @@ export function InstallationDetailPage() {
         {activeTab === "info" && <InfoTab installation={installation} />}
 
         {activeTab === "photos" && (
-          <div className="space-y-6">
-            <PhotoCapture
-              onCapture={(file, type, caption) => {
-                uploadPhoto.mutate({ file, caption });
-              }}
-            />
-            <PhotoGallery
-              photos={photos ?? []}
-              onDelete={(id) => deletePhoto.mutate(id)}
-            />
-          </div>
+          <PhotosTab
+            photos={photos ?? []}
+            onUpload={(file, type, caption) => {
+              uploadPhoto.mutate({ file, caption });
+            }}
+            onDelete={(id) => deletePhoto.mutate(id)}
+          />
         )}
 
         {activeTab === "measurements" && (
-          <div className="space-y-4">
-            {!showMeasurementForm ? (
-              <button
-                onClick={() => setShowMeasurementForm(true)}
-                className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-              >
-                <PlusIcon />
-                Messung hinzufügen
-              </button>
-            ) : (
-              <MeasurementForm
-                onSubmit={async (data: MeasurementFormData) => {
-                  await createMeasurement.mutateAsync(data);
-                  setShowMeasurementForm(false);
-                }}
-                onCancel={() => setShowMeasurementForm(false)}
-                isSubmitting={createMeasurement.isPending}
-              />
-            )}
-
-            {measurements && measurements.length > 0 ? (
-              <div className="space-y-3">
-                {measurements.map((m) => (
-                  <MeasurementCard
-                    key={m.id}
-                    measurement={m}
-                    onDelete={(id) => deleteMeasurement.mutate(id)}
-                  />
-                ))}
-              </div>
-            ) : (
-              !showMeasurementForm && (
-                <p className="py-8 text-center text-sm text-gray-500">
-                  Noch keine Messungen vorhanden.
-                </p>
-              )
-            )}
-          </div>
+          <MeasurementsTab
+            measurements={measurements ?? []}
+            onCreateMeasurement={async (data) => {
+              await createMeasurement.mutateAsync(data);
+            }}
+            onDeleteMeasurement={(id) => deleteMeasurement.mutate(id)}
+            isCreating={createMeasurement.isPending}
+          />
         )}
       </div>
     </div>
-  );
-}
-
-function InfoTab({ installation }: { installation: any }) {
-  const sections = [
-    {
-      title: "Komponente",
-      fields: [
-        { label: "Hersteller", value: installation.manufacturer },
-        { label: "Modell", value: installation.model },
-        { label: "Seriennummer", value: installation.serialNumber },
-      ],
-    },
-    {
-      title: "Kabel / Elektrisch",
-      fields: [
-        { label: "Kabeltyp", value: installation.cableType },
-        {
-          label: "Querschnitt",
-          value: installation.crossSectionMm2
-            ? `${installation.crossSectionMm2} mm²`
-            : null,
-        },
-        {
-          label: "Länge",
-          value: installation.lengthM ? `${installation.lengthM} m` : null,
-        },
-        { label: "Stromkreis", value: installation.circuitId },
-        { label: "Sicherung", value: installation.fuseType },
-        {
-          label: "Nennstrom",
-          value: installation.fuseRatingA
-            ? `${installation.fuseRatingA} A`
-            : null,
-        },
-        {
-          label: "Spannung",
-          value: installation.voltageV
-            ? `${installation.voltageV} V`
-            : null,
-        },
-        { label: "Phase", value: installation.phase },
-        {
-          label: "Tiefe",
-          value: installation.depthMm
-            ? `${installation.depthMm} mm`
-            : null,
-        },
-      ],
-    },
-    {
-      title: "GPS-Position",
-      fields: [
-        {
-          label: "Koordinaten",
-          value:
-            installation.gpsLat && installation.gpsLng
-              ? `${installation.gpsLat.toFixed(6)}, ${installation.gpsLng.toFixed(6)}`
-              : null,
-        },
-        {
-          label: "Genauigkeit",
-          value: installation.gpsAccuracy
-            ? `±${installation.gpsAccuracy.toFixed(1)} m`
-            : null,
-        },
-        { label: "Quelle", value: installation.gpsSource },
-      ],
-    },
-  ];
-
-  return (
-    <div className="space-y-6">
-      {sections.map((section) => {
-        const filledFields = section.fields.filter((f) => f.value);
-        if (filledFields.length === 0) return null;
-        return (
-          <div
-            key={section.title}
-            className="rounded-xl border border-gray-200 bg-white p-5"
-          >
-            <h3 className="text-sm font-semibold text-gray-900">
-              {section.title}
-            </h3>
-            <dl className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {filledFields.map((field) => (
-                <div key={field.label}>
-                  <dt className="text-xs text-gray-400">{field.label}</dt>
-                  <dd className="mt-0.5 text-sm text-gray-900">
-                    {field.value}
-                  </dd>
-                </div>
-              ))}
-            </dl>
-          </div>
-        );
-      })}
-
-      {installation.notes && (
-        <div className="rounded-xl border border-gray-200 bg-white p-5">
-          <h3 className="text-sm font-semibold text-gray-900">Notizen</h3>
-          <p className="mt-2 whitespace-pre-wrap text-sm text-gray-600">
-            {installation.notes}
-          </p>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function PlusIcon() {
-  return (
-    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-    </svg>
   );
 }

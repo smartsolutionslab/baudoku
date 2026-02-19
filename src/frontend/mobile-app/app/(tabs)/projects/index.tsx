@@ -2,10 +2,10 @@ import { useState, useMemo } from "react";
 import { View, FlatList, TouchableOpacity, StyleSheet } from "react-native";
 import { useRouter, Stack } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
-import { useProjects } from "../../../src/hooks";
-import { ProjectCard } from "../../../src/components/projects";
-import { EmptyState, FloatingActionButton, SearchBar } from "../../../src/components/common";
-import { Colors, Spacing } from "../../../src/styles/tokens";
+import { useProjects } from "@/hooks";
+import { ProjectCard } from "@/components/projects";
+import { EmptyState, FloatingActionButton, SearchBar } from "@/components/common";
+import { Colors, Spacing } from "@/styles/tokens";
 
 export default function ProjectsScreen() {
   const router = useRouter();

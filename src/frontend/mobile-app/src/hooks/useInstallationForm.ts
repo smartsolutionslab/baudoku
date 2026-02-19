@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import { Alert } from "react-native";
 import { installationSchema, type InstallationFormData } from "../validation/schemas";
+import { useFormValidation } from "./useFormValidation";
 import type { GpsPosition } from "./useGpsCapture";
 
 export type UseInstallationFormOptions = {
@@ -25,7 +26,7 @@ export function useInstallationForm({ initialValues, onSubmit }: UseInstallation
     status: "in_progress",
     ...initialValues,
   });
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const { errors, setErrors, validate } = useFormValidation(installationSchema);
 
   const hasComponentValues = !!initialValues?.manufacturer || !!initialValues?.model || !!initialValues?.serialNumber;
   const hasCableValues = !!initialValues?.cableType || initialValues?.crossSectionMm2 != null || initialValues?.lengthM != null;
@@ -38,7 +39,7 @@ export function useInstallationForm({ initialValues, onSubmit }: UseInstallation
       delete next[key];
       return next;
     });
-  }, []);
+  }, [setErrors]);
 
   const str = (key: string) => {
     const val = form[key];
@@ -55,25 +56,15 @@ export function useInstallationForm({ initialValues, onSubmit }: UseInstallation
         cleaned[k] = v;
       }
 
-      const result = installationSchema.safeParse(cleaned);
-      if (!result.success) {
-        const fieldErrors: Record<string, string> = {};
-        for (const issue of result.error.issues) {
-          const key = issue.path[0]?.toString();
-          if (key && !fieldErrors[key]) {
-            fieldErrors[key] = issue.message;
-          }
-        }
-        setErrors(fieldErrors);
-        return;
-      }
+      const data = validate(cleaned);
+      if (!data) return;
       try {
-        await onSubmit(result.data, currentGps);
+        await onSubmit(data, currentGps);
       } catch {
         Alert.alert("Fehler", "Installation konnte nicht gespeichert werden.");
       }
     },
-    [form, onSubmit]
+    [form, onSubmit, validate]
   );
 
   return {

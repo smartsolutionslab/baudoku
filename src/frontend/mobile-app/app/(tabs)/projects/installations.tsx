@@ -7,12 +7,12 @@ import {
   StyleSheet,
 } from "react-native";
 import { useLocalSearchParams, useRouter, Stack } from "expo-router";
-import { useInstallationsByProject } from "../../../src/hooks";
-import { StatusBadge, EmptyState, SearchBar, FilterChips } from "../../../src/components/common";
-import { Colors, Spacing, FontSize, Radius } from "../../../src/styles/tokens";
-import { INSTALLATION_TYPE_OPTIONS, INSTALLATION_STATUS_OPTIONS } from "../../../src/constants";
-import type { Installation } from "../../../src/db/repositories/types";
-import { projectId as toProjectId } from "../../../src/types/branded";
+import { useInstallationsByProject } from "@/hooks";
+import { StatusBadge, EmptyState, SearchBar, FilterChips } from "@/components/common";
+import { Colors, Spacing, FontSize, Radius } from "@/styles/tokens";
+import { INSTALLATION_TYPE_OPTIONS, INSTALLATION_STATUS_OPTIONS } from "@/constants";
+import type { Installation } from "@/db/repositories/types";
+import { projectId as toProjectId } from "@/types/branded";
 
 export default function InstallationsListScreen() {
   const { projectId: rawProjectId } = useLocalSearchParams<{ projectId: string }>();

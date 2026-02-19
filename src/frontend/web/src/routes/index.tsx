@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { apiGet } from "@baudoku/shared-api";
 import type { Project } from "@baudoku/shared-types";
+import { PlusIcon } from "@/components/icons";
 
 export function DashboardPage() {
   const { data: projects } = useQuery({
@@ -133,10 +134,3 @@ function StatusBadge({ status, className = "" }: { status: string; className?: s
   );
 }
 
-function PlusIcon() {
-  return (
-    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-    </svg>
-  );
-}

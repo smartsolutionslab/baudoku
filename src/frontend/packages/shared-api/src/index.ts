@@ -151,6 +151,31 @@ export async function apiUpload<T>(
   return response.json() as Promise<T>;
 }
 
+export async function apiRawUpload(
+  path: string,
+  body: Blob | ArrayBuffer,
+  extraHeaders?: Record<string, string>
+): Promise<Response> {
+  const headers: Record<string, string> = {
+    ...extraHeaders,
+  };
+  if (authToken) headers["Authorization"] = `Bearer ${authToken}`;
+
+  const response = await fetch(`${baseUrl}${path}`, {
+    method: "POST",
+    headers,
+    body,
+  });
+
+  if (!response.ok) {
+    if (response.status === 401) handleUnauthorized();
+    const responseBody = await response.text().catch(() => "");
+    throw new ApiError(response.status, response.statusText, responseBody);
+  }
+
+  return response;
+}
+
 // ─── Typed API Functions ────────────────────────────────────────
 
 export async function pushBatch(

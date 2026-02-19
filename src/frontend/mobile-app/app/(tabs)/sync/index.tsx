@@ -7,14 +7,14 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useRouter } from "expo-router";
-import { useSyncStore } from "../../../src/store";
-import { useSyncStatus, useSyncManager } from "../../../src/hooks";
-import { UploadQueueCard } from "../../../src/components/sync";
-import { Button } from "../../../src/components/core";
-import { StatusBadge } from "../../../src/components/common";
-import { Colors, Spacing, FontSize, Radius } from "../../../src/styles/tokens";
-import { formatDateTime } from "../../../src/utils";
-import type { SyncOutboxEntry } from "../../../src/db/repositories/types";
+import { useSyncStore } from "@/store";
+import { useSyncStatus, useSyncManager } from "@/hooks";
+import { UploadQueueCard } from "@/components/sync";
+import { Button } from "@/components/core";
+import { StatusBadge } from "@/components/common";
+import { Colors, Spacing, FontSize, Radius } from "@/styles/tokens";
+import { formatDateTime } from "@/utils";
+import type { SyncOutboxEntry } from "@/db/repositories/types";
 
 function operationLabel(op: string): string {
   switch (op) {

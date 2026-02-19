@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useCallback } from "react";
 import { useAuthStore } from "../store";
 import { loadTokens, saveTokens, clearTokens, refreshAccessToken, parseUserFromToken } from "../auth";
-import { setAuthToken, onUnauthorized } from "../sync/apiClient";
+import { setAuthToken, setBaseUrl, onUnauthorized } from "@baudoku/shared-api";
+import { API_BASE_URL } from "../config/environment";
 
 function getTokenExpiresIn(token: string): number {
   try {
@@ -19,6 +20,10 @@ function getTokenExpiresIn(token: string): number {
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const refreshTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { setTokens, setUser, clearAuth } = useAuthStore();
+
+  useEffect(() => {
+    setBaseUrl(API_BASE_URL);
+  }, []);
 
   const handleLogout = useCallback(async () => {
     clearAuth();

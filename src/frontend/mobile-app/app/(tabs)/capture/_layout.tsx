@@ -1,5 +1,5 @@
 import { Stack } from "expo-router";
-import { ScreenErrorFallback } from "../../../src/components/common";
+import { ScreenErrorFallback } from "@/components/common";
 
 export function ErrorBoundary(props: { error: Error; retry: () => void }) {
   return <ScreenErrorFallback {...props} />;

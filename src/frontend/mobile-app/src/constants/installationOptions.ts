@@ -1,9 +1,8 @@
-export const INSTALLATION_STATUS_OPTIONS = [
-  { label: "Geplant", value: "planned" },
-  { label: "In Arbeit", value: "in_progress" },
-  { label: "Abgeschlossen", value: "completed" },
-  { label: "Geprüft", value: "inspected" },
-];
+import { INSTALLATION_STATUS_LABELS } from "@baudoku/shared-constants";
+
+export const INSTALLATION_STATUS_OPTIONS = Object.entries(
+  INSTALLATION_STATUS_LABELS
+).map(([value, label]) => ({ value, label }));
 
 export const INSTALLATION_TYPE_OPTIONS = [
   { value: "cable_tray", label: "Kabeltrasse" },

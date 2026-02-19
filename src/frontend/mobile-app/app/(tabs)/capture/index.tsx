@@ -5,11 +5,11 @@ import { FontAwesome } from "@expo/vector-icons";
 import {
   useProjects,
   useZonesByProject,
-} from "../../../src/hooks";
-import { ProjectCard } from "../../../src/components/projects";
-import { EmptyState } from "../../../src/components/common";
-import { Colors, Spacing, FontSize, Radius } from "../../../src/styles/tokens";
-import type { ProjectId, ZoneId } from "../../../src/types/branded";
+} from "@/hooks";
+import { ProjectCard } from "@/components/projects";
+import { EmptyState } from "@/components/common";
+import { Colors, Spacing, FontSize, Radius } from "@/styles/tokens";
+import type { ProjectId, ZoneId } from "@/types/branded";
 
 function ZonePicker({
   projectId,

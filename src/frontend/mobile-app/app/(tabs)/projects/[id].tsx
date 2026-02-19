@@ -6,12 +6,12 @@ import {
   useDeleteProject,
   useZoneTree,
   useConfirmDelete,
-} from "../../../src/hooks";
-import { ZoneTree } from "../../../src/components/projects";
-import { StatusBadge, EmptyState, FloatingActionButton, ActionBar } from "../../../src/components/common";
-import { Colors, Spacing, FontSize, Radius } from "../../../src/styles/tokens";
-import { formatDate } from "../../../src/utils";
-import { projectId } from "../../../src/types/branded";
+} from "@/hooks";
+import { ZoneTree } from "@/components/projects";
+import { StatusBadge, EmptyState, FloatingActionButton, ActionBar } from "@/components/common";
+import { Colors, Spacing, FontSize, Radius } from "@/styles/tokens";
+import { formatDate } from "@/utils";
+import { projectId } from "@/types/branded";
 
 export default function ProjectDetailScreen() {
   const { id: rawId } = useLocalSearchParams<{ id: string }>();
