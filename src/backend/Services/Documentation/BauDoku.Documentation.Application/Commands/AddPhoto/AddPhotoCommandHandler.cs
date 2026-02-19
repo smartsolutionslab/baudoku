@@ -2,7 +2,7 @@ using BauDoku.BuildingBlocks.Application.Commands;
 using BauDoku.BuildingBlocks.Application.Persistence;
 using BauDoku.Documentation.Application.Contracts;
 using BauDoku.Documentation.Application.Diagnostics;
-using BauDoku.Documentation.Domain.ValueObjects;
+using BauDoku.Documentation.Domain;
 
 namespace BauDoku.Documentation.Application.Commands.AddPhoto;
 
@@ -27,12 +27,14 @@ public sealed class AddPhotoCommandHandler(IInstallationRepository installations
         var description = Description.FromNullable(descriptionText);
 
         GpsPosition? position = null;
-        if (latitude.HasValue && longitude.HasValue
-            && horizontalAccuracy.HasValue && gpsSource is not null)
+        if (latitude.HasValue && longitude.HasValue && horizontalAccuracy.HasValue && gpsSource is not null)
         {
             position = GpsPosition.Create(
-                Latitude.From(latitude.Value), Longitude.From(longitude.Value), altitude,
-                HorizontalAccuracy.From(horizontalAccuracy.Value), GpsSource.From(gpsSource));
+                Latitude.From(latitude.Value),
+                Longitude.From(longitude.Value),
+                altitude,
+                HorizontalAccuracy.From(horizontalAccuracy.Value),
+                GpsSource.From(gpsSource));
         }
 
         installation.AddPhoto(

@@ -1,7 +1,7 @@
 using BauDoku.BuildingBlocks.Application.Queries;
 using BauDoku.Sync.Application.Contracts;
 using BauDoku.Sync.Application.Queries.Dtos;
-using BauDoku.Sync.Domain.ValueObjects;
+using BauDoku.Sync.Domain;
 
 namespace BauDoku.Sync.Application.Queries.GetConflicts;
 

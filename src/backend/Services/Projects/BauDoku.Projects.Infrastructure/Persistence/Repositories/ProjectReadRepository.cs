@@ -2,7 +2,7 @@ using System.Linq.Expressions;
 using BauDoku.BuildingBlocks.Application.Pagination;
 using BauDoku.Projects.Application.Contracts;
 using BauDoku.Projects.Application.Queries.Dtos;
-using BauDoku.Projects.Domain.Aggregates;
+using BauDoku.Projects.Domain;
 using Microsoft.EntityFrameworkCore;
 
 namespace BauDoku.Projects.Infrastructure.Persistence.Repositories;

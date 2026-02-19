@@ -2,7 +2,7 @@ using AwesomeAssertions;
 using BauDoku.Sync.Application.Contracts;
 using BauDoku.Sync.Application.Queries.Dtos;
 using BauDoku.Sync.Application.Queries.GetConflicts;
-using BauDoku.Sync.Domain.ValueObjects;
+using BauDoku.Sync.Domain;
 using NSubstitute;
 
 namespace BauDoku.Sync.UnitTests.Application.Queries;

@@ -2,8 +2,7 @@ using AwesomeAssertions;
 using BauDoku.BuildingBlocks.Application.Persistence;
 using BauDoku.Documentation.Application.Commands.CompleteChunkedUpload;
 using BauDoku.Documentation.Application.Contracts;
-using BauDoku.Documentation.Domain.Aggregates;
-using BauDoku.Documentation.Domain.ValueObjects;
+using BauDoku.Documentation.Domain;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 

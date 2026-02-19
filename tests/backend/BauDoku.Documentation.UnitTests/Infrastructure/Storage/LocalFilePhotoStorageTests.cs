@@ -1,5 +1,5 @@
 using AwesomeAssertions;
-using BauDoku.Documentation.Domain.ValueObjects;
+using BauDoku.Documentation.Domain;
 using BauDoku.Documentation.Infrastructure.Storage;
 using Microsoft.Extensions.Options;
 

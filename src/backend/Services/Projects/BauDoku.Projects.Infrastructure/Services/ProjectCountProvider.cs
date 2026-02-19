@@ -1,5 +1,5 @@
 using BauDoku.Projects.Application.Contracts;
-using BauDoku.Projects.Domain.ValueObjects;
+using BauDoku.Projects.Domain;
 using BauDoku.Projects.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 

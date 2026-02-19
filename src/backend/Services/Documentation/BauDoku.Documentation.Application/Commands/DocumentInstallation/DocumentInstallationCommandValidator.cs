@@ -1,4 +1,4 @@
-using BauDoku.Documentation.Domain.ValueObjects;
+using BauDoku.Documentation.Domain;
 using FluentValidation;
 
 namespace BauDoku.Documentation.Application.Commands.DocumentInstallation;
@@ -18,11 +18,11 @@ public sealed class DocumentInstallationCommandValidator : AbstractValidator<Doc
             .When(x => x.Description is not null);
         RuleFor(x => x.CableType).MaximumLength(CableType.MaxLength)
             .When(x => x.CableType is not null);
-        RuleFor(x => x.Manufacturer).MaximumLength(Domain.ValueObjects.Manufacturer.MaxLength)
+        RuleFor(x => x.Manufacturer).MaximumLength(Manufacturer.MaxLength)
             .When(x => x.Manufacturer is not null);
-        RuleFor(x => x.ModelName).MaximumLength(Domain.ValueObjects.ModelName.MaxLength)
+        RuleFor(x => x.ModelName).MaximumLength(ModelName.MaxLength)
             .When(x => x.ModelName is not null);
-        RuleFor(x => x.SerialNumber).MaximumLength(Domain.ValueObjects.SerialNumber.MaxLength)
+        RuleFor(x => x.SerialNumber).MaximumLength(SerialNumber.MaxLength)
             .When(x => x.SerialNumber is not null);
         RuleFor(x => x.CrossSection).GreaterThan(0)
             .When(x => x.CrossSection is not null);

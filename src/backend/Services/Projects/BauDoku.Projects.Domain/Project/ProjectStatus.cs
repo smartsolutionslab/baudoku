@@ -1,7 +1,7 @@
 using BauDoku.BuildingBlocks.Domain;
 using BauDoku.BuildingBlocks.Domain.Guards;
 
-namespace BauDoku.Projects.Domain.ValueObjects;
+namespace BauDoku.Projects.Domain;
 
 public sealed record ProjectStatus : IValueObject
 {

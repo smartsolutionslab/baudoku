@@ -1,10 +1,6 @@
 using BauDoku.BuildingBlocks.Domain;
-using BauDoku.Sync.Domain.Entities;
-using BauDoku.Sync.Domain.Events;
-using BauDoku.Sync.Domain.Rules;
-using BauDoku.Sync.Domain.ValueObjects;
 
-namespace BauDoku.Sync.Domain.Aggregates;
+namespace BauDoku.Sync.Domain;
 
 public sealed class SyncBatch : AggregateRoot<SyncBatchIdentifier>
 {

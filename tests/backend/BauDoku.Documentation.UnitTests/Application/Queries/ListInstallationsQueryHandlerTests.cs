@@ -3,7 +3,7 @@ using BauDoku.BuildingBlocks.Application.Pagination;
 using BauDoku.Documentation.Application.Contracts;
 using BauDoku.Documentation.Application.Queries.Dtos;
 using BauDoku.Documentation.Application.Queries.ListInstallations;
-using BauDoku.Documentation.Domain.ValueObjects;
+using BauDoku.Documentation.Domain;
 using NSubstitute;
 
 namespace BauDoku.Documentation.UnitTests.Application.Queries;

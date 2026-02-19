@@ -1,6 +1,5 @@
 using AwesomeAssertions;
-using BauDoku.Projects.Domain.Aggregates;
-using BauDoku.Projects.Domain.ValueObjects;
+using BauDoku.Projects.Domain;
 using BauDoku.Projects.IntegrationTests.Fixtures;
 using Microsoft.EntityFrameworkCore;
 

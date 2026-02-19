@@ -1,5 +1,4 @@
-using BauDoku.Sync.Domain.Aggregates;
-using BauDoku.Sync.Domain.ValueObjects;
+using BauDoku.Sync.Domain;
 
 namespace BauDoku.Sync.UnitTests.Builders;
 

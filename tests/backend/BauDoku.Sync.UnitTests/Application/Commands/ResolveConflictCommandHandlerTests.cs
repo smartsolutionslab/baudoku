@@ -2,8 +2,7 @@ using AwesomeAssertions;
 using BauDoku.BuildingBlocks.Application.Persistence;
 using BauDoku.Sync.Application.Commands.ResolveConflict;
 using BauDoku.Sync.Application.Contracts;
-using BauDoku.Sync.Domain.Aggregates;
-using BauDoku.Sync.Domain.ValueObjects;
+using BauDoku.Sync.Domain;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 

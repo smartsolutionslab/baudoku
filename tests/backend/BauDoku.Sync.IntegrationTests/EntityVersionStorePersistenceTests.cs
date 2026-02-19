@@ -1,5 +1,5 @@
 using AwesomeAssertions;
-using BauDoku.Sync.Domain.ValueObjects;
+using BauDoku.Sync.Domain;
 using BauDoku.Sync.Infrastructure.Persistence.Repositories;
 using BauDoku.Sync.IntegrationTests.Fixtures;
 

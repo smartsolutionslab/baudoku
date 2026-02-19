@@ -1,7 +1,6 @@
 using BauDoku.BuildingBlocks.Domain;
-using BauDoku.Sync.Domain.ValueObjects;
 
-namespace BauDoku.Sync.Domain.Rules;
+namespace BauDoku.Sync.Domain;
 
 public sealed class BatchMustNotBeAlreadyProcessed(BatchStatus currentStatus) : IBusinessRule
 {

@@ -1,5 +1,5 @@
 using BauDoku.Sync.Application.Commands.ResolveConflict;
-using BauDoku.Sync.Domain.ValueObjects;
+using BauDoku.Sync.Domain;
 using FluentValidation.TestHelper;
 
 namespace BauDoku.Sync.UnitTests.Application.Validators;

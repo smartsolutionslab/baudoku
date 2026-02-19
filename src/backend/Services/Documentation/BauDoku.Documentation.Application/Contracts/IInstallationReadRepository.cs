@@ -1,6 +1,6 @@
 using BauDoku.BuildingBlocks.Application.Pagination;
 using BauDoku.Documentation.Application.Queries.Dtos;
-using BauDoku.Documentation.Domain.ValueObjects;
+using BauDoku.Documentation.Domain;
 
 namespace BauDoku.Documentation.Application.Contracts;
 

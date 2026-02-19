@@ -1,6 +1,6 @@
 using BauDoku.BuildingBlocks.Infrastructure.Storage;
 using BauDoku.Documentation.Application.Contracts;
-using BauDoku.Documentation.Domain.ValueObjects;
+using BauDoku.Documentation.Domain;
 using Microsoft.Extensions.Options;
 
 namespace BauDoku.Documentation.Infrastructure.Storage;

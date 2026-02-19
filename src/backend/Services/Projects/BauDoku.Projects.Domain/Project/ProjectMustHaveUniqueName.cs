@@ -1,6 +1,6 @@
 using BauDoku.BuildingBlocks.Domain;
 
-namespace BauDoku.Projects.Domain.Rules;
+namespace BauDoku.Projects.Domain;
 
 public sealed class ProjectMustHaveUniqueName(bool nameAlreadyExists) : IBusinessRule
 {

@@ -1,10 +1,6 @@
 using BauDoku.BuildingBlocks.Domain;
-using BauDoku.Documentation.Domain.Entities;
-using BauDoku.Documentation.Domain.Events;
-using BauDoku.Documentation.Domain.Rules;
-using BauDoku.Documentation.Domain.ValueObjects;
 
-namespace BauDoku.Documentation.Domain.Aggregates;
+namespace BauDoku.Documentation.Domain;
 
 public sealed class Installation : AggregateRoot<InstallationIdentifier>
 {

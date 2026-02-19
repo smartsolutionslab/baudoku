@@ -1,4 +1,4 @@
-using BauDoku.Sync.Domain.ValueObjects;
+using BauDoku.Sync.Domain;
 using FluentValidation;
 
 namespace BauDoku.Sync.Application.Commands.ResolveConflict;

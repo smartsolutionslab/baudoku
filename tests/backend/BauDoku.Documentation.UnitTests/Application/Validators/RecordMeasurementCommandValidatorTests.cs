@@ -1,5 +1,5 @@
 using BauDoku.Documentation.Application.Commands.RecordMeasurement;
-using BauDoku.Documentation.Domain.ValueObjects;
+using BauDoku.Documentation.Domain;
 using FluentValidation.TestHelper;
 
 namespace BauDoku.Documentation.UnitTests.Application.Validators;

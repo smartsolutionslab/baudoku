@@ -1,6 +1,5 @@
 using BauDoku.Projects.Application.Queries.Dtos;
-using BauDoku.Projects.Domain.Aggregates;
-using BauDoku.Projects.Domain.Entities;
+using BauDoku.Projects.Domain;
 
 namespace BauDoku.Projects.Application.Mapping;
 

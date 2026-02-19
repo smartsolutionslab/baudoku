@@ -1,5 +1,4 @@
-using BauDoku.Documentation.Domain.Aggregates;
-using BauDoku.Documentation.Domain.ValueObjects;
+using BauDoku.Documentation.Domain;
 
 namespace BauDoku.Documentation.UnitTests.Builders;
 

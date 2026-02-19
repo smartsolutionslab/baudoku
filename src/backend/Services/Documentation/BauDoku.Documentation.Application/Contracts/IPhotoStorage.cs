@@ -1,4 +1,4 @@
-using BauDoku.Documentation.Domain.ValueObjects;
+using BauDoku.Documentation.Domain;
 
 namespace BauDoku.Documentation.Application.Contracts;
 

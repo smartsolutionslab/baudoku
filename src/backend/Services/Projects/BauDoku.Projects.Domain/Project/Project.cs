@@ -1,10 +1,6 @@
 using BauDoku.BuildingBlocks.Domain;
-using BauDoku.Projects.Domain.Entities;
-using BauDoku.Projects.Domain.Events;
-using BauDoku.Projects.Domain.Rules;
-using BauDoku.Projects.Domain.ValueObjects;
 
-namespace BauDoku.Projects.Domain.Aggregates;
+namespace BauDoku.Projects.Domain;
 
 public sealed class Project : AggregateRoot<ProjectIdentifier>
 {

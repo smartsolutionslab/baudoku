@@ -1,6 +1,5 @@
 using AwesomeAssertions;
-using BauDoku.Documentation.Domain.Rules;
-using BauDoku.Documentation.Domain.ValueObjects;
+using BauDoku.Documentation.Domain;
 
 namespace BauDoku.Documentation.UnitTests.Domain.Rules;
 
