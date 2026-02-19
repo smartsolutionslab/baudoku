@@ -101,7 +101,7 @@ public static class Extensions
             configuration.WriteTo.Console(new Serilog.Formatting.Compact.CompactJsonFormatter());
         }
 
-        var otlpEndpoint = builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"];
+        var otlpEndpoint = builder.Configuration.GetOtlpExporterEndpoint();
 
         if (!string.IsNullOrWhiteSpace(otlpEndpoint))
         {
@@ -156,7 +156,7 @@ public static class Extensions
 
     private static void AddOpenTelemetryExporters(IHostApplicationBuilder builder)
     {
-        var useOtlpExporter = !string.IsNullOrWhiteSpace(builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"]);
+        var useOtlpExporter = !string.IsNullOrWhiteSpace(builder.Configuration.GetOtlpExporterEndpoint());
 
         if (useOtlpExporter)
         {
@@ -187,6 +187,9 @@ public static class Extensions
 
         return builder;
     }
+
+    private static string? GetOtlpExporterEndpoint(this IConfiguration configuration)
+        => configuration["OTEL_EXPORTER_OTLP_ENDPOINT"];
 
     private static Task WriteHealthCheckResponse(HttpContext context, HealthReport report)
     {
