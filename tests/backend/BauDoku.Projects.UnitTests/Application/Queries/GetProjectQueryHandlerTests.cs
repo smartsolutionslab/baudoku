@@ -25,11 +25,15 @@ public sealed class GetProjectQueryHandlerTests
         var project = Project.Create(
             ProjectIdentifier.New(),
             ProjectName.From("Testprojekt"),
-            Address.Create(Street.From("Musterstraße 1"), City.From("Berlin"), ZipCode.From("10115")),
-            ClientInfo.Create("Max Mustermann", "max@example.com", "+49 30 12345"));
+            Address.Create(
+                Street.From("Musterstraße 1"),
+                City.From("Berlin"), ZipCode.From("10115")),
+            ClientInfo.Create(
+                ClientName.From("Max Mustermann"),
+                EmailAddress.From("max@example.com"),
+                PhoneNumber.From("+49 30 12345")));
 
-        projects.GetByIdReadOnlyAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>())
-            .Returns(project);
+        projects.GetByIdReadOnlyAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>()).Returns(project);
 
         var result = await handler.Handle(new GetProjectQuery(project.Id.Value));
 
@@ -58,10 +62,15 @@ public sealed class GetProjectQueryHandlerTests
         var project = Project.Create(
             ProjectIdentifier.New(),
             ProjectName.From("Testprojekt"),
-            Address.Create(Street.From("Musterstraße 1"), City.From("Berlin"), ZipCode.From("10115")),
-            ClientInfo.Create("Max Mustermann"));
+            Address.Create(
+                Street.From("Musterstraße 1"),
+                City.From("Berlin"),
+                ZipCode.From("10115")),
+            ClientInfo.Create(ClientName.From("Max Mustermann")));
 
-        project.AddZone(ZoneIdentifier.New(), ZoneName.From("Erdgeschoss"), ZoneType.Floor);
+        project.AddZone(
+            ZoneIdentifier.New(),
+            ZoneName.From("Erdgeschoss"), ZoneType.Floor);
 
         projects.GetByIdReadOnlyAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(project);

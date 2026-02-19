@@ -8,7 +8,7 @@ using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("ProjectsDb") ?? throw new InvalidOperationException("Verbindungszeichenfolge 'ProjectsDb' nicht gefunden.");
+var connectionString = builder.Configuration.GetRequiredConnectionString(ConnectionStringNames.ProjectsDb);
 
 builder.AddServiceDefaults(health =>
 {

@@ -14,7 +14,7 @@ public sealed class ProjectReadRepository(ProjectsDbContext context) : IProjectR
         p.Name.Value,
         p.Status.Value,
         p.Address.City.Value,
-        p.Client.Name,
+        p.Client.Name.Value,
         p.CreatedAt,
         p.Zones.Count);
 
@@ -28,7 +28,7 @@ public sealed class ProjectReadRepository(ProjectsDbContext context) : IProjectR
         {
             query = query.Where(p => EF.Functions.ILike(p.Name.Value, $"%{search}%")
                 || EF.Functions.ILike(p.Address.City.Value, $"%{search}%")
-                || EF.Functions.ILike(p.Client.Name, $"%{search}%"));
+                || EF.Functions.ILike(p.Client.Name.Value, $"%{search}%"));
         }
 
         var totalCount = await query.CountAsync(cancellationToken);

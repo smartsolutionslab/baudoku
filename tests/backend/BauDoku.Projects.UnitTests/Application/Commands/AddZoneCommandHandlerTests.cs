@@ -27,7 +27,7 @@ public sealed class AddZoneCommandHandlerTests
             ProjectIdentifier.New(),
             ProjectName.From("Testprojekt"),
             Address.Create(Street.From("Musterstraße 1"), City.From("Berlin"), ZipCode.From("10115")),
-            ClientInfo.Create("Max Mustermann"));
+            ClientInfo.Create(ClientName.From("Max Mustermann")));
 
     [Fact]
     public async Task Handle_WithValidCommand_ShouldAddZoneAndSave()

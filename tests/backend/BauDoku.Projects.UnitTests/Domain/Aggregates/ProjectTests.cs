@@ -17,7 +17,7 @@ public sealed class ProjectTests
         var id = ProjectIdentifier.New();
         var name = ProjectName.From("Neues Projekt");
         var address = Address.Create(Street.From("Hauptstraße 5"), City.From("München"), ZipCode.From("80331"));
-        var client = ClientInfo.Create("Firma GmbH");
+        var client = ClientInfo.Create(ClientName.From("Firma GmbH"));
 
         var project = Project.Create(id, name, address, client);
 
