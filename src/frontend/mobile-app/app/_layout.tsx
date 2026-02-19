@@ -24,7 +24,6 @@ export const unstable_settings = {
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  console.log("[BauDoku] RootLayout rendering");
   const [loaded, error] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
     ...FontAwesome.font,
@@ -103,7 +102,9 @@ function RootLayoutNav() {
           <OfflineBanner />
           <ToastContainer />
           <Stack>
+            <Stack.Screen name="index" options={{ headerShown: false }} />
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="+not-found" options={{ headerShown: false }} />
           </Stack>
         </SyncProvider>
       </AuthProvider>
