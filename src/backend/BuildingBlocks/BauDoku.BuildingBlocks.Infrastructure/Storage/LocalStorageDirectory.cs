@@ -16,9 +16,7 @@ public sealed class LocalStorageDirectory
         var combined = Path.Combine(BasePath, relativePath);
         var fullPath = Path.GetFullPath(combined);
 
-        if (!fullPath.StartsWith(Path.GetFullPath(BasePath), StringComparison.OrdinalIgnoreCase)) throw new UnauthorizedAccessException($"Zugriff verweigert: {relativePath}");
-
-        return fullPath;
+        return !fullPath.StartsWith(Path.GetFullPath(BasePath), StringComparison.OrdinalIgnoreCase) ? throw new UnauthorizedAccessException($"Zugriff verweigert: {relativePath}") : fullPath;
     }
 
     public string CreateSubdirectory(string relativePath)
@@ -31,20 +29,34 @@ public sealed class LocalStorageDirectory
     public bool DirectoryExists(string relativePath) => Directory.Exists(Resolve(relativePath));
 
     public void DeleteDirectory(string relativePath)
-        => Directory.Delete(Resolve(relativePath), recursive: true);
+    {
+        var fullPath = Resolve(relativePath);
+        if (Directory.Exists(fullPath))
+        {
+            Directory.Delete(fullPath, recursive: true);
+        }
+    }
 
     public string[] GetSubdirectories() => Directory.Exists(BasePath) ? Directory.GetDirectories(BasePath) : [];
 
-    public string[] GetFiles(string relativePath, string pattern)
-        => Directory.GetFiles(Resolve(relativePath), pattern);
+    public string[] GetFiles(string relativePath, string pattern) => Directory.GetFiles(Resolve(relativePath), pattern);
 
     public bool FileExists(string relativePath) => File.Exists(Resolve(relativePath));
 
-    public void DeleteFile(string relativePath) => File.Delete(Resolve(relativePath));
+    public void DeleteFile(string relativePath)
+    {
+        var fullPath = Resolve(relativePath);
+        if (File.Exists(fullPath))
+        {
+            File.Delete(fullPath);
+        }
+    }
 
-    public string ReadAllText(string relativePath) => File.ReadAllText(Resolve(relativePath));
+    public async Task<string> ReadAllTextAsync(string relativePath, CancellationToken ct = default)
+        => await File.ReadAllTextAsync(Resolve(relativePath), ct);
 
-    public void WriteAllText(string relativePath, string content) => File.WriteAllText(Resolve(relativePath), content);
+    public async Task WriteAllTextAsync(string relativePath, string content, CancellationToken ct = default)
+        => await File.WriteAllTextAsync(Resolve(relativePath), content, ct);
 
     public async Task WriteStreamAsync(string relativePath, Stream data, CancellationToken ct = default)
     {

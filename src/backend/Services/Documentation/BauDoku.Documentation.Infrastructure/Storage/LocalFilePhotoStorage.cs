@@ -5,14 +5,9 @@ using Microsoft.Extensions.Options;
 
 namespace BauDoku.Documentation.Infrastructure.Storage;
 
-public sealed class LocalFilePhotoStorage : IPhotoStorage
+public sealed class LocalFilePhotoStorage(IOptions<PhotoStorageOptions> options) : IPhotoStorage
 {
-    private readonly LocalStorageDirectory storage;
-
-    public LocalFilePhotoStorage(IOptions<PhotoStorageOptions> options)
-    {
-        storage = new LocalStorageDirectory(options.Value.LocalPath);
-    }
+    private readonly LocalStorageDirectory storage = new(options.Value.LocalPath);
 
     public async Task<BlobUrl> UploadAsync(Stream stream, FileName fileName, ContentType contentType, CancellationToken ct = default)
     {
@@ -23,8 +18,7 @@ public sealed class LocalFilePhotoStorage : IPhotoStorage
 
     public Task<Stream> DownloadAsync(BlobUrl blobUrl, CancellationToken ct = default)
     {
-        if (!storage.FileExists(blobUrl.Value))
-            throw new FileNotFoundException($"Foto nicht gefunden: {blobUrl.Value}");
+        if (!storage.FileExists(blobUrl.Value)) throw new FileNotFoundException($"Foto nicht gefunden: {blobUrl.Value}");
 
         Stream stream = storage.OpenRead(blobUrl.Value);
         return Task.FromResult(stream);
@@ -32,9 +26,7 @@ public sealed class LocalFilePhotoStorage : IPhotoStorage
 
     public Task DeleteAsync(BlobUrl blobUrl, CancellationToken ct = default)
     {
-        if (storage.FileExists(blobUrl.Value))
-            storage.DeleteFile(blobUrl.Value);
-
+        storage.DeleteFile(blobUrl.Value);
         return Task.CompletedTask;
     }
 }
