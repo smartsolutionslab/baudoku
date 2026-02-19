@@ -17,7 +17,7 @@ import type { PhotoId } from "../../types/branded";
 import { StatusBadge } from "../common";
 import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
 import { formatDateTime } from "../../utils";
-import { photoTypeLabels } from "../../constants";
+import { PHOTO_TYPE_LABELS } from "../../constants";
 
 type PhotoViewerProps = {
   photo: Photo | null;
@@ -80,7 +80,7 @@ export function PhotoViewer({
             <View style={styles.footerTop}>
               <StatusBadge
                 status={photo.type}
-                label={photoTypeLabels[photo.type] ?? photo.type}
+                label={PHOTO_TYPE_LABELS[photo.type] ?? photo.type}
               />
               <Text style={styles.date}>
                 {formatDateTime(photo.takenAt ? new Date(photo.takenAt) : null)}

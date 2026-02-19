@@ -1,72 +1,20 @@
-import { apiGet, apiPost, apiUpload, apiRawUpload } from "./apiClient";
+import { apiPost, apiUpload, apiRawUpload } from "@baudoku/shared-api";
+import type { PhotoUploadResult } from "@baudoku/shared-types";
 
-export type SyncDeltaDto = {
-  entityType: string;
-  entityId: string;
-  operation: string;
-  baseVersion: number;
-  payload: string;
-  timestamp: string;
-};
+// Re-export types from shared-types
+export type {
+  SyncDeltaDto,
+  ConflictDto,
+  ProcessSyncBatchResult,
+  ServerDeltaDto,
+  ChangeSetResult,
+  PhotoUploadResult,
+} from "@baudoku/shared-types";
 
-export type ConflictDto = {
-  id: string;
-  entityType: string;
-  entityId: string;
-  clientPayload: string;
-  serverPayload: string;
-  clientVersion: number;
-  serverVersion: number;
-  status: string;
-  detectedAt: string;
-};
+// Re-export shared API functions
+export { pushBatch, pullChanges, getConflicts, resolveConflict } from "@baudoku/shared-api";
 
-export type ProcessSyncBatchResult = {
-  batchId: string;
-  appliedCount: number;
-  conflictCount: number;
-  conflicts: ConflictDto[];
-};
-
-export type ServerDeltaDto = {
-  entityType: string;
-  entityId: string;
-  operation: string;
-  version: number;
-  payload: string;
-  timestamp: string;
-};
-
-export type ChangeSetResult = {
-  changes: ServerDeltaDto[];
-  serverTimestamp: string;
-  hasMore: boolean;
-};
-
-export async function pushBatch(deviceId: string, deltas: SyncDeltaDto[]): Promise<ProcessSyncBatchResult> {
-  return apiPost<ProcessSyncBatchResult>("/api/sync/batch", { deviceId, deltas });
-}
-
-export async function pullChanges(deviceId: string, since?: string | null, limit?: number): Promise<ChangeSetResult> {
-  const params = new URLSearchParams({ deviceId });
-  if (since) params.set("since", since);
-  if (limit) params.set("limit", limit.toString());
-
-  return apiGet<ChangeSetResult>(`/api/sync/changes?${params}`);
-}
-
-export async function getConflicts(deviceId?: string, status?: string): Promise<ConflictDto[]> {
-  const params = new URLSearchParams();
-  if (deviceId) params.set("deviceId", deviceId);
-  if (status) params.set("status", status);
-
-  const qs = params.toString();
-  return apiGet<ConflictDto[]>(`/api/sync/conflicts${qs ? `?${qs}` : ""}`);
-}
-
-export type PhotoUploadResult = {
-  id: string;
-};
+// ─── Mobile-only: Expo URI-based photo upload ──────────────────
 
 export async function uploadPhoto(installationId: string, fileUri: string, fileName: string, mimeType: string, caption?: string): Promise<PhotoUploadResult> {
   const formData = new FormData();
@@ -75,6 +23,8 @@ export async function uploadPhoto(installationId: string, fileUri: string, fileN
 
   return apiUpload<PhotoUploadResult>(`/api/documentation/installations/${installationId}/photos`, formData);
 }
+
+// ─── Mobile-only: Chunked upload ───────────────────────────────
 
 export type ChunkedUploadInitResult = {
   sessionId: string;
@@ -90,8 +40,4 @@ export async function uploadChunk(sessionId: string, chunkIndex: number, chunkBl
 
 export async function completeChunkedUpload(sessionId: string): Promise<PhotoUploadResult> {
   return apiPost<PhotoUploadResult>(`/api/documentation/uploads/${sessionId}/complete`, {});
-}
-
-export async function resolveConflict(conflictId: string, strategy: string, mergedPayload?: string): Promise<void> {
-  await apiPost(`/api/sync/conflicts/${conflictId}/resolve`, { strategy,  mergedPayload: mergedPayload ?? null });
 }

@@ -1,4 +1,5 @@
 export { useConfirmDelete } from "./useConfirmDelete";
+export { useFormValidation } from "./useFormValidation";
 export { useConflicts, useResolveConflict } from "./useConflicts";
 export { useDashboardStats, type DashboardStats } from "./useDashboardStats";
 export { useGpsCapture, type GpsPosition, type GpsSource, type GpsCorrService, type GpsRtkStatus, type UseGpsCaptureReturn } from "./useGpsCapture";
