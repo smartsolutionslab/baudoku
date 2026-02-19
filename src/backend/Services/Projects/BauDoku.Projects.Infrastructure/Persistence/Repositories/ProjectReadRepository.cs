@@ -3,6 +3,7 @@ using BauDoku.BuildingBlocks.Application.Pagination;
 using BauDoku.Projects.Application.Contracts;
 using BauDoku.Projects.Application.Queries.Dtos;
 using BauDoku.BuildingBlocks.Domain;
+using BauDoku.BuildingBlocks.Infrastructure.Pagination;
 using BauDoku.Projects.Domain;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,8 +22,6 @@ public sealed class ProjectReadRepository(ProjectsDbContext context) : IProjectR
 
     public async Task<PagedResult<ProjectListItemDto>> ListAsync(string? search, PaginationParams pagination, CancellationToken cancellationToken = default)
     {
-        var (page, pageSize) = pagination;
-
         var query = context.Projects.AsNoTracking();
 
         if (search.HasValue())
@@ -32,15 +31,9 @@ public sealed class ProjectReadRepository(ProjectsDbContext context) : IProjectR
                 || EF.Functions.ILike(p.Client.Name.Value, $"%{search}%"));
         }
 
-        var totalCount = await query.CountAsync(cancellationToken);
-
-        var items = await query
+        return await query
             .OrderByDescending(p => p.CreatedAt)
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
             .Select(toProjectListItem)
-            .ToListAsync(cancellationToken);
-
-        return new PagedResult<ProjectListItemDto>(items, totalCount, page, pageSize);
+            .ToPagedResultAsync(pagination, cancellationToken);
     }
 }
