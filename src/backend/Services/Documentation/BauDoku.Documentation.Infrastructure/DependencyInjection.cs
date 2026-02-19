@@ -1,5 +1,6 @@
 using BauDoku.BuildingBlocks.Application.Persistence;
 using BauDoku.Documentation.Application.Contracts;
+using BauDoku.Documentation.Domain;
 using BauDoku.Documentation.Infrastructure.Persistence;
 using BauDoku.Documentation.Infrastructure.Persistence.Repositories;
 using BauDoku.Documentation.Infrastructure.Storage;

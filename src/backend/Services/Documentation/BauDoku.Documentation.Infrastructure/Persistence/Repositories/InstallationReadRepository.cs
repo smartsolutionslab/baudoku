@@ -2,8 +2,9 @@ using System.Linq.Expressions;
 using BauDoku.BuildingBlocks.Application.Pagination;
 using BauDoku.Documentation.Application.Contracts;
 using BauDoku.Documentation.Application.Queries.Dtos;
-using BauDoku.Documentation.Domain.Aggregates;
-using BauDoku.Documentation.Domain.ValueObjects;
+using BauDoku.BuildingBlocks.Domain;
+using BauDoku.BuildingBlocks.Infrastructure.Pagination;
+using BauDoku.Documentation.Domain;
 using Microsoft.EntityFrameworkCore;
 
 namespace BauDoku.Documentation.Infrastructure.Persistence.Repositories;
@@ -26,7 +27,6 @@ public sealed class InstallationReadRepository(DocumentationDbContext context) :
     public async Task<PagedResult<InstallationListItemDto>> ListAsync(InstallationListFilter filter, PaginationParams pagination, CancellationToken cancellationToken = default)
     {
         var (projectId, zoneId, type, status, search) = filter;
-        var (page, pageSize) = pagination;
 
         var query = context.Installations.AsNoTracking();
 
@@ -42,20 +42,13 @@ public sealed class InstallationReadRepository(DocumentationDbContext context) :
         if (status is not null)
             query = query.Where(i => i.Status.Value == status.Value);
 
-        if (!string.IsNullOrWhiteSpace(search))
-            query = query.Where(i =>
-                i.Description != null && EF.Functions.ILike(i.Description.Value, $"%{search}%"));
+        if (search.HasValue())
+            query = query.Where(i => i.Description != null && EF.Functions.ILike(i.Description.Value, $"%{search}%"));
 
-        var totalCount = await query.CountAsync(cancellationToken);
-
-        var items = await query
+        return await query
             .OrderByDescending(i => i.CreatedAt)
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
             .Select(toInstallationListItem)
-            .ToListAsync(cancellationToken);
-
-        return new PagedResult<InstallationListItemDto>(items, totalCount, page, pageSize);
+            .ToPagedResultAsync(pagination, cancellationToken);
     }
 
     public async Task<PagedResult<NearbyInstallationDto>> SearchInRadiusAsync(
@@ -65,7 +58,6 @@ public sealed class InstallationReadRepository(DocumentationDbContext context) :
         CancellationToken cancellationToken = default)
     {
         var (latitude, longitude, radiusMeters) = radius;
-        var (page, pageSize) = pagination;
 
         var baseQuery = context.Database.SqlQuery<NearbyInstallationDto>(
             $"""
@@ -95,15 +87,9 @@ public sealed class InstallationReadRepository(DocumentationDbContext context) :
         if (projectId is not null)
             baseQuery = baseQuery.Where(x => x.ProjectId == projectId.Value);
 
-        var totalCount = await baseQuery.CountAsync(cancellationToken);
-
-        var items = await baseQuery
+        return await baseQuery
             .OrderBy(x => x.DistanceMeters)
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
-            .ToListAsync(cancellationToken);
-
-        return new PagedResult<NearbyInstallationDto>(items, totalCount, page, pageSize);
+            .ToPagedResultAsync(pagination, cancellationToken);
     }
 
     public async Task<PagedResult<InstallationListItemDto>> SearchInBoundingBoxAsync(
@@ -113,7 +99,6 @@ public sealed class InstallationReadRepository(DocumentationDbContext context) :
         CancellationToken cancellationToken = default)
     {
         var (minLatitude, minLongitude, maxLatitude, maxLongitude) = boundingBox;
-        var (page, pageSize) = pagination;
 
         var query = context.Installations
             .FromSqlInterpolated(
@@ -128,15 +113,9 @@ public sealed class InstallationReadRepository(DocumentationDbContext context) :
         if (projectId is not null)
             query = query.Where(i => i.ProjectId.Value == projectId.Value);
 
-        var totalCount = await query.CountAsync(cancellationToken);
-
-        var items = await query
+        return await query
             .OrderByDescending(i => i.CreatedAt)
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
             .Select(toInstallationListItem)
-            .ToListAsync(cancellationToken);
-
-        return new PagedResult<InstallationListItemDto>(items, totalCount, page, pageSize);
+            .ToPagedResultAsync(pagination, cancellationToken);
     }
 }

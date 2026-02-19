@@ -1,8 +1,6 @@
 using BauDoku.BuildingBlocks.Domain;
-using BauDoku.Sync.Domain.Rules;
-using BauDoku.Sync.Domain.ValueObjects;
 
-namespace BauDoku.Sync.Domain.Entities;
+namespace BauDoku.Sync.Domain;
 
 public sealed class ConflictRecord : Entity<ConflictRecordIdentifier>
 {

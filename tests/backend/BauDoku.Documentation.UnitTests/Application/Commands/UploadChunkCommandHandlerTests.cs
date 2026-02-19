@@ -1,7 +1,7 @@
 using AwesomeAssertions;
 using BauDoku.Documentation.Application.Commands.UploadChunk;
 using BauDoku.Documentation.Application.Contracts;
-using BauDoku.Documentation.Domain.ValueObjects;
+using BauDoku.Documentation.Domain;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 

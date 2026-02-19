@@ -1,8 +1,6 @@
 using AwesomeAssertions;
 using BauDoku.BuildingBlocks.Domain;
-using BauDoku.Documentation.Domain.Aggregates;
-using BauDoku.Documentation.Domain.Events;
-using BauDoku.Documentation.Domain.ValueObjects;
+using BauDoku.Documentation.Domain;
 using BauDoku.Documentation.UnitTests.Builders;
 
 namespace BauDoku.Documentation.UnitTests.Domain.Aggregates;

@@ -1,7 +1,7 @@
 using BauDoku.BuildingBlocks.Domain;
 using BauDoku.BuildingBlocks.Domain.Guards;
 
-namespace BauDoku.Sync.Domain.ValueObjects;
+namespace BauDoku.Sync.Domain;
 
 public sealed record ConflictStatus : IValueObject
 {

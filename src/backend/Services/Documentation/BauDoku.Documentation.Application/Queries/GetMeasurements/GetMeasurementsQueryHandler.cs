@@ -1,8 +1,7 @@
 using BauDoku.BuildingBlocks.Application.Queries;
-using BauDoku.Documentation.Application.Contracts;
 using BauDoku.Documentation.Application.Mapping;
 using BauDoku.Documentation.Application.Queries.Dtos;
-using BauDoku.Documentation.Domain.ValueObjects;
+using BauDoku.Documentation.Domain;
 
 namespace BauDoku.Documentation.Application.Queries.GetMeasurements;
 

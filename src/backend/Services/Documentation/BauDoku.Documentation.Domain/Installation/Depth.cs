@@ -1,7 +1,7 @@
 using BauDoku.BuildingBlocks.Domain;
 using BauDoku.BuildingBlocks.Domain.Guards;
 
-namespace BauDoku.Documentation.Domain.ValueObjects;
+namespace BauDoku.Documentation.Domain;
 
 public sealed record Depth : IValueObject
 {

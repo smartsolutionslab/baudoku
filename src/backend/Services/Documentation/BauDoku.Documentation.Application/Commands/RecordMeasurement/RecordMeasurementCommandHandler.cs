@@ -1,8 +1,7 @@
 using BauDoku.BuildingBlocks.Application.Commands;
 using BauDoku.BuildingBlocks.Application.Persistence;
-using BauDoku.Documentation.Application.Contracts;
 using BauDoku.Documentation.Application.Diagnostics;
-using BauDoku.Documentation.Domain.ValueObjects;
+using BauDoku.Documentation.Domain;
 
 namespace BauDoku.Documentation.Application.Commands.RecordMeasurement;
 

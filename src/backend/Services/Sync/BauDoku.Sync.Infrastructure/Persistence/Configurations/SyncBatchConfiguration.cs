@@ -1,5 +1,4 @@
-using BauDoku.Sync.Domain.Aggregates;
-using BauDoku.Sync.Domain.ValueObjects;
+using BauDoku.Sync.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

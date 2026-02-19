@@ -101,9 +101,7 @@ public static class Extensions
             configuration.WriteTo.Console(new Serilog.Formatting.Compact.CompactJsonFormatter());
         }
 
-        var otlpEndpoint = builder.Configuration.GetOtlpExporterEndpoint();
-
-        if (!string.IsNullOrWhiteSpace(otlpEndpoint))
+        if (builder.Configuration.TryGetOtlpExporterEndpoint(out var otlpEndpoint))
         {
             configuration.WriteTo.OpenTelemetry(options =>
             {
@@ -156,9 +154,7 @@ public static class Extensions
 
     private static void AddOpenTelemetryExporters(IHostApplicationBuilder builder)
     {
-        var useOtlpExporter = !string.IsNullOrWhiteSpace(builder.Configuration.GetOtlpExporterEndpoint());
-
-        if (useOtlpExporter)
+        if (builder.Configuration.TryGetOtlpExporterEndpoint(out _))
         {
             builder.Services.AddOpenTelemetry().UseOtlpExporter();
         }
@@ -170,26 +166,29 @@ public static class Extensions
 
         configureHealthChecks?.Invoke(healthChecks);
 
-        var rabbitConnection = builder.Configuration.GetConnectionString(ConnectionStringNames.RabbitMq);
-        if (!string.IsNullOrWhiteSpace(rabbitConnection))
-        {
-            var rabbitUri = new Uri(rabbitConnection);
-            var lazyConnection = new Lazy<Task<IConnection>>(() => new ConnectionFactory { Uri = rabbitUri }.CreateConnectionAsync());
+        var rabbitConnection = builder.Configuration.GetRequiredConnectionString(ConnectionStringNames.RabbitMq);
+        var rabbitUri = new Uri(rabbitConnection);
+        var lazyConnection = new Lazy<Task<IConnection>>(() => new ConnectionFactory { Uri = rabbitUri }.CreateConnectionAsync());
+        healthChecks.AddRabbitMQ(sp => lazyConnection.Value, name: "rabbitmq", failureStatus: HealthStatus.Degraded, tags: ["ready"]);
 
-            healthChecks.AddRabbitMQ(sp => lazyConnection.Value, name: "rabbitmq", failureStatus: HealthStatus.Degraded, tags: ["ready"]);
-        }
-
-        var redisConnection = builder.Configuration.GetConnectionString(ConnectionStringNames.Redis);
-        if (!string.IsNullOrWhiteSpace(redisConnection))
-        {
-            healthChecks.AddRedis(redisConnection, name: "redis", failureStatus: HealthStatus.Degraded, tags: ["ready"]);
-        }
+        var redisConnection = builder.Configuration.GetRequiredConnectionString(ConnectionStringNames.Redis);
+        healthChecks.AddRedis(redisConnection, name: "redis", failureStatus: HealthStatus.Degraded, tags: ["ready"]);
 
         return builder;
     }
 
-    private static string? GetOtlpExporterEndpoint(this IConfiguration configuration)
-        => configuration["OTEL_EXPORTER_OTLP_ENDPOINT"];
+    private static bool TryGetOtlpExporterEndpoint(this IConfiguration configuration, out string endpoint)
+    {
+        var value = configuration["OTEL_EXPORTER_OTLP_ENDPOINT"];
+        if (!string.IsNullOrWhiteSpace(value))
+        {
+            endpoint = value;
+            return true;
+        }
+
+        endpoint = default!;
+        return false;
+    }
 
     private static Task WriteHealthCheckResponse(HttpContext context, HealthReport report)
     {

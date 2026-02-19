@@ -1,3 +1,4 @@
+using BauDoku.Documentation.Domain;
 using FluentValidation;
 
 namespace BauDoku.Documentation.Application.Commands.InitChunkedUpload;
@@ -17,6 +18,6 @@ public sealed class InitChunkedUploadCommandValidator : AbstractValidator<InitCh
         RuleFor(x => x.TotalSize).GreaterThan(0).LessThanOrEqualTo(MaxFileSize);
         RuleFor(x => x.TotalChunks).GreaterThan(0).LessThanOrEqualTo(MaxChunks);
         RuleFor(x => x.PhotoType).NotEmpty();
-        RuleFor(x => x.Caption).MaximumLength(Domain.ValueObjects.Caption.MaxLength).When(x => x.Caption is not null);
+        RuleFor(x => x.Caption).MaximumLength(Caption.MaxLength).When(x => x.Caption is not null);
     }
 }

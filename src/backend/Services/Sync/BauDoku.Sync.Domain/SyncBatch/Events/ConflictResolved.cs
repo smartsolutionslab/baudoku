@@ -1,7 +1,6 @@
 using BauDoku.BuildingBlocks.Domain;
-using BauDoku.Sync.Domain.ValueObjects;
 
-namespace BauDoku.Sync.Domain.Events;
+namespace BauDoku.Sync.Domain;
 
 public sealed record ConflictResolved(
     ConflictRecordIdentifier ConflictId,

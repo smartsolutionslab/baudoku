@@ -1,5 +1,6 @@
 using BauDoku.BuildingBlocks.Application.Persistence;
 using BauDoku.Sync.Application.Contracts;
+using BauDoku.Sync.Domain;
 using BauDoku.Sync.Infrastructure.BackgroundServices;
 using BauDoku.Sync.Infrastructure.Persistence;
 using BauDoku.Sync.Infrastructure.Persistence.Repositories;

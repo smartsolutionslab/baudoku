@@ -1,7 +1,7 @@
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using BauDoku.Documentation.Application.Contracts;
-using BauDoku.Documentation.Domain.ValueObjects;
+using BauDoku.Documentation.Domain;
 using Microsoft.Extensions.Options;
 
 namespace BauDoku.Documentation.Infrastructure.Storage;

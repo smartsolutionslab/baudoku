@@ -1,6 +1,6 @@
 using BauDoku.BuildingBlocks.Domain;
 
-namespace BauDoku.Documentation.Domain.ValueObjects;
+namespace BauDoku.Documentation.Domain;
 
 public sealed record GpsPosition : IValueObject
 {

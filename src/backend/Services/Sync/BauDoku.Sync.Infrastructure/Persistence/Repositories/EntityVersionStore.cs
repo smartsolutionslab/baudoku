@@ -1,7 +1,7 @@
 using System.Linq.Expressions;
 using BauDoku.Sync.Application.Contracts;
 using BauDoku.Sync.Application.Queries.Dtos;
-using BauDoku.Sync.Domain.ValueObjects;
+using BauDoku.Sync.Domain;
 using Microsoft.EntityFrameworkCore;
 
 namespace BauDoku.Sync.Infrastructure.Persistence.Repositories;

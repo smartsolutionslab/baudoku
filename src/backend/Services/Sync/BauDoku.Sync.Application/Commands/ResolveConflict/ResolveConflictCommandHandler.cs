@@ -2,7 +2,7 @@ using BauDoku.BuildingBlocks.Application.Commands;
 using BauDoku.BuildingBlocks.Application.Persistence;
 using BauDoku.Sync.Application.Contracts;
 using BauDoku.Sync.Application.Diagnostics;
-using BauDoku.Sync.Domain.ValueObjects;
+using BauDoku.Sync.Domain;
 
 namespace BauDoku.Sync.Application.Commands.ResolveConflict;
 

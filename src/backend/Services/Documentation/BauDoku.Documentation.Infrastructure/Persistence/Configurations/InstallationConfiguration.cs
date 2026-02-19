@@ -1,6 +1,4 @@
-using BauDoku.Documentation.Domain.Aggregates;
-using BauDoku.Documentation.Domain.Entities;
-using BauDoku.Documentation.Domain.ValueObjects;
+using BauDoku.Documentation.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using NetTopologySuite.Geometries;

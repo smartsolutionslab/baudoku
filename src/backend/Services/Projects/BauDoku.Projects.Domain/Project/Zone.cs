@@ -1,7 +1,6 @@
 using BauDoku.BuildingBlocks.Domain;
-using BauDoku.Projects.Domain.ValueObjects;
 
-namespace BauDoku.Projects.Domain.Entities;
+namespace BauDoku.Projects.Domain;
 
 public sealed class Zone : Entity<ZoneIdentifier>
 {

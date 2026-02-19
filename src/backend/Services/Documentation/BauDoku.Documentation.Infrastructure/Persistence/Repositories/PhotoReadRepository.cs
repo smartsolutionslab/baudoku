@@ -1,8 +1,7 @@
 using System.Linq.Expressions;
 using BauDoku.Documentation.Application.Contracts;
 using BauDoku.Documentation.Application.Queries.Dtos;
-using BauDoku.Documentation.Domain.Entities;
-using BauDoku.Documentation.Domain.ValueObjects;
+using BauDoku.Documentation.Domain;
 using Microsoft.EntityFrameworkCore;
 
 namespace BauDoku.Documentation.Infrastructure.Persistence.Repositories;

@@ -1,5 +1,5 @@
 using BauDoku.Projects.Application.Commands.CreateProject;
-using BauDoku.Projects.Domain.ValueObjects;
+using BauDoku.Projects.Domain;
 using FluentValidation.TestHelper;
 
 namespace BauDoku.Projects.UnitTests.Application.Validators;

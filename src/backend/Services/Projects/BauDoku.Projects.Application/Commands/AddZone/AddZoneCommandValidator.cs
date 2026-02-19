@@ -1,4 +1,4 @@
-using BauDoku.Projects.Domain.ValueObjects;
+using BauDoku.Projects.Domain;
 using FluentValidation;
 
 namespace BauDoku.Projects.Application.Commands.AddZone;

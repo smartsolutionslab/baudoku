@@ -1,8 +1,6 @@
 using BauDoku.BuildingBlocks.Domain;
-using BauDoku.Documentation.Domain.Aggregates;
-using BauDoku.Documentation.Domain.ValueObjects;
 
-namespace BauDoku.Documentation.Application.Contracts;
+namespace BauDoku.Documentation.Domain;
 
 public interface IInstallationRepository : IRepository<Installation, InstallationIdentifier>
 {
