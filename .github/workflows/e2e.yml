@@ -41,7 +41,6 @@ jobs:
     needs: check-changes
     if: needs.check-changes.outputs.has_changes == 'true'
     timeout-minutes: 45
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
         with:
