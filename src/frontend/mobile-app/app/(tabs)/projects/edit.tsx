@@ -1,8 +1,8 @@
 import { useLocalSearchParams, useRouter, Stack } from "expo-router";
-import { useProject, useUpdateProject } from "../../../src/hooks";
-import { ProjectForm } from "../../../src/components/projects";
-import type { ProjectFormData } from "../../../src/validation/schemas";
-import { projectId } from "../../../src/types/branded";
+import { useProject, useUpdateProject } from "@/hooks";
+import { ProjectForm } from "@/components/projects";
+import type { ProjectFormData } from "@/validation/schemas";
+import { projectId } from "@/types/branded";
 
 export default function EditProjectScreen() {
   const { id: rawId } = useLocalSearchParams<{ id: string }>();

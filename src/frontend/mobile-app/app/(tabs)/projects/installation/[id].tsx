@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { useLocalSearchParams, useRouter, Stack } from "expo-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import * as installationRepo from "../../../../src/db/repositories/installationRepo";
+import * as installationRepo from "@/db/repositories/installationRepo";
 import {
   usePhotosByInstallation,
   useMeasurementsByInstallation,
@@ -21,9 +21,9 @@ import {
   usePhotoCapture,
   type CapturedPhoto,
   useConfirmDelete,
-} from "../../../../src/hooks";
-import { deletePhotoFile } from "../../../../src/utils";
-import { StatusBadge, EmptyState, ActionBar, BottomSheet } from "../../../../src/components/common";
+} from "@/hooks";
+import { deletePhotoFile } from "@/utils";
+import { StatusBadge, EmptyState, ActionBar, BottomSheet } from "@/components/common";
 import {
   InstallationDetails,
   PhotoGallery,
@@ -33,13 +33,13 @@ import {
   PhotoViewer,
   MeasurementCard,
   MeasurementForm,
-} from "../../../../src/components/installations";
-import { Button } from "../../../../src/components/core";
-import { Colors, Spacing, FontSize, Radius } from "../../../../src/styles/tokens";
-import type { Photo } from "../../../../src/db/repositories/types";
-import type { MeasurementFormData } from "../../../../src/validation/schemas";
-import { installationId } from "../../../../src/types/branded";
-import type { MeasurementId } from "../../../../src/types/branded";
+} from "@/components/installations";
+import { Button } from "@/components/core";
+import { Colors, Spacing, FontSize, Radius } from "@/styles/tokens";
+import type { Photo } from "@/db/repositories/types";
+import type { MeasurementFormData } from "@/validation/schemas";
+import { installationId } from "@/types/branded";
+import type { MeasurementId } from "@/types/branded";
 
 function uploadStatusColor(status: string): string {
   switch (status) {

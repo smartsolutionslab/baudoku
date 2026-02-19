@@ -1,10 +1,10 @@
 import { useLocalSearchParams, useRouter, Stack } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
-import * as installationRepo from "../../../../src/db/repositories/installationRepo";
-import { useUpdateInstallation, type GpsPosition, type GpsSource, type GpsCorrService, type GpsRtkStatus } from "../../../../src/hooks";
-import { InstallationForm } from "../../../../src/components/installations";
-import type { InstallationFormData } from "../../../../src/validation/schemas";
-import { installationId } from "../../../../src/types/branded";
+import * as installationRepo from "@/db/repositories/installationRepo";
+import { useUpdateInstallation, type GpsPosition, type GpsSource, type GpsCorrService, type GpsRtkStatus } from "@/hooks";
+import { InstallationForm } from "@/components/installations";
+import type { InstallationFormData } from "@/validation/schemas";
+import { installationId } from "@/types/branded";
 
 export default function EditInstallationScreen() {
   const { id: rawId } = useLocalSearchParams<{ id: string }>();

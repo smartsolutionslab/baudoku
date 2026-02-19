@@ -6,14 +6,14 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useColorScheme } from "react-native";
 
-import { QueryProvider, AuthProvider, SyncProvider } from "../src/providers";
-import { useMigrationsHelper } from "../src/db/useMigrationsHelper";
-import { startConnectivityMonitor, stopConnectivityMonitor } from "../src/sync/ConnectivityMonitor";
-import { useSettingsStore } from "../src/store";
-import { OfflineBanner } from "../src/components/sync";
-import { ToastContainer } from "../src/components/core";
+import { QueryProvider, AuthProvider, SyncProvider } from "@/providers";
+import { useMigrationsHelper } from "@/db/useMigrationsHelper";
+import { startConnectivityMonitor, stopConnectivityMonitor } from "@/sync/ConnectivityMonitor";
+import { useSettingsStore } from "@/store";
+import { OfflineBanner } from "@/components/sync";
+import { ToastContainer } from "@/components/core";
 import { View, Text, ActivityIndicator, StyleSheet } from "react-native";
-import { Colors, Spacing, FontSize } from "../src/styles/tokens";
+import { Colors, Spacing, FontSize } from "@/styles/tokens";
 
 export { ErrorBoundary } from "expo-router";
 

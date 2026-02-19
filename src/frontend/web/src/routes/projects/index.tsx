@@ -1,11 +1,11 @@
 import { useState, useMemo } from "react";
 import { Link } from "@tanstack/react-router";
-import { useProjects, useDeleteProject } from "../../hooks/useProjects";
-import { StatusBadge } from "../../components/common/StatusBadge";
-import { SearchBar } from "../../components/common/SearchBar";
-import { FilterChips } from "../../components/common/FilterChips";
-import { EmptyState } from "../../components/common/EmptyState";
-import { ConfirmDialog } from "../../components/common/ConfirmDialog";
+import { useProjects, useDeleteProject } from "@/hooks/useProjects";
+import { StatusBadge } from "@/components/common/StatusBadge";
+import { SearchBar } from "@/components/common/SearchBar";
+import { FilterChips } from "@/components/common/FilterChips";
+import { EmptyState } from "@/components/common/EmptyState";
+import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { PROJECT_STATUS_LABELS } from "@baudoku/shared-constants";
 
 const statusOptions = Object.entries(PROJECT_STATUS_LABELS).map(

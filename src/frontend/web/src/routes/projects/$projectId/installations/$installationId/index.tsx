@@ -8,12 +8,12 @@ import {
   useDeletePhoto,
   useCreateMeasurement,
   useDeleteMeasurement,
-} from "../../../../../hooks/useInstallations";
-import { StatusBadge } from "../../../../../components/common/StatusBadge";
-import { PhotoGallery } from "../../../../../components/installations/PhotoGallery";
-import { PhotoCapture } from "../../../../../components/installations/PhotoCapture";
-import { MeasurementCard } from "../../../../../components/installations/MeasurementCard";
-import { MeasurementForm } from "../../../../../components/installations/MeasurementForm";
+} from "@/hooks/useInstallations";
+import { StatusBadge } from "@/components/common/StatusBadge";
+import { PhotoGallery } from "@/components/installations/PhotoGallery";
+import { PhotoCapture } from "@/components/installations/PhotoCapture";
+import { MeasurementCard } from "@/components/installations/MeasurementCard";
+import { MeasurementForm } from "@/components/installations/MeasurementForm";
 import type { PhotoType } from "@baudoku/shared-types";
 import type { MeasurementFormData } from "@baudoku/shared-validation";
 

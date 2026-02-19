@@ -2,10 +2,10 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import {
   useZonesByProject,
   useCreateZone,
-} from "../../../../src/hooks";
-import { ZoneForm } from "../../../../src/components/projects";
-import type { ZoneFormData } from "../../../../src/validation/schemas";
-import { projectId as toProjectId } from "../../../../src/types/branded";
+} from "@/hooks";
+import { ZoneForm } from "@/components/projects";
+import type { ZoneFormData } from "@/validation/schemas";
+import { projectId as toProjectId } from "@/types/branded";
 
 export default function NewZoneScreen() {
   const { projectId: rawProjectId, parentZoneId } = useLocalSearchParams<{

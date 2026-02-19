@@ -3,13 +3,13 @@ import { Link, useParams, useSearch } from "@tanstack/react-router";
 import {
   useInstallations,
   useDeleteInstallation,
-} from "../../../../hooks/useInstallations";
-import { useZones } from "../../../../hooks/useProjects";
-import { StatusBadge } from "../../../../components/common/StatusBadge";
-import { SearchBar } from "../../../../components/common/SearchBar";
-import { FilterChips } from "../../../../components/common/FilterChips";
-import { EmptyState } from "../../../../components/common/EmptyState";
-import { ConfirmDialog } from "../../../../components/common/ConfirmDialog";
+} from "@/hooks/useInstallations";
+import { useZones } from "@/hooks/useProjects";
+import { StatusBadge } from "@/components/common/StatusBadge";
+import { SearchBar } from "@/components/common/SearchBar";
+import { FilterChips } from "@/components/common/FilterChips";
+import { EmptyState } from "@/components/common/EmptyState";
+import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { INSTALLATION_STATUS_LABELS } from "@baudoku/shared-constants";
 
 const statusOptions = Object.entries(INSTALLATION_STATUS_LABELS).map(

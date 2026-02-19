@@ -1,7 +1,7 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useCreateInstallation, type GpsPosition } from "../../../src/hooks";
-import { InstallationForm } from "../../../src/components/installations";
-import type { InstallationFormData } from "../../../src/validation/schemas";
+import { useCreateInstallation, type GpsPosition } from "@/hooks";
+import { InstallationForm } from "@/components/installations";
+import type { InstallationFormData } from "@/validation/schemas";
 
 export default function NewInstallationScreen() {
   const { projectId, zoneId } = useLocalSearchParams<{

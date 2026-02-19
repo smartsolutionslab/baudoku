@@ -5,10 +5,10 @@ import {
   useZones,
   useDeleteZone,
   useUpdateProject,
-} from "../../../hooks/useProjects";
-import { ZoneTree } from "../../../components/projects/ZoneTree";
-import { StatusBadge } from "../../../components/common/StatusBadge";
-import { ConfirmDialog } from "../../../components/common/ConfirmDialog";
+} from "@/hooks/useProjects";
+import { ZoneTree } from "@/components/projects/ZoneTree";
+import { StatusBadge } from "@/components/common/StatusBadge";
+import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 
 export function ProjectDetailPage() {
   const { projectId } = useParams({ strict: false }) as { projectId: string };
