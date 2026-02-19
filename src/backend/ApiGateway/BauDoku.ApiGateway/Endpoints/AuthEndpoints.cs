@@ -1,3 +1,4 @@
+using BauDoku.BuildingBlocks.Domain;
 using BauDoku.BuildingBlocks.Infrastructure.Auth;
 using Microsoft.Extensions.Options;
 
@@ -14,7 +15,7 @@ public static class AuthEndpoints
             ILogger<LogoutRequest> logger) =>
         {
             var keycloak = keycloakOptions.Value;
-            if (string.IsNullOrEmpty(keycloak.Authority))
+            if (!keycloak.Authority.HasValue())
             {
                 logger.LogWarning("Keycloak authority not configured — logout skipped");
                 return Results.Ok();

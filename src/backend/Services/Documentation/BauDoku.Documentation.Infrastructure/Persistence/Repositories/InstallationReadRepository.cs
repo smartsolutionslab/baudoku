@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using BauDoku.BuildingBlocks.Application.Pagination;
 using BauDoku.Documentation.Application.Contracts;
 using BauDoku.Documentation.Application.Queries.Dtos;
+using BauDoku.BuildingBlocks.Domain;
 using BauDoku.Documentation.Domain;
 using Microsoft.EntityFrameworkCore;
 
@@ -41,9 +42,8 @@ public sealed class InstallationReadRepository(DocumentationDbContext context) :
         if (status is not null)
             query = query.Where(i => i.Status.Value == status.Value);
 
-        if (!string.IsNullOrWhiteSpace(search))
-            query = query.Where(i =>
-                i.Description != null && EF.Functions.ILike(i.Description.Value, $"%{search}%"));
+        if (search.HasValue())
+            query = query.Where(i => i.Description != null && EF.Functions.ILike(i.Description.Value, $"%{search}%"));
 
         var totalCount = await query.CountAsync(cancellationToken);
 

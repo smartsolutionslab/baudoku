@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using BauDoku.BuildingBlocks.Application.Pagination;
 using BauDoku.Projects.Application.Contracts;
 using BauDoku.Projects.Application.Queries.Dtos;
+using BauDoku.BuildingBlocks.Domain;
 using BauDoku.Projects.Domain;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,7 +25,7 @@ public sealed class ProjectReadRepository(ProjectsDbContext context) : IProjectR
 
         var query = context.Projects.AsNoTracking();
 
-        if (!string.IsNullOrWhiteSpace(search))
+        if (search.HasValue())
         {
             query = query.Where(p => EF.Functions.ILike(p.Name.Value, $"%{search}%")
                 || EF.Functions.ILike(p.Address.City.Value, $"%{search}%")
