@@ -17,9 +17,9 @@ builder.AddServiceDefaults();
 
 builder.Services.AddSingleton<IDispatcher, NoOpDispatcher>();
 
-var projectsCs = builder.Configuration.GetConnectionString("ProjectsDb") ?? throw new InvalidOperationException("Missing connection string: ProjectsDb");
-var documentationCs = builder.Configuration.GetConnectionString("DocumentationDb") ?? throw new InvalidOperationException("Missing connection string: DocumentationDb");
-var syncCs = builder.Configuration.GetConnectionString("SyncDb") ?? throw new InvalidOperationException("Missing connection string: SyncDb");
+var projectsCs = builder.Configuration.GetRequiredConnectionString(ConnectionStringNames.ProjectsDb);
+var documentationCs = builder.Configuration.GetRequiredConnectionString(ConnectionStringNames.DocumentationDb);
+var syncCs = builder.Configuration.GetRequiredConnectionString(ConnectionStringNames.SyncDb);
 
 builder.Services.AddDbContext<ProjectsDbContext>((sp, options) => options.UseNpgsql(projectsCs));
 

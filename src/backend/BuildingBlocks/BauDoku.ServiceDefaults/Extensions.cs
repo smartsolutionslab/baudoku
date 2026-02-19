@@ -170,7 +170,7 @@ public static class Extensions
 
         configureHealthChecks?.Invoke(healthChecks);
 
-        var rabbitConnection = builder.Configuration.GetConnectionString("rabbitmq");
+        var rabbitConnection = builder.Configuration.GetConnectionString(ConnectionStringNames.RabbitMq);
         if (!string.IsNullOrWhiteSpace(rabbitConnection))
         {
             var rabbitUri = new Uri(rabbitConnection);
@@ -179,7 +179,7 @@ public static class Extensions
             healthChecks.AddRabbitMQ(sp => lazyConnection.Value, name: "rabbitmq", failureStatus: HealthStatus.Degraded, tags: ["ready"]);
         }
 
-        var redisConnection = builder.Configuration.GetConnectionString("redis");
+        var redisConnection = builder.Configuration.GetConnectionString(ConnectionStringNames.Redis);
         if (!string.IsNullOrWhiteSpace(redisConnection))
         {
             healthChecks.AddRedis(redisConnection, name: "redis", failureStatus: HealthStatus.Degraded, tags: ["ready"]);

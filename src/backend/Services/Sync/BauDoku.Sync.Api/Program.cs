@@ -9,7 +9,7 @@ using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("SyncDb") ?? throw new InvalidOperationException("Verbindungszeichenfolge 'SyncDb' nicht gefunden.");
+var connectionString = builder.Configuration.GetRequiredConnectionString(ConnectionStringNames.SyncDb);
 
 builder.AddServiceDefaults(health =>
 {
