@@ -87,14 +87,14 @@ public sealed class CreateProjectCommandValidatorTests
     [Fact]
     public void ClientName_WhenTooLong_ShouldHaveError()
     {
-        var cmd = CreateValidCommand() with { ClientName = new string('a', ClientInfo.MaxNameLength + 1) };
+        var cmd = CreateValidCommand() with { ClientName = new string('a', ClientName.MaxLength + 1) };
         validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.ClientName);
     }
 
     [Fact]
     public void ClientEmail_WhenTooLong_ShouldHaveError()
     {
-        var cmd = CreateValidCommand() with { ClientEmail = new string('a', ClientInfo.MaxEmailLength + 1) };
+        var cmd = CreateValidCommand() with { ClientEmail = new string('a', EmailAddress.MaxLength + 1) };
         validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.ClientEmail);
     }
 
@@ -108,7 +108,7 @@ public sealed class CreateProjectCommandValidatorTests
     [Fact]
     public void ClientPhone_WhenTooLong_ShouldHaveError()
     {
-        var cmd = CreateValidCommand() with { ClientPhone = new string('1', ClientInfo.MaxPhoneLength + 1) };
+        var cmd = CreateValidCommand() with { ClientPhone = new string('1', PhoneNumber.MaxLength + 1) };
         validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.ClientPhone);
     }
 }

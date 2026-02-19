@@ -26,8 +26,14 @@ public sealed class DeleteProjectCommandHandlerTests
         Project.Create(
             ProjectIdentifier.New(),
             ProjectName.From("Test Projekt"),
-            Address.Create(Street.From("Musterstraße 1"), City.From("Berlin"), ZipCode.From("10115")),
-            ClientInfo.Create("Max Mustermann", "max@example.com", "+49 30 12345"));
+            Address.Create(
+                Street.From("Musterstraße 1"),
+                City.From("Berlin"),
+                ZipCode.From("10115")),
+            ClientInfo.Create(
+                ClientName.From("Max Mustermann"),
+                EmailAddress.From("max@example.com"),
+                PhoneNumber.From("+49 30 12345")));
 
     [Fact]
     public async Task Handle_WithExistingProject_ShouldRemoveAndSave()
@@ -55,8 +61,7 @@ public sealed class DeleteProjectCommandHandlerTests
 
         await handler.Handle(command);
 
-        project.DomainEvents.Should().ContainSingle(e =>
-            e.GetType().Name == "ProjectDeleted");
+        project.DomainEvents.Should().ContainSingle(e => e.GetType().Name == "ProjectDeleted");
     }
 
     [Fact]

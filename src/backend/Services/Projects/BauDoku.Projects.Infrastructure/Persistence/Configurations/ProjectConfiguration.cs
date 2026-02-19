@@ -52,15 +52,18 @@ public sealed class ProjectConfiguration : IEntityTypeConfiguration<Project>
         {
             client.Property(c => c.Name)
                 .HasColumnName("client_name")
-                .HasMaxLength(ClientInfo.MaxNameLength);
+                .HasMaxLength(ClientName.MaxLength)
+                .HasConversion(n => n.Value, value => ClientName.From(value));
 
             client.Property(c => c.Email)
                 .HasColumnName("client_email")
-                .HasMaxLength(ClientInfo.MaxEmailLength);
+                .HasMaxLength(EmailAddress.MaxLength)
+                .HasConversion(e => e!.Value, value => EmailAddress.From(value));
 
             client.Property(c => c.Phone)
                 .HasColumnName("client_phone")
-                .HasMaxLength(ClientInfo.MaxPhoneLength);
+                .HasMaxLength(PhoneNumber.MaxLength)
+                .HasConversion(p => p!.Value, value => PhoneNumber.From(value));
         });
 
         builder.HasMany(p => p.Zones)

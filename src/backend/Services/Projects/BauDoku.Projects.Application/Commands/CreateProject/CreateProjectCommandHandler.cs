@@ -24,7 +24,10 @@ public sealed class CreateProjectCommandHandler(IProjectRepository projects, IUn
         if (rule.IsBroken()) throw new BusinessRuleException(rule);
 
         var address = Address.Create(Street.From(street), City.From(city), ZipCode.From(zipCode));
-        var client = ClientInfo.Create(clientName, clientEmail, clientPhone);
+        var client = ClientInfo.Create(
+            ClientName.From(clientName),
+            EmailAddress.FromNullable(clientEmail),
+            PhoneNumber.FromNullable(clientPhone));
 
         var project = Project.Create(projectId, projectName, address, client);
 

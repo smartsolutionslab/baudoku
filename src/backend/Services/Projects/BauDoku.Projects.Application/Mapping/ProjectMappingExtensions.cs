@@ -13,9 +13,9 @@ public static class ProjectMappingExtensions
             project.Address.Street.Value,
             project.Address.City.Value,
             project.Address.ZipCode.Value,
-            project.Client.Name,
-            project.Client.Email,
-            project.Client.Phone,
+            project.Client.Name.Value,
+            project.Client.Email?.Value,
+            project.Client.Phone?.Value,
             project.CreatedAt,
             project.Zones.Select(z => z.ToDto()).ToList());
 
