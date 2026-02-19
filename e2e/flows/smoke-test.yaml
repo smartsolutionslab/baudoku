@@ -21,6 +21,13 @@ appId: com.baudoku.app
 - tapOn:
     id: "project-name-input"
 - inputText: "E2E Testprojekt"
+- hideKeyboard
+
+- scrollUntilVisible:
+    element:
+      id: "submit-button"
+    direction: DOWN
+    timeout: 10000
 
 - tapOn:
     id: "submit-button"
