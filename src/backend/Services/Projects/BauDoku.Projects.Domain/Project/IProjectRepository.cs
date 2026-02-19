@@ -1,8 +1,6 @@
 using BauDoku.BuildingBlocks.Domain;
-using BauDoku.Projects.Domain.Aggregates;
-using BauDoku.Projects.Domain.ValueObjects;
 
-namespace BauDoku.Projects.Application.Contracts;
+namespace BauDoku.Projects.Domain;
 
 public interface IProjectRepository : IRepository<Project, ProjectIdentifier>
 {

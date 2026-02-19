@@ -1,7 +1,6 @@
 using BauDoku.BuildingBlocks.Domain;
-using BauDoku.Projects.Domain.ValueObjects;
 
-namespace BauDoku.Projects.Domain.Events;
+namespace BauDoku.Projects.Domain;
 
 public sealed record ProjectCreated(
     ProjectIdentifier ProjectIdentifier,

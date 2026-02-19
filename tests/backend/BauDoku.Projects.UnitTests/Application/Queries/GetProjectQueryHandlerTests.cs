@@ -1,8 +1,6 @@
 using AwesomeAssertions;
-using BauDoku.Projects.Application.Contracts;
 using BauDoku.Projects.Application.Queries.GetProject;
-using BauDoku.Projects.Domain.Aggregates;
-using BauDoku.Projects.Domain.ValueObjects;
+using BauDoku.Projects.Domain;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 

@@ -1,6 +1,4 @@
-using BauDoku.Projects.Application.Contracts;
-using BauDoku.Projects.Domain.Aggregates;
-using BauDoku.Projects.Domain.ValueObjects;
+using BauDoku.Projects.Domain;
 using Microsoft.EntityFrameworkCore;
 
 namespace BauDoku.Projects.Infrastructure.Persistence.Repositories;

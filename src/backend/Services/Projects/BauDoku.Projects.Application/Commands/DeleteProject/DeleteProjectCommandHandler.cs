@@ -1,8 +1,7 @@
 using BauDoku.BuildingBlocks.Application.Commands;
 using BauDoku.BuildingBlocks.Application.Persistence;
-using BauDoku.Projects.Application.Contracts;
 using BauDoku.Projects.Application.Diagnostics;
-using BauDoku.Projects.Domain.ValueObjects;
+using BauDoku.Projects.Domain;
 
 namespace BauDoku.Projects.Application.Commands.DeleteProject;
 

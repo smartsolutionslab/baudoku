@@ -1,8 +1,6 @@
 using BauDoku.BuildingBlocks.Domain;
-using BauDoku.Sync.Domain.Aggregates;
-using BauDoku.Sync.Domain.ValueObjects;
 
-namespace BauDoku.Sync.Application.Contracts;
+namespace BauDoku.Sync.Domain;
 
 public interface ISyncBatchRepository : IRepository<SyncBatch, SyncBatchIdentifier>
 {

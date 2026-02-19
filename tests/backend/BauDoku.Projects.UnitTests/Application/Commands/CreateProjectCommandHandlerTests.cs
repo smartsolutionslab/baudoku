@@ -2,9 +2,7 @@ using AwesomeAssertions;
 using BauDoku.BuildingBlocks.Application.Persistence;
 using BauDoku.BuildingBlocks.Domain;
 using BauDoku.Projects.Application.Commands.CreateProject;
-using BauDoku.Projects.Application.Contracts;
-using BauDoku.Projects.Domain.Aggregates;
-using BauDoku.Projects.Domain.ValueObjects;
+using BauDoku.Projects.Domain;
 using NSubstitute;
 
 namespace BauDoku.Projects.UnitTests.Application.Commands;
