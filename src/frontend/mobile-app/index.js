@@ -1,21 +1,21 @@
 import "@expo/metro-runtime";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { Text, View } from "react-native";
 import { ExpoRoot } from "expo-router";
 import { renderRootComponent } from "expo-router/build/renderRootComponent";
+import * as SplashScreen from "expo-splash-screen";
 
 // Explicit require.context so route discovery resolves relative to this file
-// (mobile-app/), not relative to the hoisted node_modules/expo-router/_ctx.*.js.
-// This is the standard monorepo workaround for expo-router.
 const ctx = require.context(
   "./app",
   true,
   /^(?:\.\/)(?!(?:(?:(?:.*\+api)|(?:\+html)|(?:\+middleware)))\.[tj]sx?$).*(?:\.ios|\.web)?\.[tj]sx?$/
 );
 
-// Debug: log discovered routes so we can verify in logcat
+// Debug: log discovered routes
 console.log("[BauDoku] require.context keys:", JSON.stringify(ctx.keys()));
 
-// Debug: try to load the root layout module to check for import errors
+// Debug: test route loading
 try {
   const layoutModule = ctx("./_layout.tsx");
   console.log("[BauDoku] _layout.tsx exports:", Object.keys(layoutModule));
@@ -23,7 +23,7 @@ try {
   console.error("[BauDoku] FAILED to load _layout.tsx:", e.message);
 }
 
-// Debug: try to load getRoutes and see if route tree builds
+// Debug: test route tree building
 try {
   const { getRoutes } = require("expo-router/build/getRoutes");
   const routeTree = getRoutes(ctx, {
@@ -38,10 +38,9 @@ try {
   }
 } catch (e) {
   console.error("[BauDoku] getRoutes FAILED:", e.message);
-  console.error("[BauDoku] getRoutes stack:", e.stack?.substring(0, 500));
 }
 
-// Debug error boundary to catch silent rendering crashes
+// Error boundary to catch rendering crashes
 class DebugErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
@@ -52,22 +51,51 @@ class DebugErrorBoundary extends React.Component {
   }
   componentDidCatch(error, info) {
     console.error("[BauDoku] RENDER ERROR:", error.message);
-    console.error("[BauDoku] COMPONENT STACK:", info.componentStack);
+    console.error("[BauDoku] STACK:", error.stack?.substring(0, 500));
+    console.error("[BauDoku] COMPONENT STACK:", info.componentStack?.substring(0, 500));
   }
   render() {
     if (this.state.error) {
-      console.error("[BauDoku] ErrorBoundary caught error, rendering null");
-      return null;
+      return (
+        <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "red" }}>
+          <Text style={{ color: "white", fontSize: 18, textAlign: "center", padding: 20 }}>
+            ERROR: {this.state.error.message}
+          </Text>
+        </View>
+      );
     }
     return this.props.children;
   }
 }
 
 function App() {
-  console.log("[BauDoku] App component rendering");
+  const [debugInfo, setDebugInfo] = useState("mounting...");
+
   useEffect(() => {
-    console.log("[BauDoku] App useEffect - component mounted");
+    console.log("[BauDoku] App mounted");
+
+    // Force-hide splash after 5s to reveal actual screen state
+    const timer = setTimeout(() => {
+      console.log("[BauDoku] Force-hiding splash screen after 5s");
+      SplashScreen.hideAsync().then(() => {
+        console.log("[BauDoku] Splash hidden successfully");
+      }).catch((e) => {
+        console.error("[BauDoku] Splash hide failed:", e.message);
+      });
+      setDebugInfo("splash hidden, waiting for navigation...");
+    }, 5000);
+
+    // Log periodic state after mount
+    const interval = setInterval(() => {
+      console.log("[BauDoku] App still alive, debugInfo:", debugInfo);
+    }, 10000);
+
+    return () => {
+      clearTimeout(timer);
+      clearInterval(interval);
+    };
   }, []);
+
   return (
     <DebugErrorBoundary>
       <ExpoRoot context={ctx} />
