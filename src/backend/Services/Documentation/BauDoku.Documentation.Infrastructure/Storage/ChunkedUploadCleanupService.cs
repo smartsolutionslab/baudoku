@@ -1,4 +1,3 @@
-using System.Text.Json;
 using BauDoku.BuildingBlocks.Infrastructure.Storage;
 using BauDoku.Documentation.Application.Contracts;
 using Microsoft.Extensions.Hosting;
@@ -42,8 +41,7 @@ public sealed class ChunkedUploadCleanupService(IOptions<PhotoStorageOptions> op
 
             try
             {
-                var json = await storage.ReadAllTextAsync(metadataPath, ct);
-                var session = JsonSerializer.Deserialize<ChunkedUploadSession>(json);
+                var session = await storage.ReadJsonAsync<ChunkedUploadSession>(metadataPath, ct);
                 if (session is null || DateTime.UtcNow - session.CreatedAt > maxAge)
                 {
                     TryDeleteDirectory(sessionName);

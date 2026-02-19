@@ -66,6 +66,36 @@ public sealed class LocalFilePhotoStorageTests : IDisposable
         File.Exists(filePath).Should().BeFalse();
     }
 
+    [Fact]
+    public async Task UploadAsync_ShouldWriteFileAndReturnBlobUrl()
+    {
+        var content = "photo bytes"u8.ToArray();
+        using var stream = new MemoryStream(content);
+
+        var blobUrl = await storage.UploadAsync(stream, FileName.From("test.jpg"), ContentType.From("image/jpeg"));
+
+        blobUrl.Value.Should().EndWith(".jpg");
+        var filePath = Path.Combine(tempDir, blobUrl.Value);
+        File.Exists(filePath).Should().BeTrue();
+        (await File.ReadAllBytesAsync(filePath)).Should().Equal(content);
+    }
+
+    [Fact]
+    public void DownloadAsync_WhenMissing_ShouldThrowFileNotFoundException()
+    {
+        Func<Task> act = () => storage.DownloadAsync(BlobUrl.From("nonexistent.jpg"));
+
+        act.Should().ThrowAsync<FileNotFoundException>();
+    }
+
+    [Fact]
+    public async Task DeleteAsync_WhenMissing_ShouldNotThrow()
+    {
+        var act = () => storage.DeleteAsync(BlobUrl.From("nonexistent.jpg"));
+
+        await act.Should().NotThrowAsync();
+    }
+
     public void Dispose()
     {
         if (Directory.Exists(tempDir))

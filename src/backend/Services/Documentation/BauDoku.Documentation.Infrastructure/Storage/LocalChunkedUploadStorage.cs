@@ -1,4 +1,3 @@
-using System.Text.Json;
 using BauDoku.BuildingBlocks.Infrastructure.Storage;
 using BauDoku.Documentation.Application.Contracts;
 using BauDoku.Documentation.Domain.ValueObjects;
@@ -10,35 +9,34 @@ public sealed class LocalChunkedUploadStorage(IOptions<PhotoStorageOptions> opti
 {
     private readonly LocalStorageDirectory storage = new(options.Value.ChunkedPath);
 
-    public async Task<UploadSessionIdentifier> InitSessionAsync(ChunkedUploadSession session, CancellationToken ct = default)
+    public async Task<UploadSessionIdentifier> InitSessionAsync(ChunkedUploadSession session, CancellationToken cancellationToken = default)
     {
         var sessionDir = session.SessionId.ToString();
         storage.CreateSubdirectory(sessionDir);
 
-        var json = JsonSerializer.Serialize(session);
-        await storage.WriteAllTextAsync(Path.Combine(sessionDir, "metadata.json"), json, ct);
+        await storage.WriteJsonAsync(Path.Combine(sessionDir, "metadata.json"), session, cancellationToken);
 
         return UploadSessionIdentifier.From(session.SessionId);
     }
 
-    public async Task StoreChunkAsync(UploadSessionIdentifier sessionId, int chunkIndex, Stream data, CancellationToken ct = default)
+    public async Task StoreChunkAsync(UploadSessionIdentifier sessionId, int chunkIndex, Stream data, CancellationToken cancellationToken = default)
     {
         var sessionDir = sessionId.Value.ToString();
         if (!storage.DirectoryExists(sessionDir)) throw new InvalidOperationException($"Upload-Session {sessionId.Value} nicht gefunden.");
 
-        await storage.WriteStreamAsync(Path.Combine(sessionDir, $"{chunkIndex}.chunk"), data, ct);
+        await storage.WriteStreamAsync(Path.Combine(sessionDir, $"{chunkIndex}.chunk"), data, cancellationToken);
     }
 
-    public async Task<ChunkedUploadSession> GetSessionAsync(UploadSessionIdentifier sessionId, CancellationToken ct = default)
+    public async Task<ChunkedUploadSession> GetSessionAsync(UploadSessionIdentifier sessionId, CancellationToken cancellationToken = default)
     {
         var metadataPath = Path.Combine(sessionId.Value.ToString(), "metadata.json");
         if (!storage.FileExists(metadataPath)) throw new KeyNotFoundException($"Upload-Session mit ID {sessionId.Value} nicht gefunden.");
 
-        var json = await storage.ReadAllTextAsync(metadataPath, ct);
-        return JsonSerializer.Deserialize<ChunkedUploadSession>(json) ?? throw new KeyNotFoundException($"Upload-Session mit ID {sessionId.Value} nicht gefunden.");
+        return await storage.ReadJsonAsync<ChunkedUploadSession>(metadataPath, cancellationToken)
+            ?? throw new KeyNotFoundException($"Upload-Session mit ID {sessionId.Value} nicht gefunden.");
     }
 
-    public Task<int> GetUploadedChunkCountAsync(UploadSessionIdentifier sessionId, CancellationToken ct = default)
+    public Task<int> GetUploadedChunkCountAsync(UploadSessionIdentifier sessionId, CancellationToken cancellationToken = default)
     {
         var sessionDir = sessionId.Value.ToString();
         if (!storage.DirectoryExists(sessionDir)) return Task.FromResult(0);
@@ -47,12 +45,11 @@ public sealed class LocalChunkedUploadStorage(IOptions<PhotoStorageOptions> opti
         return Task.FromResult(chunkCount);
     }
 
-    public async Task<Stream> AssembleAsync(UploadSessionIdentifier sessionId, CancellationToken ct = default)
+    public async Task<Stream> AssembleAsync(UploadSessionIdentifier sessionId, CancellationToken cancellationToken = default)
     {
         var sessionDir = sessionId.Value.ToString();
         var metadataPath = Path.Combine(sessionDir, "metadata.json");
-        var json = await storage.ReadAllTextAsync(metadataPath, ct);
-        var session = JsonSerializer.Deserialize<ChunkedUploadSession>(json) ?? throw new InvalidOperationException($"Session-Metadaten für {sessionId.Value} nicht lesbar.");
+        var session = await storage.ReadJsonAsync<ChunkedUploadSession>(metadataPath, cancellationToken) ?? throw new InvalidOperationException($"Session-Metadaten für {sessionId.Value} nicht lesbar.");
 
         var assembledPath = Path.Combine(sessionDir, "assembled");
         await using (var assembledStream = storage.OpenWrite(assembledPath))
@@ -63,15 +60,14 @@ public sealed class LocalChunkedUploadStorage(IOptions<PhotoStorageOptions> opti
                 if (!storage.FileExists(chunkPath)) throw new InvalidOperationException($"Chunk {index} für Session {sessionId.Value} nicht gefunden.");
 
                 await using var chunkStream = storage.OpenRead(chunkPath);
-                await chunkStream.CopyToAsync(assembledStream, ct);
+                await chunkStream.CopyToAsync(assembledStream, cancellationToken);
             }
         }
 
-        return new FileStream(storage.Resolve(assembledPath), FileMode.Open, FileAccess.Read, FileShare.None,
-            bufferSize: 4096, FileOptions.DeleteOnClose);
+        return new FileStream(storage.Resolve(assembledPath), FileMode.Open, FileAccess.Read, FileShare.None, bufferSize: 4096, FileOptions.DeleteOnClose);
     }
 
-    public Task CleanupSessionAsync(UploadSessionIdentifier sessionId, CancellationToken ct = default)
+    public Task CleanupSessionAsync(UploadSessionIdentifier sessionId, CancellationToken cancellationToken = default)
     {
         storage.DeleteDirectory(sessionId.Value.ToString());
         return Task.CompletedTask;

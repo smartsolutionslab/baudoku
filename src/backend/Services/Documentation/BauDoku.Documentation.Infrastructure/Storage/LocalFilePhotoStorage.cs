@@ -18,8 +18,7 @@ public sealed class LocalFilePhotoStorage(IOptions<PhotoStorageOptions> options)
 
     public Task<Stream> DownloadAsync(BlobUrl blobUrl, CancellationToken ct = default)
     {
-        if (!storage.FileExists(blobUrl.Value)) throw new FileNotFoundException($"Foto nicht gefunden: {blobUrl.Value}");
-
+        storage.EnsureFileExists(blobUrl.Value);
         Stream stream = storage.OpenRead(blobUrl.Value);
         return Task.FromResult(stream);
     }
