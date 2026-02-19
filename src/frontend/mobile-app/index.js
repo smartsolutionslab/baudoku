@@ -11,6 +11,9 @@ const ctx = require.context(
   /^(?:\.\/)(?!(?:(?:(?:.*\+api)|(?:\+html)|(?:\+middleware)))\.[tj]sx?$).*(?:\.ios|\.web)?\.[tj]sx?$/
 );
 
+// Debug: log discovered routes so we can verify in logcat
+console.log("[BauDoku] require.context keys:", JSON.stringify(ctx.keys()));
+
 function App() {
   return <ExpoRoot context={ctx} />;
 }
