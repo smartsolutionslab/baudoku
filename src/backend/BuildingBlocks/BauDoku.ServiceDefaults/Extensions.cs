@@ -166,13 +166,19 @@ public static class Extensions
 
         configureHealthChecks?.Invoke(healthChecks);
 
-        var rabbitConnection = builder.Configuration.GetRequiredConnectionString(ConnectionStringNames.RabbitMq);
-        var rabbitUri = new Uri(rabbitConnection);
-        var lazyConnection = new Lazy<Task<IConnection>>(() => new ConnectionFactory { Uri = rabbitUri }.CreateConnectionAsync());
-        healthChecks.AddRabbitMQ(sp => lazyConnection.Value, name: "rabbitmq", failureStatus: HealthStatus.Degraded, tags: ["ready"]);
+        var rabbitConnection = builder.Configuration.GetConnectionString(ConnectionStringNames.RabbitMq);
+        if (!string.IsNullOrEmpty(rabbitConnection))
+        {
+            var rabbitUri = new Uri(rabbitConnection);
+            var lazyConnection = new Lazy<Task<IConnection>>(() => new ConnectionFactory { Uri = rabbitUri }.CreateConnectionAsync());
+            healthChecks.AddRabbitMQ(sp => lazyConnection.Value, name: "rabbitmq", failureStatus: HealthStatus.Degraded, tags: ["ready"]);
+        }
 
-        var redisConnection = builder.Configuration.GetRequiredConnectionString(ConnectionStringNames.Redis);
-        healthChecks.AddRedis(redisConnection, name: "redis", failureStatus: HealthStatus.Degraded, tags: ["ready"]);
+        var redisConnection = builder.Configuration.GetConnectionString(ConnectionStringNames.Redis);
+        if (!string.IsNullOrEmpty(redisConnection))
+        {
+            healthChecks.AddRedis(redisConnection, name: "redis", failureStatus: HealthStatus.Degraded, tags: ["ready"]);
+        }
 
         return builder;
     }

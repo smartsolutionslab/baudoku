@@ -32,12 +32,13 @@ public sealed class PhotoReadRepository(DocumentationDbContext context) : IPhoto
 
     public async Task<PhotoDto> GetByIdAsync(PhotoIdentifier photoId, CancellationToken cancellationToken = default)
     {
+        var id = photoId.Value;
         return await context.Photos
             .AsNoTracking()
-            .Where(p => p.Id.Value == photoId.Value)
+            .Where(p => p.Id == photoId)
             .Select(toPhotoDto)
             .FirstOrDefaultAsync(cancellationToken)
-            ?? throw new KeyNotFoundException($"Foto mit ID '{photoId.Value}' nicht gefunden.");
+            ?? throw new KeyNotFoundException($"Foto mit ID '{id}' nicht gefunden.");
     }
 
     public async Task<IReadOnlyList<PhotoDto>> ListByInstallationIdAsync(InstallationIdentifier installationId, CancellationToken cancellationToken = default)
