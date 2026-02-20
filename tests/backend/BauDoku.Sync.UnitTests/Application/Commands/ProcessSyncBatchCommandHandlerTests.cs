@@ -1,6 +1,7 @@
 using AwesomeAssertions;
 using BauDoku.BuildingBlocks.Application.Persistence;
-using BauDoku.Sync.Application.Commands.ProcessSyncBatch;
+using BauDoku.Sync.Application.Commands;
+using BauDoku.Sync.Application.Commands.Handlers;
 using BauDoku.Sync.Application.Contracts;
 using BauDoku.Sync.Application.Queries.Dtos;
 using BauDoku.Sync.Domain;

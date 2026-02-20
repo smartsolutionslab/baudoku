@@ -1,5 +1,6 @@
 using AwesomeAssertions;
-using BauDoku.Documentation.Application.Commands.UploadChunk;
+using BauDoku.Documentation.Application.Commands;
+using BauDoku.Documentation.Application.Commands.Handlers;
 using BauDoku.Documentation.Application.Contracts;
 using BauDoku.Documentation.Domain;
 using NSubstitute;

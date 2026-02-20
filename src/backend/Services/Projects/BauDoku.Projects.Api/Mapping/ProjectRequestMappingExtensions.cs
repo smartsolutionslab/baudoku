@@ -1,4 +1,4 @@
-using BauDoku.Projects.Application.Commands.AddZone;
+using BauDoku.Projects.Application.Commands;
 using BauDoku.Projects.Api.Endpoints;
 using BauDoku.Projects.Domain;
 

@@ -1,7 +1,7 @@
 using BauDoku.BuildingBlocks.Application.Dispatcher;
 using BauDoku.BuildingBlocks.Infrastructure.Auth;
 using BauDoku.Sync.Api.Mapping;
-using BauDoku.Sync.Application.Commands.ProcessSyncBatch;
+using BauDoku.Sync.Application.Commands;
 using BauDoku.Sync.Application.Queries.Dtos;
 using BauDoku.Sync.Application.Queries.GetChangesSince;
 using BauDoku.Sync.Application.Queries.GetConflicts;

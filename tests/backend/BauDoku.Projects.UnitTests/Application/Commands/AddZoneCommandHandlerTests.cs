@@ -1,6 +1,7 @@
 using AwesomeAssertions;
 using BauDoku.BuildingBlocks.Application.Persistence;
-using BauDoku.Projects.Application.Commands.AddZone;
+using BauDoku.Projects.Application.Commands;
+using BauDoku.Projects.Application.Commands.Handlers;
 using BauDoku.Projects.Domain;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;

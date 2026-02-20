@@ -1,7 +1,8 @@
 using AwesomeAssertions;
 using BauDoku.BuildingBlocks.Application.Persistence;
 using BauDoku.BuildingBlocks.Domain;
-using BauDoku.Projects.Application.Commands.CreateProject;
+using BauDoku.Projects.Application.Commands;
+using BauDoku.Projects.Application.Commands.Handlers;
 using BauDoku.Projects.Domain;
 using NSubstitute;
 

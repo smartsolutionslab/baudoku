@@ -1,4 +1,5 @@
-using BauDoku.Sync.Application.Commands.ProcessSyncBatch;
+using BauDoku.Sync.Application.Commands;
+using BauDoku.Sync.Application.Commands.Validators;
 using BauDoku.Sync.Application.Queries.Dtos;
 using BauDoku.Sync.Domain;
 using FluentValidation.TestHelper;

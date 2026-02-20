@@ -1,4 +1,5 @@
-using BauDoku.Documentation.Application.Commands.AddPhoto;
+using BauDoku.Documentation.Application.Commands;
+using BauDoku.Documentation.Application.Commands.Validators;
 using BauDoku.Documentation.Domain;
 using FluentValidation.TestHelper;
 

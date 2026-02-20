@@ -1,9 +1,7 @@
 using BauDoku.BuildingBlocks.Application.Dispatcher;
 using BauDoku.BuildingBlocks.Application.Responses;
 using BauDoku.BuildingBlocks.Infrastructure.Auth;
-using BauDoku.Documentation.Application.Commands.CompleteChunkedUpload;
-using BauDoku.Documentation.Application.Commands.InitChunkedUpload;
-using BauDoku.Documentation.Application.Commands.UploadChunk;
+using BauDoku.Documentation.Application.Commands;
 using BauDoku.Documentation.Domain;
 
 namespace BauDoku.Documentation.Api.Endpoints;

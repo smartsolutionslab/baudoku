@@ -1,4 +1,4 @@
-using BauDoku.Sync.Application.Commands.ResolveConflict;
+using BauDoku.Sync.Application.Commands;
 using BauDoku.Sync.Api.Endpoints;
 using BauDoku.Sync.Domain;
 

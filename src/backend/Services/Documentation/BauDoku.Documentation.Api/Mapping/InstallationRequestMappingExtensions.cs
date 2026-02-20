@@ -1,6 +1,4 @@
-using BauDoku.Documentation.Application.Commands.AddPhoto;
-using BauDoku.Documentation.Application.Commands.RecordMeasurement;
-using BauDoku.Documentation.Application.Commands.UpdateInstallation;
+using BauDoku.Documentation.Application.Commands;
 using BauDoku.Documentation.Api.Endpoints;
 using BauDoku.Documentation.Domain;
 
