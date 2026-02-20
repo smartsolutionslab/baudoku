@@ -61,7 +61,9 @@ var apiGateway = builder.AddProject("api-gateway", @"..\..\ApiGateway\BauDoku.Ap
     .WaitFor(documentationApi)
     .WaitFor(syncApi);
 
-// Web frontend runs separately: cd src/frontend/web && npm run dev (port 5173)
-// Vite proxy forwards /api to http://localhost:5000 (API Gateway)
+builder.AddExecutable("web", "npm", @"..\..\..\..\src\frontend\web", "run", "dev")
+    .WithHttpEndpoint(port: 5173, isProxied: false)
+    .WaitFor(keycloak)
+    .WithExternalHttpEndpoints();
 
 builder.Build().Run();
