@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:10.0-preview-alpine AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine AS build
 ARG BUILD_CONFIGURATION=Release
 ARG VERSION=0.0.0
 WORKDIR /src
@@ -30,7 +30,7 @@ RUN dotnet publish Services/Sync/BauDoku.Sync.Api/BauDoku.Sync.Api.csproj \
     /p:Version=$VERSION \
     /p:UseAppHost=false
 
-ARG RUNTIME_IMAGE=mcr.microsoft.com/dotnet/aspnet:10.0-preview-alpine
+ARG RUNTIME_IMAGE=mcr.microsoft.com/dotnet/aspnet:10.0-alpine
 FROM $RUNTIME_IMAGE AS final
 WORKDIR /app
 EXPOSE 8080

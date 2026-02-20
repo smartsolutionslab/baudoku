@@ -399,10 +399,10 @@ jobs:
         id: runtime
         run: |
           if [ "${{ inputs.debug_images }}" = "true" ]; then
-            echo "image=mcr.microsoft.com/dotnet/aspnet:10.0-preview" >> "$GITHUB_OUTPUT"
+            echo "image=mcr.microsoft.com/dotnet/aspnet:10.0" >> "$GITHUB_OUTPUT"
             echo "suffix=-debug" >> "$GITHUB_OUTPUT"
           else
-            echo "image=mcr.microsoft.com/dotnet/aspnet:10.0-preview-alpine" >> "$GITHUB_OUTPUT"
+            echo "image=mcr.microsoft.com/dotnet/aspnet:10.0-alpine" >> "$GITHUB_OUTPUT"
             echo "suffix=" >> "$GITHUB_OUTPUT"
           fi
 
