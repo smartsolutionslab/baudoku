@@ -1,0 +1,124 @@
+global:
+  image:
+    registry: ghcr.io
+    prefix: smartsolutionslab/baudoku
+    tag: "${image_tag}"
+    pullPolicy: ${pull_policy}
+  imagePullSecrets:
+    - name: ghcr-credentials
+
+services:
+  projectsApi:
+    replicaCount: ${api_replicas}
+    env:
+      - name: ASPNETCORE_ENVIRONMENT
+        value: "${aspnetcore_environment}"
+      - name: ConnectionStrings__ProjectsDb
+        valueFrom:
+          secretKeyRef:
+            name: baudoku-db-credentials
+            key: projects-connection-string
+      - name: ConnectionStrings__rabbitmq
+        valueFrom:
+          secretKeyRef:
+            name: baudoku-rabbitmq-credentials
+            key: connection-string
+      - name: ConnectionStrings__redis
+        valueFrom:
+          secretKeyRef:
+            name: baudoku-redis-credentials
+            key: connection-string
+      - name: Authentication__Keycloak__Authority
+        value: "${keycloak_authority}"
+
+  documentationApi:
+    replicaCount: ${api_replicas}
+    env:
+      - name: ASPNETCORE_ENVIRONMENT
+        value: "${aspnetcore_environment}"
+      - name: ConnectionStrings__DocumentationDb
+        valueFrom:
+          secretKeyRef:
+            name: baudoku-db-credentials
+            key: documentation-connection-string
+      - name: ConnectionStrings__rabbitmq
+        valueFrom:
+          secretKeyRef:
+            name: baudoku-rabbitmq-credentials
+            key: connection-string
+      - name: ConnectionStrings__redis
+        valueFrom:
+          secretKeyRef:
+            name: baudoku-redis-credentials
+            key: connection-string
+      - name: Authentication__Keycloak__Authority
+        value: "${keycloak_authority}"
+
+  syncApi:
+    replicaCount: ${api_replicas}
+    env:
+      - name: ASPNETCORE_ENVIRONMENT
+        value: "${aspnetcore_environment}"
+      - name: ConnectionStrings__SyncDb
+        valueFrom:
+          secretKeyRef:
+            name: baudoku-db-credentials
+            key: sync-connection-string
+      - name: ConnectionStrings__rabbitmq
+        valueFrom:
+          secretKeyRef:
+            name: baudoku-rabbitmq-credentials
+            key: connection-string
+      - name: ConnectionStrings__redis
+        valueFrom:
+          secretKeyRef:
+            name: baudoku-redis-credentials
+            key: connection-string
+      - name: Authentication__Keycloak__Authority
+        value: "${keycloak_authority}"
+
+  apiGateway:
+    replicaCount: ${api_replicas}
+    env:
+      - name: ASPNETCORE_ENVIRONMENT
+        value: "${aspnetcore_environment}"
+      - name: Authentication__Keycloak__Authority
+        value: "${keycloak_authority}"
+      - name: ReverseProxy__Clusters__web-ui-cluster__Destinations__web-ui__Address
+        value: "http://web"
+
+  web:
+    replicaCount: ${api_replicas}
+
+ingress:
+  enabled: true
+  className: nginx
+  host: ${domain}
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  tls:
+    - secretName: baudoku-${environment}-tls
+      hosts:
+        - ${domain}
+
+dashboard:
+  enabled: ${dashboard_enabled}
+  image:
+    pullPolicy: ${pull_policy}
+  auth:
+    browserToken: true
+    secretName: baudoku-dashboard-auth
+    secretKey: browser-token
+  ingress:
+    enabled: ${dashboard_enabled}
+    host: monitoring.${domain}
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+    tls:
+      - secretName: baudoku-monitoring-${environment}-tls
+        hosts:
+          - monitoring.${domain}
+
+otel:
+  enabled: true
+  endpoint: http://aspire-dashboard:18889
