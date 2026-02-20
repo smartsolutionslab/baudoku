@@ -1,3 +1,4 @@
+ARG RUNTIME_IMAGE=mcr.microsoft.com/dotnet/aspnet:10.0-alpine
 FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine AS build
 ARG BUILD_CONFIGURATION=Release
 ARG VERSION=0.0.0
@@ -30,7 +31,6 @@ RUN dotnet publish Services/Documentation/BauDoku.Documentation.Api/BauDoku.Docu
     /p:Version=$VERSION \
     /p:UseAppHost=false
 
-ARG RUNTIME_IMAGE=mcr.microsoft.com/dotnet/aspnet:10.0-alpine
 FROM $RUNTIME_IMAGE AS final
 WORKDIR /app
 EXPOSE 8080
