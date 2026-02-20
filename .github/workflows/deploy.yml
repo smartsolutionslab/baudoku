@@ -4,16 +4,19 @@ on:
   workflow_run:
     workflows: [CI]
     types: [completed]
-    branches: [main]
+    branches: [main, development]
 
 permissions:
   contents: read
+  packages: read
 
 jobs:
   deploy-staging:
     name: Deploy to Staging
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: >-
+      github.event.workflow_run.conclusion == 'success'
+      && github.event.workflow_run.head_branch == 'development'
     environment: staging
     steps:
       - uses: actions/checkout@v4
@@ -32,21 +35,28 @@ jobs:
           useConfigFile: true
           configFilePath: GitVersion.yml
 
-      - name: Azure Login
-        uses: azure/login@v2
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
-      - name: Set AKS Context
-        uses: azure/aks-set-context@v4
-        with:
-          cluster-name: ${{ secrets.AKS_CLUSTER_NAME }}
-          resource-group: ${{ secrets.AKS_RESOURCE_GROUP }}
+      - name: Configure Kubernetes
+        run: doctl kubernetes cluster kubeconfig save ${{ secrets.DOKS_CLUSTER_NAME }}
 
       - name: Install Helm
         uses: azure/setup-helm@v4
         with:
           version: v3.17.0
+
+      - name: Create GHCR pull secret
+        run: |
+          kubectl create namespace baudoku-staging --dry-run=client -o yaml | kubectl apply -f -
+          kubectl create secret docker-registry ghcr-credentials \
+            --namespace baudoku-staging \
+            --docker-server=ghcr.io \
+            --docker-username=${{ github.actor }} \
+            --docker-password=${{ secrets.GITHUB_TOKEN }} \
+            --dry-run=client -o yaml | kubectl apply -f -
 
       - name: Deploy with Helm
         run: |
@@ -54,6 +64,63 @@ jobs:
             --namespace baudoku-staging \
             --create-namespace \
             --values deploy/helm/baudoku/values-staging.yaml \
+            --set global.image.tag=${{ steps.gitversion.outputs.semVer }} \
+            --wait \
+            --timeout 5m
+
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    if: >-
+      github.event.workflow_run.conclusion == 'success'
+      && github.event.workflow_run.head_branch == 'main'
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v3
+        with:
+          versionSpec: '6.x'
+
+      - name: Determine Version
+        id: gitversion
+        uses: gittools/actions/gitversion/execute@v3
+        with:
+          useConfigFile: true
+          configFilePath: GitVersion.yml
+
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Configure Kubernetes
+        run: doctl kubernetes cluster kubeconfig save ${{ secrets.DOKS_CLUSTER_NAME }}
+
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: v3.17.0
+
+      - name: Create GHCR pull secret
+        run: |
+          kubectl create namespace baudoku-production --dry-run=client -o yaml | kubectl apply -f -
+          kubectl create secret docker-registry ghcr-credentials \
+            --namespace baudoku-production \
+            --docker-server=ghcr.io \
+            --docker-username=${{ github.actor }} \
+            --docker-password=${{ secrets.GITHUB_TOKEN }} \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Deploy with Helm
+        run: |
+          helm upgrade --install baudoku deploy/helm/baudoku \
+            --namespace baudoku-production \
+            --create-namespace \
+            --values deploy/helm/baudoku/values-production.yaml \
             --set global.image.tag=${{ steps.gitversion.outputs.semVer }} \
             --wait \
             --timeout 5m
