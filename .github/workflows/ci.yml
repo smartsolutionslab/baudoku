@@ -367,6 +367,7 @@ jobs:
     needs: [version, backend, web]
     if: >-
       github.ref == 'refs/heads/main'
+      || github.ref == 'refs/heads/development'
       || (github.event_name == 'pull_request' && github.base_ref == 'main')
       || (github.event_name == 'workflow_dispatch' && inputs.debug_images)
     strategy:
