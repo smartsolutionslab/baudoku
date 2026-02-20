@@ -30,7 +30,7 @@ RUN dotnet publish Services/Documentation/BauDoku.Documentation.Api/BauDoku.Docu
     /p:Version=$VERSION \
     /p:UseAppHost=false
 
-ARG RUNTIME_IMAGE=mcr.microsoft.com/dotnet/aspnet:10.0-preview-noble-chiseled-extra
+ARG RUNTIME_IMAGE=mcr.microsoft.com/dotnet/aspnet:10.0-preview-alpine
 FROM $RUNTIME_IMAGE AS final
 WORKDIR /app
 EXPOSE 8080
