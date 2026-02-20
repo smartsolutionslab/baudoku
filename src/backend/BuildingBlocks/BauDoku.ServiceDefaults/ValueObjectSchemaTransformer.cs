@@ -44,6 +44,8 @@ public sealed class ValueObjectSchemaTransformer : IOpenApiSchemaTransformer
         _ when clrType == typeof(float) => (JsonSchemaType.Number, "float"),
         _ when clrType == typeof(decimal) => (JsonSchemaType.Number, "decimal"),
         _ when clrType == typeof(bool) => (JsonSchemaType.Boolean, null),
+        _ when clrType == typeof(DateOnly) => (JsonSchemaType.String, "date"),
+        _ when clrType == typeof(TimeOnly) => (JsonSchemaType.String, "time"),
         _ when clrType == typeof(DateTime) => (JsonSchemaType.String, "date-time"),
         _ when clrType == typeof(DateTimeOffset) => (JsonSchemaType.String, "date-time"),
         _ => (JsonSchemaType.String, null)
