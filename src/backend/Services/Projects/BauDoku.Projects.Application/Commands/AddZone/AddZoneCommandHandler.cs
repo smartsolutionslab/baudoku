@@ -10,15 +10,10 @@ public sealed class AddZoneCommandHandler(IProjectRepository projects, IUnitOfWo
 {
     public async Task Handle(AddZoneCommand command, CancellationToken cancellationToken = default)
     {
-        var (projectId, name, type, parentZoneId) = command;
-        var project = await projects.GetByIdAsync(ProjectIdentifier.From(projectId), cancellationToken);
+        var project = await projects.GetByIdAsync(command.ProjectId, cancellationToken);
 
         var zoneId = ZoneIdentifier.New();
-        var zoneName = ZoneName.From(name);
-        var zoneType = ZoneType.From(type);
-        var parentZoneIdentifier = ZoneIdentifier.FromNullable(parentZoneId);
-
-        project.AddZone(zoneId, zoneName, zoneType, parentZoneIdentifier);
+        project.AddZone(zoneId, command.Name, command.Type, command.ParentZoneId);
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
 

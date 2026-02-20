@@ -8,6 +8,7 @@ using BauDoku.Projects.Application.Commands.DeleteProject;
 using BauDoku.Projects.Application.Queries.Dtos;
 using BauDoku.Projects.Application.Queries.GetProject;
 using BauDoku.Projects.Application.Queries.ListProjects;
+using BauDoku.Projects.Domain;
 
 namespace BauDoku.Projects.Api.Endpoints;
 
@@ -77,7 +78,7 @@ public static class ProjectEndpoints
 
         group.MapDelete("/{id:guid}", async (Guid id, IDispatcher dispatcher, CancellationToken ct) =>
         {
-            var command = new DeleteProjectCommand(id);
+            var command = new DeleteProjectCommand(ProjectIdentifier.From(id));
             await dispatcher.Send(command, ct);
             return Results.NoContent();
         })

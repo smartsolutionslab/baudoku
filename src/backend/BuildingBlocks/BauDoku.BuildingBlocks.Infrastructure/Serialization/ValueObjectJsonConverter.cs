@@ -11,11 +11,18 @@ public sealed class ValueObjectJsonConverter<TVo, TValue>(MethodInfo? fromMethod
         var value = JsonSerializer.Deserialize<TValue>(ref reader, options);
         if (value is null) return default;
 
-        if (fromMethod is not null) return (TVo)fromMethod.Invoke(null, [value])!;
+        try
+        {
+            if (fromMethod is not null) return (TVo)fromMethod.Invoke(null, [value])!;
 
-        // Fallback: try constructor with single value parameter
-        var constructor = typeToConvert.GetConstructor([typeof(TValue)]);
-        if (constructor is not null) return (TVo)constructor.Invoke([value]);
+            // Fallback: try constructor with single value parameter
+            var constructor = typeToConvert.GetConstructor([typeof(TValue)]);
+            if (constructor is not null) return (TVo)constructor.Invoke([value]);
+        }
+        catch (TargetInvocationException ex) when (ex.InnerException is not null)
+        {
+            throw new JsonException(ex.InnerException.Message, ex.InnerException);
+        }
 
         throw new JsonException($"Cannot deserialize ValueObject {typeToConvert.Name}: no From() method or matching constructor found.");
     }

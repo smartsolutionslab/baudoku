@@ -1,3 +1,4 @@
+using System.Text.Json;
 using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
@@ -16,6 +17,18 @@ public sealed class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logge
         var problemDetails = exception switch
         {
             ValidationException validationException => CreateValidationProblemDetails(validationException),
+            JsonException { InnerException: ArgumentException argEx } => new ProblemDetails
+            {
+                Status = StatusCodes.Status400BadRequest,
+                Title = "Bad Request",
+                Detail = argEx.Message
+            },
+            JsonException jsonException => new ProblemDetails
+            {
+                Status = StatusCodes.Status400BadRequest,
+                Title = "Bad Request",
+                Detail = jsonException.Message
+            },
             ArgumentException argumentException => new ProblemDetails
             {
                 Status = StatusCodes.Status400BadRequest,
