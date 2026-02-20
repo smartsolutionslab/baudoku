@@ -1,18 +1,18 @@
+import { useMemo } from "react";
 import { Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { apiGet } from "@baudoku/shared-api";
-import type { Project } from "@baudoku/shared-types";
+import { useProjects } from "@/hooks/useProjects";
 import { PlusIcon } from "@/components/icons";
 
 export function DashboardPage() {
-  const { data: projects } = useQuery({
-    queryKey: ["projects"],
-    queryFn: () => apiGet<Project[]>("/api/projects"),
-  });
+  const { data } = useProjects();
 
-  const activeCount = projects?.filter((p) => p.status === "active").length ?? 0;
-  const completedCount = projects?.filter((p) => p.status === "completed").length ?? 0;
-  const totalCount = projects?.length ?? 0;
+  const projects = useMemo(
+    () => data?.pages.flatMap((p) => p.items) ?? [],
+    [data]
+  );
+  const totalCount = data?.pages[0]?.totalCount ?? 0;
+  const activeCount = projects.filter((p) => p.status === "active").length;
+  const completedCount = projects.filter((p) => p.status === "completed").length;
 
   return (
     <div>
@@ -61,7 +61,7 @@ export function DashboardPage() {
       </div>
 
       {/* Recent projects */}
-      {projects && projects.length > 0 && (
+      {projects.length > 0 && (
         <div className="mt-8">
           <h2 className="text-lg font-semibold text-gray-900">
             Letzte Projekte
@@ -133,4 +133,3 @@ function StatusBadge({ status, className = "" }: { status: string; className?: s
     </span>
   );
 }
-

@@ -32,7 +32,7 @@ export interface Zone {
   version: number;
 }
 
-export type ZoneType = "building" | "floor" | "room" | "section" | "trench";
+export type ZoneType = "building" | "floor" | "room" | "trench";
 
 export interface Installation {
   id: string;
@@ -205,5 +205,7 @@ export interface PagedResult<T> {
   totalCount: number;
   page: number;
   pageSize: number;
-  hasMore: boolean;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
 }

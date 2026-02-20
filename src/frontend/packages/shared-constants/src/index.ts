@@ -55,7 +55,6 @@ export const ZONE_TYPES = [
   "building",
   "floor",
   "room",
-  "section",
   "trench",
 ] as const;
 
@@ -63,7 +62,6 @@ export const ZONE_TYPE_LABELS: Record<(typeof ZONE_TYPES)[number], string> = {
   building: "Gebäude",
   floor: "Stockwerk",
   room: "Raum",
-  section: "Abschnitt",
   trench: "Graben",
 };
 

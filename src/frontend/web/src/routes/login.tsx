@@ -1,18 +1,17 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { UserManager } from "oidc-client-ts";
-import { oidcConfig } from "../auth/oidcConfig";
-import { useAuth } from "../auth/AuthProvider";
-
-const userManager = new UserManager(oidcConfig);
+import { useAuth, userManager } from "../auth/AuthProvider";
 
 export function LoginPage() {
   const navigate = useNavigate();
   const { isAuthenticated, login } = useAuth();
+  const callbackProcessed = useRef(false);
 
   useEffect(() => {
-    // Handle OIDC callback
+    // Handle OIDC callback (guard against React strict mode double-invocation)
     if (window.location.search.includes("code=")) {
+      if (callbackProcessed.current) return;
+      callbackProcessed.current = true;
       userManager
         .signinRedirectCallback()
         .then(() => navigate({ to: "/" }))

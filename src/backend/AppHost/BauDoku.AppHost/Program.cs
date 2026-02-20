@@ -63,7 +63,7 @@ var apiGateway = builder.AddProject("api-gateway", @"..\..\ApiGateway\BauDoku.Ap
 
 builder.AddExecutable("web", "npm", @"..\..\..\..\src\frontend\web", "run", "dev")
     .WithHttpEndpoint(port: 5173, isProxied: false)
-    .WaitFor(keycloak)
-    .WithExternalHttpEndpoints();
+    .WaitFor(apiGateway)
+    .WaitFor(keycloak);    
 
 builder.Build().Run();

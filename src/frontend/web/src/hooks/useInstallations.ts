@@ -13,7 +13,7 @@ export function useInstallations(projectId: string) {
     queryKey: ["projects", projectId, "installations"],
     queryFn: () =>
       apiGet<Installation[]>(
-        `/api/projects/${projectId}/installations`
+        `/api/documentation/installations?projectId=${projectId}`
       ),
     enabled: !!projectId,
   });
@@ -35,8 +35,8 @@ export function useCreateInstallation(projectId: string) {
   return useMutation({
     mutationFn: (data: InstallationFormData & { zoneId: string }) =>
       apiPost<Installation>(
-        `/api/projects/${projectId}/installations`,
-        data
+        `/api/documentation/installations`,
+        { ...data, projectId }
       ),
     onSuccess: () => {
       queryClient.invalidateQueries({

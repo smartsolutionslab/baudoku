@@ -20,10 +20,7 @@ public static class InstallationEndpoints
     {
         var group = app.MapGroup("/api/documentation/installations").WithTags("Installations");
 
-        group.MapPost("/", async (
-            DocumentInstallationCommand command,
-            IDispatcher dispatcher,
-            CancellationToken ct) =>
+        group.MapPost("/", async (DocumentInstallationCommand command, IDispatcher dispatcher, CancellationToken ct) =>
         {
             var id = await dispatcher.Send(command, ct);
             return Results.Created($"/api/documentation/installations/{id}", new CreatedResponse(id));
@@ -97,10 +94,7 @@ public static class InstallationEndpoints
         .WithSummary("Installationen in einem Gebiet suchen")
         .Produces<PagedResult<InstallationListItemDto>>(StatusCodes.Status200OK);
 
-        group.MapGet("/{id:guid}", async (
-            Guid id,
-            IDispatcher dispatcher,
-            CancellationToken ct) =>
+        group.MapGet("/{id:guid}", async (Guid id, IDispatcher dispatcher, CancellationToken ct) =>
         {
             var query = new GetInstallationQuery(id);
             var result = await dispatcher.Query(query, ct);
@@ -112,11 +106,7 @@ public static class InstallationEndpoints
         .Produces<InstallationDto>(StatusCodes.Status200OK)
         .Produces(StatusCodes.Status404NotFound);
 
-        group.MapPut("/{id:guid}", async (
-            Guid id,
-            UpdateInstallationRequest request,
-            IDispatcher dispatcher,
-            CancellationToken ct) =>
+        group.MapPut("/{id:guid}", async (Guid id, UpdateInstallationRequest request, IDispatcher dispatcher, CancellationToken ct) =>
         {
             var command = request.ToCommand(id);
 
@@ -130,10 +120,7 @@ public static class InstallationEndpoints
         .Produces(StatusCodes.Status404NotFound)
         .ProducesValidationProblem();
 
-        group.MapPost("/{id:guid}/complete", async (
-            Guid id,
-            IDispatcher dispatcher,
-            CancellationToken ct) =>
+        group.MapPost("/{id:guid}/complete", async (Guid id, IDispatcher dispatcher, CancellationToken ct) =>
         {
             var command = new CompleteInstallationCommand(id);
             await dispatcher.Send(command, ct);
@@ -145,10 +132,7 @@ public static class InstallationEndpoints
         .Produces(StatusCodes.Status204NoContent)
         .Produces(StatusCodes.Status404NotFound);
 
-        group.MapDelete("/{id:guid}", async (
-            Guid id,
-            IDispatcher dispatcher,
-            CancellationToken ct) =>
+        group.MapDelete("/{id:guid}", async (Guid id, IDispatcher dispatcher, CancellationToken ct) =>
         {
             var command = new DeleteInstallationCommand(id);
             await dispatcher.Send(command, ct);

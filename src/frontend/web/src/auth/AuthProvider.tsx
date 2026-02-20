@@ -20,7 +20,7 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-const userManager = new UserManager(oidcConfig);
+export const userManager = new UserManager(oidcConfig);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);

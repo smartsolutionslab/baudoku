@@ -51,6 +51,18 @@ public static class ProjectEndpoints
         .Produces<ProjectDto>(StatusCodes.Status200OK)
         .Produces(StatusCodes.Status404NotFound);
 
+        group.MapGet("/{id:guid}/zones", async (Guid id, IDispatcher dispatcher, CancellationToken ct) =>
+        {
+            var query = new GetProjectQuery(id);
+            var result = await dispatcher.Query(query, ct);
+            return Results.Ok(result.Zones);
+        })
+        .RequireAuthorization()
+        .WithName("ListZones")
+        .WithSummary("Zonen eines Projekts abrufen")
+        .Produces<IReadOnlyList<ZoneDto>>(StatusCodes.Status200OK)
+        .Produces(StatusCodes.Status404NotFound);
+
         group.MapPost("/{id:guid}/zones", async (Guid id, AddZoneRequest request, IDispatcher dispatcher, CancellationToken ct) =>
         {
             var command = request.ToCommand(id);

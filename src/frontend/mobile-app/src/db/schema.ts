@@ -24,7 +24,7 @@ export const zones = sqliteTable("zones", {
   projectId: text("project_id").notNull().references(() => projects.id),
   parentZoneId: text("parent_zone_id"),
   name: text("name").notNull(),
-  type: text("type", { enum: ["building", "floor", "room", "section", "trench"] }).notNull(),
+  type: text("type", { enum: ["building", "floor", "room", "trench"] }).notNull(),
   qrCode: text("qr_code"),
   sortOrder: integer("sort_order").default(0),
   version: integer("version").notNull().default(1),
