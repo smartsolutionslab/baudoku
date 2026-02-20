@@ -11,7 +11,7 @@ import { useProjects, useSyncStatus } from "@/hooks";
 import { Button } from "@/components/core";
 import { useAuthStore, useSettingsStore } from "@/store";
 import { clearTokens } from "@/auth";
-import { setAuthToken } from "@baudoku/shared-api";
+import { setAuthToken } from "@baudoku/core";
 import { Colors, Spacing, FontSize, Radius } from "@/styles/tokens";
 
 export default function ProfileScreen() {

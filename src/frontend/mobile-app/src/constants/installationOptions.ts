@@ -1,4 +1,4 @@
-import { INSTALLATION_STATUS_LABELS } from "@baudoku/shared-constants";
+import { INSTALLATION_STATUS_LABELS } from "@baudoku/documentation";
 
 export const INSTALLATION_STATUS_OPTIONS = Object.entries(
   INSTALLATION_STATUS_LABELS

@@ -3,8 +3,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   measurementSchema,
   type MeasurementFormData,
-} from "@baudoku/shared-validation";
-import { MEASUREMENT_TYPES } from "@baudoku/shared-constants";
+  MEASUREMENT_TYPES,
+} from "@baudoku/documentation";
 import { FormField } from "../common/FormField";
 import { FormSelect } from "../common/FormSelect";
 

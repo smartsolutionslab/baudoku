@@ -1,18 +1,19 @@
-import { apiPost, apiUpload, apiRawUpload } from "@baudoku/shared-api";
-import type { PhotoUploadResult } from "@baudoku/shared-types";
+import { apiPost, apiUpload, apiRawUpload } from "@baudoku/core";
+import type { PhotoUploadResult } from "@baudoku/core";
 
-// Re-export types from shared-types
+// Re-export types from sync package
 export type {
   SyncDeltaDto,
   ConflictDto,
   ProcessSyncBatchResult,
   ServerDeltaDto,
   ChangeSetResult,
-  PhotoUploadResult,
-} from "@baudoku/shared-types";
+} from "@baudoku/sync";
+
+export type { PhotoUploadResult } from "@baudoku/core";
 
 // Re-export shared API functions
-export { pushBatch, pullChanges, getConflicts, resolveConflict } from "@baudoku/shared-api";
+export { pushBatch, pullChanges, getConflicts, resolveConflict } from "@baudoku/sync";
 
 // ─── Mobile-only: Expo URI-based photo upload ──────────────────
 

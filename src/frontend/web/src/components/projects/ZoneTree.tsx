@@ -1,8 +1,7 @@
 import { useMemo } from "react";
 import { Link } from "@tanstack/react-router";
-import type { Zone } from "@baudoku/shared-types";
-import { buildZoneTree, flattenTree, type ZoneNode } from "@baudoku/shared-logic";
-import { ZONE_TYPE_LABELS } from "@baudoku/shared-constants";
+import { buildZoneTree, flattenTree, ZONE_TYPE_LABELS } from "@baudoku/projects";
+import type { Zone, ZoneNode } from "@baudoku/projects";
 import { PlusIcon, TrashIcon } from "@/components/icons";
 
 interface ZoneTreeProps {

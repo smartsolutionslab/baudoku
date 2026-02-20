@@ -4,9 +4,9 @@ import {
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
-import { apiGet, apiPost, apiPut, apiDelete } from "@baudoku/shared-api";
-import type { Project, PagedResult, Zone } from "@baudoku/shared-types";
-import type { ProjectFormData, ZoneFormData } from "@baudoku/shared-validation";
+import { apiGet, apiPost, apiPut, apiDelete } from "@baudoku/core";
+import type { PagedResult } from "@baudoku/core";
+import type { Project, Zone, ProjectFormData, ZoneFormData } from "@baudoku/projects";
 
 // ─── Projects ───────────────────────────────────────────────────
 

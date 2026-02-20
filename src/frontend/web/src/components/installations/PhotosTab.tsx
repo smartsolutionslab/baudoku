@@ -1,6 +1,6 @@
 import { PhotoGallery } from "./PhotoGallery";
 import { PhotoCapture } from "./PhotoCapture";
-import type { Photo } from "@baudoku/shared-types";
+import type { Photo } from "@baudoku/documentation";
 
 type PhotosTabProps = {
   photos: Photo[];

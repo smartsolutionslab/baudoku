@@ -1,7 +1,7 @@
 import React from "react";
 import { QueryClient, QueryClientProvider, MutationCache, QueryCache } from "@tanstack/react-query";
 import { useToastStore } from "../store";
-import { ApiError } from "@baudoku/shared-api";
+import { ApiError } from "@baudoku/core";
 
 function getErrorMessage(error: unknown): string | null {
   if (error instanceof ApiError) {

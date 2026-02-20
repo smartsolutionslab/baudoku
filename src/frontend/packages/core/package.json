@@ -1,5 +1,5 @@
 {
-  "name": "@baudoku/shared-logic",
+  "name": "@baudoku/core",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -7,8 +7,5 @@
   "types": "./src/index.ts",
   "exports": {
     ".": "./src/index.ts"
-  },
-  "dependencies": {
-    "@baudoku/shared-types": "*"
   }
 }

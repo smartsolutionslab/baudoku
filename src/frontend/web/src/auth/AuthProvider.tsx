@@ -8,7 +8,7 @@ import {
 } from "react";
 import { UserManager, type User } from "oidc-client-ts";
 import { oidcConfig } from "./oidcConfig";
-import { setAuthToken, onUnauthorized } from "@baudoku/shared-api";
+import { setAuthToken, onUnauthorized } from "@baudoku/core";
 
 interface AuthContextValue {
   user: User | null;

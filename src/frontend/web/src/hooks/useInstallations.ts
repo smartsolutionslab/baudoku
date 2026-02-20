@@ -1,10 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiGet, apiPost, apiPut, apiDelete } from "@baudoku/shared-api";
-import type { Installation, Photo, Measurement } from "@baudoku/shared-types";
+import { apiGet, apiPost, apiPut, apiDelete } from "@baudoku/core";
 import type {
+  Installation,
+  Photo,
+  Measurement,
   InstallationFormData,
   MeasurementFormData,
-} from "@baudoku/shared-validation";
+} from "@baudoku/documentation";
 
 // ─── Installations ──────────────────────────────────────────────
 

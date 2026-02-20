@@ -1,10 +1,8 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { zoneSchema, type ZoneFormData } from "@baudoku/shared-validation";
-import { ZONE_TYPE_LABELS } from "@baudoku/shared-constants";
+import { zoneSchema, type ZoneFormData, ZONE_TYPE_LABELS, type Zone } from "@baudoku/projects";
 import { FormField } from "../common/FormField";
 import { FormSelect } from "../common/FormSelect";
-import type { Zone } from "@baudoku/shared-types";
 
 interface ZoneFormProps {
   zones: Zone[];

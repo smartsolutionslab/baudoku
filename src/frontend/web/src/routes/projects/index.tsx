@@ -7,7 +7,7 @@ import { FilterChips } from "@/components/common/FilterChips";
 import { EmptyState } from "@/components/common/EmptyState";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { PlusIcon, TrashIcon } from "@/components/icons";
-import { PROJECT_STATUS_LABELS } from "@baudoku/shared-constants";
+import { PROJECT_STATUS_LABELS } from "@baudoku/projects";
 
 const statusOptions = Object.entries(PROJECT_STATUS_LABELS).map(
   ([value, label]) => ({ value, label })

@@ -1,7 +1,7 @@
 import { useState } from "react";
-import type { Photo } from "@baudoku/shared-types";
-import { PHOTO_TYPE_LABELS } from "@baudoku/shared-constants";
-import { getBaseUrl } from "@baudoku/shared-api";
+import type { Photo } from "@baudoku/documentation";
+import { PHOTO_TYPE_LABELS } from "@baudoku/documentation";
+import { getBaseUrl } from "@baudoku/core";
 
 interface PhotoGalleryProps {
   photos: Photo[];
