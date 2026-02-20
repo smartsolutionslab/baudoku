@@ -7,7 +7,7 @@
 **/node_modules
 **/.expo
 
-src/frontend/
+src/frontend/mobile-app/
 tests/
 grafana/
 e2e/
