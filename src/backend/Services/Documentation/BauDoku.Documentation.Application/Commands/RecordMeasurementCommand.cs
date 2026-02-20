@@ -10,4 +10,4 @@ public sealed record RecordMeasurementCommand(
     MeasurementUnit Unit,
     double? MinThreshold,
     double? MaxThreshold,
-    string? Notes) : ICommand<Guid>;
+    string? Notes) : ICommand<MeasurementIdentifier>;

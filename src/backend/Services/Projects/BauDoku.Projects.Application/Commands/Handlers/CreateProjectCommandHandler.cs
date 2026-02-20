@@ -7,9 +7,9 @@ using BauDoku.Projects.Domain;
 namespace BauDoku.Projects.Application.Commands.Handlers;
 
 public sealed class CreateProjectCommandHandler(IProjectRepository projects, IUnitOfWork unitOfWork)
-    : ICommandHandler<CreateProjectCommand, Guid>
+    : ICommandHandler<CreateProjectCommand, ProjectIdentifier>
 {
-    public async Task<Guid> Handle(CreateProjectCommand command, CancellationToken cancellationToken = default)
+    public async Task<ProjectIdentifier> Handle(CreateProjectCommand command, CancellationToken cancellationToken = default)
     {
         var (name, street, city, zipCode, clientName, clientEmail, clientPhone) = command;
 
@@ -28,6 +28,6 @@ public sealed class CreateProjectCommandHandler(IProjectRepository projects, IUn
 
         ProjectsMetrics.ProjectsCreated.Add(1);
 
-        return projectId.Value;
+        return projectId;
     }
 }

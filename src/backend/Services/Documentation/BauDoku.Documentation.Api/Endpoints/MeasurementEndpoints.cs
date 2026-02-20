@@ -4,8 +4,8 @@ using BauDoku.BuildingBlocks.Infrastructure.Auth;
 using BauDoku.Documentation.Api.Mapping;
 using BauDoku.Documentation.Application.Commands;
 using BauDoku.Documentation.Domain;
+using BauDoku.Documentation.Application.Queries;
 using BauDoku.Documentation.Application.Queries.Dtos;
-using BauDoku.Documentation.Application.Queries.GetMeasurements;
 
 namespace BauDoku.Documentation.Api.Endpoints;
 
@@ -23,9 +23,9 @@ public static class MeasurementEndpoints
         {
             var command = request.ToCommand(installationId);
 
-            var measurementId = await dispatcher.Send(command, ct);
+            var measurementId = await dispatcher.Send<MeasurementIdentifier>(command, ct);
             return Results.Created(
-                $"/api/documentation/installations/{installationId}/measurements", new CreatedResponse(measurementId));
+                $"/api/documentation/installations/{installationId}/measurements", new CreatedResponse(measurementId.Value));
         })
         .RequireAuthorization(AuthPolicies.RequireUser)
         .WithName("RecordMeasurement")
@@ -38,7 +38,7 @@ public static class MeasurementEndpoints
             IDispatcher dispatcher,
             CancellationToken ct) =>
         {
-            var query = new GetMeasurementsQuery(installationId);
+            var query = new GetMeasurementsQuery(InstallationIdentifier.From(installationId));
             var result = await dispatcher.Query(query, ct);
             return Results.Ok(result);
         })

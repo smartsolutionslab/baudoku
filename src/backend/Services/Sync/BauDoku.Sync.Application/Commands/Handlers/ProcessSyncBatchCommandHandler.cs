@@ -88,6 +88,6 @@ public sealed class ProcessSyncBatchCommandHandler(ISyncBatchRepository syncBatc
         SyncMetrics.ConflictsDetected.Add(conflicts.Count);
         SyncMetrics.DeltasPerBatch.Record(deltas.Count);
 
-        return new ProcessSyncBatchResult(batchId.Value, appliedCount, conflicts.Count, conflicts);
+        return new ProcessSyncBatchResult(batchId, appliedCount, conflicts.Count, conflicts);
     }
 }

@@ -13,8 +13,8 @@ public static class QueryablePaginationExtensions
         var totalCount = await query.CountAsync(cancellationToken);
 
         var items = await query
-            .Skip((pagination.Page - 1) * pagination.PageSize)
-            .Take(pagination.PageSize)
+            .Skip((pagination.Page.Value - 1) * pagination.PageSize.Value)
+            .Take(pagination.PageSize.Value)
             .ToListAsync(cancellationToken);
 
         return new PagedResult<T>(items, totalCount, pagination.Page, pagination.PageSize);

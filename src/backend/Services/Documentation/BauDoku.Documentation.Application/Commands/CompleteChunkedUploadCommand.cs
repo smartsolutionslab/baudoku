@@ -3,4 +3,4 @@ using BauDoku.Documentation.Domain;
 
 namespace BauDoku.Documentation.Application.Commands;
 
-public sealed record CompleteChunkedUploadCommand(UploadSessionIdentifier SessionId) : ICommand<Guid>;
+public sealed record CompleteChunkedUploadCommand(UploadSessionIdentifier SessionId) : ICommand<PhotoIdentifier>;

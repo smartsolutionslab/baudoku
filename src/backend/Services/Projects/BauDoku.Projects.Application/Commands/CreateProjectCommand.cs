@@ -10,4 +10,4 @@ public sealed record CreateProjectCommand(
     ZipCode ZipCode,
     ClientName ClientName,
     EmailAddress? ClientEmail,
-    PhoneNumber? ClientPhone) : ICommand<Guid>;
+    PhoneNumber? ClientPhone) : ICommand<ProjectIdentifier>;

@@ -25,4 +25,4 @@ public sealed record DocumentInstallationCommand(
     int? DepthMm,
     Manufacturer? Manufacturer,
     ModelName? ModelName,
-    SerialNumber? SerialNumber) : ICommand<Guid>;
+    SerialNumber? SerialNumber) : ICommand<InstallationIdentifier>;

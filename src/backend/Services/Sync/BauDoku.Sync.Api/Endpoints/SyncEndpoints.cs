@@ -3,8 +3,8 @@ using BauDoku.BuildingBlocks.Infrastructure.Auth;
 using BauDoku.Sync.Api.Mapping;
 using BauDoku.Sync.Application.Commands;
 using BauDoku.Sync.Application.Queries.Dtos;
-using BauDoku.Sync.Application.Queries.GetChangesSince;
-using BauDoku.Sync.Application.Queries.GetConflicts;
+using BauDoku.Sync.Application.Queries;
+using BauDoku.Sync.Domain;
 
 namespace BauDoku.Sync.Api.Endpoints;
 
@@ -14,9 +14,9 @@ public static class SyncEndpoints
     {
         var group = app.MapGroup("/api/sync").WithTags("Sync");
 
-        group.MapPost("/batch", async (ProcessSyncBatchCommand command, IDispatcher dispatcher, CancellationToken ct) =>
+        group.MapPost("/batch", async (ProcessSyncBatchCommand command, IDispatcher dispatcher, CancellationToken cancellationToken) =>
         {
-            var result = await dispatcher.Send<ProcessSyncBatchResult>(command, ct);
+            var result = await dispatcher.Send<ProcessSyncBatchResult>(command, cancellationToken);
             return Results.Ok(result);
         })
         .RequireAuthorization(AuthPolicies.RequireUser)
@@ -25,10 +25,10 @@ public static class SyncEndpoints
         .Produces<ProcessSyncBatchResult>(StatusCodes.Status200OK)
         .ProducesValidationProblem();
 
-        group.MapGet("/changes", async (string deviceId, DateTime? since, int? limit, IDispatcher dispatcher, CancellationToken ct) =>
+        group.MapGet("/changes", async (string deviceId, DateTime? since, int? limit, IDispatcher dispatcher, CancellationToken cancellationToken) =>
         {
-            var query = new GetChangesSinceQuery(deviceId, since, limit);
-            var result = await dispatcher.Query(query, ct);
+            var query = new GetChangesSinceQuery(DeviceIdentifier.From(deviceId), since, limit);
+            var result = await dispatcher.Query(query, cancellationToken);
             return Results.Ok(result);
         })
         .RequireAuthorization()
@@ -36,10 +36,12 @@ public static class SyncEndpoints
         .WithSummary("Änderungen seit einem Zeitpunkt abrufen")
         .Produces<ChangeSetResult>(StatusCodes.Status200OK);
 
-        group.MapGet("/conflicts", async (string? deviceId, string? status, IDispatcher dispatcher, CancellationToken ct) =>
+        group.MapGet("/conflicts", async (string? deviceId, string? status, IDispatcher dispatcher, CancellationToken cancellationToken) =>
         {
-            var query = new GetConflictsQuery(deviceId, status);
-            var result = await dispatcher.Query(query, ct);
+            var query = new GetConflictsQuery(
+                DeviceIdentifier.FromNullable(deviceId),
+                ConflictStatus.FromNullable(status));
+            var result = await dispatcher.Query(query, cancellationToken);
             return Results.Ok(result);
         })
         .RequireAuthorization()

@@ -17,8 +17,8 @@ public static class ChunkedUploadEndpoints
             IDispatcher dispatcher,
             CancellationToken ct) =>
         {
-            var sessionId = await dispatcher.Send(command, ct);
-            return Results.Ok(new CreatedResponse(sessionId));
+            var sessionId = await dispatcher.Send<UploadSessionIdentifier>(command, ct);
+            return Results.Ok(new CreatedResponse(sessionId.Value));
         })
         .RequireAuthorization(AuthPolicies.RequireUser)
         .WithName("InitChunkedUpload")
@@ -49,8 +49,8 @@ public static class ChunkedUploadEndpoints
             CancellationToken ct) =>
         {
             var command = new CompleteChunkedUploadCommand(UploadSessionIdentifier.From(sessionId));
-            var photoId = await dispatcher.Send(command, ct);
-            return Results.Created($"/api/documentation/photos/{photoId}", new CreatedResponse(photoId));
+            var photoId = await dispatcher.Send<PhotoIdentifier>(command, ct);
+            return Results.Created($"/api/documentation/photos/{photoId.Value}", new CreatedResponse(photoId.Value));
         })
         .RequireAuthorization(AuthPolicies.RequireUser)
         .WithName("CompleteChunkedUpload")

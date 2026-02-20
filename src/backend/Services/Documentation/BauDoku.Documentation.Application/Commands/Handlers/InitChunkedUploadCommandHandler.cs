@@ -5,9 +5,9 @@ using BauDoku.Documentation.Domain;
 namespace BauDoku.Documentation.Application.Commands.Handlers;
 
 public sealed class InitChunkedUploadCommandHandler(IInstallationRepository installations, IChunkedUploadStorage chunkedUploadStorage)
-    : ICommandHandler<InitChunkedUploadCommand, Guid>
+    : ICommandHandler<InitChunkedUploadCommand, UploadSessionIdentifier>
 {
-    public async Task<Guid> Handle(InitChunkedUploadCommand command, CancellationToken cancellationToken = default)
+    public async Task<UploadSessionIdentifier> Handle(InitChunkedUploadCommand command, CancellationToken cancellationToken = default)
     {
         var (installationId, fileName, contentType, totalSize, totalChunks,
             photoType, caption, description,
@@ -35,6 +35,6 @@ public sealed class InitChunkedUploadCommandHandler(IInstallationRepository inst
             CreatedAt: DateTime.UtcNow);
 
         await chunkedUploadStorage.InitSessionAsync(session, cancellationToken);
-        return sessionIdentifier.Value;
+        return sessionIdentifier;
     }
 }

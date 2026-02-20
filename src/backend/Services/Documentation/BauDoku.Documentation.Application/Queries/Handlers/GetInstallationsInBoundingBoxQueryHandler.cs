@@ -1,20 +1,19 @@
 using BauDoku.BuildingBlocks.Application.Pagination;
 using BauDoku.BuildingBlocks.Application.Queries;
+using BauDoku.BuildingBlocks.Domain;
 using BauDoku.Documentation.Application.Contracts;
 using BauDoku.Documentation.Application.Queries.Dtos;
-using BauDoku.Documentation.Domain;
 
-namespace BauDoku.Documentation.Application.Queries.GetInstallationsInBoundingBox;
+namespace BauDoku.Documentation.Application.Queries.Handlers;
 
 public sealed class GetInstallationsInBoundingBoxQueryHandler(IInstallationReadRepository installations)
     : IQueryHandler<GetInstallationsInBoundingBoxQuery, PagedResult<InstallationListItemDto>>
 {
     public async Task<PagedResult<InstallationListItemDto>> Handle(GetInstallationsInBoundingBoxQuery query, CancellationToken cancellationToken = default)
     {
-        var (minLatitude, minLongitude, maxLatitude, maxLongitude, projectId, page, pageSize) = query;
-        var boundingBox = new BoundingBox(minLatitude, minLongitude, maxLatitude, maxLongitude);
-        var projectIdentifier = ProjectIdentifier.FromNullable(projectId);
-        var pagination = new PaginationParams(page, pageSize);
-        return await installations.SearchInBoundingBoxAsync(boundingBox, projectIdentifier, pagination, cancellationToken);
+        var pagination = new PaginationParams(
+            query.Page ?? PageNumber.Default,
+            query.PageSize ?? PageSize.Default);
+        return await installations.SearchInBoundingBoxAsync(query.Bounds, query.ProjectId, pagination, cancellationToken);
     }
 }

@@ -6,9 +6,9 @@ using BauDoku.Documentation.Domain;
 namespace BauDoku.Documentation.Application.Commands.Handlers;
 
 public sealed class DocumentInstallationCommandHandler(IInstallationRepository installations, IUnitOfWork unitOfWork)
-    : ICommandHandler<DocumentInstallationCommand, Guid>
+    : ICommandHandler<DocumentInstallationCommand, InstallationIdentifier>
 {
-    public async Task<Guid> Handle(DocumentInstallationCommand command, CancellationToken cancellationToken = default)
+    public async Task<InstallationIdentifier> Handle(DocumentInstallationCommand command, CancellationToken cancellationToken = default)
     {
         var (projectId, zoneId, type,
             latitude, longitude, altitude,
@@ -46,6 +46,6 @@ public sealed class DocumentInstallationCommandHandler(IInstallationRepository i
         DocumentationMetrics.InstallationsDocumented.Add(1);
         DocumentationMetrics.GpsHorizontalAccuracy.Record(horizontalAccuracy.Value);
 
-        return installationId.Value;
+        return installationId;
     }
 }

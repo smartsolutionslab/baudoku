@@ -17,4 +17,4 @@ public sealed record AddPhotoCommand(
     HorizontalAccuracy? HorizontalAccuracy,
     GpsSource? GpsSource,
     Stream Stream,
-    DateTime? TakenAt = null) : ICommand<Guid>;
+    DateTime? TakenAt = null) : ICommand<PhotoIdentifier>;

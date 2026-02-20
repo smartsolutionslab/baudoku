@@ -6,9 +6,9 @@ using BauDoku.Documentation.Domain;
 namespace BauDoku.Documentation.Application.Commands.Handlers;
 
 public sealed class RecordMeasurementCommandHandler(IInstallationRepository installations, IUnitOfWork unitOfWork)
-    : ICommandHandler<RecordMeasurementCommand, Guid>
+    : ICommandHandler<RecordMeasurementCommand, MeasurementIdentifier>
 {
-    public async Task<Guid> Handle(RecordMeasurementCommand command, CancellationToken cancellationToken = default)
+    public async Task<MeasurementIdentifier> Handle(RecordMeasurementCommand command, CancellationToken cancellationToken = default)
     {
         var (installationId, type, value, unit, minThreshold, maxThreshold, notes) = command;
 
@@ -24,6 +24,6 @@ public sealed class RecordMeasurementCommandHandler(IInstallationRepository inst
 
         DocumentationMetrics.MeasurementsRecorded.Add(1);
 
-        return measurementId.Value;
+        return measurementId;
     }
 }

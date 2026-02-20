@@ -16,4 +16,4 @@ public sealed record InitChunkedUploadCommand(
     Longitude? Longitude,
     double? Altitude,
     HorizontalAccuracy? HorizontalAccuracy,
-    GpsSource? GpsSource) : ICommand<Guid>;
+    GpsSource? GpsSource) : ICommand<UploadSessionIdentifier>;

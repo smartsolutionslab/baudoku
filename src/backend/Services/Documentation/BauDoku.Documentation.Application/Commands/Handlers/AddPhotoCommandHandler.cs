@@ -7,9 +7,9 @@ using BauDoku.Documentation.Domain;
 namespace BauDoku.Documentation.Application.Commands.Handlers;
 
 public sealed class AddPhotoCommandHandler(IInstallationRepository installations, IPhotoStorage photoStorage, IUnitOfWork unitOfWork)
-    : ICommandHandler<AddPhotoCommand, Guid>
+    : ICommandHandler<AddPhotoCommand, PhotoIdentifier>
 {
-    public async Task<Guid> Handle(AddPhotoCommand command, CancellationToken cancellationToken = default)
+    public async Task<PhotoIdentifier> Handle(AddPhotoCommand command, CancellationToken cancellationToken = default)
     {
         var (installationId, fileName, contentType, fileSize,
             photoType, caption, description,
@@ -46,6 +46,6 @@ public sealed class AddPhotoCommandHandler(IInstallationRepository installations
         DocumentationMetrics.PhotosAdded.Add(1);
         DocumentationMetrics.PhotoFileSize.Record(fileSize.Value);
 
-        return photoId.Value;
+        return photoId;
     }
 }

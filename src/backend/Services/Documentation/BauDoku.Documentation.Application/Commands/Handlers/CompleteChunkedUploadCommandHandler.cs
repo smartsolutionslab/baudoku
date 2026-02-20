@@ -7,9 +7,9 @@ using BauDoku.Documentation.Domain;
 namespace BauDoku.Documentation.Application.Commands.Handlers;
 
 public sealed class CompleteChunkedUploadCommandHandler(IChunkedUploadStorage chunkedUploadStorage, IPhotoStorage photoStorage, IInstallationRepository installations, IUnitOfWork unitOfWork)
-    : ICommandHandler<CompleteChunkedUploadCommand, Guid>
+    : ICommandHandler<CompleteChunkedUploadCommand, PhotoIdentifier>
 {
-    public async Task<Guid> Handle(CompleteChunkedUploadCommand command, CancellationToken cancellationToken = default)
+    public async Task<PhotoIdentifier> Handle(CompleteChunkedUploadCommand command, CancellationToken cancellationToken = default)
     {
         var sessionId = command.SessionId;
 
@@ -52,6 +52,6 @@ public sealed class CompleteChunkedUploadCommandHandler(IChunkedUploadStorage ch
 
         await chunkedUploadStorage.CleanupSessionAsync(sessionId, cancellationToken);
 
-        return photoId.Value;
+        return photoId;
     }
 }

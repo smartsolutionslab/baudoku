@@ -1,5 +1,6 @@
 using AwesomeAssertions;
-using BauDoku.Projects.Application.Queries.GetProject;
+using BauDoku.Projects.Application.Queries;
+using BauDoku.Projects.Application.Queries.Handlers;
 using BauDoku.Projects.Domain;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
@@ -33,7 +34,7 @@ public sealed class GetProjectQueryHandlerTests
 
         projects.GetByIdReadOnlyAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>()).Returns(project);
 
-        var result = await handler.Handle(new GetProjectQuery(project.Id.Value));
+        var result = await handler.Handle(new GetProjectQuery(project.Id));
 
         result.Should().NotBeNull();
         result.Name.Should().Be("Testprojekt");
@@ -49,7 +50,7 @@ public sealed class GetProjectQueryHandlerTests
         projects.GetByIdReadOnlyAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>())
             .Throws(new KeyNotFoundException());
 
-        var act = () => handler.Handle(new GetProjectQuery(Guid.NewGuid()));
+        var act = () => handler.Handle(new GetProjectQuery(ProjectIdentifier.New()));
 
         await act.Should().ThrowAsync<KeyNotFoundException>();
     }
@@ -73,7 +74,7 @@ public sealed class GetProjectQueryHandlerTests
         projects.GetByIdReadOnlyAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(project);
 
-        var result = await handler.Handle(new GetProjectQuery(project.Id.Value));
+        var result = await handler.Handle(new GetProjectQuery(project.Id));
 
         result.Should().NotBeNull();
         result.Zones.Should().ContainSingle();
