@@ -10,6 +10,10 @@ permissions:
   contents: read
   packages: read
 
+env:
+  TF_INPUT: "false"
+  TF_IN_AUTOMATION: "true"
+
 jobs:
   deploy-staging:
     name: Deploy to Staging
@@ -18,6 +22,10 @@ jobs:
       github.event.workflow_run.conclusion == 'success'
       && github.event.workflow_run.head_branch == 'development'
     environment: staging
+    defaults:
+      run:
+        working-directory: deploy/terraform/environments/staging
+
     steps:
       - uses: actions/checkout@v4
         with:
@@ -35,38 +43,27 @@ jobs:
           useConfigFile: true
           configFilePath: GitVersion.yml
 
-      - name: Install doctl
-        uses: digitalocean/action-doctl@v2
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
         with:
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          terraform_version: "~> 1.9"
 
-      - name: Configure Kubernetes
-        run: doctl kubernetes cluster kubeconfig save ${{ secrets.DOKS_CLUSTER_NAME }}
+      - name: Terraform Init
+        run: terraform init
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.DO_SPACES_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SPACES_SECRET_KEY }}
 
-      - name: Install Helm
-        uses: azure/setup-helm@v4
-        with:
-          version: v3.17.0
-
-      - name: Create GHCR pull secret
-        run: |
-          kubectl create namespace baudoku-staging --dry-run=client -o yaml | kubectl apply -f -
-          kubectl create secret docker-registry ghcr-credentials \
-            --namespace baudoku-staging \
-            --docker-server=ghcr.io \
-            --docker-username=${{ github.actor }} \
-            --docker-password=${{ secrets.GITHUB_TOKEN }} \
-            --dry-run=client -o yaml | kubectl apply -f -
-
-      - name: Deploy with Helm
-        run: |
-          helm upgrade --install baudoku deploy/helm/baudoku \
-            --namespace baudoku-staging \
-            --create-namespace \
-            --values deploy/helm/baudoku/values-staging.yaml \
-            --set global.image.tag=${{ steps.gitversion.outputs.semVer }} \
-            --wait \
-            --timeout 5m
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.DO_SPACES_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SPACES_SECRET_KEY }}
+          DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          TF_VAR_image_tag: ${{ steps.gitversion.outputs.semVer }}
+          TF_VAR_ghcr_username: ${{ github.actor }}
+          TF_VAR_ghcr_token: ${{ secrets.GITHUB_TOKEN }}
+          TF_VAR_keycloak_admin_password: ${{ secrets.KEYCLOAK_ADMIN_PASSWORD }}
 
   deploy-production:
     name: Deploy to Production
@@ -75,6 +72,10 @@ jobs:
       github.event.workflow_run.conclusion == 'success'
       && github.event.workflow_run.head_branch == 'main'
     environment: production
+    defaults:
+      run:
+        working-directory: deploy/terraform/environments/production
+
     steps:
       - uses: actions/checkout@v4
         with:
@@ -92,35 +93,32 @@ jobs:
           useConfigFile: true
           configFilePath: GitVersion.yml
 
-      - name: Install doctl
-        uses: digitalocean/action-doctl@v2
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
         with:
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          terraform_version: "~> 1.9"
 
-      - name: Configure Kubernetes
-        run: doctl kubernetes cluster kubeconfig save ${{ secrets.DOKS_CLUSTER_NAME }}
+      - name: Terraform Init
+        run: terraform init
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.DO_SPACES_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SPACES_SECRET_KEY }}
 
-      - name: Install Helm
-        uses: azure/setup-helm@v4
-        with:
-          version: v3.17.0
+      - name: Terraform Plan
+        id: plan
+        run: terraform plan -out=tfplan
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.DO_SPACES_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SPACES_SECRET_KEY }}
+          DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          TF_VAR_image_tag: ${{ steps.gitversion.outputs.semVer }}
+          TF_VAR_ghcr_username: ${{ github.actor }}
+          TF_VAR_ghcr_token: ${{ secrets.GITHUB_TOKEN }}
+          TF_VAR_keycloak_admin_password: ${{ secrets.KEYCLOAK_ADMIN_PASSWORD }}
 
-      - name: Create GHCR pull secret
-        run: |
-          kubectl create namespace baudoku-production --dry-run=client -o yaml | kubectl apply -f -
-          kubectl create secret docker-registry ghcr-credentials \
-            --namespace baudoku-production \
-            --docker-server=ghcr.io \
-            --docker-username=${{ github.actor }} \
-            --docker-password=${{ secrets.GITHUB_TOKEN }} \
-            --dry-run=client -o yaml | kubectl apply -f -
-
-      - name: Deploy with Helm
-        run: |
-          helm upgrade --install baudoku deploy/helm/baudoku \
-            --namespace baudoku-production \
-            --create-namespace \
-            --values deploy/helm/baudoku/values-production.yaml \
-            --set global.image.tag=${{ steps.gitversion.outputs.semVer }} \
-            --wait \
-            --timeout 5m
+      - name: Terraform Apply
+        run: terraform apply tfplan
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.DO_SPACES_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SPACES_SECRET_KEY }}
+          DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
