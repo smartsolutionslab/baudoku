@@ -19,11 +19,9 @@
     "react-hook-form": "^7.56.0",
     "@hookform/resolvers": "^5.0.1",
     "oidc-client-ts": "^3.3.0",
-    "@baudoku/shared-types": "*",
-    "@baudoku/shared-validation": "*",
-    "@baudoku/shared-api": "*",
-    "@baudoku/shared-constants": "*",
-    "@baudoku/shared-logic": "*"
+    "@baudoku/core": "*",
+    "@baudoku/projects": "*",
+    "@baudoku/documentation": "*"
   },
   "devDependencies": {
     "vite": "^6.3.0",

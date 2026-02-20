@@ -1,16 +1,14 @@
 using BauDoku.BuildingBlocks.Application.Dispatcher;
 using BauDoku.BuildingBlocks.Application.Pagination;
 using BauDoku.BuildingBlocks.Application.Responses;
+using BauDoku.BuildingBlocks.Domain;
 using BauDoku.BuildingBlocks.Infrastructure.Auth;
 using BauDoku.Documentation.Api.Mapping;
-using BauDoku.Documentation.Application.Commands.CompleteInstallation;
-using BauDoku.Documentation.Application.Commands.DeleteInstallation;
-using BauDoku.Documentation.Application.Commands.DocumentInstallation;
+using BauDoku.Documentation.Application.Commands;
+using BauDoku.Documentation.Application.Contracts;
+using BauDoku.Documentation.Domain;
+using BauDoku.Documentation.Application.Queries;
 using BauDoku.Documentation.Application.Queries.Dtos;
-using BauDoku.Documentation.Application.Queries.GetInstallation;
-using BauDoku.Documentation.Application.Queries.GetInstallationsInBoundingBox;
-using BauDoku.Documentation.Application.Queries.GetInstallationsInRadius;
-using BauDoku.Documentation.Application.Queries.ListInstallations;
 
 namespace BauDoku.Documentation.Api.Endpoints;
 
@@ -20,13 +18,10 @@ public static class InstallationEndpoints
     {
         var group = app.MapGroup("/api/documentation/installations").WithTags("Installations");
 
-        group.MapPost("/", async (
-            DocumentInstallationCommand command,
-            IDispatcher dispatcher,
-            CancellationToken ct) =>
+        group.MapPost("/", async (DocumentInstallationCommand command, IDispatcher dispatcher, CancellationToken cancellationToken) =>
         {
-            var id = await dispatcher.Send(command, ct);
-            return Results.Created($"/api/documentation/installations/{id}", new CreatedResponse(id));
+            var id = await dispatcher.Send<InstallationIdentifier>(command, cancellationToken);
+            return Results.Created($"/api/documentation/installations/{id.Value}", new CreatedResponse(id.Value));
         })
         .RequireAuthorization(AuthPolicies.RequireUser)
         .WithName("DocumentInstallation")
@@ -46,8 +41,13 @@ public static class InstallationEndpoints
             CancellationToken ct) =>
         {
             var query = new ListInstallationsQuery(
-                projectId, zoneId, type, status, search,
-                page ?? 1, pageSize ?? 20);
+                ProjectIdentifier.FromNullable(projectId),
+                ZoneIdentifier.FromNullable(zoneId),
+                InstallationType.FromNullable(type),
+                InstallationStatus.FromNullable(status),
+                SearchTerm.FromNullable(search),
+                page.HasValue ? PageNumber.From(page.Value) : null,
+                pageSize.HasValue ? PageSize.From(pageSize.Value) : null);
             var result = await dispatcher.Query(query, ct);
             return Results.Ok(result);
         })
@@ -67,8 +67,10 @@ public static class InstallationEndpoints
             CancellationToken ct) =>
         {
             var query = new GetInstallationsInRadiusQuery(
-                latitude, longitude, radiusMeters, projectId,
-                page ?? 1, pageSize ?? 20);
+                new SearchRadius(latitude, longitude, radiusMeters),
+                ProjectIdentifier.FromNullable(projectId),
+                page.HasValue ? PageNumber.From(page.Value) : null,
+                pageSize.HasValue ? PageSize.From(pageSize.Value) : null);
             return Results.Ok(await dispatcher.Query(query, ct));
         })
         .RequireAuthorization()
@@ -88,8 +90,10 @@ public static class InstallationEndpoints
             CancellationToken ct) =>
         {
             var query = new GetInstallationsInBoundingBoxQuery(
-                minLatitude, minLongitude, maxLatitude, maxLongitude,
-                projectId, page ?? 1, pageSize ?? 20);
+                new BoundingBox(minLatitude, minLongitude, maxLatitude, maxLongitude),
+                ProjectIdentifier.FromNullable(projectId),
+                page.HasValue ? PageNumber.From(page.Value) : null,
+                pageSize.HasValue ? PageSize.From(pageSize.Value) : null);
             return Results.Ok(await dispatcher.Query(query, ct));
         })
         .RequireAuthorization()
@@ -97,13 +101,10 @@ public static class InstallationEndpoints
         .WithSummary("Installationen in einem Gebiet suchen")
         .Produces<PagedResult<InstallationListItemDto>>(StatusCodes.Status200OK);
 
-        group.MapGet("/{id:guid}", async (
-            Guid id,
-            IDispatcher dispatcher,
-            CancellationToken ct) =>
+        group.MapGet("/{id:guid}", async (Guid id, IDispatcher dispatcher, CancellationToken cancellationToken) =>
         {
-            var query = new GetInstallationQuery(id);
-            var result = await dispatcher.Query(query, ct);
+            var query = new GetInstallationQuery(InstallationIdentifier.From(id));
+            var result = await dispatcher.Query(query, cancellationToken);
             return Results.Ok(result);
         })
         .RequireAuthorization()
@@ -112,15 +113,11 @@ public static class InstallationEndpoints
         .Produces<InstallationDto>(StatusCodes.Status200OK)
         .Produces(StatusCodes.Status404NotFound);
 
-        group.MapPut("/{id:guid}", async (
-            Guid id,
-            UpdateInstallationRequest request,
-            IDispatcher dispatcher,
-            CancellationToken ct) =>
+        group.MapPut("/{id:guid}", async (Guid id, UpdateInstallationRequest request, IDispatcher dispatcher, CancellationToken cancellationToken) =>
         {
             var command = request.ToCommand(id);
 
-            await dispatcher.Send(command, ct);
+            await dispatcher.Send(command, cancellationToken);
             return Results.NoContent();
         })
         .RequireAuthorization(AuthPolicies.RequireUser)
@@ -130,13 +127,10 @@ public static class InstallationEndpoints
         .Produces(StatusCodes.Status404NotFound)
         .ProducesValidationProblem();
 
-        group.MapPost("/{id:guid}/complete", async (
-            Guid id,
-            IDispatcher dispatcher,
-            CancellationToken ct) =>
+        group.MapPost("/{id:guid}/complete", async (Guid id, IDispatcher dispatcher, CancellationToken cancellationToken) =>
         {
-            var command = new CompleteInstallationCommand(id);
-            await dispatcher.Send(command, ct);
+            var command = new CompleteInstallationCommand(InstallationIdentifier.From(id));
+            await dispatcher.Send(command, cancellationToken);
             return Results.NoContent();
         })
         .RequireAuthorization(AuthPolicies.RequireUser)
@@ -145,13 +139,10 @@ public static class InstallationEndpoints
         .Produces(StatusCodes.Status204NoContent)
         .Produces(StatusCodes.Status404NotFound);
 
-        group.MapDelete("/{id:guid}", async (
-            Guid id,
-            IDispatcher dispatcher,
-            CancellationToken ct) =>
+        group.MapDelete("/{id:guid}", async (Guid id, IDispatcher dispatcher, CancellationToken cancellationToken) =>
         {
-            var command = new DeleteInstallationCommand(id);
-            await dispatcher.Send(command, ct);
+            var command = new DeleteInstallationCommand(InstallationIdentifier.From(id));
+            await dispatcher.Send(command, cancellationToken);
             return Results.NoContent();
         })
         .RequireAuthorization(AuthPolicies.RequireAdmin)

@@ -2,8 +2,7 @@ import { useState } from "react";
 import { MeasurementCard } from "./MeasurementCard";
 import { MeasurementForm } from "./MeasurementForm";
 import { PlusIcon } from "@/components/icons";
-import type { Measurement } from "@baudoku/shared-types";
-import type { MeasurementFormData } from "@baudoku/shared-validation";
+import type { Measurement, MeasurementFormData } from "@baudoku/documentation";
 
 type MeasurementsTabProps = {
   measurements: Measurement[];

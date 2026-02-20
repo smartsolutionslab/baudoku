@@ -1,6 +1,7 @@
 using AwesomeAssertions;
 using BauDoku.BuildingBlocks.Application.Persistence;
-using BauDoku.Documentation.Application.Commands.DeleteInstallation;
+using BauDoku.Documentation.Application.Commands;
+using BauDoku.Documentation.Application.Commands.Handlers;
 using BauDoku.Documentation.Domain;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
@@ -35,7 +36,7 @@ public sealed class DeleteInstallationCommandHandlerTests
         installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
 
-        await handler.Handle(new DeleteInstallationCommand(installation.Id.Value), CancellationToken.None);
+        await handler.Handle(new DeleteInstallationCommand(installation.Id), CancellationToken.None);
 
         installations.Received(1).Remove(installation);
         await unitOfWork.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
@@ -48,7 +49,7 @@ public sealed class DeleteInstallationCommandHandlerTests
         installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
 
-        await handler.Handle(new DeleteInstallationCommand(installation.Id.Value), CancellationToken.None);
+        await handler.Handle(new DeleteInstallationCommand(installation.Id), CancellationToken.None);
 
         installation.DomainEvents.Should().ContainSingle(e =>
             e.GetType().Name == "InstallationDeleted");
@@ -60,7 +61,7 @@ public sealed class DeleteInstallationCommandHandlerTests
         installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Throws(new KeyNotFoundException());
 
-        var act = () => handler.Handle(new DeleteInstallationCommand(Guid.NewGuid()), CancellationToken.None);
+        var act = () => handler.Handle(new DeleteInstallationCommand(InstallationIdentifier.New()), CancellationToken.None);
 
         await act.Should().ThrowAsync<KeyNotFoundException>();
     }

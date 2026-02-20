@@ -1,6 +1,7 @@
 using AwesomeAssertions;
 using BauDoku.BuildingBlocks.Application.Persistence;
-using BauDoku.Projects.Application.Commands.AddZone;
+using BauDoku.Projects.Application.Commands;
+using BauDoku.Projects.Application.Commands.Handlers;
 using BauDoku.Projects.Domain;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
@@ -34,7 +35,7 @@ public sealed class AddZoneCommandHandlerTests
         projects.GetByIdAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(project);
 
-        var command = new AddZoneCommand(project.Id.Value, "Erdgeschoss", "floor", null);
+        var command = new AddZoneCommand(project.Id, ZoneName.From("Erdgeschoss"), ZoneType.Floor, null);
 
         await handler.Handle(command);
 
@@ -48,7 +49,7 @@ public sealed class AddZoneCommandHandlerTests
         projects.GetByIdAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>())
             .Throws(new KeyNotFoundException());
 
-        var command = new AddZoneCommand(Guid.NewGuid(), "Erdgeschoss", "floor", null);
+        var command = new AddZoneCommand(ProjectIdentifier.New(), ZoneName.From("Erdgeschoss"), ZoneType.Floor, null);
 
         var act = () => handler.Handle(command);
 
@@ -65,7 +66,7 @@ public sealed class AddZoneCommandHandlerTests
         projects.GetByIdAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(project);
 
-        var command = new AddZoneCommand(project.Id.Value, "Erdgeschoss", "floor", parentId.Value);
+        var command = new AddZoneCommand(project.Id, ZoneName.From("Erdgeschoss"), ZoneType.Floor, parentId);
 
         await handler.Handle(command);
 

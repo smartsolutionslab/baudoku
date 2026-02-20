@@ -1,5 +1,6 @@
 using AwesomeAssertions;
-using BauDoku.Documentation.Application.Queries.GetInstallation;
+using BauDoku.Documentation.Application.Queries;
+using BauDoku.Documentation.Application.Queries.Handlers;
 using BauDoku.Documentation.Domain;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
@@ -40,7 +41,7 @@ public sealed class GetInstallationQueryHandlerTests
         installations.GetByIdReadOnlyAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
 
-        var result = await handler.Handle(new GetInstallationQuery(installation.Id.Value), CancellationToken.None);
+        var result = await handler.Handle(new GetInstallationQuery(installation.Id), CancellationToken.None);
 
         result.Should().NotBeNull();
         result.Type.Should().Be("cable_tray");
@@ -58,7 +59,7 @@ public sealed class GetInstallationQueryHandlerTests
         installations.GetByIdReadOnlyAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Throws(new KeyNotFoundException());
 
-        var act = () => handler.Handle(new GetInstallationQuery(Guid.NewGuid()), CancellationToken.None);
+        var act = () => handler.Handle(new GetInstallationQuery(InstallationIdentifier.New()), CancellationToken.None);
 
         await act.Should().ThrowAsync<KeyNotFoundException>();
     }
@@ -76,7 +77,7 @@ public sealed class GetInstallationQueryHandlerTests
         installations.GetByIdReadOnlyAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
 
-        var result = await handler.Handle(new GetInstallationQuery(installation.Id.Value), CancellationToken.None);
+        var result = await handler.Handle(new GetInstallationQuery(installation.Id), CancellationToken.None);
 
         result.Should().NotBeNull();
         result.GpsSource.Should().Be("dgnss");

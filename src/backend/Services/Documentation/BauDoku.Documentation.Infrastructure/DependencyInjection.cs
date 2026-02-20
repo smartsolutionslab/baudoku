@@ -16,7 +16,11 @@ public static class DependencyInjection
     public static IServiceCollection AddDocumentationInfrastructure(this IServiceCollection services, string connectionString, IConfiguration configuration)
     {
         services.AddDbContext<DocumentationDbContext>(options =>
-            options.UseNpgsql(connectionString, o => o.UseNetTopologySuite()));
+            options.UseNpgsql(connectionString, npgsql =>
+            {
+                npgsql.UseNetTopologySuite();
+                npgsql.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
+            }));
 
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<DocumentationDbContext>());
         services.AddScoped<IInstallationRepository, InstallationRepository>();

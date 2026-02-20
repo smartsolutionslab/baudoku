@@ -1,9 +1,8 @@
 using BauDoku.BuildingBlocks.Application.Dispatcher;
 using BauDoku.BuildingBlocks.Application.Responses;
 using BauDoku.BuildingBlocks.Infrastructure.Auth;
-using BauDoku.Documentation.Application.Commands.CompleteChunkedUpload;
-using BauDoku.Documentation.Application.Commands.InitChunkedUpload;
-using BauDoku.Documentation.Application.Commands.UploadChunk;
+using BauDoku.Documentation.Application.Commands;
+using BauDoku.Documentation.Domain;
 
 namespace BauDoku.Documentation.Api.Endpoints;
 
@@ -18,8 +17,8 @@ public static class ChunkedUploadEndpoints
             IDispatcher dispatcher,
             CancellationToken ct) =>
         {
-            var sessionId = await dispatcher.Send(command, ct);
-            return Results.Ok(new CreatedResponse(sessionId));
+            var sessionId = await dispatcher.Send<UploadSessionIdentifier>(command, ct);
+            return Results.Ok(new CreatedResponse(sessionId.Value));
         })
         .RequireAuthorization(AuthPolicies.RequireUser)
         .WithName("InitChunkedUpload")
@@ -34,7 +33,7 @@ public static class ChunkedUploadEndpoints
             IDispatcher dispatcher,
             CancellationToken ct) =>
         {
-            var command = new UploadChunkCommand(sessionId, index, httpRequest.Body);
+            var command = new UploadChunkCommand(UploadSessionIdentifier.From(sessionId), index, httpRequest.Body);
             await dispatcher.Send(command, ct);
             return Results.NoContent();
         })
@@ -49,9 +48,9 @@ public static class ChunkedUploadEndpoints
             IDispatcher dispatcher,
             CancellationToken ct) =>
         {
-            var command = new CompleteChunkedUploadCommand(sessionId);
-            var photoId = await dispatcher.Send(command, ct);
-            return Results.Created($"/api/documentation/photos/{photoId}", new CreatedResponse(photoId));
+            var command = new CompleteChunkedUploadCommand(UploadSessionIdentifier.From(sessionId));
+            var photoId = await dispatcher.Send<PhotoIdentifier>(command, ct);
+            return Results.Created($"/api/documentation/photos/{photoId.Value}", new CreatedResponse(photoId.Value));
         })
         .RequireAuthorization(AuthPolicies.RequireUser)
         .WithName("CompleteChunkedUpload")

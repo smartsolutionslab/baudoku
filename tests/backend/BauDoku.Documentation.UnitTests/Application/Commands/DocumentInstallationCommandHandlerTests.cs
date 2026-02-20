@@ -1,6 +1,7 @@
 using AwesomeAssertions;
 using BauDoku.BuildingBlocks.Application.Persistence;
-using BauDoku.Documentation.Application.Commands.DocumentInstallation;
+using BauDoku.Documentation.Application.Commands;
+using BauDoku.Documentation.Application.Commands.Handlers;
 using BauDoku.Documentation.Domain;
 using NSubstitute;
 
@@ -20,10 +21,11 @@ public sealed class DocumentInstallationCommandHandlerTests
     }
 
     private static DocumentInstallationCommand CreateValidCommand() =>
-        new(Guid.NewGuid(), null, "cable_tray",
-            48.137154, 11.576124, 520.0, 3.5, "gps",
+        new(ProjectIdentifier.New(), null, InstallationType.CableTray,
+            Latitude.From(48.137154), Longitude.From(11.576124), 520.0, HorizontalAccuracy.From(3.5), GpsSource.From("gps"),
             null, null, null, null, null,
-            "Testbeschreibung", "NYM", 4m, "grau", 5, 600, "Siemens", "Model X", "SN-123");
+            Description.From("Testbeschreibung"), CableType.From("NYM"), CrossSection.From(4m), CableColor.From("grau"), 5, 600,
+            Manufacturer.From("Siemens"), ModelName.From("Model X"), SerialNumber.From("SN-123"));
 
     [Fact]
     public async Task Handle_WithFullCommand_ShouldCreateAndReturnId()
@@ -72,8 +74,8 @@ public sealed class DocumentInstallationCommandHandlerTests
     public async Task Handle_WithNullOptionals_ShouldLeavePropertiesNull()
     {
         var command = new DocumentInstallationCommand(
-            Guid.NewGuid(), null, "cable_tray",
-            48.137154, 11.576124, null, 3.5, "gps",
+            ProjectIdentifier.New(), null, InstallationType.CableTray,
+            Latitude.From(48.137154), Longitude.From(11.576124), null, HorizontalAccuracy.From(3.5), GpsSource.From("gps"),
             null, null, null, null, null,
             null, null, null, null, null, null, null, null, null);
 

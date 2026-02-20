@@ -14,4 +14,6 @@ public sealed record Longitude : IValueObject
         Ensure.That(value).IsBetween(-180.0, 180.0, "Längengrad muss zwischen -180 und 180 liegen.");
         return new Longitude(value);
     }
+
+    public static Longitude? FromNullable(double? value) => value.HasValue ? From(value.Value) : null;
 }

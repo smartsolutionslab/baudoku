@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
-import { PHOTO_TYPE_LABELS } from "@baudoku/shared-constants";
-import type { PhotoType } from "@baudoku/shared-types";
+import { PHOTO_TYPE_LABELS } from "@baudoku/documentation";
+import type { PhotoType } from "@baudoku/documentation";
 
 interface PhotoCaptureProps {
   onCapture: (file: File, type: PhotoType, caption?: string) => void;

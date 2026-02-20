@@ -10,7 +10,7 @@ import { Button } from "@/components/core";
 import { Colors, Spacing, FontSize, Radius } from "@/styles/tokens";
 import { loginWithKeycloak, parseUserFromToken, saveTokens } from "@/auth";
 import { useAuthStore } from "@/store";
-import { setAuthToken } from "@baudoku/shared-api";
+import { setAuthToken } from "@baudoku/core";
 
 export default function LoginScreen() {
   const router = useRouter();

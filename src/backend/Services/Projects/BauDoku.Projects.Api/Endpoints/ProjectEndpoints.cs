@@ -1,13 +1,13 @@
 using BauDoku.BuildingBlocks.Application.Dispatcher;
 using BauDoku.BuildingBlocks.Application.Pagination;
 using BauDoku.BuildingBlocks.Application.Responses;
+using BauDoku.BuildingBlocks.Domain;
 using BauDoku.BuildingBlocks.Infrastructure.Auth;
 using BauDoku.Projects.Api.Mapping;
-using BauDoku.Projects.Application.Commands.CreateProject;
-using BauDoku.Projects.Application.Commands.DeleteProject;
+using BauDoku.Projects.Application.Commands;
+using BauDoku.Projects.Application.Queries;
 using BauDoku.Projects.Application.Queries.Dtos;
-using BauDoku.Projects.Application.Queries.GetProject;
-using BauDoku.Projects.Application.Queries.ListProjects;
+using BauDoku.Projects.Domain;
 
 namespace BauDoku.Projects.Api.Endpoints;
 
@@ -17,10 +17,10 @@ public static class ProjectEndpoints
     {
         var group = app.MapGroup("/api/projects").WithTags("Projects");
 
-        group.MapPost("/", async (CreateProjectCommand command, IDispatcher dispatcher, CancellationToken ct) =>
+        group.MapPost("/", async (CreateProjectCommand command, IDispatcher dispatcher, CancellationToken cancellationToken) =>
         {
-            var projectId = await dispatcher.Send<Guid>(command, ct);
-            return Results.Created($"/api/projects/{projectId}", new CreatedResponse(projectId));
+            var projectId = await dispatcher.Send<ProjectIdentifier>(command, cancellationToken);
+            return Results.Created($"/api/projects/{projectId.Value}", new CreatedResponse(projectId.Value));
         })
         .RequireAuthorization(AuthPolicies.RequireUser)
         .WithName("CreateProject")
@@ -28,10 +28,13 @@ public static class ProjectEndpoints
         .Produces<CreatedResponse>(StatusCodes.Status201Created)
         .ProducesValidationProblem();
 
-        group.MapGet("/", async (string? search, int? page, int? pageSize, IDispatcher dispatcher, CancellationToken ct) =>
+        group.MapGet("/", async (string? search, int? page, int? pageSize, IDispatcher dispatcher, CancellationToken cancellationToken) =>
         {
-            var query = new ListProjectsQuery(search, page ?? 1, pageSize ?? 20);
-            var result = await dispatcher.Query(query, ct);
+            var query = new ListProjectsQuery(
+                SearchTerm.FromNullable(search),
+                PageNumber.From(page ?? 1),
+                PageSize.From(pageSize ?? 20));
+            var result = await dispatcher.Query(query, cancellationToken);
             return Results.Ok(result);
         })
         .RequireAuthorization()
@@ -39,10 +42,10 @@ public static class ProjectEndpoints
         .WithSummary("Projekte auflisten und suchen")
         .Produces<PagedResult<ProjectListItemDto>>(StatusCodes.Status200OK);
 
-        group.MapGet("/{id:guid}", async (Guid id, IDispatcher dispatcher, CancellationToken ct) =>
+        group.MapGet("/{id:guid}", async (Guid id, IDispatcher dispatcher, CancellationToken cancellationToken) =>
         {
-            var query = new GetProjectQuery(id);
-            var result = await dispatcher.Query(query, ct);
+            var query = new GetProjectQuery(ProjectIdentifier.From(id));
+            var result = await dispatcher.Query(query, cancellationToken);
             return Results.Ok(result);
         })
         .RequireAuthorization()
@@ -51,10 +54,22 @@ public static class ProjectEndpoints
         .Produces<ProjectDto>(StatusCodes.Status200OK)
         .Produces(StatusCodes.Status404NotFound);
 
-        group.MapPost("/{id:guid}/zones", async (Guid id, AddZoneRequest request, IDispatcher dispatcher, CancellationToken ct) =>
+        group.MapGet("/{id:guid}/zones", async (Guid id, IDispatcher dispatcher, CancellationToken cancellationToken) =>
+        {
+            var query = new GetProjectQuery(ProjectIdentifier.From(id));
+            var result = await dispatcher.Query(query, cancellationToken);
+            return Results.Ok(result.Zones);
+        })
+        .RequireAuthorization()
+        .WithName("ListZones")
+        .WithSummary("Zonen eines Projekts abrufen")
+        .Produces<IReadOnlyList<ZoneDto>>(StatusCodes.Status200OK)
+        .Produces(StatusCodes.Status404NotFound);
+
+        group.MapPost("/{id:guid}/zones", async (Guid id, AddZoneRequest request, IDispatcher dispatcher, CancellationToken cancellationToken) =>
         {
             var command = request.ToCommand(id);
-            await dispatcher.Send(command, ct);
+            await dispatcher.Send(command, cancellationToken);
             return Results.NoContent();
         })
         .RequireAuthorization(AuthPolicies.RequireUser)
@@ -63,10 +78,10 @@ public static class ProjectEndpoints
         .Produces(StatusCodes.Status204NoContent)
         .ProducesValidationProblem();
 
-        group.MapDelete("/{id:guid}", async (Guid id, IDispatcher dispatcher, CancellationToken ct) =>
+        group.MapDelete("/{id:guid}", async (Guid id, IDispatcher dispatcher, CancellationToken cancellationToken) =>
         {
-            var command = new DeleteProjectCommand(id);
-            await dispatcher.Send(command, ct);
+            var command = new DeleteProjectCommand(ProjectIdentifier.From(id));
+            await dispatcher.Send(command, cancellationToken);
             return Results.NoContent();
         })
         .RequireAuthorization(AuthPolicies.RequireAdmin)

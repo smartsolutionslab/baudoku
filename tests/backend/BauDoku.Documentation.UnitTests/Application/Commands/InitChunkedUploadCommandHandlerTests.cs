@@ -1,5 +1,6 @@
 using AwesomeAssertions;
-using BauDoku.Documentation.Application.Commands.InitChunkedUpload;
+using BauDoku.Documentation.Application.Commands;
+using BauDoku.Documentation.Application.Commands.Handlers;
 using BauDoku.Documentation.Application.Contracts;
 using BauDoku.Documentation.Domain;
 using NSubstitute;
@@ -28,9 +29,9 @@ public sealed class InitChunkedUploadCommandHandlerTests
             InstallationType.CableTray,
             GpsPosition.Create(Latitude.From(48.137154), Longitude.From(11.576124), null, HorizontalAccuracy.From(3.5), GpsSource.From("gps")));
 
-    private static InitChunkedUploadCommand CreateValidCommand(Guid installationId) =>
-        new(installationId, "photo.jpg", "image/jpeg", 5 * 1024 * 1024, 5,
-            "before", null, null, null, null, null, null, null);
+    private static InitChunkedUploadCommand CreateValidCommand(InstallationIdentifier installationId) =>
+        new(installationId, FileName.From("photo.jpg"), ContentType.From("image/jpeg"), FileSize.From(5 * 1024 * 1024), 5,
+            PhotoType.Before, null, null, null, null, null, null, null);
 
     [Fact]
     public async Task Handle_WithValidCommand_ShouldInitSession()
@@ -41,7 +42,7 @@ public sealed class InitChunkedUploadCommandHandlerTests
         chunkedUploadStorage.InitSessionAsync(Arg.Any<ChunkedUploadSession>(), Arg.Any<CancellationToken>())
             .Returns(callInfo => UploadSessionIdentifier.From(callInfo.Arg<ChunkedUploadSession>().SessionId));
 
-        var command = CreateValidCommand(installation.Id.Value);
+        var command = CreateValidCommand(installation.Id);
 
         var result = await handler.Handle(command, CancellationToken.None);
 
@@ -59,7 +60,7 @@ public sealed class InitChunkedUploadCommandHandlerTests
         installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Throws(new KeyNotFoundException());
 
-        var command = CreateValidCommand(Guid.NewGuid());
+        var command = CreateValidCommand(InstallationIdentifier.New());
 
         var act = () => handler.Handle(command, CancellationToken.None);
 

@@ -23,6 +23,7 @@ builder.Services.AddCors(options =>
     options.AddDefaultPolicy(policy =>
     {
         policy.WithOrigins(
+                "http://localhost:5000",
                 "http://localhost:8081",
                 "http://localhost:19006",
                 "exp://localhost:8081",
@@ -38,6 +39,7 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 app.UseCors();
+app.UseWebSockets();
 app.MapReverseProxy();
 app.MapAuthEndpoints();
 app.MapDefaultEndpoints();

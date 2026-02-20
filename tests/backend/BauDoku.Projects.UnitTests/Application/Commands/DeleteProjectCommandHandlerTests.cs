@@ -1,6 +1,7 @@
 using AwesomeAssertions;
 using BauDoku.BuildingBlocks.Application.Persistence;
-using BauDoku.Projects.Application.Commands.DeleteProject;
+using BauDoku.Projects.Application.Commands;
+using BauDoku.Projects.Application.Commands.Handlers;
 using BauDoku.Projects.Domain;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
@@ -40,7 +41,7 @@ public sealed class DeleteProjectCommandHandlerTests
         projects.GetByIdAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(project);
 
-        var command = new DeleteProjectCommand(project.Id.Value);
+        var command = new DeleteProjectCommand(project.Id);
 
         await handler.Handle(command);
 
@@ -55,7 +56,7 @@ public sealed class DeleteProjectCommandHandlerTests
         projects.GetByIdAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(project);
 
-        var command = new DeleteProjectCommand(project.Id.Value);
+        var command = new DeleteProjectCommand(project.Id);
 
         await handler.Handle(command);
 
@@ -68,7 +69,7 @@ public sealed class DeleteProjectCommandHandlerTests
         projects.GetByIdAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>())
             .Throws(new KeyNotFoundException());
 
-        var command = new DeleteProjectCommand(Guid.NewGuid());
+        var command = new DeleteProjectCommand(ProjectIdentifier.New());
 
         var act = () => handler.Handle(command);
 
@@ -81,7 +82,7 @@ public sealed class DeleteProjectCommandHandlerTests
         projects.GetByIdAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>())
             .Throws(new KeyNotFoundException());
 
-        try { await handler.Handle(new DeleteProjectCommand(Guid.NewGuid())); } catch { }
+        try { await handler.Handle(new DeleteProjectCommand(ProjectIdentifier.New())); } catch { }
 
         await unitOfWork.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
     }

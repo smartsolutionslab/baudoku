@@ -1,6 +1,7 @@
 using AwesomeAssertions;
 using BauDoku.BuildingBlocks.Application.Persistence;
-using BauDoku.Sync.Application.Commands.ProcessSyncBatch;
+using BauDoku.Sync.Application.Commands;
+using BauDoku.Sync.Application.Commands.Handlers;
 using BauDoku.Sync.Application.Contracts;
 using BauDoku.Sync.Application.Queries.Dtos;
 using BauDoku.Sync.Domain;
@@ -33,7 +34,7 @@ public sealed class ProcessSyncBatchCommandHandlerTests
         entityVersionStore.GetCurrentVersionAsync(Arg.Is<EntityReference>(r => r.EntityId == entityId), Arg.Any<CancellationToken>())
             .Returns(SyncVersion.Initial);
 
-        var command = new ProcessSyncBatchCommand("device-001", [CreateDelta(entityId, 0)]);
+        var command = new ProcessSyncBatchCommand(DeviceIdentifier.From("device-001"), [CreateDelta(entityId, 0)]);
 
         var result = await handler.Handle(command);
 
@@ -55,7 +56,7 @@ public sealed class ProcessSyncBatchCommandHandlerTests
         entityVersionStore.GetCurrentPayloadAsync(Arg.Is<EntityReference>(r => r.EntityId == entityId), Arg.Any<CancellationToken>())
             .Returns("""{"name":"Server"}""");
 
-        var command = new ProcessSyncBatchCommand("device-001", [CreateDelta(entityId, 0)]);
+        var command = new ProcessSyncBatchCommand(DeviceIdentifier.From("device-001"), [CreateDelta(entityId, 0)]);
 
         var result = await handler.Handle(command);
 
@@ -78,7 +79,7 @@ public sealed class ProcessSyncBatchCommandHandlerTests
         entityVersionStore.GetCurrentPayloadAsync(Arg.Any<EntityReference>(), Arg.Any<CancellationToken>())
             .Returns("{}");
 
-        var command = new ProcessSyncBatchCommand("device-001",
+        var command = new ProcessSyncBatchCommand(DeviceIdentifier.From("device-001"),
             [CreateDelta(entityId1, 0), CreateDelta(entityId2, 0)]);
 
         var result = await handler.Handle(command);
@@ -100,7 +101,7 @@ public sealed class ProcessSyncBatchCommandHandlerTests
         entityVersionStore.GetCurrentPayloadAsync(Arg.Is<EntityReference>(r => r.EntityId == conflictEntityId), Arg.Any<CancellationToken>())
             .Returns("{}");
 
-        var command = new ProcessSyncBatchCommand("device-001",
+        var command = new ProcessSyncBatchCommand(DeviceIdentifier.From("device-001"),
             [CreateDelta(appliedEntityId, 0), CreateDelta(conflictEntityId, 0)]);
 
         var result = await handler.Handle(command);
@@ -120,7 +121,7 @@ public sealed class ProcessSyncBatchCommandHandlerTests
         entityVersionStore.GetCurrentVersionAsync(Arg.Is<EntityReference>(r => r.EntityId == entityId2), Arg.Any<CancellationToken>())
             .Returns(SyncVersion.From(2));
 
-        var command = new ProcessSyncBatchCommand("device-001",
+        var command = new ProcessSyncBatchCommand(DeviceIdentifier.From("device-001"),
             [CreateDelta(entityId1, 0), CreateDelta(entityId2, 2)]);
 
         var result = await handler.Handle(command);
@@ -140,7 +141,7 @@ public sealed class ProcessSyncBatchCommandHandlerTests
         entityVersionStore.GetCurrentPayloadAsync(Arg.Is<EntityReference>(r => r.EntityId == entityId), Arg.Any<CancellationToken>())
             .Returns("{}");
 
-        var command = new ProcessSyncBatchCommand("device-001", [CreateDelta(entityId, 0)]);
+        var command = new ProcessSyncBatchCommand(DeviceIdentifier.From("device-001"), [CreateDelta(entityId, 0)]);
 
         var result = await handler.Handle(command);
 

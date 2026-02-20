@@ -18,7 +18,7 @@ builder.AddServiceDefaults(health =>
 
 builder.Services.ConfigureHttpJsonOptions(options => options.SerializerOptions.Converters.Add(new ValueObjectJsonConverterFactory()));
 
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApi(options => options.AddSchemaTransformer<ValueObjectSchemaTransformer>());
 
 builder.Services.AddBauDokuAuthentication(builder.Configuration, builder.Environment);
 

@@ -1,6 +1,7 @@
 using AwesomeAssertions;
 using BauDoku.BuildingBlocks.Application.Persistence;
-using BauDoku.Documentation.Application.Commands.CompleteChunkedUpload;
+using BauDoku.Documentation.Application.Commands;
+using BauDoku.Documentation.Application.Commands.Handlers;
 using BauDoku.Documentation.Application.Contracts;
 using BauDoku.Documentation.Domain;
 using NSubstitute;
@@ -58,7 +59,7 @@ public sealed class CompleteChunkedUploadCommandHandlerTests
         installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
 
-        var command = new CompleteChunkedUploadCommand(sessionId);
+        var command = new CompleteChunkedUploadCommand(sessionIdentifier);
 
         var result = await handler.Handle(command, CancellationToken.None);
 
@@ -75,7 +76,7 @@ public sealed class CompleteChunkedUploadCommandHandlerTests
         chunkedUploadStorage.GetSessionAsync(Arg.Any<UploadSessionIdentifier>(), Arg.Any<CancellationToken>())
             .Throws(new KeyNotFoundException("Upload-Session nicht gefunden."));
 
-        var command = new CompleteChunkedUploadCommand(Guid.NewGuid());
+        var command = new CompleteChunkedUploadCommand(UploadSessionIdentifier.New());
 
         var act = () => handler.Handle(command, CancellationToken.None);
 
@@ -94,7 +95,7 @@ public sealed class CompleteChunkedUploadCommandHandlerTests
         chunkedUploadStorage.GetUploadedChunkCountAsync(sessionIdentifier, Arg.Any<CancellationToken>())
             .Returns(3);
 
-        var command = new CompleteChunkedUploadCommand(sessionId);
+        var command = new CompleteChunkedUploadCommand(sessionIdentifier);
 
         var act = () => handler.Handle(command, CancellationToken.None);
 
@@ -124,7 +125,7 @@ public sealed class CompleteChunkedUploadCommandHandlerTests
         installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
 
-        var command = new CompleteChunkedUploadCommand(sessionId);
+        var command = new CompleteChunkedUploadCommand(sessionIdentifier);
 
         await handler.Handle(command, CancellationToken.None);
 
@@ -152,7 +153,7 @@ public sealed class CompleteChunkedUploadCommandHandlerTests
         installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
 
-        var command = new CompleteChunkedUploadCommand(sessionId);
+        var command = new CompleteChunkedUploadCommand(sessionIdentifier);
 
         await handler.Handle(command, CancellationToken.None);
 

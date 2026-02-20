@@ -2,10 +2,10 @@ using BauDoku.BuildingBlocks.Application.Dispatcher;
 using BauDoku.BuildingBlocks.Application.Responses;
 using BauDoku.BuildingBlocks.Infrastructure.Auth;
 using BauDoku.Documentation.Api.Mapping;
-using BauDoku.Documentation.Application.Commands.RemovePhoto;
+using BauDoku.Documentation.Application.Commands;
 using BauDoku.Documentation.Application.Contracts;
+using BauDoku.Documentation.Application.Queries;
 using BauDoku.Documentation.Application.Queries.Dtos;
-using BauDoku.Documentation.Application.Queries.GetPhoto;
 using BauDoku.Documentation.Domain;
 
 namespace BauDoku.Documentation.Api.Endpoints;
@@ -26,8 +26,8 @@ public static class PhotoEndpoints
         {
             await using var stream = file.OpenReadStream();
             var command = request.ToCommand(installationId, file, stream);
-            var photoId = await dispatcher.Send(command, ct);
-            return Results.Created($"/api/documentation/photos/{photoId}", new CreatedResponse(photoId));
+            var photoId = await dispatcher.Send<PhotoIdentifier>(command, ct);
+            return Results.Created($"/api/documentation/photos/{photoId.Value}", new CreatedResponse(photoId.Value));
         })
         .RequireAuthorization(AuthPolicies.RequireUser)
         .DisableAntiforgery()
@@ -54,7 +54,7 @@ public static class PhotoEndpoints
             IDispatcher dispatcher,
             CancellationToken ct) =>
         {
-            var query = new GetPhotoQuery(photoId);
+            var query = new GetPhotoQuery(PhotoIdentifier.From(photoId));
             var result = await dispatcher.Query(query, ct);
             return Results.Ok(result);
         })
@@ -70,7 +70,7 @@ public static class PhotoEndpoints
             IDispatcher dispatcher,
             CancellationToken ct) =>
         {
-            var command = new RemovePhotoCommand(installationId, photoId);
+            var command = new RemovePhotoCommand(InstallationIdentifier.From(installationId), PhotoIdentifier.From(photoId));
             await dispatcher.Send(command, ct);
             return Results.NoContent();
         })

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useCallback } from "react";
 import { useAuthStore } from "../store";
 import { loadTokens, saveTokens, clearTokens, refreshAccessToken, parseUserFromToken } from "../auth";
-import { setAuthToken, setBaseUrl, onUnauthorized } from "@baudoku/shared-api";
+import { setAuthToken, setBaseUrl, onUnauthorized } from "@baudoku/core";
 import { API_BASE_URL } from "../config/environment";
 
 function getTokenExpiresIn(token: string): number {

@@ -1,5 +1,6 @@
 using AwesomeAssertions;
-using BauDoku.Documentation.Application.Queries.GetMeasurements;
+using BauDoku.Documentation.Application.Queries;
+using BauDoku.Documentation.Application.Queries.Handlers;
 using BauDoku.Documentation.Domain;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
@@ -36,7 +37,7 @@ public sealed class GetMeasurementsQueryHandlerTests
         installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
 
-        var result = await handler.Handle(new GetMeasurementsQuery(installation.Id.Value), CancellationToken.None);
+        var result = await handler.Handle(new GetMeasurementsQuery(installation.Id), CancellationToken.None);
 
         result.Should().ContainSingle();
         result[0].Type.Should().Be("insulation_resistance");
@@ -51,7 +52,7 @@ public sealed class GetMeasurementsQueryHandlerTests
         installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Throws(new KeyNotFoundException());
 
-        var act = () => handler.Handle(new GetMeasurementsQuery(Guid.NewGuid()), CancellationToken.None);
+        var act = () => handler.Handle(new GetMeasurementsQuery(InstallationIdentifier.New()), CancellationToken.None);
 
         await act.Should().ThrowAsync<KeyNotFoundException>();
     }

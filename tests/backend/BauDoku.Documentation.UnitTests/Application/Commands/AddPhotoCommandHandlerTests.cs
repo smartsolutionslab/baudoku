@@ -1,6 +1,7 @@
 using AwesomeAssertions;
 using BauDoku.BuildingBlocks.Application.Persistence;
-using BauDoku.Documentation.Application.Commands.AddPhoto;
+using BauDoku.Documentation.Application.Commands;
+using BauDoku.Documentation.Application.Commands.Handlers;
 using BauDoku.Documentation.Application.Contracts;
 using BauDoku.Documentation.Domain;
 using NSubstitute;
@@ -31,8 +32,8 @@ public sealed class AddPhotoCommandHandlerTests
             InstallationType.CableTray,
             GpsPosition.Create(Latitude.From(48.137154), Longitude.From(11.576124), null, HorizontalAccuracy.From(3.5), GpsSource.From("gps")));
 
-    private static AddPhotoCommand CreateValidCommand(Guid installationId) =>
-        new(installationId, "photo.jpg", "image/jpeg", 1024 * 100, "before",
+    private static AddPhotoCommand CreateValidCommand(InstallationIdentifier installationId) =>
+        new(installationId, FileName.From("photo.jpg"), ContentType.From("image/jpeg"), FileSize.From(1024 * 100), PhotoType.Before,
             null, null, null, null, null, null, null, new MemoryStream([1, 2, 3]));
 
     [Fact]
@@ -44,7 +45,7 @@ public sealed class AddPhotoCommandHandlerTests
         photoStorage.UploadAsync(Arg.Any<Stream>(), Arg.Any<FileName>(), Arg.Any<ContentType>(), Arg.Any<CancellationToken>())
             .Returns(BlobUrl.From("https://blob.storage/photo.jpg"));
 
-        var command = CreateValidCommand(installation.Id.Value);
+        var command = CreateValidCommand(installation.Id);
 
         var result = await handler.Handle(command, CancellationToken.None);
 
@@ -60,7 +61,7 @@ public sealed class AddPhotoCommandHandlerTests
         installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Throws(new KeyNotFoundException());
 
-        var command = CreateValidCommand(Guid.NewGuid());
+        var command = CreateValidCommand(InstallationIdentifier.New());
 
         var act = () => handler.Handle(command, CancellationToken.None);
 
@@ -77,8 +78,9 @@ public sealed class AddPhotoCommandHandlerTests
             .Returns(BlobUrl.From("https://blob.storage/photo.jpg"));
 
         var command = new AddPhotoCommand(
-            installation.Id.Value, "photo.jpg", "image/jpeg", 1024, "before",
-            null, null, 48.0, 11.0, 500.0, 5.0, "gps", new MemoryStream([1, 2, 3]));
+            installation.Id, FileName.From("photo.jpg"), ContentType.From("image/jpeg"), FileSize.From(1024), PhotoType.Before,
+            null, null, Latitude.From(48.0), Longitude.From(11.0), 500.0, HorizontalAccuracy.From(5.0), GpsSource.From("gps"),
+            new MemoryStream([1, 2, 3]));
 
         await handler.Handle(command, CancellationToken.None);
 
@@ -96,7 +98,7 @@ public sealed class AddPhotoCommandHandlerTests
         photoStorage.UploadAsync(Arg.Any<Stream>(), Arg.Any<FileName>(), Arg.Any<ContentType>(), Arg.Any<CancellationToken>())
             .Returns(BlobUrl.From("https://blob.storage/photo.jpg"));
 
-        var command = CreateValidCommand(installation.Id.Value);
+        var command = CreateValidCommand(installation.Id);
 
         await handler.Handle(command, CancellationToken.None);
 

@@ -14,7 +14,8 @@ public static class DependencyInjection
     public static IServiceCollection AddSyncInfrastructure(this IServiceCollection services, string connectionString)
     {
         services.AddDbContext<SyncDbContext>(options =>
-            options.UseNpgsql(connectionString));
+            options.UseNpgsql(connectionString, npgsql =>
+                npgsql.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)));
 
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<SyncDbContext>());
         services.AddScoped<ISyncBatchRepository, SyncBatchRepository>();

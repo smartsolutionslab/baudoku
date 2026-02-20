@@ -1,6 +1,7 @@
 using AwesomeAssertions;
 using BauDoku.BuildingBlocks.Application.Persistence;
-using BauDoku.Documentation.Application.Commands.RemoveMeasurement;
+using BauDoku.Documentation.Application.Commands;
+using BauDoku.Documentation.Application.Commands.Handlers;
 using BauDoku.Documentation.Domain;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
@@ -45,7 +46,7 @@ public sealed class RemoveMeasurementCommandHandlerTests
         installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
 
-        var command = new RemoveMeasurementCommand(installation.Id.Value, measurementId.Value);
+        var command = new RemoveMeasurementCommand(installation.Id, measurementId);
 
         await handler.Handle(command, CancellationToken.None);
 
@@ -59,7 +60,7 @@ public sealed class RemoveMeasurementCommandHandlerTests
         installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Throws(new KeyNotFoundException());
 
-        var command = new RemoveMeasurementCommand(Guid.NewGuid(), Guid.NewGuid());
+        var command = new RemoveMeasurementCommand(InstallationIdentifier.New(), MeasurementIdentifier.New());
 
         var act = () => handler.Handle(command, CancellationToken.None);
 

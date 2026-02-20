@@ -1,7 +1,8 @@
 using AwesomeAssertions;
 using BauDoku.Documentation.Application.Contracts;
 using BauDoku.Documentation.Application.Queries.Dtos;
-using BauDoku.Documentation.Application.Queries.GetPhoto;
+using BauDoku.Documentation.Application.Queries;
+using BauDoku.Documentation.Application.Queries.Handlers;
 using BauDoku.Documentation.Domain;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
@@ -22,9 +23,9 @@ public sealed class GetPhotoQueryHandlerTests
     [Fact]
     public async Task Handle_WhenPhotoExists_ShouldReturnDto()
     {
-        var photoId = Guid.NewGuid();
+        var photoId = PhotoIdentifier.New();
         var expected = new PhotoDto(
-            photoId,
+            photoId.Value,
             Guid.NewGuid(),
             "photo.jpg",
             "https://blob/photo.jpg",
@@ -57,7 +58,7 @@ public sealed class GetPhotoQueryHandlerTests
     [Fact]
     public async Task Handle_WhenPhotoNotFound_ShouldThrow()
     {
-        var photoId = Guid.NewGuid();
+        var photoId = PhotoIdentifier.New();
 
         readRepository.GetByIdAsync(Arg.Any<PhotoIdentifier>(), Arg.Any<CancellationToken>())
             .Throws(new KeyNotFoundException("Foto nicht gefunden."));
@@ -70,9 +71,9 @@ public sealed class GetPhotoQueryHandlerTests
     [Fact]
     public async Task Handle_ShouldPassCorrectPhotoIdToRepository()
     {
-        var photoId = Guid.NewGuid();
+        var photoId = PhotoIdentifier.New();
         var expected = new PhotoDto(
-            photoId, Guid.NewGuid(), "photo.jpg", "https://blob/photo.jpg", "image/jpeg",
+            photoId.Value, Guid.NewGuid(), "photo.jpg", "https://blob/photo.jpg", "image/jpeg",
             1024, "before", null, null, null, null, null, null, null, null, null, null, null, null, DateTime.UtcNow);
 
         readRepository.GetByIdAsync(Arg.Any<PhotoIdentifier>(), Arg.Any<CancellationToken>())
@@ -81,7 +82,7 @@ public sealed class GetPhotoQueryHandlerTests
         await handler.Handle(new GetPhotoQuery(photoId), CancellationToken.None);
 
         await readRepository.Received(1).GetByIdAsync(
-            Arg.Is<PhotoIdentifier>(p => p.Value == photoId),
+            Arg.Is<PhotoIdentifier>(p => p.Value == photoId.Value),
             Arg.Any<CancellationToken>());
     }
 }

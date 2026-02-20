@@ -1,3 +1,5 @@
+using BauDoku.Projects.Domain;
+
 namespace BauDoku.Projects.Api.Endpoints;
 
-public sealed record AddZoneRequest(string Name, string Type, Guid? ParentZoneId);
+public sealed record AddZoneRequest(ZoneName Name, ZoneType Type, ZoneIdentifier? ParentZoneId);

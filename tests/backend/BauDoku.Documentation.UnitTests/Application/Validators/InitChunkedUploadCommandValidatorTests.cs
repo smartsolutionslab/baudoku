@@ -1,4 +1,5 @@
-using BauDoku.Documentation.Application.Commands.InitChunkedUpload;
+using BauDoku.Documentation.Application.Commands;
+using BauDoku.Documentation.Application.Commands.Validators;
 using BauDoku.Documentation.Domain;
 using FluentValidation.TestHelper;
 
@@ -9,8 +10,8 @@ public sealed class InitChunkedUploadCommandValidatorTests
     private readonly InitChunkedUploadCommandValidator validator = new();
 
     private static InitChunkedUploadCommand CreateValidCommand() =>
-        new(Guid.NewGuid(), "photo.jpg", "image/jpeg", 5 * 1024 * 1024, 5,
-            "before", null, null, null, null, null, null, null);
+        new(InstallationIdentifier.New(), FileName.From("photo.jpg"), ContentType.From("image/jpeg"), FileSize.From(5 * 1024 * 1024), 5,
+            PhotoType.Before, null, null, null, null, null, null, null);
 
     [Fact]
     public void ValidCommand_ShouldHaveNoErrors()
@@ -20,32 +21,9 @@ public sealed class InitChunkedUploadCommandValidatorTests
     }
 
     [Fact]
-    public void InstallationId_WhenEmpty_ShouldHaveError()
-    {
-        var cmd = CreateValidCommand() with { InstallationId = Guid.Empty };
-        validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.InstallationId);
-    }
-
-    [Theory]
-    [InlineData(null)]
-    [InlineData("")]
-    public void FileName_WhenEmpty_ShouldHaveError(string? fileName)
-    {
-        var cmd = CreateValidCommand() with { FileName = fileName! };
-        validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.FileName);
-    }
-
-    [Fact]
-    public void FileName_WhenTooLong_ShouldHaveError()
-    {
-        var cmd = CreateValidCommand() with { FileName = new string('a', 256) };
-        validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.FileName);
-    }
-
-    [Fact]
     public void ContentType_WhenNotAllowed_ShouldHaveError()
     {
-        var cmd = CreateValidCommand() with { ContentType = "image/gif" };
+        var cmd = CreateValidCommand() with { ContentType = ContentType.From("image/gif") };
         validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.ContentType);
     }
 
@@ -55,21 +33,14 @@ public sealed class InitChunkedUploadCommandValidatorTests
     [InlineData("image/heic")]
     public void ContentType_WhenAllowed_ShouldNotHaveError(string contentType)
     {
-        var cmd = CreateValidCommand() with { ContentType = contentType };
+        var cmd = CreateValidCommand() with { ContentType = ContentType.From(contentType) };
         validator.TestValidate(cmd).ShouldNotHaveValidationErrorFor(x => x.ContentType);
-    }
-
-    [Fact]
-    public void TotalSize_WhenZero_ShouldHaveError()
-    {
-        var cmd = CreateValidCommand() with { TotalSize = 0 };
-        validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.TotalSize);
     }
 
     [Fact]
     public void TotalSize_WhenExceeds50MB_ShouldHaveError()
     {
-        var cmd = CreateValidCommand() with { TotalSize = 50 * 1024 * 1024 + 1 };
+        var cmd = CreateValidCommand() with { TotalSize = FileSize.From(50 * 1024 * 1024 + 1) };
         validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.TotalSize);
     }
 
@@ -85,19 +56,5 @@ public sealed class InitChunkedUploadCommandValidatorTests
     {
         var cmd = CreateValidCommand() with { TotalChunks = 51 };
         validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.TotalChunks);
-    }
-
-    [Fact]
-    public void PhotoType_WhenEmpty_ShouldHaveError()
-    {
-        var cmd = CreateValidCommand() with { PhotoType = "" };
-        validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.PhotoType);
-    }
-
-    [Fact]
-    public void Caption_WhenTooLong_ShouldHaveError()
-    {
-        var cmd = CreateValidCommand() with { Caption = new string('a', Caption.MaxLength + 1) };
-        validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.Caption);
     }
 }

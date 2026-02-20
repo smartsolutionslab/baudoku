@@ -14,10 +14,10 @@
     "test:watch": "jest --watch"
   },
   "dependencies": {
-    "@baudoku/shared-constants": "*",
-    "@baudoku/shared-logic": "*",
-    "@baudoku/shared-types": "*",
-    "@baudoku/shared-validation": "*",
+    "@baudoku/core": "*",
+    "@baudoku/projects": "*",
+    "@baudoku/documentation": "*",
+    "@baudoku/sync": "*",
     "@expo/vector-icons": "^15.0.3",
     "@react-native-community/netinfo": "11.4.1",
     "@react-navigation/native": "^7.1.8",

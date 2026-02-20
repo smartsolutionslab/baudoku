@@ -1,4 +1,4 @@
-import type { Measurement } from "@baudoku/shared-types";
+import type { Measurement } from "@baudoku/documentation";
 import { StatusBadge } from "../common/StatusBadge";
 import { TrashIcon } from "@/components/icons";
 

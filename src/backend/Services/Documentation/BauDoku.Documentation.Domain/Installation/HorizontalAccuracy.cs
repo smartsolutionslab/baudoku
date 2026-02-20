@@ -14,4 +14,6 @@ public sealed record HorizontalAccuracy : IValueObject
         Ensure.That(value).IsPositive("Horizontale Genauigkeit muss größer als 0 sein.");
         return new HorizontalAccuracy(value);
     }
+
+    public static HorizontalAccuracy? FromNullable(double? value) => value.HasValue ? From(value.Value) : null;
 }

@@ -1,55 +1,54 @@
-using BauDoku.Documentation.Application.Commands.AddPhoto;
-using BauDoku.Documentation.Application.Commands.RecordMeasurement;
-using BauDoku.Documentation.Application.Commands.UpdateInstallation;
+using BauDoku.Documentation.Application.Commands;
 using BauDoku.Documentation.Api.Endpoints;
+using BauDoku.Documentation.Domain;
 
 namespace BauDoku.Documentation.Api.Mapping;
 
 public static class InstallationRequestMappingExtensions
 {
     public static AddPhotoCommand ToCommand(this AddPhotoRequest request, Guid installationId, IFormFile file, Stream stream) =>
-        new(installationId,
-            file.FileName,
-            file.ContentType,
-            file.Length,
-            request.PhotoType ?? "other",
-            request.Caption,
-            request.Description,
-            request.Latitude,
-            request.Longitude,
+        new(InstallationIdentifier.From(installationId),
+            FileName.From(file.FileName),
+            ContentType.From(file.ContentType),
+            FileSize.From(file.Length),
+            PhotoType.From(request.PhotoType ?? "other"),
+            Caption.FromNullable(request.Caption),
+            Description.FromNullable(request.Description),
+            Latitude.FromNullable(request.Latitude),
+            Longitude.FromNullable(request.Longitude),
             request.Altitude,
-            request.HorizontalAccuracy,
-            request.GpsSource,
+            HorizontalAccuracy.FromNullable(request.HorizontalAccuracy),
+            GpsSource.FromNullable(request.GpsSource),
             stream,
             request.TakenAt);
 
     public static UpdateInstallationCommand ToCommand(this UpdateInstallationRequest request, Guid installationId) =>
-        new(installationId,
-            request.Latitude,
-            request.Longitude,
+        new(InstallationIdentifier.From(installationId),
+            Latitude.FromNullable(request.Latitude),
+            Longitude.FromNullable(request.Longitude),
             request.Altitude,
-            request.HorizontalAccuracy,
-            request.GpsSource,
-            request.CorrectionService,
-            request.RtkFixStatus,
+            HorizontalAccuracy.FromNullable(request.HorizontalAccuracy),
+            GpsSource.FromNullable(request.GpsSource),
+            CorrectionService.FromNullable(request.CorrectionService),
+            RtkFixStatus.FromNullable(request.RtkFixStatus),
             request.SatelliteCount,
             request.Hdop,
             request.CorrectionAge,
-            request.Description,
-            request.CableType,
-            request.CrossSection,
-            request.CableColor,
+            Description.FromNullable(request.Description),
+            CableType.FromNullable(request.CableType),
+            CrossSection.FromNullable(request.CrossSection),
+            CableColor.FromNullable(request.CableColor),
             request.ConductorCount,
             request.DepthMm,
-            request.Manufacturer,
-            request.ModelName,
-            request.SerialNumber);
+            Manufacturer.FromNullable(request.Manufacturer),
+            ModelName.FromNullable(request.ModelName),
+            SerialNumber.FromNullable(request.SerialNumber));
 
     public static RecordMeasurementCommand ToCommand(this RecordMeasurementRequest request, Guid installationId) =>
-        new(installationId,
-            request.Type,
+        new(InstallationIdentifier.From(installationId),
+            MeasurementType.From(request.Type),
             request.Value,
-            request.Unit,
+            MeasurementUnit.From(request.Unit),
             request.MinThreshold,
             request.MaxThreshold,
             request.Notes);

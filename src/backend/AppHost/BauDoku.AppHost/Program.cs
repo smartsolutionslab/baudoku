@@ -61,10 +61,9 @@ var apiGateway = builder.AddProject("api-gateway", @"..\..\ApiGateway\BauDoku.Ap
     .WaitFor(documentationApi)
     .WaitFor(syncApi);
 
-builder.AddViteApp("web", @"..\..\..\..\src\frontend\web")
-    .WithReference(apiGateway)
-    .WithHttpEndpoint(port: 5173, name: "vite", env: "PORT")
-    .WaitFor(keycloak)
-    .WithExternalHttpEndpoints();
+builder.AddExecutable("web", "npm", @"..\..\..\..\src\frontend\web", "run", "dev")
+    .WithHttpEndpoint(port: 5173, isProxied: false)
+    .WaitFor(apiGateway)
+    .WaitFor(keycloak);    
 
 builder.Build().Run();

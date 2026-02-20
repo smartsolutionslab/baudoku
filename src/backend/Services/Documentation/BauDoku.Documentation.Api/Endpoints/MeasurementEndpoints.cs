@@ -2,9 +2,10 @@ using BauDoku.BuildingBlocks.Application.Dispatcher;
 using BauDoku.BuildingBlocks.Application.Responses;
 using BauDoku.BuildingBlocks.Infrastructure.Auth;
 using BauDoku.Documentation.Api.Mapping;
-using BauDoku.Documentation.Application.Commands.RemoveMeasurement;
+using BauDoku.Documentation.Application.Commands;
+using BauDoku.Documentation.Domain;
+using BauDoku.Documentation.Application.Queries;
 using BauDoku.Documentation.Application.Queries.Dtos;
-using BauDoku.Documentation.Application.Queries.GetMeasurements;
 
 namespace BauDoku.Documentation.Api.Endpoints;
 
@@ -22,9 +23,9 @@ public static class MeasurementEndpoints
         {
             var command = request.ToCommand(installationId);
 
-            var measurementId = await dispatcher.Send(command, ct);
+            var measurementId = await dispatcher.Send<MeasurementIdentifier>(command, ct);
             return Results.Created(
-                $"/api/documentation/installations/{installationId}/measurements", new CreatedResponse(measurementId));
+                $"/api/documentation/installations/{installationId}/measurements", new CreatedResponse(measurementId.Value));
         })
         .RequireAuthorization(AuthPolicies.RequireUser)
         .WithName("RecordMeasurement")
@@ -37,7 +38,7 @@ public static class MeasurementEndpoints
             IDispatcher dispatcher,
             CancellationToken ct) =>
         {
-            var query = new GetMeasurementsQuery(installationId);
+            var query = new GetMeasurementsQuery(InstallationIdentifier.From(installationId));
             var result = await dispatcher.Query(query, ct);
             return Results.Ok(result);
         })
@@ -53,7 +54,7 @@ public static class MeasurementEndpoints
             IDispatcher dispatcher,
             CancellationToken ct) =>
         {
-            var command = new RemoveMeasurementCommand(installationId, measurementId);
+            var command = new RemoveMeasurementCommand(InstallationIdentifier.From(installationId), MeasurementIdentifier.From(measurementId));
             await dispatcher.Send(command, ct);
             return Results.NoContent();
         })

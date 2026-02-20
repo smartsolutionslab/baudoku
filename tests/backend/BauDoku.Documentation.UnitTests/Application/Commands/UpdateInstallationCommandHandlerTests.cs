@@ -1,6 +1,7 @@
 using AwesomeAssertions;
 using BauDoku.BuildingBlocks.Application.Persistence;
-using BauDoku.Documentation.Application.Commands.UpdateInstallation;
+using BauDoku.Documentation.Application.Commands;
+using BauDoku.Documentation.Application.Commands.Handlers;
 using BauDoku.Documentation.Domain;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
@@ -36,12 +37,12 @@ public sealed class UpdateInstallationCommandHandlerTests
             .Returns(installation);
 
         var command = new UpdateInstallationCommand(
-            installation.Id.Value,
-            Latitude: 52.520008,
-            Longitude: 13.404954,
+            installation.Id,
+            Latitude: Latitude.From(52.520008),
+            Longitude: Longitude.From(13.404954),
             Altitude: 34.0,
-            HorizontalAccuracy: 1.5,
-            GpsSource: "dgnss",
+            HorizontalAccuracy: HorizontalAccuracy.From(1.5),
+            GpsSource: GpsSource.From("dgnss"),
             CorrectionService: null,
             RtkFixStatus: null,
             SatelliteCount: null,
@@ -70,12 +71,12 @@ public sealed class UpdateInstallationCommandHandlerTests
             .Returns(installation);
 
         var command = new UpdateInstallationCommand(
-            installation.Id.Value,
+            installation.Id,
             Latitude: null, Longitude: null, Altitude: null,
             HorizontalAccuracy: null, GpsSource: null,
             CorrectionService: null, RtkFixStatus: null,
             SatelliteCount: null, Hdop: null, CorrectionAge: null,
-            Description: "Neue Beschreibung",
+            Description: Description.From("Neue Beschreibung"),
             CableType: null, CrossSection: null, CableColor: null,
             ConductorCount: null, DepthMm: null,
             Manufacturer: null, ModelName: null, SerialNumber: null);
@@ -95,15 +96,15 @@ public sealed class UpdateInstallationCommandHandlerTests
             .Returns(installation);
 
         var command = new UpdateInstallationCommand(
-            installation.Id.Value,
+            installation.Id,
             Latitude: null, Longitude: null, Altitude: null,
             HorizontalAccuracy: null, GpsSource: null,
             CorrectionService: null, RtkFixStatus: null,
             SatelliteCount: null, Hdop: null, CorrectionAge: null,
             Description: null,
-            CableType: "NYM-J",
-            CrossSection: 2.5m,
-            CableColor: "grau",
+            CableType: CableType.From("NYM-J"),
+            CrossSection: CrossSection.From(2.5m),
+            CableColor: CableColor.From("grau"),
             ConductorCount: 3,
             DepthMm: null,
             Manufacturer: null, ModelName: null, SerialNumber: null);
@@ -124,7 +125,7 @@ public sealed class UpdateInstallationCommandHandlerTests
             .Returns(installation);
 
         var command = new UpdateInstallationCommand(
-            installation.Id.Value,
+            installation.Id,
             Latitude: null, Longitude: null, Altitude: null,
             HorizontalAccuracy: null, GpsSource: null,
             CorrectionService: null, RtkFixStatus: null,
@@ -149,7 +150,7 @@ public sealed class UpdateInstallationCommandHandlerTests
             .Throws(new KeyNotFoundException());
 
         var command = new UpdateInstallationCommand(
-            Guid.NewGuid(),
+            InstallationIdentifier.New(),
             Latitude: null, Longitude: null, Altitude: null,
             HorizontalAccuracy: null, GpsSource: null,
             CorrectionService: null, RtkFixStatus: null,
@@ -172,7 +173,7 @@ public sealed class UpdateInstallationCommandHandlerTests
             .Returns(installation);
 
         var command = new UpdateInstallationCommand(
-            installation.Id.Value,
+            installation.Id,
             Latitude: null, Longitude: null, Altitude: null,
             HorizontalAccuracy: null, GpsSource: null,
             CorrectionService: null, RtkFixStatus: null,

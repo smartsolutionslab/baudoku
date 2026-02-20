@@ -1,7 +1,8 @@
 using AwesomeAssertions;
 using BauDoku.Sync.Application.Contracts;
 using BauDoku.Sync.Application.Queries.Dtos;
-using BauDoku.Sync.Application.Queries.GetConflicts;
+using BauDoku.Sync.Application.Queries;
+using BauDoku.Sync.Application.Queries.Handlers;
 using BauDoku.Sync.Domain;
 using NSubstitute;
 
@@ -31,7 +32,7 @@ public sealed class GetConflictsQueryHandlerTests
             Arg.Any<CancellationToken>())
             .Returns(expected);
 
-        var result = await handler.Handle(new GetConflictsQuery("device-001", "unresolved"));
+        var result = await handler.Handle(new GetConflictsQuery(DeviceIdentifier.From("device-001"), ConflictStatus.From("unresolved")));
 
         result.Should().BeSameAs(expected);
         result.Should().ContainSingle();
@@ -58,7 +59,7 @@ public sealed class GetConflictsQueryHandlerTests
             Arg.Any<CancellationToken>())
             .Returns(new List<ConflictDto>());
 
-        var result = await handler.Handle(new GetConflictsQuery("device-002", null));
+        var result = await handler.Handle(new GetConflictsQuery(DeviceIdentifier.From("device-002"), null));
 
         result.Should().BeEmpty();
     }

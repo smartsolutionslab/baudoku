@@ -1,10 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiGet, apiPost, apiPut, apiDelete } from "@baudoku/shared-api";
-import type { Installation, Photo, Measurement } from "@baudoku/shared-types";
+import { apiGet, apiPost, apiPut, apiDelete } from "@baudoku/core";
 import type {
+  Installation,
+  Photo,
+  Measurement,
   InstallationFormData,
   MeasurementFormData,
-} from "@baudoku/shared-validation";
+} from "@baudoku/documentation";
 
 // ─── Installations ──────────────────────────────────────────────
 
@@ -13,7 +15,7 @@ export function useInstallations(projectId: string) {
     queryKey: ["projects", projectId, "installations"],
     queryFn: () =>
       apiGet<Installation[]>(
-        `/api/projects/${projectId}/installations`
+        `/api/documentation/installations?projectId=${projectId}`
       ),
     enabled: !!projectId,
   });
@@ -35,8 +37,8 @@ export function useCreateInstallation(projectId: string) {
   return useMutation({
     mutationFn: (data: InstallationFormData & { zoneId: string }) =>
       apiPost<Installation>(
-        `/api/projects/${projectId}/installations`,
-        data
+        `/api/documentation/installations`,
+        { ...data, projectId }
       ),
     onSuccess: () => {
       queryClient.invalidateQueries({
