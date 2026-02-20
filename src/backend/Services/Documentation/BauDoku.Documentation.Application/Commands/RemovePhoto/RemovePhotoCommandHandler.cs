@@ -12,13 +12,13 @@ public sealed class RemovePhotoCommandHandler(IInstallationRepository installati
     public async Task Handle(RemovePhotoCommand command, CancellationToken cancellationToken = default)
     {
         var (installationId, photoId) = command;
-        var installationIdentifier =  InstallationIdentifier.From(installationId);
-        var installation = await installations.GetByIdAsync(installationIdentifier, cancellationToken);
 
-        var photoIdentifier = PhotoIdentifier.From(photoId);
-        var photo = installation.Photos.FirstOrDefault(p => p.Id == photoIdentifier)  ?? throw new KeyNotFoundException($"Foto mit ID {photoId} nicht gefunden.");
+        var installation = await installations.GetByIdAsync(installationId, cancellationToken);
 
-        installation.RemovePhoto(photoIdentifier);
+        var photo = installation.Photos.FirstOrDefault(p => p.Id == photoId)
+            ?? throw new KeyNotFoundException($"Foto mit ID {photoId.Value} nicht gefunden.");
+
+        installation.RemovePhoto(photoId);
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
 

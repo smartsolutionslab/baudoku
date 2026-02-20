@@ -6,6 +6,7 @@ using BauDoku.Documentation.Api.Mapping;
 using BauDoku.Documentation.Application.Commands.CompleteInstallation;
 using BauDoku.Documentation.Application.Commands.DeleteInstallation;
 using BauDoku.Documentation.Application.Commands.DocumentInstallation;
+using BauDoku.Documentation.Domain;
 using BauDoku.Documentation.Application.Queries.Dtos;
 using BauDoku.Documentation.Application.Queries.GetInstallation;
 using BauDoku.Documentation.Application.Queries.GetInstallationsInBoundingBox;
@@ -63,9 +64,7 @@ public static class InstallationEndpoints
             IDispatcher dispatcher,
             CancellationToken ct) =>
         {
-            var query = new GetInstallationsInRadiusQuery(
-                latitude, longitude, radiusMeters, projectId,
-                page ?? 1, pageSize ?? 20);
+            var query = new GetInstallationsInRadiusQuery(latitude, longitude, radiusMeters, projectId, page ?? 1, pageSize ?? 20);
             return Results.Ok(await dispatcher.Query(query, ct));
         })
         .RequireAuthorization()
@@ -84,9 +83,7 @@ public static class InstallationEndpoints
             IDispatcher dispatcher,
             CancellationToken ct) =>
         {
-            var query = new GetInstallationsInBoundingBoxQuery(
-                minLatitude, minLongitude, maxLatitude, maxLongitude,
-                projectId, page ?? 1, pageSize ?? 20);
+            var query = new GetInstallationsInBoundingBoxQuery(minLatitude, minLongitude, maxLatitude, maxLongitude, projectId, page ?? 1, pageSize ?? 20);
             return Results.Ok(await dispatcher.Query(query, ct));
         })
         .RequireAuthorization()
@@ -122,7 +119,7 @@ public static class InstallationEndpoints
 
         group.MapPost("/{id:guid}/complete", async (Guid id, IDispatcher dispatcher, CancellationToken ct) =>
         {
-            var command = new CompleteInstallationCommand(id);
+            var command = new CompleteInstallationCommand(InstallationIdentifier.From(id));
             await dispatcher.Send(command, ct);
             return Results.NoContent();
         })
@@ -134,7 +131,7 @@ public static class InstallationEndpoints
 
         group.MapDelete("/{id:guid}", async (Guid id, IDispatcher dispatcher, CancellationToken ct) =>
         {
-            var command = new DeleteInstallationCommand(id);
+            var command = new DeleteInstallationCommand(InstallationIdentifier.From(id));
             await dispatcher.Send(command, ct);
             return Results.NoContent();
         })

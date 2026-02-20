@@ -7,11 +7,9 @@ public sealed class ResolveConflictCommandValidator : AbstractValidator<ResolveC
 {
     public ResolveConflictCommandValidator()
     {
-        RuleFor(x => x.ConflictId).NotEmpty();
-        RuleFor(x => x.Strategy).NotEmpty();
         RuleFor(x => x.MergedPayload)
-            .NotEmpty()
-            .MaximumLength(DeltaPayload.MaxLength)
-            .When(x => x.Strategy == "manual_merge");
+            .NotNull()
+            .When(x => x.Strategy == ConflictResolutionStrategy.ManualMerge)
+            .WithMessage("Merged-Payload wird bei ManualMerge benötigt.");
     }
 }

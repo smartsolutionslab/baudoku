@@ -9,20 +9,23 @@ public sealed class UpdateInstallationCommandHandler(IInstallationRepository ins
 {
     public async Task Handle(UpdateInstallationCommand command, CancellationToken cancellationToken = default)
     {
-        var (installationId, latitude, longitude, altitude, horizontalAccuracy, gpsSource,
-             correctionService, rtkFixStatus, satelliteCount, hdop, correctionAge, description,
-             cableType, crossSection, cableColor, conductorCount, depthMm, manufacturer, modelName, serialNumber) = command;
+        var (installationId,
+            latitude, longitude, altitude,
+            horizontalAccuracy, gpsSource,
+            correctionService, rtkFixStatus,
+            satelliteCount, hdop, correctionAge,
+            description,
+            cableType, crossSection, cableColor, conductorCount, depthMm,
+            manufacturer, modelName, serialNumber) = command;
 
-        var installationIdentifier = InstallationIdentifier.From(installationId);
-        var installation = await installations.GetByIdAsync(installationIdentifier, cancellationToken);
+        var installation = await installations.GetByIdAsync(installationId, cancellationToken);
 
-        if (latitude.HasValue && longitude.HasValue && horizontalAccuracy.HasValue && gpsSource is not null)
+        if (latitude is not null && longitude is not null && horizontalAccuracy is not null && gpsSource is not null)
         {
             var position = GpsPosition.Create(
-                Latitude.From(latitude.Value), Longitude.From(longitude.Value), altitude,
-                HorizontalAccuracy.From(horizontalAccuracy.Value), GpsSource.From(gpsSource),
-                CorrectionService.FromNullable(correctionService),
-                RtkFixStatus.FromNullable(rtkFixStatus),
+                latitude, longitude, altitude,
+                horizontalAccuracy, gpsSource,
+                correctionService, rtkFixStatus,
                 satelliteCount, hdop, correctionAge);
 
             installation.UpdatePosition(position);
@@ -30,7 +33,7 @@ public sealed class UpdateInstallationCommandHandler(IInstallationRepository ins
 
         if (description is not null)
         {
-            installation.UpdateDescription(Description.From(description));
+            installation.UpdateDescription(description);
         }
 
         if (cableType is not null)
@@ -45,10 +48,7 @@ public sealed class UpdateInstallationCommandHandler(IInstallationRepository ins
 
         if (manufacturer is not null || modelName is not null || serialNumber is not null)
         {
-            installation.UpdateDeviceInfo(
-                Manufacturer.FromNullable(manufacturer),
-                ModelName.FromNullable(modelName),
-                SerialNumber.FromNullable(serialNumber));
+            installation.UpdateDeviceInfo(manufacturer, modelName, serialNumber);
         }
 
         await unitOfWork.SaveChangesAsync(cancellationToken);

@@ -20,7 +20,7 @@ public sealed class InstallationPersistenceTests(PostgreSqlFixture fixture)
             InstallationType.CableTray,
             GpsPosition.Create(Latitude.From(48.1351), Longitude.From(11.5820), 520.0, HorizontalAccuracy.From(3.5), GpsSource.From("internal_gps")),
             Description.From("Test installation"),
-            CableSpec.Create("NYM-J 5x2.5", 25m, "grey", 5),
+            CableSpec.Create(CableType.From("NYM-J 5x2.5"), CrossSection.From(25), CableColor.From("grey"), 5),
             Depth.From(600),
             Manufacturer.From("Hager"),
             ModelName.From("VZ312N"),

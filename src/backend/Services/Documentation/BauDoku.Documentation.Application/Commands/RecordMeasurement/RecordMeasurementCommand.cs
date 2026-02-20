@@ -1,12 +1,13 @@
 using BauDoku.BuildingBlocks.Application.Commands;
+using BauDoku.Documentation.Domain;
 
 namespace BauDoku.Documentation.Application.Commands.RecordMeasurement;
 
 public sealed record RecordMeasurementCommand(
-    Guid InstallationId,
-    string Type,
+    InstallationIdentifier InstallationId,
+    MeasurementType Type,
     double Value,
-    string Unit,
+    MeasurementUnit Unit,
     double? MinThreshold,
     double? MaxThreshold,
     string? Notes) : ICommand<Guid>;

@@ -10,16 +10,15 @@ public sealed class RecordMeasurementCommandHandler(IInstallationRepository inst
 {
     public async Task<Guid> Handle(RecordMeasurementCommand command, CancellationToken cancellationToken = default)
     {
-        var (installationId, type, value, unit, minThreshold, maxThreshold, notesText) = command;
-        var installation = await installations.GetByIdAsync(
-            InstallationIdentifier.From(installationId), cancellationToken);
+        var (installationId, type, value, unit, minThreshold, maxThreshold, notes) = command;
+
+        var installation = await installations.GetByIdAsync(installationId, cancellationToken);
 
         var measurementId = MeasurementIdentifier.New();
-        var measurementType = MeasurementType.From(type);
-        var measurementValue = MeasurementValue.Create(value, unit, minThreshold, maxThreshold);
-        var notes = Notes.FromNullable(notesText);
+        var measurementValue = MeasurementValue.Create(value, unit.Value, minThreshold, maxThreshold);
+        var notesVo = Notes.FromNullable(notes);
 
-        installation.RecordMeasurement(measurementId, measurementType, measurementValue, notes);
+        installation.RecordMeasurement(measurementId, type, measurementValue, notesVo);
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
 

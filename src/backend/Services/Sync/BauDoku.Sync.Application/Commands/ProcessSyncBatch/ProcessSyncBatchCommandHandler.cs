@@ -13,14 +13,15 @@ public sealed class ProcessSyncBatchCommandHandler(ISyncBatchRepository syncBatc
 {
     public async Task<ProcessSyncBatchResult> Handle(ProcessSyncBatchCommand command, CancellationToken cancellationToken = default)
     {
+        var (deviceId, deltas) = command;
+
         var batchId = SyncBatchIdentifier.New();
-        var deviceId = DeviceIdentifier.From(command.DeviceId);
         var batch = SyncBatch.Create(batchId, deviceId, DateTime.UtcNow);
 
         var appliedCount = 0;
         var conflicts = new List<ConflictDto>();
 
-        foreach (var (entityTypeName, entityId, operationName, baseVersion, payloadJson, timestamp) in command.Deltas)
+        foreach (var (entityTypeName, entityId, operationName, baseVersion, payloadJson, timestamp) in deltas)
         {
             SyncMetrics.DeltaPayloadSize.Record(payloadJson.Length);
 
@@ -45,9 +46,7 @@ public sealed class ProcessSyncBatchCommandHandler(ISyncBatchRepository syncBatc
                     payload,
                     timestamp);
 
-                await entityVersionStore.SetVersionAsync(
-                    entityRef, newVersion,
-                    payloadJson, deviceId, cancellationToken);
+                await entityVersionStore.SetVersionAsync(entityRef, newVersion, payloadJson, deviceId, cancellationToken);
 
                 appliedCount++;
             }
@@ -87,12 +86,8 @@ public sealed class ProcessSyncBatchCommandHandler(ISyncBatchRepository syncBatc
         SyncMetrics.BatchesProcessed.Add(1);
         SyncMetrics.DeltasApplied.Add(appliedCount);
         SyncMetrics.ConflictsDetected.Add(conflicts.Count);
-        SyncMetrics.DeltasPerBatch.Record(command.Deltas.Count);
+        SyncMetrics.DeltasPerBatch.Record(deltas.Count);
 
-        return new ProcessSyncBatchResult(
-            batchId.Value,
-            appliedCount,
-            conflicts.Count,
-            conflicts);
+        return new ProcessSyncBatchResult(batchId.Value, appliedCount, conflicts.Count, conflicts);
     }
 }

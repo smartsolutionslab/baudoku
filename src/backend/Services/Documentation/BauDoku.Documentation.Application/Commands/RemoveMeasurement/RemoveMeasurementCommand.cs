@@ -1,7 +1,8 @@
 using BauDoku.BuildingBlocks.Application.Commands;
+using BauDoku.Documentation.Domain;
 
 namespace BauDoku.Documentation.Application.Commands.RemoveMeasurement;
 
 public sealed record RemoveMeasurementCommand(
-    Guid InstallationId,
-    Guid MeasurementId) : ICommand;
+    InstallationIdentifier InstallationId,
+    MeasurementIdentifier MeasurementId) : ICommand;

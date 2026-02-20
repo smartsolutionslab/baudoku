@@ -1,8 +1,9 @@
 using BauDoku.BuildingBlocks.Application.Commands;
+using BauDoku.Sync.Domain;
 
 namespace BauDoku.Sync.Application.Commands.ResolveConflict;
 
 public sealed record ResolveConflictCommand(
-    Guid ConflictId,
-    string Strategy,
-    string? MergedPayload) : ICommand;
+    ConflictRecordIdentifier ConflictId,
+    ConflictResolutionStrategy Strategy,
+    DeltaPayload? MergedPayload) : ICommand;

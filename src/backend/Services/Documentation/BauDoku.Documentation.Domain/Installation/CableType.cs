@@ -17,4 +17,6 @@ public sealed record CableType : IValueObject
             .MaxLengthIs(MaxLength, $"Kabeltyp darf max. {MaxLength} Zeichen lang sein.");
         return new CableType(value);
     }
+
+    public static CableType? FromNullable(string? value) => value is not null ? From(value) : null;
 }

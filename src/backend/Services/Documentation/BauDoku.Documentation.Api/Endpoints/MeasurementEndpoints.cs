@@ -3,6 +3,7 @@ using BauDoku.BuildingBlocks.Application.Responses;
 using BauDoku.BuildingBlocks.Infrastructure.Auth;
 using BauDoku.Documentation.Api.Mapping;
 using BauDoku.Documentation.Application.Commands.RemoveMeasurement;
+using BauDoku.Documentation.Domain;
 using BauDoku.Documentation.Application.Queries.Dtos;
 using BauDoku.Documentation.Application.Queries.GetMeasurements;
 
@@ -53,7 +54,7 @@ public static class MeasurementEndpoints
             IDispatcher dispatcher,
             CancellationToken ct) =>
         {
-            var command = new RemoveMeasurementCommand(installationId, measurementId);
+            var command = new RemoveMeasurementCommand(InstallationIdentifier.From(installationId), MeasurementIdentifier.From(measurementId));
             await dispatcher.Send(command, ct);
             return Results.NoContent();
         })

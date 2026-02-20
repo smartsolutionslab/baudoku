@@ -1,27 +1,28 @@
 using BauDoku.BuildingBlocks.Application.Commands;
+using BauDoku.Documentation.Domain;
 
 namespace BauDoku.Documentation.Application.Commands.DocumentInstallation;
 
 public sealed record DocumentInstallationCommand(
-    Guid ProjectId,
-    Guid? ZoneId,
-    string Type,
-    double Latitude,
-    double Longitude,
+    ProjectIdentifier ProjectId,
+    ZoneIdentifier? ZoneId,
+    InstallationType Type,
+    Latitude Latitude,
+    Longitude Longitude,
     double? Altitude,
-    double HorizontalAccuracy,
-    string GpsSource,
-    string? CorrectionService,
-    string? RtkFixStatus,
+    HorizontalAccuracy HorizontalAccuracy,
+    GpsSource GpsSource,
+    CorrectionService? CorrectionService,
+    RtkFixStatus? RtkFixStatus,
     int? SatelliteCount,
     double? Hdop,
     double? CorrectionAge,
-    string? Description,
-    string? CableType,
-    decimal? CrossSection,
-    string? CableColor,
+    Description? Description,
+    CableType? CableType,
+    CrossSection? CrossSection,
+    CableColor? CableColor,
     int? ConductorCount,
     int? DepthMm,
-    string? Manufacturer,
-    string? ModelName,
-    string? SerialNumber) : ICommand<Guid>;
+    Manufacturer? Manufacturer,
+    ModelName? ModelName,
+    SerialNumber? SerialNumber) : ICommand<Guid>;

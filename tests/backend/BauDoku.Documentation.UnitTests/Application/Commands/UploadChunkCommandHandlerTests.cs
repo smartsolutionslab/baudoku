@@ -32,7 +32,7 @@ public sealed class UploadChunkCommandHandlerTests
             .Returns(session);
 
         var stream = new MemoryStream([1, 2, 3]);
-        var command = new UploadChunkCommand(sessionId, 2, stream);
+        var command = new UploadChunkCommand(UploadSessionIdentifier.From(sessionId), 2, stream);
 
         await handler.Handle(command, CancellationToken.None);
 
@@ -46,7 +46,7 @@ public sealed class UploadChunkCommandHandlerTests
         chunkedUploadStorage.GetSessionAsync(Arg.Any<UploadSessionIdentifier>(), Arg.Any<CancellationToken>())
             .Throws(new KeyNotFoundException("Upload-Session nicht gefunden."));
 
-        var command = new UploadChunkCommand(Guid.NewGuid(), 0, new MemoryStream([1, 2, 3]));
+        var command = new UploadChunkCommand(UploadSessionIdentifier.New(), 0, new MemoryStream([1, 2, 3]));
 
         var act = () => handler.Handle(command, CancellationToken.None);
 
@@ -61,7 +61,7 @@ public sealed class UploadChunkCommandHandlerTests
         chunkedUploadStorage.GetSessionAsync(UploadSessionIdentifier.From(sessionId), Arg.Any<CancellationToken>())
             .Returns(session);
 
-        var command = new UploadChunkCommand(sessionId, 5, new MemoryStream([1, 2, 3]));
+        var command = new UploadChunkCommand(UploadSessionIdentifier.From(sessionId), 5, new MemoryStream([1, 2, 3]));
 
         var act = () => handler.Handle(command, CancellationToken.None);
 

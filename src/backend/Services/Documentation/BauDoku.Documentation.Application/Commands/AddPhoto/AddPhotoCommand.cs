@@ -1,19 +1,20 @@
 using BauDoku.BuildingBlocks.Application.Commands;
+using BauDoku.Documentation.Domain;
 
 namespace BauDoku.Documentation.Application.Commands.AddPhoto;
 
 public sealed record AddPhotoCommand(
-    Guid InstallationId,
-    string FileName,
-    string ContentType,
-    long FileSize,
-    string PhotoType,
-    string? Caption,
-    string? Description,
-    double? Latitude,
-    double? Longitude,
+    InstallationIdentifier InstallationId,
+    FileName FileName,
+    ContentType ContentType,
+    FileSize FileSize,
+    PhotoType PhotoType,
+    Caption? Caption,
+    Description? Description,
+    Latitude? Latitude,
+    Longitude? Longitude,
     double? Altitude,
-    double? HorizontalAccuracy,
-    string? GpsSource,
+    HorizontalAccuracy? HorizontalAccuracy,
+    GpsSource? GpsSource,
     Stream Stream,
     DateTime? TakenAt = null) : ICommand<Guid>;

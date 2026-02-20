@@ -35,7 +35,7 @@ public sealed class CompleteInstallationCommandHandlerTests
         installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
 
-        await handler.Handle(new CompleteInstallationCommand(installation.Id.Value), CancellationToken.None);
+        await handler.Handle(new CompleteInstallationCommand(installation.Id), CancellationToken.None);
 
         installation.Status.Should().Be(InstallationStatus.Completed);
         installation.CompletedAt.Should().NotBeNull();
@@ -48,7 +48,7 @@ public sealed class CompleteInstallationCommandHandlerTests
         installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Throws(new KeyNotFoundException());
 
-        var act = () => handler.Handle(new CompleteInstallationCommand(Guid.NewGuid()), CancellationToken.None);
+        var act = () => handler.Handle(new CompleteInstallationCommand(InstallationIdentifier.New()), CancellationToken.None);
 
         await act.Should().ThrowAsync<KeyNotFoundException>();
     }
@@ -61,7 +61,7 @@ public sealed class CompleteInstallationCommandHandlerTests
         installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
 
-        var act = () => handler.Handle(new CompleteInstallationCommand(installation.Id.Value), CancellationToken.None);
+        var act = () => handler.Handle(new CompleteInstallationCommand(installation.Id), CancellationToken.None);
 
         await act.Should().ThrowAsync<BauDoku.BuildingBlocks.Domain.BusinessRuleException>();
     }

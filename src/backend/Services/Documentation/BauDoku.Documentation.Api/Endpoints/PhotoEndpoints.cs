@@ -70,7 +70,7 @@ public static class PhotoEndpoints
             IDispatcher dispatcher,
             CancellationToken ct) =>
         {
-            var command = new RemovePhotoCommand(installationId, photoId);
+            var command = new RemovePhotoCommand(InstallationIdentifier.From(installationId), PhotoIdentifier.From(photoId));
             await dispatcher.Send(command, ct);
             return Results.NoContent();
         })

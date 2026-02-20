@@ -18,13 +18,9 @@ public sealed record CableSpec : IValueObject
         ConductorCount = conductorCount;
     }
 
-    public static CableSpec Create(string cableType, decimal? crossSection = null, string? color = null, int? conductorCount = null)
+    public static CableSpec Create(CableType cableType, CrossSection? crossSection = null, CableColor? color = null, int? conductorCount = null)
     {
         Ensure.That(conductorCount).IsPositive("Leiteranzahl muss größer als 0 sein.");
-        return new CableSpec(
-            CableType.From(cableType),
-            CrossSection.FromNullable(crossSection),
-            CableColor.FromNullable(color),
-            conductorCount);
+        return new CableSpec(cableType, crossSection, color, conductorCount);
     }
 }

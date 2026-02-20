@@ -51,7 +51,7 @@ public sealed class ResolveConflictCommandHandlerTests
         entityVersionStore.GetCurrentVersionAsync(Arg.Any<EntityReference>(), Arg.Any<CancellationToken>())
             .Returns(SyncVersion.From(3));
 
-        var command = new ResolveConflictCommand(conflictId.Value, "client_wins", null);
+        var command = new ResolveConflictCommand(conflictId, ConflictResolutionStrategy.ClientWins, null);
 
         await handler.Handle(command);
 
@@ -69,7 +69,7 @@ public sealed class ResolveConflictCommandHandlerTests
         syncBatches.GetByConflictIdAsync(Arg.Any<ConflictRecordIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(batch);
 
-        var command = new ResolveConflictCommand(conflictId.Value, "server_wins", null);
+        var command = new ResolveConflictCommand(conflictId, ConflictResolutionStrategy.ServerWins, null);
 
         await handler.Handle(command);
 
@@ -88,7 +88,7 @@ public sealed class ResolveConflictCommandHandlerTests
         entityVersionStore.GetCurrentVersionAsync(Arg.Any<EntityReference>(), Arg.Any<CancellationToken>())
             .Returns(SyncVersion.From(3));
 
-        var command = new ResolveConflictCommand(conflictId.Value, "manual_merge", """{"merged":"data"}""");
+        var command = new ResolveConflictCommand(conflictId, ConflictResolutionStrategy.ManualMerge, DeltaPayload.From("""{"merged":"data"}"""));
 
         await handler.Handle(command);
 
@@ -105,7 +105,7 @@ public sealed class ResolveConflictCommandHandlerTests
         syncBatches.GetByConflictIdAsync(Arg.Any<ConflictRecordIdentifier>(), Arg.Any<CancellationToken>())
             .Throws(new KeyNotFoundException("Batch nicht gefunden."));
 
-        var command = new ResolveConflictCommand(Guid.NewGuid(), "client_wins", null);
+        var command = new ResolveConflictCommand(ConflictRecordIdentifier.New(), ConflictResolutionStrategy.ClientWins, null);
 
         var act = () => handler.Handle(command);
 
@@ -119,7 +119,7 @@ public sealed class ResolveConflictCommandHandlerTests
         syncBatches.GetByConflictIdAsync(Arg.Any<ConflictRecordIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(batch);
 
-        var command = new ResolveConflictCommand(Guid.NewGuid(), "client_wins", null);
+        var command = new ResolveConflictCommand(ConflictRecordIdentifier.New(), ConflictResolutionStrategy.ClientWins, null);
 
         var act = () => handler.Handle(command);
 

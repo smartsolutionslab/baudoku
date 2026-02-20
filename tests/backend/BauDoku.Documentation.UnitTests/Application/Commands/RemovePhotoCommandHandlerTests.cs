@@ -46,7 +46,7 @@ public sealed class RemovePhotoCommandHandlerTests
         installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
 
-        var command = new RemovePhotoCommand(installation.Id.Value, photoId.Value);
+        var command = new RemovePhotoCommand(installation.Id, photoId);
 
         await handler.Handle(command, CancellationToken.None);
 
@@ -61,7 +61,7 @@ public sealed class RemovePhotoCommandHandlerTests
         installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Throws(new KeyNotFoundException());
 
-        var command = new RemovePhotoCommand(Guid.NewGuid(), Guid.NewGuid());
+        var command = new RemovePhotoCommand(InstallationIdentifier.New(), PhotoIdentifier.New());
 
         var act = () => handler.Handle(command, CancellationToken.None);
 
@@ -75,7 +75,7 @@ public sealed class RemovePhotoCommandHandlerTests
         installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
 
-        var command = new RemovePhotoCommand(installation.Id.Value, Guid.NewGuid());
+        var command = new RemovePhotoCommand(installation.Id, PhotoIdentifier.New());
 
         var act = () => handler.Handle(command, CancellationToken.None);
 

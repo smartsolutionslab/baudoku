@@ -9,27 +9,29 @@ public sealed class InitChunkedUploadCommandHandler(IInstallationRepository inst
 {
     public async Task<Guid> Handle(InitChunkedUploadCommand command, CancellationToken cancellationToken = default)
     {
-        var (installationId, fileName, contentType, totalSize, totalChunks, photoType,
-             caption, description, latitude, longitude, altitude, horizontalAccuracy, gpsSource) = command;
+        var (installationId, fileName, contentType, totalSize, totalChunks,
+            photoType, caption, description,
+            latitude, longitude, altitude,
+            horizontalAccuracy, gpsSource) = command;
 
-        _ = await installations.GetByIdAsync(InstallationIdentifier.From(installationId), cancellationToken);
+        _ = await installations.GetByIdAsync(installationId, cancellationToken);
 
         var sessionIdentifier = UploadSessionIdentifier.New();
         var session = new ChunkedUploadSession(
             SessionId: sessionIdentifier.Value,
-            InstallationId: installationId,
-            FileName: fileName,
-            ContentType: contentType,
-            TotalSize: totalSize,
+            InstallationId: installationId.Value,
+            FileName: fileName.Value,
+            ContentType: contentType.Value,
+            TotalSize: totalSize.Value,
             TotalChunks: totalChunks,
-            PhotoType: photoType,
-            Caption: caption,
-            Description: description,
-            Latitude: latitude,
-            Longitude: longitude,
+            PhotoType: photoType.Value,
+            Caption: caption?.Value,
+            Description: description?.Value,
+            Latitude: latitude?.Value,
+            Longitude: longitude?.Value,
             Altitude: altitude,
-            HorizontalAccuracy: horizontalAccuracy,
-            GpsSource: gpsSource,
+            HorizontalAccuracy: horizontalAccuracy?.Value,
+            GpsSource: gpsSource?.Value,
             CreatedAt: DateTime.UtcNow);
 
         await chunkedUploadStorage.InitSessionAsync(session, cancellationToken);

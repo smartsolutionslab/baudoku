@@ -1,4 +1,3 @@
-using BauDoku.Documentation.Domain;
 using FluentValidation;
 
 namespace BauDoku.Documentation.Application.Commands.InitChunkedUpload;
@@ -12,12 +11,12 @@ public sealed class InitChunkedUploadCommandValidator : AbstractValidator<InitCh
 
     public InitChunkedUploadCommandValidator()
     {
-        RuleFor(x => x.InstallationId).NotEmpty();
-        RuleFor(x => x.FileName).NotEmpty().MaximumLength(255);
-        RuleFor(x => x.ContentType).NotEmpty().Must(ct => AllowedContentTypes.Contains(ct)).WithMessage("ContentType muss image/jpeg, image/png oder image/heic sein.");
-        RuleFor(x => x.TotalSize).GreaterThan(0).LessThanOrEqualTo(MaxFileSize);
+        RuleFor(x => x.ContentType)
+            .Must(ct => AllowedContentTypes.Contains(ct.Value))
+            .WithMessage("ContentType muss image/jpeg, image/png oder image/heic sein.");
+        RuleFor(x => x.TotalSize)
+            .Must(fs => fs.Value <= MaxFileSize)
+            .WithMessage($"Dateigröße darf max. {MaxFileSize} Bytes betragen.");
         RuleFor(x => x.TotalChunks).GreaterThan(0).LessThanOrEqualTo(MaxChunks);
-        RuleFor(x => x.PhotoType).NotEmpty();
-        RuleFor(x => x.Caption).MaximumLength(Caption.MaxLength).When(x => x.Caption is not null);
     }
 }

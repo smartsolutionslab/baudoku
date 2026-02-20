@@ -36,7 +36,7 @@ public sealed class RecordMeasurementCommandHandlerTests
             .Returns(installation);
 
         var command = new RecordMeasurementCommand(
-            installation.Id.Value, "insulation_resistance", 500.0, "MΩ", 1.0, null, "Notiz");
+            installation.Id, MeasurementType.InsulationResistance, 500.0, MeasurementUnit.From("MΩ"), 1.0, null, "Notiz");
 
         var result = await handler.Handle(command, CancellationToken.None);
 
@@ -52,7 +52,7 @@ public sealed class RecordMeasurementCommandHandlerTests
             .Throws(new KeyNotFoundException());
 
         var command = new RecordMeasurementCommand(
-            Guid.NewGuid(), "insulation_resistance", 500.0, "MΩ", null, null, null);
+            InstallationIdentifier.New(), MeasurementType.InsulationResistance, 500.0, MeasurementUnit.From("MΩ"), null, null, null);
 
         var act = () => handler.Handle(command, CancellationToken.None);
 

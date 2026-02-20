@@ -11,30 +11,13 @@ public sealed class ProcessSyncBatchCommandValidatorTests
 
     private static SyncDeltaDto CreateValidDelta() => new("project", Guid.NewGuid(), "create", 0, """{"name":"Test"}""", DateTime.UtcNow);
 
-    private static ProcessSyncBatchCommand CreateValidCommand() => new("device-001", [CreateValidDelta()]);
+    private static ProcessSyncBatchCommand CreateValidCommand() => new(DeviceIdentifier.From("device-001"), [CreateValidDelta()]);
 
     [Fact]
     public void ValidCommand_ShouldHaveNoErrors()
     {
         var result = validator.TestValidate(CreateValidCommand());
         result.ShouldNotHaveAnyValidationErrors();
-    }
-
-    [Theory]
-    [InlineData(null)]
-    [InlineData("")]
-    [InlineData("   ")]
-    public void DeviceId_WhenEmpty_ShouldHaveError(string? deviceId)
-    {
-        var cmd = CreateValidCommand() with { DeviceId = deviceId! };
-        validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.DeviceId);
-    }
-
-    [Fact]
-    public void DeviceId_WhenTooLong_ShouldHaveError()
-    {
-        var cmd = CreateValidCommand() with { DeviceId = new string('a', DeviceIdentifier.MaxLength + 1) };
-        validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.DeviceId);
     }
 
     [Fact]

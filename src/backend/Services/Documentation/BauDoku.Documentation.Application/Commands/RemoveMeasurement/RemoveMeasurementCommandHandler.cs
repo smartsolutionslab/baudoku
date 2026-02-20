@@ -11,10 +11,10 @@ public sealed class RemoveMeasurementCommandHandler(IInstallationRepository inst
     public async Task Handle(RemoveMeasurementCommand command, CancellationToken cancellationToken = default)
     {
         var (installationId, measurementId) = command;
-        var installation = await installations.GetByIdAsync(
-            InstallationIdentifier.From(installationId), cancellationToken);
 
-        installation.RemoveMeasurement(MeasurementIdentifier.From(measurementId));
+        var installation = await installations.GetByIdAsync(installationId, cancellationToken);
+
+        installation.RemoveMeasurement(measurementId);
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
 

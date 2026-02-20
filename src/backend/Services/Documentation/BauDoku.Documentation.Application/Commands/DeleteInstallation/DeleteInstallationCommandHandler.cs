@@ -10,8 +10,7 @@ public sealed class DeleteInstallationCommandHandler(IInstallationRepository ins
 {
     public async Task Handle(DeleteInstallationCommand command, CancellationToken cancellationToken = default)
     {
-        var installationId = InstallationIdentifier.From(command.InstallationId);
-        var installation = await installations.GetByIdAsync(installationId, cancellationToken);
+        var installation = await installations.GetByIdAsync(command.InstallationId, cancellationToken);
 
         installation.Delete();
         installations.Remove(installation);

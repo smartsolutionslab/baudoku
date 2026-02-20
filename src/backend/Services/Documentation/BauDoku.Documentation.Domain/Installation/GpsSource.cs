@@ -17,4 +17,6 @@ public sealed record GpsSource : IValueObject
             .MaxLengthIs(MaxLength, $"GPS-Quelle darf max. {MaxLength} Zeichen lang sein.");
         return new GpsSource(value);
     }
+
+    public static GpsSource? FromNullable(string? value) => value is not null ? From(value) : null;
 }

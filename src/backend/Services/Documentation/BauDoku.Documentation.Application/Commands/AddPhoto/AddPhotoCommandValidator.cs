@@ -1,4 +1,3 @@
-using BauDoku.Documentation.Domain;
 using FluentValidation;
 
 namespace BauDoku.Documentation.Application.Commands.AddPhoto;
@@ -14,18 +13,12 @@ public sealed class AddPhotoCommandValidator : AbstractValidator<AddPhotoCommand
 
     public AddPhotoCommandValidator()
     {
-        RuleFor(x => x.InstallationId).NotEmpty();
-        RuleFor(x => x.FileName).NotEmpty().MaximumLength(255);
         RuleFor(x => x.ContentType)
-            .NotEmpty()
-            .Must(ct => AllowedContentTypes.Contains(ct))
+            .Must(ct => AllowedContentTypes.Contains(ct.Value))
             .WithMessage("ContentType muss image/jpeg, image/png oder image/heic sein.");
-        RuleFor(x => x.FileSize).GreaterThan(0).LessThanOrEqualTo(MaxFileSize);
-        RuleFor(x => x.PhotoType).NotEmpty();
-        RuleFor(x => x.Caption).MaximumLength(Caption.MaxLength)
-            .When(x => x.Caption is not null);
-        RuleFor(x => x.Description).MaximumLength(Description.MaxLength)
-            .When(x => x.Description is not null);
+        RuleFor(x => x.FileSize)
+            .Must(fs => fs.Value <= MaxFileSize)
+            .WithMessage($"Dateigröße darf max. {MaxFileSize} Bytes betragen.");
         RuleFor(x => x.Stream).NotNull();
     }
 }

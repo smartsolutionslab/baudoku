@@ -4,6 +4,7 @@ using BauDoku.BuildingBlocks.Infrastructure.Auth;
 using BauDoku.Documentation.Application.Commands.CompleteChunkedUpload;
 using BauDoku.Documentation.Application.Commands.InitChunkedUpload;
 using BauDoku.Documentation.Application.Commands.UploadChunk;
+using BauDoku.Documentation.Domain;
 
 namespace BauDoku.Documentation.Api.Endpoints;
 
@@ -34,7 +35,7 @@ public static class ChunkedUploadEndpoints
             IDispatcher dispatcher,
             CancellationToken ct) =>
         {
-            var command = new UploadChunkCommand(sessionId, index, httpRequest.Body);
+            var command = new UploadChunkCommand(UploadSessionIdentifier.From(sessionId), index, httpRequest.Body);
             await dispatcher.Send(command, ct);
             return Results.NoContent();
         })
@@ -49,7 +50,7 @@ public static class ChunkedUploadEndpoints
             IDispatcher dispatcher,
             CancellationToken ct) =>
         {
-            var command = new CompleteChunkedUploadCommand(sessionId);
+            var command = new CompleteChunkedUploadCommand(UploadSessionIdentifier.From(sessionId));
             var photoId = await dispatcher.Send(command, ct);
             return Results.Created($"/api/documentation/photos/{photoId}", new CreatedResponse(photoId));
         })
