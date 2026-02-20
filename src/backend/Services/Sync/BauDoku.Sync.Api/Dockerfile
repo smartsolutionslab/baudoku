@@ -1,8 +1,4 @@
-FROM mcr.microsoft.com/dotnet/aspnet:10.0-preview AS base
-WORKDIR /app
-EXPOSE 8080
-
-FROM mcr.microsoft.com/dotnet/sdk:10.0-preview AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0-preview-alpine AS build
 ARG BUILD_CONFIGURATION=Release
 ARG VERSION=0.0.0
 WORKDIR /src
@@ -30,10 +26,13 @@ COPY src/backend/ .
 RUN dotnet publish Services/Sync/BauDoku.Sync.Api/BauDoku.Sync.Api.csproj \
     -c $BUILD_CONFIGURATION \
     -o /app/publish \
+    --no-restore \
     /p:Version=$VERSION \
     /p:UseAppHost=false
 
-FROM base AS final
+FROM mcr.microsoft.com/dotnet/aspnet:10.0-preview-noble-chiseled-extra AS final
 WORKDIR /app
+EXPOSE 8080
+USER $APP_UID
 COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "BauDoku.Sync.Api.dll"]

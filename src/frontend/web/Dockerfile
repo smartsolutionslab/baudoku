@@ -15,7 +15,9 @@ COPY src/frontend/web/ ./web/
 # Build
 RUN npm run build --workspace=web
 
-FROM nginx:alpine AS final
+FROM nginx:stable-alpine-slim AS final
+# Remove default config
+RUN rm -rf /usr/share/nginx/html/*
 COPY --from=build /app/web/dist /usr/share/nginx/html
 COPY src/frontend/web/nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
