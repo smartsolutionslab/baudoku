@@ -10,7 +10,7 @@ resource "random_password" "postgis" {
 
 resource "helm_release" "postgis" {
   name       = "postgis-${var.environment}"
-  repository = "https://charts.bitnami.com/bitnami"
+  repository = "oci://registry-1.docker.io/bitnamicharts"
   chart      = "postgresql"
   version    = "16.4.3"
   namespace  = kubernetes_namespace.this.metadata[0].name

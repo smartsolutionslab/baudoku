@@ -9,7 +9,7 @@ resource "random_password" "redis" {
 
 resource "helm_release" "redis" {
   name       = "redis-${var.environment}"
-  repository = "https://charts.bitnami.com/bitnami"
+  repository = "oci://registry-1.docker.io/bitnamicharts"
   chart      = "redis"
   version    = "20.6.2"
   namespace  = kubernetes_namespace.this.metadata[0].name
