@@ -77,31 +77,20 @@ resource "helm_release" "cert_manager" {
 
 # -----------------------------------------------------------------------------
 # ClusterIssuer for Let's Encrypt (production)
+#
+# Uses a local Helm chart instead of kubernetes_manifest because the latter
+# requires a live cluster connection at plan time, which fails on first apply
+# when the cluster doesn't exist yet.
 # -----------------------------------------------------------------------------
 
-resource "kubernetes_manifest" "letsencrypt_prod" {
-  manifest = {
-    apiVersion = "cert-manager.io/v1"
-    kind       = "ClusterIssuer"
-    metadata = {
-      name = "letsencrypt-prod"
-    }
-    spec = {
-      acme = {
-        server = "https://acme-v02.api.letsencrypt.org/directory"
-        email  = var.acme_email
-        privateKeySecretRef = {
-          name = "letsencrypt-prod-key"
-        }
-        solvers = [{
-          http01 = {
-            ingress = {
-              class = "nginx"
-            }
-          }
-        }]
-      }
-    }
+resource "helm_release" "cluster_issuer" {
+  name      = "letsencrypt-issuer"
+  chart     = "${path.module}/charts/cluster-issuer"
+  namespace = "cert-manager"
+
+  set {
+    name  = "email"
+    value = var.acme_email
   }
 
   depends_on = [helm_release.cert_manager]
