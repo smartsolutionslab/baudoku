@@ -21,6 +21,12 @@ resource "helm_release" "redis" {
     value = "bitnamilegacy/redis"
   }
 
+  # Allow non-standard image (bitnamilegacy)
+  set {
+    name  = "global.security.allowInsecureImages"
+    value = "true"
+  }
+
   set {
     name  = "architecture"
     value = "standalone"

@@ -16,6 +16,12 @@ resource "helm_release" "keycloak" {
     value = "bitnamilegacy/keycloak"
   }
 
+  # Allow non-standard images (bitnamilegacy for keycloak + postgresql sub-chart)
+  set {
+    name  = "global.security.allowInsecureImages"
+    value = "true"
+  }
+
   set {
     name  = "auth.adminUser"
     value = "admin"

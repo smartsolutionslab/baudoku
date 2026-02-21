@@ -21,6 +21,12 @@ resource "helm_release" "postgresql" {
     value = "bitnamilegacy/postgresql"
   }
 
+  # Allow non-standard image (bitnamilegacy)
+  set {
+    name  = "global.security.allowInsecureImages"
+    value = "true"
+  }
+
   set {
     name  = "auth.username"
     value = "baudoku"
