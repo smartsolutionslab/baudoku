@@ -26,6 +26,15 @@ resource "digitalocean_kubernetes_cluster" "this" {
 }
 
 # -----------------------------------------------------------------------------
+# Wait for cluster API to become available after creation
+# -----------------------------------------------------------------------------
+
+resource "time_sleep" "wait_for_cluster" {
+  create_duration = "60s"
+  depends_on      = [digitalocean_kubernetes_cluster.this]
+}
+
+# -----------------------------------------------------------------------------
 # nginx-ingress controller
 # -----------------------------------------------------------------------------
 
@@ -52,7 +61,7 @@ resource "helm_release" "nginx_ingress" {
     value = "128Mi"
   }
 
-  depends_on = [digitalocean_kubernetes_cluster.this]
+  depends_on = [time_sleep.wait_for_cluster]
 }
 
 # -----------------------------------------------------------------------------
@@ -72,7 +81,7 @@ resource "helm_release" "cert_manager" {
     value = "true"
   }
 
-  depends_on = [digitalocean_kubernetes_cluster.this]
+  depends_on = [time_sleep.wait_for_cluster]
 }
 
 # -----------------------------------------------------------------------------
