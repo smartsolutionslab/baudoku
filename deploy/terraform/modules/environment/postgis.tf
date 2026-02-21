@@ -14,11 +14,18 @@ resource "helm_release" "postgis" {
   chart      = "postgresql"
   version    = "16.4.3"
   namespace  = kubernetes_namespace.this.metadata[0].name
+  timeout    = 600
 
   # Ensure the service name matches what secrets.tf expects
   set {
     name  = "fullnameOverride"
     value = "postgis-${var.environment}"
+  }
+
+  # Allow non-Bitnami PostGIS image
+  set {
+    name  = "global.security.allowInsecureImages"
+    value = "true"
   }
 
   # Override image to PostGIS

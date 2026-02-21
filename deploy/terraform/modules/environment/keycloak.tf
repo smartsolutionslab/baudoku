@@ -8,6 +8,7 @@ resource "helm_release" "keycloak" {
   chart      = "keycloak"
   version    = "24.2.3"
   namespace  = kubernetes_namespace.this.metadata[0].name
+  timeout    = 600
 
   set {
     name  = "auth.adminUser"

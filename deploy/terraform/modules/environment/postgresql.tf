@@ -13,6 +13,7 @@ resource "helm_release" "postgresql" {
   chart      = "postgresql"
   version    = "16.4.3"
   namespace  = kubernetes_namespace.this.metadata[0].name
+  timeout    = 600
 
   set {
     name  = "auth.username"

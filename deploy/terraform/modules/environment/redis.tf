@@ -13,6 +13,7 @@ resource "helm_release" "redis" {
   chart      = "redis"
   version    = "20.6.2"
   namespace  = kubernetes_namespace.this.metadata[0].name
+  timeout    = 600
 
   set {
     name  = "architecture"

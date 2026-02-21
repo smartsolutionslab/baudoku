@@ -11,8 +11,9 @@ resource "helm_release" "rabbitmq" {
   name       = "rabbitmq-${var.environment}"
   repository = "oci://registry-1.docker.io/bitnamicharts"
   chart      = "rabbitmq"
-  version    = "15.1.3"
+  version    = "16.0.14"
   namespace  = kubernetes_namespace.this.metadata[0].name
+  timeout    = 600
 
   set {
     name  = "auth.username"

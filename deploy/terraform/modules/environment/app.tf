@@ -24,6 +24,7 @@ resource "helm_release" "baudoku" {
   name      = "baudoku"
   chart     = var.helm_chart_path
   namespace = kubernetes_namespace.this.metadata[0].name
+  timeout   = 600
 
   values = [
     templatefile("${path.module}/templates/values.yaml.tftpl", {
