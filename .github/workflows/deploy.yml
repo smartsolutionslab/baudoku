@@ -126,11 +126,38 @@ jobs:
         with:
           terraform_version: "~> 1.9"
 
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
       - name: Terraform Init
         run: terraform init
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.DO_SPACES_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SPACES_SECRET_KEY }}
+
+      - name: Clean up stuck Helm releases
+        continue-on-error: true
+        run: |
+          doctl kubernetes cluster kubeconfig save baudoku-k8s 2>/dev/null || exit 0
+          for info in "postgresql-staging:baudoku-staging:environment.helm_release.postgresql" "postgis-staging:baudoku-staging:environment.helm_release.postgis" "rabbitmq-staging:baudoku-staging:environment.helm_release.rabbitmq" "redis-staging:baudoku-staging:environment.helm_release.redis" "keycloak-staging:baudoku-staging:environment.helm_release.keycloak" "baudoku:baudoku-staging:environment.helm_release.baudoku"; do
+            IFS=: read -r name ns tf_name <<< "$info"
+            status=$(helm status "$name" -n "$ns" -o json 2>/dev/null | jq -r '.info.status // empty')
+            if [[ "$status" == pending-* || "$status" == "failed" ]]; then
+              echo "Release $name in $ns is $status — removing"
+              helm uninstall "$name" -n "$ns" --no-hooks 2>/dev/null || true
+              terraform state rm "module.${tf_name}" 2>/dev/null || true
+            fi
+          done
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.DO_SPACES_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SPACES_SECRET_KEY }}
+          DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          TF_VAR_image_tag: ${{ steps.gitversion.outputs.semVer }}
+          TF_VAR_ghcr_username: ${{ github.actor }}
+          TF_VAR_ghcr_token: ${{ secrets.GITHUB_TOKEN }}
+          TF_VAR_keycloak_admin_password: ${{ secrets.KEYCLOAK_ADMIN_PASSWORD }}
 
       - name: Terraform Apply
         run: terraform apply -auto-approve

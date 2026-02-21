@@ -15,6 +15,12 @@ resource "helm_release" "rabbitmq" {
   namespace  = kubernetes_namespace.this.metadata[0].name
   timeout    = 600
 
+  # Bitnami moved images from docker.io/bitnami to docker.io/bitnamilegacy
+  set {
+    name  = "image.repository"
+    value = "bitnamilegacy/rabbitmq"
+  }
+
   set {
     name  = "auth.username"
     value = "baudoku"

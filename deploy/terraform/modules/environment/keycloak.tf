@@ -10,6 +10,12 @@ resource "helm_release" "keycloak" {
   namespace  = kubernetes_namespace.this.metadata[0].name
   timeout    = 600
 
+  # Bitnami moved images from docker.io/bitnami to docker.io/bitnamilegacy
+  set {
+    name  = "image.repository"
+    value = "bitnamilegacy/keycloak"
+  }
+
   set {
     name  = "auth.adminUser"
     value = "admin"
@@ -20,10 +26,15 @@ resource "helm_release" "keycloak" {
     value = var.keycloak_admin_password
   }
 
-  # Use the same PostgreSQL instance for Keycloak's own DB
+  # Use embedded PostgreSQL for Keycloak's own DB
   set {
     name  = "postgresql.enabled"
     value = "true"
+  }
+
+  set {
+    name  = "postgresql.image.repository"
+    value = "bitnamilegacy/postgresql"
   }
 
   set {

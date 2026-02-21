@@ -15,6 +15,12 @@ resource "helm_release" "redis" {
   namespace  = kubernetes_namespace.this.metadata[0].name
   timeout    = 600
 
+  # Bitnami moved images from docker.io/bitnami to docker.io/bitnamilegacy
+  set {
+    name  = "image.repository"
+    value = "bitnamilegacy/redis"
+  }
+
   set {
     name  = "architecture"
     value = "standalone"
