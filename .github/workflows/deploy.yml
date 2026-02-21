@@ -19,19 +19,19 @@ jobs:
     name: Ensure Terraform State Bucket
     runs-on: ubuntu-latest
     if: github.event.workflow_run.conclusion == 'success'
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.DO_SPACES_ACCESS_KEY }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SPACES_SECRET_KEY }}
+      AWS_DEFAULT_REGION: fra1
     steps:
-      - name: Install doctl
-        uses: digitalocean/action-doctl@v2
-        with:
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-
       - name: Create Spaces bucket if missing
         run: |
-          if doctl spaces list --format Name --no-header | grep -q '^baudoku-terraform-state$'; then
+          ENDPOINT="https://fra1.digitaloceanspaces.com"
+          if aws s3api head-bucket --bucket baudoku-terraform-state --endpoint-url "$ENDPOINT" 2>/dev/null; then
             echo "Bucket already exists."
           else
             echo "Creating Spaces bucket..."
-            doctl spaces create baudoku-terraform-state --region fra1
+            aws s3api create-bucket --bucket baudoku-terraform-state --endpoint-url "$ENDPOINT"
           fi
 
   deploy-staging:
