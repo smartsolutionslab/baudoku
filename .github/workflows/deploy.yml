@@ -51,15 +51,33 @@ jobs:
         with:
           terraform_version: "~> 1.9"
 
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
       - name: Terraform Init
         run: terraform init
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.DO_SPACES_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SPACES_SECRET_KEY }}
 
-      - name: Import orphaned Helm releases
+      - name: Clean up stuck Helm releases
+        continue-on-error: true
         run: |
-          terraform import module.cluster.helm_release.nginx_ingress ingress-nginx/ingress-nginx 2>/dev/null || true
+          # Get cluster kubeconfig (may fail if cluster doesn't exist yet)
+          doctl kubernetes cluster kubeconfig save baudoku-k8s 2>/dev/null || exit 0
+
+          # Check each managed Helm release for stuck pending-* state
+          for info in "ingress-nginx:ingress-nginx:nginx_ingress" "cert-manager:cert-manager:cert_manager" "letsencrypt-issuer:cert-manager:cluster_issuer"; do
+            IFS=: read -r name ns tf_name <<< "$info"
+            status=$(helm status "$name" -n "$ns" -o json 2>/dev/null | jq -r '.info.status // empty')
+            if [[ "$status" == pending-* ]]; then
+              echo "Release $name in $ns stuck in $status — removing"
+              helm uninstall "$name" -n "$ns" --no-hooks 2>/dev/null || true
+              terraform state rm "module.cluster.helm_release.${tf_name}" 2>/dev/null || true
+            fi
+          done
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.DO_SPACES_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SPACES_SECRET_KEY }}
