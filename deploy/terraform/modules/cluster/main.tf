@@ -45,6 +45,7 @@ resource "helm_release" "nginx_ingress" {
   version          = "4.12.0"
   namespace        = "ingress-nginx"
   create_namespace = true
+  cleanup_on_fail  = true
 
   set {
     name  = "controller.publishService.enabled"
@@ -75,6 +76,7 @@ resource "helm_release" "cert_manager" {
   version          = "1.17.1"
   namespace        = "cert-manager"
   create_namespace = true
+  cleanup_on_fail  = true
 
   set {
     name  = "crds.enabled"
@@ -93,9 +95,10 @@ resource "helm_release" "cert_manager" {
 # -----------------------------------------------------------------------------
 
 resource "helm_release" "cluster_issuer" {
-  name      = "letsencrypt-issuer"
-  chart     = "${path.module}/charts/cluster-issuer"
-  namespace = "cert-manager"
+  name            = "letsencrypt-issuer"
+  chart           = "${path.module}/charts/cluster-issuer"
+  namespace       = "cert-manager"
+  cleanup_on_fail = true
 
   set {
     name  = "email"
