@@ -15,7 +15,7 @@ variable "image_tag" {
 }
 
 variable "domain" {
-  description = "Domain name for the application (e.g. staging.baudoku.example.com)"
+  description = "Domain name for the application (e.g. staging.baudoku.apps.smartsolutionslab.tech)"
   type        = string
 }
 
