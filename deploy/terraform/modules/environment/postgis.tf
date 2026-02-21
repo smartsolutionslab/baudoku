@@ -14,7 +14,7 @@ resource "helm_release" "postgis" {
   chart      = "postgresql"
   version    = "16.4.3"
   namespace  = kubernetes_namespace.this.metadata[0].name
-  timeout    = 600
+  timeout    = 900
 
   # Ensure the service name matches what secrets.tf expects
   set {
@@ -41,7 +41,7 @@ resource "helm_release" "postgis" {
 
   set {
     name  = "image.tag"
-    value = "17-3.5"
+    value = "17-3.5-alpine"
   }
 
   set {
