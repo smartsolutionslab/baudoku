@@ -57,6 +57,15 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.DO_SPACES_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SPACES_SECRET_KEY }}
 
+      - name: Import orphaned Helm releases
+        run: |
+          terraform import module.cluster.helm_release.nginx_ingress ingress-nginx/ingress-nginx 2>/dev/null || true
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.DO_SPACES_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SPACES_SECRET_KEY }}
+          DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          TF_VAR_acme_email: ${{ secrets.ACME_EMAIL }}
+
       - name: Terraform Apply
         run: terraform apply -auto-approve
         env:
