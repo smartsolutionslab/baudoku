@@ -141,7 +141,14 @@ jobs:
         continue-on-error: true
         run: |
           doctl kubernetes cluster kubeconfig save baudoku-k8s 2>/dev/null || exit 0
-          for info in "postgresql-staging:baudoku-staging:environment.helm_release.postgresql" "postgis-staging:baudoku-staging:environment.helm_release.postgis" "rabbitmq-staging:baudoku-staging:environment.helm_release.rabbitmq" "redis-staging:baudoku-staging:environment.helm_release.redis" "keycloak-staging:baudoku-staging:environment.helm_release.keycloak" "baudoku:baudoku-staging:environment.helm_release.baudoku"; do
+          # Clean up failed PostGIS Helm release from previous attempts (now a StatefulSet)
+          postgis_status=$(helm status "postgis-staging" -n "baudoku-staging" -o json 2>/dev/null | jq -r '.info.status // empty')
+          if [[ -n "$postgis_status" ]]; then
+            echo "Legacy PostGIS Helm release found ($postgis_status) — removing"
+            helm uninstall "postgis-staging" -n "baudoku-staging" --no-hooks 2>/dev/null || true
+            terraform state rm "module.environment.helm_release.postgis" 2>/dev/null || true
+          fi
+          for info in "postgresql-staging:baudoku-staging:environment.helm_release.postgresql" "rabbitmq-staging:baudoku-staging:environment.helm_release.rabbitmq" "redis-staging:baudoku-staging:environment.helm_release.redis" "keycloak-staging:baudoku-staging:environment.helm_release.keycloak" "baudoku:baudoku-staging:environment.helm_release.baudoku"; do
             IFS=: read -r name ns tf_name <<< "$info"
             status=$(helm status "$name" -n "$ns" -o json 2>/dev/null | jq -r '.info.status // empty')
             if [[ "$status" == pending-* || "$status" == "failed" ]]; then

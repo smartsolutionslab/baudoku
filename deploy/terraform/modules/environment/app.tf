@@ -41,7 +41,7 @@ resource "helm_release" "baudoku" {
 
   depends_on = [
     helm_release.postgresql,
-    helm_release.postgis,
+    kubernetes_stateful_set.postgis,
     helm_release.rabbitmq,
     helm_release.redis,
     helm_release.keycloak,
