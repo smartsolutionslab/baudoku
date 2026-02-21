@@ -4,7 +4,7 @@
 
 resource "helm_release" "keycloak" {
   name       = "keycloak-${var.environment}"
-  repository = "https://charts.bitnami.com/bitnami"
+  repository = "oci://registry-1.docker.io/bitnamicharts"
   chart      = "keycloak"
   version    = "24.2.3"
   namespace  = kubernetes_namespace.this.metadata[0].name

@@ -9,7 +9,7 @@ resource "random_password" "rabbitmq" {
 
 resource "helm_release" "rabbitmq" {
   name       = "rabbitmq-${var.environment}"
-  repository = "https://charts.bitnami.com/bitnami"
+  repository = "oci://registry-1.docker.io/bitnamicharts"
   chart      = "rabbitmq"
   version    = "15.1.3"
   namespace  = kubernetes_namespace.this.metadata[0].name

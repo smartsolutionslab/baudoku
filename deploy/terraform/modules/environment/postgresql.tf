@@ -9,7 +9,7 @@ resource "random_password" "postgresql" {
 
 resource "helm_release" "postgresql" {
   name       = "postgresql-${var.environment}"
-  repository = "https://charts.bitnami.com/bitnami"
+  repository = "oci://registry-1.docker.io/bitnamicharts"
   chart      = "postgresql"
   version    = "16.4.3"
   namespace  = kubernetes_namespace.this.metadata[0].name
