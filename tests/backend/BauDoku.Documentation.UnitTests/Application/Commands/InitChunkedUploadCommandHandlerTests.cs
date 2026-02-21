@@ -1,9 +1,10 @@
 using AwesomeAssertions;
-using BauDoku.Documentation.Application.Commands.InitChunkedUpload;
+using BauDoku.Documentation.Application.Commands;
+using BauDoku.Documentation.Application.Commands.Handlers;
 using BauDoku.Documentation.Application.Contracts;
-using BauDoku.Documentation.Domain.Aggregates;
-using BauDoku.Documentation.Domain.ValueObjects;
+using BauDoku.Documentation.Domain;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 
 namespace BauDoku.Documentation.UnitTests.Application.Commands;
 
@@ -26,23 +27,22 @@ public sealed class InitChunkedUploadCommandHandlerTests
             ProjectIdentifier.New(),
             null,
             InstallationType.CableTray,
-            GpsPosition.Create(48.137154, 11.576124, null, 3.5, "gps"));
+            GpsPosition.Create(Latitude.From(48.137154), Longitude.From(11.576124), null, HorizontalAccuracy.From(3.5), GpsSource.From("gps")));
 
-    private static InitChunkedUploadCommand CreateValidCommand(Guid installationId) =>
-        new(installationId, "photo.jpg", "image/jpeg", 5 * 1024 * 1024, 5,
-            "before", null, null, null, null, null, null, null);
+    private static InitChunkedUploadCommand CreateValidCommand(InstallationIdentifier installationId) =>
+        new(installationId, FileName.From("photo.jpg"), ContentType.From("image/jpeg"), FileSize.From(5 * 1024 * 1024), 5,
+            PhotoType.Before, null, null, null, null, null, null, null);
 
     [Fact]
     public async Task Handle_WithValidCommand_ShouldInitSession()
     {
         var installation = CreateValidInstallation();
-        var expectedSessionId = Guid.NewGuid();
         installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
         chunkedUploadStorage.InitSessionAsync(Arg.Any<ChunkedUploadSession>(), Arg.Any<CancellationToken>())
-            .Returns(expectedSessionId);
+            .Returns(callInfo => UploadSessionIdentifier.From(callInfo.Arg<ChunkedUploadSession>().SessionId));
 
-        var command = CreateValidCommand(installation.Id.Value);
+        var command = CreateValidCommand(installation.Id);
 
         var result = await handler.Handle(command, CancellationToken.None);
 
@@ -58,12 +58,12 @@ public sealed class InitChunkedUploadCommandHandlerTests
     public async Task Handle_WhenInstallationNotFound_ShouldThrow()
     {
         installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
-            .Returns((Installation?)null);
+            .Throws(new KeyNotFoundException());
 
-        var command = CreateValidCommand(Guid.NewGuid());
+        var command = CreateValidCommand(InstallationIdentifier.New());
 
         var act = () => handler.Handle(command, CancellationToken.None);
 
-        await act.Should().ThrowAsync<InvalidOperationException>();
+        await act.Should().ThrowAsync<KeyNotFoundException>();
     }
 }

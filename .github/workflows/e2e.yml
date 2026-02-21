@@ -41,7 +41,6 @@ jobs:
     needs: check-changes
     if: needs.check-changes.outputs.has_changes == 'true'
     timeout-minutes: 45
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
         with:
@@ -88,9 +87,9 @@ jobs:
           curl -Ls "https://get.maestro.mobile.dev" | bash
           echo "$HOME/.maestro/bin" >> $GITHUB_PATH
 
-      - name: Build debug APK
+      - name: Build release APK
         working-directory: src/frontend/mobile-app/android
-        run: ./gradlew assembleDebug -PbundleInDebug=true --no-daemon
+        run: ./gradlew assembleRelease --no-daemon
 
       - name: Run Maestro flows
         uses: reactivecircus/android-emulator-runner@v2
@@ -99,13 +98,23 @@ jobs:
           arch: x86_64
           emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect
           script: |
-            adb install src/frontend/mobile-app/android/app/build/outputs/apk/debug/app-debug.apk
+            adb install src/frontend/mobile-app/android/app/build/outputs/apk/release/app-release.apk
+            adb logcat -c
+            adb logcat ReactNativeJS:* ReactNative:* ExpoSQLite:* ExpoModulesCore:* expo:* SplashScreen:* *:E > /tmp/rn-logcat.txt &
+            LOGCAT_PID=$!
             maestro test e2e/flows/
+            MAESTRO_EXIT=$?
+            kill $LOGCAT_PID 2>/dev/null || true
+            echo "=== React Native Logcat ==="
+            cat /tmp/rn-logcat.txt
+            exit $MAESTRO_EXIT
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: e2e-results
-          path: ~/.maestro/tests/
+          path: |
+            ~/.maestro/tests/
+            /tmp/rn-logcat.txt
           retention-days: 14

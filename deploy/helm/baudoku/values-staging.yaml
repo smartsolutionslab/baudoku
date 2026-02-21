@@ -1,6 +1,8 @@
 global:
   image:
     pullPolicy: Always
+  imagePullSecrets:
+    - name: ghcr-credentials
 
 services:
   projectsApi:

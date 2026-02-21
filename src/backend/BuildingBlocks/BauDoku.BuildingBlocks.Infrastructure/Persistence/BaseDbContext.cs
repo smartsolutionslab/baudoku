@@ -28,9 +28,7 @@ public abstract class BaseDbContext(DbContextOptions options, IDispatcher dispat
             .Select(e => e.Entity)
             .ToList();
 
-        var domainEvents = aggregateRoots
-            .SelectMany(ar => ar.DomainEvents)
-            .ToList();
+        var domainEvents = aggregateRoots.SelectMany(ar => ar.DomainEvents).ToList();
 
         aggregateRoots.ForEach(ar => ar.ClearDomainEvents());
 

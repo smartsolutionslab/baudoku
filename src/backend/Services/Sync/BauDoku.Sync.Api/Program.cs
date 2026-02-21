@@ -9,7 +9,7 @@ using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("SyncDb") ?? throw new InvalidOperationException("Connection string 'SyncDb' not found.");
+var connectionString = builder.Configuration.GetRequiredConnectionString(ConnectionStringNames.SyncDb);
 
 builder.AddServiceDefaults(health =>
 {
@@ -18,7 +18,7 @@ builder.AddServiceDefaults(health =>
 
 builder.Services.ConfigureHttpJsonOptions(options => options.SerializerOptions.Converters.Add(new ValueObjectJsonConverterFactory()));
 
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApi(options => options.AddSchemaTransformer<ValueObjectSchemaTransformer>());
 
 builder.Services.AddBauDokuAuthentication(builder.Configuration, builder.Environment);
 

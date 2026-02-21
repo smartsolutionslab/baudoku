@@ -11,7 +11,7 @@ import { FontAwesome } from "@expo/vector-icons";
 import type { Photo } from "../../db/repositories/types";
 import { StatusBadge, EmptyState } from "../common";
 import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
-import { photoTypeLabels } from "../../constants";
+import { PHOTO_TYPE_LABELS } from "../../constants";
 
 type PhotoGalleryProps = {
   photos: Photo[];
@@ -49,7 +49,7 @@ export function PhotoGallery({
           <View style={styles.badge}>
             <StatusBadge
               status={photo.type}
-              label={photoTypeLabels[photo.type] ?? photo.type}
+              label={PHOTO_TYPE_LABELS[photo.type] ?? photo.type}
             />
           </View>
           {photo.uploadStatus === "uploading" && (

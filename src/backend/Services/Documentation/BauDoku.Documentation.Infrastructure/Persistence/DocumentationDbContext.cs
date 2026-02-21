@@ -1,7 +1,6 @@
 using BauDoku.BuildingBlocks.Application.Dispatcher;
 using BauDoku.BuildingBlocks.Infrastructure.Persistence;
-using BauDoku.Documentation.Domain.Aggregates;
-using BauDoku.Documentation.Domain.Entities;
+using BauDoku.Documentation.Domain;
 using Microsoft.EntityFrameworkCore;
 
 namespace BauDoku.Documentation.Infrastructure.Persistence;

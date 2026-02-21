@@ -1,4 +1,4 @@
-using System.Text.Json;
+using BauDoku.BuildingBlocks.Infrastructure.Storage;
 using BauDoku.Documentation.Application.Contracts;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -9,58 +9,49 @@ namespace BauDoku.Documentation.Infrastructure.Storage;
 public sealed class ChunkedUploadCleanupService(IOptions<PhotoStorageOptions> options, ILogger<ChunkedUploadCleanupService> logger)
     : BackgroundService
 {
-    private readonly string basePath = ResolveBasePath(options.Value.ChunkedPath);
+    private readonly LocalStorageDirectory storage = new(options.Value.ChunkedPath);
     private readonly TimeSpan interval = TimeSpan.FromMinutes(15);
     private readonly TimeSpan maxAge = TimeSpan.FromHours(1);
-
-    private static string ResolveBasePath(string chunkedPath)
-    {
-        if (Path.IsPathRooted(chunkedPath))
-            return chunkedPath;
-        return Path.Combine(Directory.GetCurrentDirectory(), chunkedPath);
-    }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         while (!stoppingToken.IsCancellationRequested)
         {
             await Task.Delay(interval, stoppingToken);
-            CleanupExpiredSessions();
+            await CleanupExpiredSessionsAsync(stoppingToken);
         }
     }
 
-    private void CleanupExpiredSessions()
+    private async Task CleanupExpiredSessionsAsync(CancellationToken ct)
     {
-        if (!Directory.Exists(basePath))
-            return;
-
-        var sessionDirs = Directory.GetDirectories(basePath);
+        var sessionDirs = storage.GetSubdirectories();
         var cleaned = 0;
 
         foreach (var sessionDir in sessionDirs)
         {
-            var metadataPath = Path.Combine(sessionDir, "metadata.json");
-            if (!File.Exists(metadataPath))
+            var sessionName = Path.GetFileName(sessionDir);
+            var metadataPath = Path.Combine(sessionName, "metadata.json");
+
+            if (!storage.FileExists(metadataPath))
             {
-                TryDeleteDirectory(sessionDir);
+                TryDeleteDirectory(sessionName);
                 cleaned++;
                 continue;
             }
 
             try
             {
-                var json = File.ReadAllText(metadataPath);
-                var session = JsonSerializer.Deserialize<ChunkedUploadSession>(json);
+                var session = await storage.ReadJsonAsync<ChunkedUploadSession>(metadataPath, ct);
                 if (session is null || DateTime.UtcNow - session.CreatedAt > maxAge)
                 {
-                    TryDeleteDirectory(sessionDir);
+                    TryDeleteDirectory(sessionName);
                     cleaned++;
                 }
             }
             catch (Exception ex)
             {
                 logger.LogWarning(ex, "Fehler beim Lesen der Session-Metadaten in {SessionDir}", sessionDir);
-                TryDeleteDirectory(sessionDir);
+                TryDeleteDirectory(sessionName);
                 cleaned++;
             }
         }
@@ -71,15 +62,15 @@ public sealed class ChunkedUploadCleanupService(IOptions<PhotoStorageOptions> op
         }
     }
 
-    private void TryDeleteDirectory(string path)
+    private void TryDeleteDirectory(string relativePath)
     {
         try
         {
-            Directory.Delete(path, recursive: true);
+            storage.DeleteDirectory(relativePath);
         }
         catch (Exception ex)
         {
-            logger.LogWarning(ex, "Fehler beim Löschen des Session-Verzeichnisses {Path}", path);
+            logger.LogWarning(ex, "Fehler beim Löschen des Session-Verzeichnisses {Path}", relativePath);
         }
     }
 }

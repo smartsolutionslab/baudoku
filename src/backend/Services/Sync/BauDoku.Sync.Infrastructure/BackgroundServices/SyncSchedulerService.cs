@@ -1,5 +1,5 @@
 using BauDoku.BuildingBlocks.Application.Persistence;
-using BauDoku.Sync.Application.Contracts;
+using BauDoku.Sync.Domain;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;

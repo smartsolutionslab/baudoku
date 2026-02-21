@@ -1,5 +1,5 @@
 using AwesomeAssertions;
-using BauDoku.Sync.Domain.ValueObjects;
+using BauDoku.Sync.Domain;
 
 namespace BauDoku.Sync.UnitTests.Domain.ValueObjects;
 

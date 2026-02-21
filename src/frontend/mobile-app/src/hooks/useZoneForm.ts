@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import { Alert } from "react-native";
 import { zoneSchema, type ZoneFormData } from "../validation/schemas";
+import { useFormValidation } from "./useFormValidation";
 
 export type UseZoneFormOptions = {
   initialValues?: Partial<ZoneFormData>;
@@ -21,7 +22,7 @@ export function useZoneForm({ initialValues, defaultParentZoneId, onSubmit }: Us
     parentZoneId: defaultParentZoneId ?? null,
     ...initialValues,
   });
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const { errors, setErrors, validate } = useFormValidation(zoneSchema);
 
   const set = useCallback(
     <K extends keyof ZoneFormData>(key: K, value: ZoneFormData[K]) => {
@@ -32,28 +33,18 @@ export function useZoneForm({ initialValues, defaultParentZoneId, onSubmit }: Us
         return next;
       });
     },
-    []
+    [setErrors]
   );
 
   const handleSubmit = useCallback(async () => {
-    const result = zoneSchema.safeParse(form);
-    if (!result.success) {
-      const fieldErrors: Record<string, string> = {};
-      for (const issue of result.error.issues) {
-        const key = issue.path[0]?.toString();
-        if (key && !fieldErrors[key]) {
-          fieldErrors[key] = issue.message;
-        }
-      }
-      setErrors(fieldErrors);
-      return;
-    }
+    const data = validate(form);
+    if (!data) return;
     try {
-      await onSubmit(result.data);
+      await onSubmit(data);
     } catch {
       Alert.alert("Fehler", "Zone konnte nicht gespeichert werden.");
     }
-  }, [form, onSubmit]);
+  }, [form, onSubmit, validate]);
 
   return { form, errors, set, handleSubmit };
 }

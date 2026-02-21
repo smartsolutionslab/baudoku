@@ -1,0 +1,93 @@
+using BauDoku.BuildingBlocks.Application.Commands;
+using BauDoku.BuildingBlocks.Application.Persistence;
+using BauDoku.Sync.Application.Contracts;
+using BauDoku.Sync.Application.Diagnostics;
+using BauDoku.Sync.Application.Mapping;
+using BauDoku.Sync.Application.Queries.Dtos;
+using BauDoku.Sync.Domain;
+
+namespace BauDoku.Sync.Application.Commands.Handlers;
+
+public sealed class ProcessSyncBatchCommandHandler(ISyncBatchRepository syncBatches, IEntityVersionStore entityVersionStore, IUnitOfWork unitOfWork)
+    : ICommandHandler<ProcessSyncBatchCommand, ProcessSyncBatchResult>
+{
+    public async Task<ProcessSyncBatchResult> Handle(ProcessSyncBatchCommand command, CancellationToken cancellationToken = default)
+    {
+        var (deviceId, deltas) = command;
+
+        var batchId = SyncBatchIdentifier.New();
+        var batch = SyncBatch.Create(batchId, deviceId, DateTime.UtcNow);
+
+        var appliedCount = 0;
+        var conflicts = new List<ConflictDto>();
+
+        foreach (var (entityTypeName, entityId, operationName, baseVersion, payloadJson, timestamp) in deltas)
+        {
+            SyncMetrics.DeltaPayloadSize.Record(payloadJson.Length);
+
+            var entityType = EntityType.From(entityTypeName);
+            var entityRef = EntityReference.Create(entityType, entityId);
+            var operation = DeltaOperation.From(operationName);
+            var clientBaseVersion = SyncVersion.From(baseVersion);
+            var payload = DeltaPayload.From(payloadJson);
+
+            var currentServerVersion = await entityVersionStore.GetCurrentVersionAsync(entityRef, cancellationToken);
+
+            if (clientBaseVersion.Value == currentServerVersion.Value)
+            {
+                var newVersion = currentServerVersion.Increment();
+
+                batch.AddDelta(
+                    SyncDeltaIdentifier.New(),
+                    entityRef,
+                    operation,
+                    clientBaseVersion,
+                    newVersion,
+                    payload,
+                    timestamp);
+
+                await entityVersionStore.SetVersionAsync(entityRef, newVersion, payloadJson, deviceId, cancellationToken);
+
+                appliedCount++;
+            }
+            else
+            {
+                var serverPayloadJson = await entityVersionStore.GetCurrentPayloadAsync(entityRef, cancellationToken);
+                var serverPayload = DeltaPayload.From(serverPayloadJson);
+
+                var conflict = batch.AddConflict(
+                    ConflictRecordIdentifier.New(),
+                    entityRef,
+                    payload,
+                    serverPayload,
+                    clientBaseVersion,
+                    currentServerVersion);
+
+                conflicts.Add(conflict.ToDto());
+            }
+        }
+
+        if (conflicts.Count == 0)
+        {
+            batch.MarkCompleted();
+        }
+        else if (appliedCount > 0)
+        {
+            batch.MarkPartialConflict();
+        }
+        else
+        {
+            batch.MarkFailed();
+        }
+
+        await syncBatches.AddAsync(batch, cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        SyncMetrics.BatchesProcessed.Add(1);
+        SyncMetrics.DeltasApplied.Add(appliedCount);
+        SyncMetrics.ConflictsDetected.Add(conflicts.Count);
+        SyncMetrics.DeltasPerBatch.Record(deltas.Count);
+
+        return new ProcessSyncBatchResult(batchId, appliedCount, conflicts.Count, conflicts);
+    }
+}

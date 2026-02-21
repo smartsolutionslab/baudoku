@@ -4,7 +4,11 @@ appId: com.baudoku.app
 
 - launchApp
 
-- assertVisible: "Projekte"
+# CI emulator is slow (software rendering, cold boot) — app startup
+# (Hermes init + font loading + SQLite migrations) can take 30-40s
+- extendedWaitUntil:
+    visible: "Projekte"
+    timeout: 60000
 
 - tapOn: "Projekte"
 
@@ -17,6 +21,13 @@ appId: com.baudoku.app
 - tapOn:
     id: "project-name-input"
 - inputText: "E2E Testprojekt"
+- hideKeyboard
+
+- scrollUntilVisible:
+    element:
+      id: "submit-button"
+    direction: DOWN
+    timeout: 10000
 
 - tapOn:
     id: "submit-button"

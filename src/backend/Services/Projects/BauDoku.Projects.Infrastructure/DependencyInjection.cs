@@ -1,5 +1,6 @@
 using BauDoku.BuildingBlocks.Application.Persistence;
 using BauDoku.Projects.Application.Contracts;
+using BauDoku.Projects.Domain;
 using BauDoku.Projects.Infrastructure.Persistence;
 using BauDoku.Projects.Infrastructure.Persistence.Repositories;
 using BauDoku.Projects.Infrastructure.Services;
@@ -12,10 +13,8 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddProjectsInfrastructure(this IServiceCollection services, string connectionString)
     {
-        services.AddDbContext<ProjectsDbContext>((sp, options) =>
-        {
-            options.UseNpgsql(connectionString);
-        });
+        services.AddDbContext<ProjectsDbContext>(options =>
+            options.UseNpgsql(connectionString));
 
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<ProjectsDbContext>());
         services.AddScoped<IProjectRepository, ProjectRepository>();

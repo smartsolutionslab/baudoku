@@ -4,17 +4,106 @@ on:
   workflow_run:
     workflows: [CI]
     types: [completed]
-    branches: [main]
+    branches: [main, development]
 
 permissions:
   contents: read
+  packages: read
+
+env:
+  TF_INPUT: "false"
+  TF_IN_AUTOMATION: "true"
 
 jobs:
+  ensure-state-bucket:
+    name: Ensure Terraform State Bucket
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'success'
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.DO_SPACES_ACCESS_KEY }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SPACES_SECRET_KEY }}
+      AWS_DEFAULT_REGION: fra1
+    steps:
+      - name: Create Spaces bucket if missing
+        run: |
+          ENDPOINT="https://fra1.digitaloceanspaces.com"
+          if aws s3api head-bucket --bucket baudoku-terraform-state --endpoint-url "$ENDPOINT" 2>/dev/null; then
+            echo "Bucket already exists."
+          else
+            echo "Creating Spaces bucket..."
+            aws s3api create-bucket --bucket baudoku-terraform-state --endpoint-url "$ENDPOINT"
+          fi
+
+  provision-cluster:
+    name: Provision DOKS Cluster
+    runs-on: ubuntu-latest
+    needs: ensure-state-bucket
+    if: github.event.workflow_run.conclusion == 'success'
+    defaults:
+      run:
+        working-directory: deploy/terraform/environments/shared
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "~> 1.9"
+
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Terraform Init
+        run: terraform init
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.DO_SPACES_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SPACES_SECRET_KEY }}
+
+      - name: Clean up stuck Helm releases
+        continue-on-error: true
+        run: |
+          # Get cluster kubeconfig (may fail if cluster doesn't exist yet)
+          doctl kubernetes cluster kubeconfig save baudoku-k8s 2>/dev/null || exit 0
+
+          # Check each managed Helm release for stuck pending-* state
+          for info in "ingress-nginx:ingress-nginx:nginx_ingress" "cert-manager:cert-manager:cert_manager" "letsencrypt-issuer:cert-manager:cluster_issuer"; do
+            IFS=: read -r name ns tf_name <<< "$info"
+            status=$(helm status "$name" -n "$ns" -o json 2>/dev/null | jq -r '.info.status // empty')
+            if [[ "$status" == pending-* ]]; then
+              echo "Release $name in $ns stuck in $status — removing"
+              helm uninstall "$name" -n "$ns" --no-hooks 2>/dev/null || true
+              terraform state rm "module.cluster.helm_release.${tf_name}" 2>/dev/null || true
+            fi
+          done
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.DO_SPACES_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SPACES_SECRET_KEY }}
+          DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          TF_VAR_acme_email: ${{ secrets.ACME_EMAIL }}
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.DO_SPACES_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SPACES_SECRET_KEY }}
+          DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          TF_VAR_acme_email: ${{ secrets.ACME_EMAIL }}
+
   deploy-staging:
     name: Deploy to Staging
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    needs: provision-cluster
+    if: >-
+      github.event.workflow_run.conclusion == 'success'
+      && github.event.workflow_run.head_branch == 'development'
     environment: staging
+    defaults:
+      run:
+        working-directory: deploy/terraform/environments/staging
+
     steps:
       - uses: actions/checkout@v4
         with:
@@ -32,28 +121,117 @@ jobs:
           useConfigFile: true
           configFilePath: GitVersion.yml
 
-      - name: Azure Login
-        uses: azure/login@v2
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          terraform_version: "~> 1.9"
 
-      - name: Set AKS Context
-        uses: azure/aks-set-context@v4
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
         with:
-          cluster-name: ${{ secrets.AKS_CLUSTER_NAME }}
-          resource-group: ${{ secrets.AKS_RESOURCE_GROUP }}
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
-      - name: Install Helm
-        uses: azure/setup-helm@v4
-        with:
-          version: v3.17.0
+      - name: Terraform Init
+        run: terraform init
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.DO_SPACES_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SPACES_SECRET_KEY }}
 
-      - name: Deploy with Helm
+      - name: Clean up stuck Helm releases
+        continue-on-error: true
         run: |
-          helm upgrade --install baudoku deploy/helm/baudoku \
-            --namespace baudoku-staging \
-            --create-namespace \
-            --values deploy/helm/baudoku/values-staging.yaml \
-            --set global.image.tag=${{ steps.gitversion.outputs.semVer }} \
-            --wait \
-            --timeout 5m
+          doctl kubernetes cluster kubeconfig save baudoku-k8s 2>/dev/null || exit 0
+          # Clean up failed PostGIS Helm release from previous attempts (now a StatefulSet)
+          postgis_status=$(helm status "postgis-staging" -n "baudoku-staging" -o json 2>/dev/null | jq -r '.info.status // empty')
+          if [[ -n "$postgis_status" ]]; then
+            echo "Legacy PostGIS Helm release found ($postgis_status) — removing"
+            helm uninstall "postgis-staging" -n "baudoku-staging" --no-hooks 2>/dev/null || true
+            terraform state rm "module.environment.helm_release.postgis" 2>/dev/null || true
+          fi
+          for info in "postgresql-staging:baudoku-staging:environment.helm_release.postgresql" "rabbitmq-staging:baudoku-staging:environment.helm_release.rabbitmq" "redis-staging:baudoku-staging:environment.helm_release.redis" "keycloak-staging:baudoku-staging:environment.helm_release.keycloak" "baudoku:baudoku-staging:environment.helm_release.baudoku"; do
+            IFS=: read -r name ns tf_name <<< "$info"
+            status=$(helm status "$name" -n "$ns" -o json 2>/dev/null | jq -r '.info.status // empty')
+            if [[ "$status" == pending-* || "$status" == "failed" ]]; then
+              echo "Release $name in $ns is $status — removing"
+              helm uninstall "$name" -n "$ns" --no-hooks 2>/dev/null || true
+              terraform state rm "module.${tf_name}" 2>/dev/null || true
+            fi
+          done
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.DO_SPACES_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SPACES_SECRET_KEY }}
+          DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          TF_VAR_image_tag: ${{ steps.gitversion.outputs.semVer }}
+          TF_VAR_ghcr_username: ${{ github.actor }}
+          TF_VAR_ghcr_token: ${{ secrets.GITHUB_TOKEN }}
+          TF_VAR_keycloak_admin_password: ${{ secrets.KEYCLOAK_ADMIN_PASSWORD }}
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.DO_SPACES_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SPACES_SECRET_KEY }}
+          DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          TF_VAR_image_tag: ${{ steps.gitversion.outputs.semVer }}
+          TF_VAR_ghcr_username: ${{ github.actor }}
+          TF_VAR_ghcr_token: ${{ secrets.GITHUB_TOKEN }}
+          TF_VAR_keycloak_admin_password: ${{ secrets.KEYCLOAK_ADMIN_PASSWORD }}
+
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: provision-cluster
+    if: >-
+      github.event.workflow_run.conclusion == 'success'
+      && github.event.workflow_run.head_branch == 'main'
+    environment: production
+    defaults:
+      run:
+        working-directory: deploy/terraform/environments/production
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v3
+        with:
+          versionSpec: '6.x'
+
+      - name: Determine Version
+        id: gitversion
+        uses: gittools/actions/gitversion/execute@v3
+        with:
+          useConfigFile: true
+          configFilePath: GitVersion.yml
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "~> 1.9"
+
+      - name: Terraform Init
+        run: terraform init
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.DO_SPACES_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SPACES_SECRET_KEY }}
+
+      - name: Terraform Plan
+        id: plan
+        run: terraform plan -out=tfplan
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.DO_SPACES_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SPACES_SECRET_KEY }}
+          DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          TF_VAR_image_tag: ${{ steps.gitversion.outputs.semVer }}
+          TF_VAR_ghcr_username: ${{ github.actor }}
+          TF_VAR_ghcr_token: ${{ secrets.GITHUB_TOKEN }}
+          TF_VAR_keycloak_admin_password: ${{ secrets.KEYCLOAK_ADMIN_PASSWORD }}
+
+      - name: Terraform Apply
+        run: terraform apply tfplan
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.DO_SPACES_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SPACES_SECRET_KEY }}
+          DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}

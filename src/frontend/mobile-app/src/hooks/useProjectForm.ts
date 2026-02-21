@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import { Alert } from "react-native";
 import { projectSchema, type ProjectFormData } from "../validation/schemas";
+import { useFormValidation } from "./useFormValidation";
 
 export type UseProjectFormOptions = {
   initialValues?: Partial<ProjectFormData>;
@@ -19,7 +20,7 @@ export function useProjectForm({ initialValues, onSubmit }: UseProjectFormOption
     status: "active",
     ...initialValues,
   });
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const { errors, setErrors, validate } = useFormValidation(projectSchema);
 
   const set = useCallback(
     <K extends keyof ProjectFormData>(key: K, value: ProjectFormData[K]) => {
@@ -30,28 +31,18 @@ export function useProjectForm({ initialValues, onSubmit }: UseProjectFormOption
         return next;
       });
     },
-    []
+    [setErrors]
   );
 
   const handleSubmit = useCallback(async () => {
-    const result = projectSchema.safeParse(form);
-    if (!result.success) {
-      const fieldErrors: Record<string, string> = {};
-      for (const issue of result.error.issues) {
-        const key = issue.path[0]?.toString();
-        if (key && !fieldErrors[key]) {
-          fieldErrors[key] = issue.message;
-        }
-      }
-      setErrors(fieldErrors);
-      return;
-    }
+    const data = validate(form);
+    if (!data) return;
     try {
-      await onSubmit(result.data);
+      await onSubmit(data);
     } catch {
       Alert.alert("Fehler", "Projekt konnte nicht gespeichert werden.");
     }
-  }, [form, onSubmit]);
+  }, [form, onSubmit, validate]);
 
   return { form, errors, set, handleSubmit };
 }

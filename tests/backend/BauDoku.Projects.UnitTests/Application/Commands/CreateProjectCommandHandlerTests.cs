@@ -1,10 +1,9 @@
 using AwesomeAssertions;
 using BauDoku.BuildingBlocks.Application.Persistence;
 using BauDoku.BuildingBlocks.Domain;
-using BauDoku.Projects.Application.Commands.CreateProject;
-using BauDoku.Projects.Application.Contracts;
-using BauDoku.Projects.Domain.Aggregates;
-using BauDoku.Projects.Domain.ValueObjects;
+using BauDoku.Projects.Application.Commands;
+using BauDoku.Projects.Application.Commands.Handlers;
+using BauDoku.Projects.Domain;
 using NSubstitute;
 
 namespace BauDoku.Projects.UnitTests.Application.Commands;
@@ -23,7 +22,13 @@ public sealed class CreateProjectCommandHandlerTests
     }
 
     private static CreateProjectCommand CreateValidCommand(string name = "Neues Projekt") =>
-        new(name, "Musterstraße 1", "Berlin", "10115", "Max Mustermann", "max@example.com", "+49 30 12345");
+        new(ProjectName.From(name),
+            Street.From("Musterstraße 1"),
+            City.From("Berlin"),
+            ZipCode.From("10115"),
+            ClientName.From("Max Mustermann"),
+            EmailAddress.From("max@example.com"),
+            PhoneNumber.From("+49 30 12345"));
 
     [Fact]
     public async Task Handle_WithUniqueName_ShouldCreateProjectAndReturnId()

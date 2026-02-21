@@ -8,6 +8,10 @@ public static class DocumentationMetrics
 
     public static readonly Counter<long> InstallationsDocumented = Meter.CreateCounter<long>("baudoku.documentation.installations_documented", description: "Number of installations documented");
 
+    public static readonly Counter<long> InstallationsDeleted = Meter.CreateCounter<long>("baudoku.documentation.installations_deleted", description: "Number of installations deleted");
+
+    public static readonly Counter<long> InstallationsCompleted = Meter.CreateCounter<long>("baudoku.documentation.installations_completed", description: "Number of installations completed");
+
     public static readonly Counter<long> PhotosAdded = Meter.CreateCounter<long>("baudoku.documentation.photos_added", description: "Number of photos added");
 
     public static readonly Counter<long> PhotosRemoved = Meter.CreateCounter<long>("baudoku.documentation.photos_removed", description: "Number of photos removed");

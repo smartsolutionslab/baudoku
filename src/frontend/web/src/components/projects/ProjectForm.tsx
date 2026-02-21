@@ -1,7 +1,6 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { projectSchema, type ProjectFormData } from "@baudoku/shared-validation";
-import { PROJECT_STATUS_LABELS } from "@baudoku/shared-constants";
+import { projectSchema, type ProjectFormData, PROJECT_STATUS_LABELS } from "@baudoku/projects";
 import { FormField } from "../common/FormField";
 import { FormSelect } from "../common/FormSelect";
 import { useNavigate } from "@tanstack/react-router";

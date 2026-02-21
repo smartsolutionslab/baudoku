@@ -1,10 +1,10 @@
 using AwesomeAssertions;
 using BauDoku.BuildingBlocks.Application.Persistence;
-using BauDoku.Documentation.Application.Commands.UpdateInstallation;
-using BauDoku.Documentation.Application.Contracts;
-using BauDoku.Documentation.Domain.Aggregates;
-using BauDoku.Documentation.Domain.ValueObjects;
+using BauDoku.Documentation.Application.Commands;
+using BauDoku.Documentation.Application.Commands.Handlers;
+using BauDoku.Documentation.Domain;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 
 namespace BauDoku.Documentation.UnitTests.Application.Commands;
 
@@ -27,7 +27,7 @@ public sealed class UpdateInstallationCommandHandlerTests
             ProjectIdentifier.New(),
             null,
             InstallationType.CableTray,
-            GpsPosition.Create(48.137154, 11.576124, null, 3.5, "gps"));
+            GpsPosition.Create(Latitude.From(48.137154), Longitude.From(11.576124), null, HorizontalAccuracy.From(3.5), GpsSource.From("gps")));
 
     [Fact]
     public async Task Handle_WithGpsUpdate_ShouldUpdatePosition()
@@ -37,12 +37,12 @@ public sealed class UpdateInstallationCommandHandlerTests
             .Returns(installation);
 
         var command = new UpdateInstallationCommand(
-            installation.Id.Value,
-            Latitude: 52.520008,
-            Longitude: 13.404954,
+            installation.Id,
+            Latitude: Latitude.From(52.520008),
+            Longitude: Longitude.From(13.404954),
             Altitude: 34.0,
-            HorizontalAccuracy: 1.5,
-            GpsSource: "dgnss",
+            HorizontalAccuracy: HorizontalAccuracy.From(1.5),
+            GpsSource: GpsSource.From("dgnss"),
             CorrectionService: null,
             RtkFixStatus: null,
             SatelliteCount: null,
@@ -53,12 +53,13 @@ public sealed class UpdateInstallationCommandHandlerTests
             CrossSection: null,
             CableColor: null,
             ConductorCount: null,
-            DepthMm: null);
+            DepthMm: null,
+            Manufacturer: null, ModelName: null, SerialNumber: null);
 
         await handler.Handle(command, CancellationToken.None);
 
-        installation.Position.Latitude.Should().Be(52.520008);
-        installation.Position.Longitude.Should().Be(13.404954);
+        installation.Position.Latitude.Value.Should().Be(52.520008);
+        installation.Position.Longitude.Value.Should().Be(13.404954);
         await unitOfWork.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
@@ -70,14 +71,15 @@ public sealed class UpdateInstallationCommandHandlerTests
             .Returns(installation);
 
         var command = new UpdateInstallationCommand(
-            installation.Id.Value,
+            installation.Id,
             Latitude: null, Longitude: null, Altitude: null,
             HorizontalAccuracy: null, GpsSource: null,
             CorrectionService: null, RtkFixStatus: null,
             SatelliteCount: null, Hdop: null, CorrectionAge: null,
-            Description: "Neue Beschreibung",
+            Description: Description.From("Neue Beschreibung"),
             CableType: null, CrossSection: null, CableColor: null,
-            ConductorCount: null, DepthMm: null);
+            ConductorCount: null, DepthMm: null,
+            Manufacturer: null, ModelName: null, SerialNumber: null);
 
         await handler.Handle(command, CancellationToken.None);
 
@@ -94,23 +96,24 @@ public sealed class UpdateInstallationCommandHandlerTests
             .Returns(installation);
 
         var command = new UpdateInstallationCommand(
-            installation.Id.Value,
+            installation.Id,
             Latitude: null, Longitude: null, Altitude: null,
             HorizontalAccuracy: null, GpsSource: null,
             CorrectionService: null, RtkFixStatus: null,
             SatelliteCount: null, Hdop: null, CorrectionAge: null,
             Description: null,
-            CableType: "NYM-J",
-            CrossSection: 2.5m,
-            CableColor: "grau",
+            CableType: CableType.From("NYM-J"),
+            CrossSection: CrossSection.From(2.5m),
+            CableColor: CableColor.From("grau"),
             ConductorCount: 3,
-            DepthMm: null);
+            DepthMm: null,
+            Manufacturer: null, ModelName: null, SerialNumber: null);
 
         await handler.Handle(command, CancellationToken.None);
 
         installation.CableSpec.Should().NotBeNull();
-        installation.CableSpec!.CableType.Should().Be("NYM-J");
-        installation.CableSpec.CrossSection.Should().Be(2.5m);
+        installation.CableSpec!.CableType.Value.Should().Be("NYM-J");
+        installation.CableSpec.CrossSection!.Value.Should().Be(2.5m);
         await unitOfWork.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
@@ -122,7 +125,7 @@ public sealed class UpdateInstallationCommandHandlerTests
             .Returns(installation);
 
         var command = new UpdateInstallationCommand(
-            installation.Id.Value,
+            installation.Id,
             Latitude: null, Longitude: null, Altitude: null,
             HorizontalAccuracy: null, GpsSource: null,
             CorrectionService: null, RtkFixStatus: null,
@@ -130,7 +133,8 @@ public sealed class UpdateInstallationCommandHandlerTests
             Description: null,
             CableType: null, CrossSection: null, CableColor: null,
             ConductorCount: null,
-            DepthMm: 600);
+            DepthMm: 600,
+            Manufacturer: null, ModelName: null, SerialNumber: null);
 
         await handler.Handle(command, CancellationToken.None);
 
@@ -143,21 +147,22 @@ public sealed class UpdateInstallationCommandHandlerTests
     public async Task Handle_WhenInstallationNotFound_ShouldThrow()
     {
         installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
-            .Returns((Installation?)null);
+            .Throws(new KeyNotFoundException());
 
         var command = new UpdateInstallationCommand(
-            Guid.NewGuid(),
+            InstallationIdentifier.New(),
             Latitude: null, Longitude: null, Altitude: null,
             HorizontalAccuracy: null, GpsSource: null,
             CorrectionService: null, RtkFixStatus: null,
             SatelliteCount: null, Hdop: null, CorrectionAge: null,
             Description: null,
             CableType: null, CrossSection: null, CableColor: null,
-            ConductorCount: null, DepthMm: null);
+            ConductorCount: null, DepthMm: null,
+            Manufacturer: null, ModelName: null, SerialNumber: null);
 
         var act = () => handler.Handle(command, CancellationToken.None);
 
-        await act.Should().ThrowAsync<InvalidOperationException>();
+        await act.Should().ThrowAsync<KeyNotFoundException>();
     }
 
     [Fact]
@@ -168,14 +173,15 @@ public sealed class UpdateInstallationCommandHandlerTests
             .Returns(installation);
 
         var command = new UpdateInstallationCommand(
-            installation.Id.Value,
+            installation.Id,
             Latitude: null, Longitude: null, Altitude: null,
             HorizontalAccuracy: null, GpsSource: null,
             CorrectionService: null, RtkFixStatus: null,
             SatelliteCount: null, Hdop: null, CorrectionAge: null,
             Description: null,
             CableType: null, CrossSection: null, CableColor: null,
-            ConductorCount: null, DepthMm: null);
+            ConductorCount: null, DepthMm: null,
+            Manufacturer: null, ModelName: null, SerialNumber: null);
 
         await handler.Handle(command, CancellationToken.None);
 

@@ -1,0 +1,78 @@
+global:
+  image:
+    pullPolicy: IfNotPresent
+  imagePullSecrets:
+    - name: ghcr-credentials
+
+services:
+  projectsApi:
+    replicaCount: 2
+    env:
+      - name: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - name: ConnectionStrings__ProjectsDb
+        valueFrom:
+          secretKeyRef:
+            name: baudoku-db-credentials
+            key: projects-connection-string
+
+  documentationApi:
+    replicaCount: 2
+    env:
+      - name: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - name: ConnectionStrings__DocumentationDb
+        valueFrom:
+          secretKeyRef:
+            name: baudoku-db-credentials
+            key: documentation-connection-string
+
+  syncApi:
+    replicaCount: 2
+    env:
+      - name: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - name: ConnectionStrings__SyncDb
+        valueFrom:
+          secretKeyRef:
+            name: baudoku-db-credentials
+            key: sync-connection-string
+
+  apiGateway:
+    replicaCount: 2
+    env:
+      - name: ASPNETCORE_ENVIRONMENT
+        value: Production
+
+ingress:
+  enabled: true
+  className: nginx
+  host: baudoku.example.com
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  tls:
+    - secretName: baudoku-production-tls
+      hosts:
+        - baudoku.example.com
+
+dashboard:
+  enabled: true
+  image:
+    pullPolicy: IfNotPresent
+  auth:
+    browserToken: true
+    secretName: baudoku-dashboard-auth
+    secretKey: browser-token
+  ingress:
+    enabled: true
+    host: monitoring.baudoku.example.com
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+    tls:
+      - secretName: baudoku-monitoring-production-tls
+        hosts:
+          - monitoring.baudoku.example.com
+
+otel:
+  enabled: true
+  endpoint: http://aspire-dashboard:18889

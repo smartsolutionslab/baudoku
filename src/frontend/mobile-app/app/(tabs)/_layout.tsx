@@ -2,9 +2,9 @@ import React from "react";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Tabs } from "expo-router";
 
-import { Colors } from "../../src/styles/tokens";
-import { SyncIndicator } from "../../src/components/sync";
-import { useSyncStatus } from "../../src/hooks";
+import { Colors } from "@/styles/tokens";
+import { SyncIndicator } from "@/components/sync";
+import { useSyncStatus } from "@/hooks";
 
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>["name"];

@@ -1,7 +1,10 @@
 using AwesomeAssertions;
-using BauDoku.Documentation.Application.Commands.UploadChunk;
+using BauDoku.Documentation.Application.Commands;
+using BauDoku.Documentation.Application.Commands.Handlers;
 using BauDoku.Documentation.Application.Contracts;
+using BauDoku.Documentation.Domain;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 
 namespace BauDoku.Documentation.UnitTests.Application.Commands;
 
@@ -26,29 +29,29 @@ public sealed class UploadChunkCommandHandlerTests
     {
         var sessionId = Guid.NewGuid();
         var session = CreateValidSession(sessionId);
-        chunkedUploadStorage.GetSessionAsync(sessionId, Arg.Any<CancellationToken>())
+        chunkedUploadStorage.GetSessionAsync(UploadSessionIdentifier.From(sessionId), Arg.Any<CancellationToken>())
             .Returns(session);
 
         var stream = new MemoryStream([1, 2, 3]);
-        var command = new UploadChunkCommand(sessionId, 2, stream);
+        var command = new UploadChunkCommand(UploadSessionIdentifier.From(sessionId), 2, stream);
 
         await handler.Handle(command, CancellationToken.None);
 
         await chunkedUploadStorage.Received(1)
-            .StoreChunkAsync(sessionId, 2, stream, Arg.Any<CancellationToken>());
+            .StoreChunkAsync(UploadSessionIdentifier.From(sessionId), 2, stream, Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task Handle_WhenSessionNotFound_ShouldThrow()
     {
-        chunkedUploadStorage.GetSessionAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
-            .Returns((ChunkedUploadSession?)null);
+        chunkedUploadStorage.GetSessionAsync(Arg.Any<UploadSessionIdentifier>(), Arg.Any<CancellationToken>())
+            .Throws(new KeyNotFoundException("Upload-Session nicht gefunden."));
 
-        var command = new UploadChunkCommand(Guid.NewGuid(), 0, new MemoryStream([1, 2, 3]));
+        var command = new UploadChunkCommand(UploadSessionIdentifier.New(), 0, new MemoryStream([1, 2, 3]));
 
         var act = () => handler.Handle(command, CancellationToken.None);
 
-        await act.Should().ThrowAsync<InvalidOperationException>();
+        await act.Should().ThrowAsync<KeyNotFoundException>();
     }
 
     [Fact]
@@ -56,10 +59,10 @@ public sealed class UploadChunkCommandHandlerTests
     {
         var sessionId = Guid.NewGuid();
         var session = CreateValidSession(sessionId);
-        chunkedUploadStorage.GetSessionAsync(sessionId, Arg.Any<CancellationToken>())
+        chunkedUploadStorage.GetSessionAsync(UploadSessionIdentifier.From(sessionId), Arg.Any<CancellationToken>())
             .Returns(session);
 
-        var command = new UploadChunkCommand(sessionId, 5, new MemoryStream([1, 2, 3]));
+        var command = new UploadChunkCommand(UploadSessionIdentifier.From(sessionId), 5, new MemoryStream([1, 2, 3]));
 
         var act = () => handler.Handle(command, CancellationToken.None);
 

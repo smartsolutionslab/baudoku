@@ -1,72 +1,64 @@
+using System.Linq.Expressions;
 using BauDoku.BuildingBlocks.Application.Pagination;
 using BauDoku.Documentation.Application.Contracts;
 using BauDoku.Documentation.Application.Queries.Dtos;
+using BauDoku.BuildingBlocks.Domain;
+using BauDoku.BuildingBlocks.Infrastructure.Pagination;
+using BauDoku.Documentation.Domain;
 using Microsoft.EntityFrameworkCore;
 
 namespace BauDoku.Documentation.Infrastructure.Persistence.Repositories;
 
 public sealed class InstallationReadRepository(DocumentationDbContext context) : IInstallationReadRepository
 {
-    public async Task<PagedResult<InstallationListItemDto>> ListAsync(
-        Guid? projectId,
-        Guid? zoneId,
-        string? type,
-        string? status,
-        string? search,
-        int page,
-        int pageSize,
-        CancellationToken cancellationToken = default)
+    private static readonly Expression<Func<Installation, InstallationListItemDto>> toInstallationListItem = i => new InstallationListItemDto(
+        i.Id.Value,
+        i.ProjectId.Value,
+        i.Type.Value,
+        i.Status.Value,
+        i.QualityGrade.Value,
+        i.Position.Latitude.Value,
+        i.Position.Longitude.Value,
+        i.Description != null ? i.Description.Value : null,
+        i.CreatedAt,
+        i.Photos.Count,
+        i.Measurements.Count);
+
+    public async Task<PagedResult<InstallationListItemDto>> ListAsync(InstallationListFilter filter, PaginationParams pagination, CancellationToken cancellationToken = default)
     {
+        var (projectId, zoneId, type, status, search) = filter;
+
         var query = context.Installations.AsNoTracking();
 
-        if (projectId.HasValue)
+        if (projectId is not null)
             query = query.Where(i => i.ProjectId.Value == projectId.Value);
 
-        if (zoneId.HasValue)
+        if (zoneId is not null)
             query = query.Where(i => i.ZoneId != null && i.ZoneId.Value == zoneId.Value);
 
-        if (!string.IsNullOrWhiteSpace(type))
-            query = query.Where(i => EF.Functions.ILike(i.Type.Value, type));
+        if (type is not null)
+            query = query.Where(i => i.Type.Value == type.Value);
 
-        if (!string.IsNullOrWhiteSpace(status))
-            query = query.Where(i => EF.Functions.ILike(i.Status.Value, status));
+        if (status is not null)
+            query = query.Where(i => i.Status.Value == status.Value);
 
-        if (!string.IsNullOrWhiteSpace(search))
-            query = query.Where(i =>
-                i.Description != null && EF.Functions.ILike(i.Description.Value, $"%{search}%"));
+        if (search.HasValue())
+            query = query.Where(i => i.Description != null && EF.Functions.ILike(i.Description.Value, $"%{search}%"));
 
-        var totalCount = await query.CountAsync(cancellationToken);
-
-        var items = await query
+        return await query
             .OrderByDescending(i => i.CreatedAt)
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
-            .Select(i => new InstallationListItemDto(
-                i.Id.Value,
-                i.ProjectId.Value,
-                i.Type.Value,
-                i.Status.Value,
-                i.QualityGrade.Value,
-                i.Position.Latitude,
-                i.Position.Longitude,
-                i.Description != null ? i.Description.Value : null,
-                i.CreatedAt,
-                i.Photos.Count,
-                i.Measurements.Count))
-            .ToListAsync(cancellationToken);
-
-        return new PagedResult<InstallationListItemDto>(items, totalCount, page, pageSize);
+            .Select(toInstallationListItem)
+            .ToPagedResultAsync(pagination, cancellationToken);
     }
 
     public async Task<PagedResult<NearbyInstallationDto>> SearchInRadiusAsync(
-        double latitude,
-        double longitude,
-        double radiusMeters,
-        Guid? projectId,
-        int page,
-        int pageSize,
+        SearchRadius radius,
+        ProjectIdentifier? projectId,
+        PaginationParams pagination,
         CancellationToken cancellationToken = default)
     {
+        var (latitude, longitude, radiusMeters) = radius;
+
         var baseQuery = context.Database.SqlQuery<NearbyInstallationDto>(
             $"""
             SELECT
@@ -92,30 +84,22 @@ public sealed class InstallationReadRepository(DocumentationDbContext context) :
                 {radiusMeters})
             """);
 
-        if (projectId.HasValue)
+        if (projectId is not null)
             baseQuery = baseQuery.Where(x => x.ProjectId == projectId.Value);
 
-        var totalCount = await baseQuery.CountAsync(cancellationToken);
-
-        var items = await baseQuery
+        return await baseQuery
             .OrderBy(x => x.DistanceMeters)
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
-            .ToListAsync(cancellationToken);
-
-        return new PagedResult<NearbyInstallationDto>(items, totalCount, page, pageSize);
+            .ToPagedResultAsync(pagination, cancellationToken);
     }
 
     public async Task<PagedResult<InstallationListItemDto>> SearchInBoundingBoxAsync(
-        double minLatitude,
-        double minLongitude,
-        double maxLatitude,
-        double maxLongitude,
-        Guid? projectId,
-        int page,
-        int pageSize,
+        BoundingBox boundingBox,
+        ProjectIdentifier? projectId,
+        PaginationParams pagination,
         CancellationToken cancellationToken = default)
     {
+        var (minLatitude, minLongitude, maxLatitude, maxLongitude) = boundingBox;
+
         var query = context.Installations
             .FromSqlInterpolated(
                 $"""
@@ -126,29 +110,12 @@ public sealed class InstallationReadRepository(DocumentationDbContext context) :
                 """)
             .AsNoTracking();
 
-        if (projectId.HasValue)
+        if (projectId is not null)
             query = query.Where(i => i.ProjectId.Value == projectId.Value);
 
-        var totalCount = await query.CountAsync(cancellationToken);
-
-        var items = await query
+        return await query
             .OrderByDescending(i => i.CreatedAt)
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
-            .Select(i => new InstallationListItemDto(
-                i.Id.Value,
-                i.ProjectId.Value,
-                i.Type.Value,
-                i.Status.Value,
-                i.QualityGrade.Value,
-                i.Position.Latitude,
-                i.Position.Longitude,
-                i.Description != null ? i.Description.Value : null,
-                i.CreatedAt,
-                i.Photos.Count,
-                i.Measurements.Count))
-            .ToListAsync(cancellationToken);
-
-        return new PagedResult<InstallationListItemDto>(items, totalCount, page, pageSize);
+            .Select(toInstallationListItem)
+            .ToPagedResultAsync(pagination, cancellationToken);
     }
 }

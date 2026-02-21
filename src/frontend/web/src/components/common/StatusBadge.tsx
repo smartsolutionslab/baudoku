@@ -1,7 +1,5 @@
-import {
-  PROJECT_STATUS_LABELS,
-  INSTALLATION_STATUS_LABELS,
-} from "@baudoku/shared-constants";
+import { PROJECT_STATUS_LABELS } from "@baudoku/projects";
+import { INSTALLATION_STATUS_LABELS } from "@baudoku/documentation";
 
 const statusStyles: Record<string, string> = {
   active: "bg-green-100 text-green-700",

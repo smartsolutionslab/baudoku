@@ -1,8 +1,8 @@
 import { useParams, useNavigate } from "@tanstack/react-router";
-import { useZones } from "../../../../hooks/useProjects";
-import { useCreateInstallation } from "../../../../hooks/useInstallations";
-import { InstallationForm } from "../../../../components/installations/InstallationForm";
-import type { InstallationFormData } from "@baudoku/shared-validation";
+import { useZones } from "@/hooks/useProjects";
+import { useCreateInstallation } from "@/hooks/useInstallations";
+import { InstallationForm } from "@/components/installations/InstallationForm";
+import type { InstallationFormData } from "@baudoku/documentation";
 
 export function InstallationNewPage() {
   const { projectId } = useParams({ strict: false }) as { projectId: string };

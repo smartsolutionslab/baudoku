@@ -1,10 +1,11 @@
 using AwesomeAssertions;
 using BauDoku.BuildingBlocks.Application.Persistence;
-using BauDoku.Documentation.Application.Commands.RemovePhoto;
+using BauDoku.Documentation.Application.Commands;
+using BauDoku.Documentation.Application.Commands.Handlers;
 using BauDoku.Documentation.Application.Contracts;
-using BauDoku.Documentation.Domain.Aggregates;
-using BauDoku.Documentation.Domain.ValueObjects;
+using BauDoku.Documentation.Domain;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 
 namespace BauDoku.Documentation.UnitTests.Application.Commands;
 
@@ -30,10 +31,10 @@ public sealed class RemovePhotoCommandHandlerTests
             ProjectIdentifier.New(),
             null,
             InstallationType.CableTray,
-            GpsPosition.Create(48.137154, 11.576124, null, 3.5, "gps"));
+            GpsPosition.Create(Latitude.From(48.137154), Longitude.From(11.576124), null, HorizontalAccuracy.From(3.5), GpsSource.From("gps")));
 
         photoId = PhotoIdentifier.New();
-        installation.AddPhoto(photoId, "photo.jpg", "https://blob/photo.jpg", "image/jpeg", 1024,
+        installation.AddPhoto(photoId, FileName.From("photo.jpg"), BlobUrl.From("https://blob/photo.jpg"), ContentType.From("image/jpeg"), FileSize.From(1024),
             PhotoType.Before);
 
         return installation;
@@ -46,12 +47,12 @@ public sealed class RemovePhotoCommandHandlerTests
         installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
 
-        var command = new RemovePhotoCommand(installation.Id.Value, photoId.Value);
+        var command = new RemovePhotoCommand(installation.Id, photoId);
 
         await handler.Handle(command, CancellationToken.None);
 
         installation.Photos.Should().BeEmpty();
-        await photoStorage.Received(1).DeleteAsync("https://blob/photo.jpg", Arg.Any<CancellationToken>());
+        await photoStorage.Received(1).DeleteAsync(BlobUrl.From("https://blob/photo.jpg"), Arg.Any<CancellationToken>());
         await unitOfWork.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
@@ -59,13 +60,13 @@ public sealed class RemovePhotoCommandHandlerTests
     public async Task Handle_WhenInstallationNotFound_ShouldThrow()
     {
         installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
-            .Returns((Installation?)null);
+            .Throws(new KeyNotFoundException());
 
-        var command = new RemovePhotoCommand(Guid.NewGuid(), Guid.NewGuid());
+        var command = new RemovePhotoCommand(InstallationIdentifier.New(), PhotoIdentifier.New());
 
         var act = () => handler.Handle(command, CancellationToken.None);
 
-        await act.Should().ThrowAsync<InvalidOperationException>();
+        await act.Should().ThrowAsync<KeyNotFoundException>();
     }
 
     [Fact]
@@ -75,10 +76,10 @@ public sealed class RemovePhotoCommandHandlerTests
         installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
 
-        var command = new RemovePhotoCommand(installation.Id.Value, Guid.NewGuid());
+        var command = new RemovePhotoCommand(installation.Id, PhotoIdentifier.New());
 
         var act = () => handler.Handle(command, CancellationToken.None);
 
-        await act.Should().ThrowAsync<InvalidOperationException>();
+        await act.Should().ThrowAsync<KeyNotFoundException>();
     }
 }

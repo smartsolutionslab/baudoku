@@ -1,10 +1,10 @@
 using AwesomeAssertions;
 using BauDoku.BuildingBlocks.Application.Persistence;
-using BauDoku.Sync.Application.Commands.ProcessSyncBatch;
+using BauDoku.Sync.Application.Commands;
+using BauDoku.Sync.Application.Commands.Handlers;
 using BauDoku.Sync.Application.Contracts;
 using BauDoku.Sync.Application.Queries.Dtos;
-using BauDoku.Sync.Domain.Aggregates;
-using BauDoku.Sync.Domain.ValueObjects;
+using BauDoku.Sync.Domain;
 using NSubstitute;
 
 namespace BauDoku.Sync.UnitTests.Application.Commands;
@@ -31,10 +31,10 @@ public sealed class ProcessSyncBatchCommandHandlerTests
     public async Task Handle_AllDeltasApplied_ShouldReturnCompleted()
     {
         var entityId = Guid.NewGuid();
-        entityVersionStore.GetCurrentVersionAsync(Arg.Any<EntityType>(), entityId, Arg.Any<CancellationToken>())
+        entityVersionStore.GetCurrentVersionAsync(Arg.Is<EntityReference>(r => r.EntityId == entityId), Arg.Any<CancellationToken>())
             .Returns(SyncVersion.Initial);
 
-        var command = new ProcessSyncBatchCommand("device-001", [CreateDelta(entityId, 0)]);
+        var command = new ProcessSyncBatchCommand(DeviceIdentifier.From("device-001"), [CreateDelta(entityId, 0)]);
 
         var result = await handler.Handle(command);
 
@@ -42,7 +42,7 @@ public sealed class ProcessSyncBatchCommandHandlerTests
         result.ConflictCount.Should().Be(0);
         result.BatchId.Should().NotBe(Guid.Empty);
         await entityVersionStore.Received(1).SetVersionAsync(
-            Arg.Any<EntityType>(), entityId, Arg.Any<SyncVersion>(), Arg.Any<string>(), Arg.Any<DeviceIdentifier>(), Arg.Any<CancellationToken>());
+            Arg.Is<EntityReference>(r => r.EntityId == entityId), Arg.Any<SyncVersion>(), Arg.Any<string>(), Arg.Any<DeviceIdentifier>(), Arg.Any<CancellationToken>());
         await syncBatches.Received(1).AddAsync(Arg.Any<SyncBatch>(), Arg.Any<CancellationToken>());
         await unitOfWork.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
@@ -51,12 +51,12 @@ public sealed class ProcessSyncBatchCommandHandlerTests
     public async Task Handle_VersionMismatch_ShouldCreateConflict()
     {
         var entityId = Guid.NewGuid();
-        entityVersionStore.GetCurrentVersionAsync(Arg.Any<EntityType>(), entityId, Arg.Any<CancellationToken>())
+        entityVersionStore.GetCurrentVersionAsync(Arg.Is<EntityReference>(r => r.EntityId == entityId), Arg.Any<CancellationToken>())
             .Returns(SyncVersion.From(5));
-        entityVersionStore.GetCurrentPayloadAsync(Arg.Any<EntityType>(), entityId, Arg.Any<CancellationToken>())
+        entityVersionStore.GetCurrentPayloadAsync(Arg.Is<EntityReference>(r => r.EntityId == entityId), Arg.Any<CancellationToken>())
             .Returns("""{"name":"Server"}""");
 
-        var command = new ProcessSyncBatchCommand("device-001", [CreateDelta(entityId, 0)]);
+        var command = new ProcessSyncBatchCommand(DeviceIdentifier.From("device-001"), [CreateDelta(entityId, 0)]);
 
         var result = await handler.Handle(command);
 
@@ -74,12 +74,12 @@ public sealed class ProcessSyncBatchCommandHandlerTests
         var entityId1 = Guid.NewGuid();
         var entityId2 = Guid.NewGuid();
 
-        entityVersionStore.GetCurrentVersionAsync(Arg.Any<EntityType>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>())
+        entityVersionStore.GetCurrentVersionAsync(Arg.Any<EntityReference>(), Arg.Any<CancellationToken>())
             .Returns(SyncVersion.From(3));
-        entityVersionStore.GetCurrentPayloadAsync(Arg.Any<EntityType>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>())
+        entityVersionStore.GetCurrentPayloadAsync(Arg.Any<EntityReference>(), Arg.Any<CancellationToken>())
             .Returns("{}");
 
-        var command = new ProcessSyncBatchCommand("device-001",
+        var command = new ProcessSyncBatchCommand(DeviceIdentifier.From("device-001"),
             [CreateDelta(entityId1, 0), CreateDelta(entityId2, 0)]);
 
         var result = await handler.Handle(command);
@@ -94,14 +94,14 @@ public sealed class ProcessSyncBatchCommandHandlerTests
         var appliedEntityId = Guid.NewGuid();
         var conflictEntityId = Guid.NewGuid();
 
-        entityVersionStore.GetCurrentVersionAsync(Arg.Any<EntityType>(), appliedEntityId, Arg.Any<CancellationToken>())
+        entityVersionStore.GetCurrentVersionAsync(Arg.Is<EntityReference>(r => r.EntityId == appliedEntityId), Arg.Any<CancellationToken>())
             .Returns(SyncVersion.Initial);
-        entityVersionStore.GetCurrentVersionAsync(Arg.Any<EntityType>(), conflictEntityId, Arg.Any<CancellationToken>())
+        entityVersionStore.GetCurrentVersionAsync(Arg.Is<EntityReference>(r => r.EntityId == conflictEntityId), Arg.Any<CancellationToken>())
             .Returns(SyncVersion.From(5));
-        entityVersionStore.GetCurrentPayloadAsync(Arg.Any<EntityType>(), conflictEntityId, Arg.Any<CancellationToken>())
+        entityVersionStore.GetCurrentPayloadAsync(Arg.Is<EntityReference>(r => r.EntityId == conflictEntityId), Arg.Any<CancellationToken>())
             .Returns("{}");
 
-        var command = new ProcessSyncBatchCommand("device-001",
+        var command = new ProcessSyncBatchCommand(DeviceIdentifier.From("device-001"),
             [CreateDelta(appliedEntityId, 0), CreateDelta(conflictEntityId, 0)]);
 
         var result = await handler.Handle(command);
@@ -116,12 +116,12 @@ public sealed class ProcessSyncBatchCommandHandlerTests
         var entityId1 = Guid.NewGuid();
         var entityId2 = Guid.NewGuid();
 
-        entityVersionStore.GetCurrentVersionAsync(Arg.Any<EntityType>(), entityId1, Arg.Any<CancellationToken>())
+        entityVersionStore.GetCurrentVersionAsync(Arg.Is<EntityReference>(r => r.EntityId == entityId1), Arg.Any<CancellationToken>())
             .Returns(SyncVersion.Initial);
-        entityVersionStore.GetCurrentVersionAsync(Arg.Any<EntityType>(), entityId2, Arg.Any<CancellationToken>())
+        entityVersionStore.GetCurrentVersionAsync(Arg.Is<EntityReference>(r => r.EntityId == entityId2), Arg.Any<CancellationToken>())
             .Returns(SyncVersion.From(2));
 
-        var command = new ProcessSyncBatchCommand("device-001",
+        var command = new ProcessSyncBatchCommand(DeviceIdentifier.From("device-001"),
             [CreateDelta(entityId1, 0), CreateDelta(entityId2, 2)]);
 
         var result = await handler.Handle(command);
@@ -129,19 +129,19 @@ public sealed class ProcessSyncBatchCommandHandlerTests
         result.AppliedCount.Should().Be(2);
         result.ConflictCount.Should().Be(0);
         await entityVersionStore.Received(2).SetVersionAsync(
-            Arg.Any<EntityType>(), Arg.Any<Guid>(), Arg.Any<SyncVersion>(), Arg.Any<string>(), Arg.Any<DeviceIdentifier>(), Arg.Any<CancellationToken>());
+            Arg.Any<EntityReference>(), Arg.Any<SyncVersion>(), Arg.Any<string>(), Arg.Any<DeviceIdentifier>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
-    public async Task Handle_NullServerPayload_ShouldUseEmptyJson()
+    public async Task Handle_NoExistingPayload_ShouldUseEmptyJson()
     {
         var entityId = Guid.NewGuid();
-        entityVersionStore.GetCurrentVersionAsync(Arg.Any<EntityType>(), entityId, Arg.Any<CancellationToken>())
+        entityVersionStore.GetCurrentVersionAsync(Arg.Is<EntityReference>(r => r.EntityId == entityId), Arg.Any<CancellationToken>())
             .Returns(SyncVersion.From(1));
-        entityVersionStore.GetCurrentPayloadAsync(Arg.Any<EntityType>(), entityId, Arg.Any<CancellationToken>())
-            .Returns((string?)null);
+        entityVersionStore.GetCurrentPayloadAsync(Arg.Is<EntityReference>(r => r.EntityId == entityId), Arg.Any<CancellationToken>())
+            .Returns("{}");
 
-        var command = new ProcessSyncBatchCommand("device-001", [CreateDelta(entityId, 0)]);
+        var command = new ProcessSyncBatchCommand(DeviceIdentifier.From("device-001"), [CreateDelta(entityId, 0)]);
 
         var result = await handler.Handle(command);
 

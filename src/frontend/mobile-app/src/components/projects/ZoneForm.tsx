@@ -11,7 +11,6 @@ const typeOptions = [
   { label: "Stockwerk", value: "floor" },
   { label: "Raum", value: "room" },
   { label: "Graben", value: "trench" },
-  { label: "Abschnitt", value: "section" },
 ];
 
 type ZoneFormProps = {

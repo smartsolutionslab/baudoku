@@ -1,6 +1,4 @@
-using BauDoku.Documentation.Domain.Aggregates;
-using BauDoku.Documentation.Domain.Entities;
-using BauDoku.Documentation.Domain.ValueObjects;
+using BauDoku.Documentation.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using NetTopologySuite.Geometries;
@@ -27,7 +25,7 @@ public sealed class InstallationConfiguration : IEntityTypeConfiguration<Install
             .HasColumnName("zone_id")
             .HasConversion(
                 id => id != null ? id.Value : (Guid?)null,
-                value => value.HasValue ? ZoneIdentifier.From(value.Value) : null);
+                value => ZoneIdentifier.FromNullable(value));
 
         builder.Property(i => i.Type)
             .HasColumnName("type")
@@ -49,13 +47,23 @@ public sealed class InstallationConfiguration : IEntityTypeConfiguration<Install
 
         builder.OwnsOne(i => i.Position, pos =>
         {
-            pos.Property(p => p.Latitude).HasColumnName("gps_latitude").IsRequired();
-            pos.Property(p => p.Longitude).HasColumnName("gps_longitude").IsRequired();
+            pos.Property(p => p.Latitude).HasColumnName("gps_latitude").IsRequired()
+                .HasConversion(v => v.Value, v => Latitude.From(v));
+            pos.Property(p => p.Longitude).HasColumnName("gps_longitude").IsRequired()
+                .HasConversion(v => v.Value, v => Longitude.From(v));
             pos.Property(p => p.Altitude).HasColumnName("gps_altitude");
-            pos.Property(p => p.HorizontalAccuracy).HasColumnName("gps_horizontal_accuracy").IsRequired();
-            pos.Property(p => p.Source).HasColumnName("gps_source").HasMaxLength(20).IsRequired();
-            pos.Property(p => p.CorrectionService).HasColumnName("gps_correction_service").HasMaxLength(20);
-            pos.Property(p => p.RtkFixStatus).HasColumnName("gps_rtk_fix_status").HasMaxLength(10);
+            pos.Property(p => p.HorizontalAccuracy).HasColumnName("gps_horizontal_accuracy").IsRequired()
+                .HasConversion(v => v.Value, v => HorizontalAccuracy.From(v));
+            pos.Property(p => p.Source).HasColumnName("gps_source").HasMaxLength(GpsSource.MaxLength).IsRequired()
+                .HasConversion(s => s.Value, v => GpsSource.From(v));
+            pos.Property(p => p.CorrectionService).HasColumnName("gps_correction_service").HasMaxLength(CorrectionService.MaxLength)
+                .HasConversion(
+                    s => s != null ? s.Value : null,
+                    v => CorrectionService.FromNullable(v));
+            pos.Property(p => p.RtkFixStatus).HasColumnName("gps_rtk_fix_status").HasMaxLength(RtkFixStatus.MaxLength)
+                .HasConversion(
+                    s => s != null ? s.Value : null,
+                    v => RtkFixStatus.FromNullable(v));
             pos.Property(p => p.SatelliteCount).HasColumnName("gps_satellite_count");
             pos.Property(p => p.Hdop).HasColumnName("gps_hdop");
             pos.Property(p => p.CorrectionAge).HasColumnName("gps_correction_age");
@@ -80,9 +88,16 @@ public sealed class InstallationConfiguration : IEntityTypeConfiguration<Install
 
         builder.OwnsOne(i => i.CableSpec, cable =>
         {
-            cable.Property(c => c.CableType).HasColumnName("cable_type").HasMaxLength(CableSpec.MaxCableTypeLength);
-            cable.Property(c => c.CrossSection).HasColumnName("cable_cross_section").HasColumnType("decimal(5,2)");
-            cable.Property(c => c.Color).HasColumnName("cable_color").HasMaxLength(CableSpec.MaxColorLength);
+            cable.Property(c => c.CableType).HasColumnName("cable_type").HasMaxLength(CableType.MaxLength)
+                .HasConversion(ct => ct.Value, v => CableType.From(v));
+            cable.Property(c => c.CrossSection).HasColumnName("cable_cross_section").HasColumnType("decimal(5,2)")
+                .HasConversion(
+                    cs => cs != null ? cs.Value : (decimal?)null,
+                    v => CrossSection.FromNullable(v));
+            cable.Property(c => c.Color).HasColumnName("cable_color").HasMaxLength(CableColor.MaxLength)
+                .HasConversion(
+                    c => c != null ? c.Value : null,
+                    v => CableColor.FromNullable(v));
             cable.Property(c => c.ConductorCount).HasColumnName("cable_conductor_count");
         });
 
@@ -90,28 +105,28 @@ public sealed class InstallationConfiguration : IEntityTypeConfiguration<Install
             .HasColumnName("depth_mm")
             .HasConversion(
                 d => d != null ? d.ValueInMillimeters : (int?)null,
-                value => value != null ? Depth.From(value.Value) : null);
+                value => Depth.FromNullable(value));
 
         builder.Property(i => i.Manufacturer)
             .HasColumnName("manufacturer")
             .HasMaxLength(Manufacturer.MaxLength)
             .HasConversion(
                 m => m != null ? m.Value : null,
-                value => value != null ? Manufacturer.From(value) : null);
+                value => Manufacturer.FromNullable(value));
 
         builder.Property(i => i.ModelName)
             .HasColumnName("model_name")
             .HasMaxLength(ModelName.MaxLength)
             .HasConversion(
                 m => m != null ? m.Value : null,
-                value => value != null ? ModelName.From(value) : null);
+                value => ModelName.FromNullable(value));
 
         builder.Property(i => i.SerialNumber)
             .HasColumnName("serial_number")
             .HasMaxLength(SerialNumber.MaxLength)
             .HasConversion(
                 s => s != null ? s.Value : null,
-                value => value != null ? SerialNumber.From(value) : null);
+                value => SerialNumber.FromNullable(value));
 
         builder.Property(i => i.CreatedAt).HasColumnName("created_at").IsRequired();
         builder.Property(i => i.CompletedAt).HasColumnName("completed_at");

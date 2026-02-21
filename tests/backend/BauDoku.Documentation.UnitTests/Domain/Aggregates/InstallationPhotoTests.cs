@@ -1,8 +1,6 @@
 using AwesomeAssertions;
 using BauDoku.BuildingBlocks.Domain;
-using BauDoku.Documentation.Domain.Aggregates;
-using BauDoku.Documentation.Domain.Events;
-using BauDoku.Documentation.Domain.ValueObjects;
+using BauDoku.Documentation.Domain;
 using BauDoku.Documentation.UnitTests.Builders;
 
 namespace BauDoku.Documentation.UnitTests.Domain.Aggregates;
@@ -20,22 +18,22 @@ public sealed class InstallationPhotoTests
 
         installation.AddPhoto(
             photoId,
-            "photo.jpg",
-            "uploads/abc.jpg",
-            "image/jpeg",
-            1024,
+            FileName.From("photo.jpg"),
+            BlobUrl.From("uploads/abc.jpg"),
+            ContentType.From("image/jpeg"),
+            FileSize.From(1024),
             PhotoType.Before,
             Caption.From("Vorher-Bild"),
             Description.From("Detailansicht"),
-            GpsPosition.Create(48.1351, 11.5820, 520.0, 3.5, "internal_gps"));
+            GpsPosition.Create(Latitude.From(48.1351), Longitude.From(11.5820), 520.0, HorizontalAccuracy.From(3.5), GpsSource.From("internal_gps")));
 
         installation.Photos.Should().ContainSingle();
         var photo = installation.Photos[0];
         photo.Id.Should().Be(photoId);
-        photo.FileName.Should().Be("photo.jpg");
-        photo.BlobUrl.Should().Be("uploads/abc.jpg");
-        photo.ContentType.Should().Be("image/jpeg");
-        photo.FileSize.Should().Be(1024);
+        photo.FileName.Value.Should().Be("photo.jpg");
+        photo.BlobUrl.Value.Should().Be("uploads/abc.jpg");
+        photo.ContentType.Value.Should().Be("image/jpeg");
+        photo.FileSize.Value.Should().Be(1024);
         photo.PhotoType.Should().Be(PhotoType.Before);
         photo.Caption!.Value.Should().Be("Vorher-Bild");
         photo.Description!.Value.Should().Be("Detailansicht");
@@ -49,7 +47,7 @@ public sealed class InstallationPhotoTests
         installation.ClearDomainEvents();
         var photoId = PhotoIdentifier.New();
 
-        installation.AddPhoto(photoId, "photo.jpg", "url", "image/jpeg", 1024, PhotoType.Detail);
+        installation.AddPhoto(photoId, FileName.From("photo.jpg"), BlobUrl.From("url"), ContentType.From("image/jpeg"), FileSize.From(1024), PhotoType.Detail);
 
         installation.DomainEvents.Should().ContainSingle()
             .Which.Should().BeOfType<PhotoAdded>()
@@ -63,7 +61,7 @@ public sealed class InstallationPhotoTests
         installation.ClearDomainEvents();
 
         installation.AddPhoto(
-            PhotoIdentifier.New(), "photo.jpg", "url", "image/jpeg", 2048, PhotoType.Other);
+            PhotoIdentifier.New(), FileName.From("photo.jpg"), BlobUrl.From("url"), ContentType.From("image/jpeg"), FileSize.From(2048), PhotoType.Other);
 
         var photo = installation.Photos[0];
         photo.Caption.Should().BeNull();
@@ -78,7 +76,7 @@ public sealed class InstallationPhotoTests
         installation.MarkAsCompleted();
 
         var act = () => installation.AddPhoto(
-            PhotoIdentifier.New(), "photo.jpg", "url", "image/jpeg", 1024, PhotoType.After);
+            PhotoIdentifier.New(), FileName.From("photo.jpg"), BlobUrl.From("url"), ContentType.From("image/jpeg"), FileSize.From(1024), PhotoType.After);
 
         act.Should().Throw<BusinessRuleException>();
     }
@@ -88,7 +86,7 @@ public sealed class InstallationPhotoTests
     {
         var installation = CreateValidInstallation();
         var photoId = PhotoIdentifier.New();
-        installation.AddPhoto(photoId, "photo.jpg", "url", "image/jpeg", 1024, PhotoType.Before);
+        installation.AddPhoto(photoId, FileName.From("photo.jpg"), BlobUrl.From("url"), ContentType.From("image/jpeg"), FileSize.From(1024), PhotoType.Before);
         installation.ClearDomainEvents();
 
         installation.RemovePhoto(photoId);
@@ -101,7 +99,7 @@ public sealed class InstallationPhotoTests
     {
         var installation = CreateValidInstallation();
         var photoId = PhotoIdentifier.New();
-        installation.AddPhoto(photoId, "photo.jpg", "url", "image/jpeg", 1024, PhotoType.Before);
+        installation.AddPhoto(photoId, FileName.From("photo.jpg"), BlobUrl.From("url"), ContentType.From("image/jpeg"), FileSize.From(1024), PhotoType.Before);
         installation.ClearDomainEvents();
 
         installation.RemovePhoto(photoId);
@@ -126,7 +124,7 @@ public sealed class InstallationPhotoTests
     {
         var installation = CreateValidInstallation();
         var photoId = PhotoIdentifier.New();
-        installation.AddPhoto(photoId, "photo.jpg", "url", "image/jpeg", 1024, PhotoType.Before);
+        installation.AddPhoto(photoId, FileName.From("photo.jpg"), BlobUrl.From("url"), ContentType.From("image/jpeg"), FileSize.From(1024), PhotoType.Before);
         installation.MarkAsCompleted();
 
         var act = () => installation.RemovePhoto(photoId);
@@ -139,9 +137,9 @@ public sealed class InstallationPhotoTests
     {
         var installation = CreateValidInstallation();
 
-        installation.AddPhoto(PhotoIdentifier.New(), "photo1.jpg", "url1", "image/jpeg", 1024, PhotoType.Before);
-        installation.AddPhoto(PhotoIdentifier.New(), "photo2.jpg", "url2", "image/jpeg", 2048, PhotoType.After);
-        installation.AddPhoto(PhotoIdentifier.New(), "photo3.png", "url3", "image/png", 4096, PhotoType.Detail);
+        installation.AddPhoto(PhotoIdentifier.New(), FileName.From("photo1.jpg"), BlobUrl.From("url1"), ContentType.From("image/jpeg"), FileSize.From(1024), PhotoType.Before);
+        installation.AddPhoto(PhotoIdentifier.New(), FileName.From("photo2.jpg"), BlobUrl.From("url2"), ContentType.From("image/jpeg"), FileSize.From(2048), PhotoType.After);
+        installation.AddPhoto(PhotoIdentifier.New(), FileName.From("photo3.png"), BlobUrl.From("url3"), ContentType.From("image/png"), FileSize.From(4096), PhotoType.Detail);
 
         installation.Photos.Should().HaveCount(3);
     }

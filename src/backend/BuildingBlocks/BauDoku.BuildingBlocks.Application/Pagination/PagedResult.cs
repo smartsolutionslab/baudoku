@@ -1,3 +1,5 @@
+using BauDoku.BuildingBlocks.Domain;
+
 namespace BauDoku.BuildingBlocks.Application.Pagination;
 
 public sealed record PagedResult<T>
@@ -10,13 +12,11 @@ public sealed record PagedResult<T>
     public bool HasNextPage => Page < TotalPages;
     public bool HasPreviousPage => Page > 1;
 
-    public PagedResult(IReadOnlyList<T> items, int totalCount, int page, int pageSize)
+    public PagedResult(IReadOnlyList<T> items, int totalCount, PageNumber page, PageSize pageSize)
     {
-        ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(pageSize, 0);
-
         Items = items;
         TotalCount = totalCount;
-        Page = page;
-        PageSize = pageSize;
+        Page = page.Value;
+        PageSize = pageSize.Value;
     }
 }

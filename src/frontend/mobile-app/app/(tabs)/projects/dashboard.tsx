@@ -8,9 +8,9 @@ import {
 } from "react-native";
 import { useRouter, Stack } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
-import { useDashboardStats } from "../../../src/hooks";
-import { DashboardCard } from "../../../src/components/common";
-import { Colors, Spacing, FontSize, Radius } from "../../../src/styles/tokens";
+import { useDashboardStats } from "@/hooks";
+import { DashboardCard } from "@/components/common";
+import { Colors, Spacing, FontSize, Radius } from "@/styles/tokens";
 
 export default function DashboardScreen() {
   const router = useRouter();

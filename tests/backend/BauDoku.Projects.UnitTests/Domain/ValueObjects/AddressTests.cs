@@ -1,5 +1,5 @@
 using AwesomeAssertions;
-using BauDoku.Projects.Domain.ValueObjects;
+using BauDoku.Projects.Domain;
 
 namespace BauDoku.Projects.UnitTests.Domain.ValueObjects;
 
@@ -8,11 +8,11 @@ public sealed class AddressTests
     [Fact]
     public void Create_WithValidData_ShouldSucceed()
     {
-        var address = Address.Create("Musterstraße 1", "Berlin", "10115");
+        var address = Address.Create(Street.From("Musterstraße 1"), City.From("Berlin"), ZipCode.From("10115"));
 
-        address.Street.Should().Be("Musterstraße 1");
-        address.City.Should().Be("Berlin");
-        address.ZipCode.Should().Be("10115");
+        address.Street.Value.Should().Be("Musterstraße 1");
+        address.City.Value.Should().Be("Berlin");
+        address.ZipCode.Value.Should().Be("10115");
     }
 
     [Theory]
@@ -21,7 +21,7 @@ public sealed class AddressTests
     [InlineData("   ")]
     public void Create_WithEmptyStreet_ShouldThrow(string? street)
     {
-        var act = () => Address.Create(street!, "Berlin", "10115");
+        var act = () => Address.Create(Street.From(street!), City.From("Berlin"), ZipCode.From("10115"));
 
         act.Should().Throw<ArgumentException>();
     }
@@ -32,7 +32,7 @@ public sealed class AddressTests
     [InlineData("   ")]
     public void Create_WithEmptyCity_ShouldThrow(string? city)
     {
-        var act = () => Address.Create("Musterstraße 1", city!, "10115");
+        var act = () => Address.Create(Street.From("Musterstraße 1"), City.From(city!), ZipCode.From("10115"));
 
         act.Should().Throw<ArgumentException>();
     }
@@ -43,7 +43,7 @@ public sealed class AddressTests
     [InlineData("   ")]
     public void Create_WithEmptyZipCode_ShouldThrow(string? zipCode)
     {
-        var act = () => Address.Create("Musterstraße 1", "Berlin", zipCode!);
+        var act = () => Address.Create(Street.From("Musterstraße 1"), City.From("Berlin"), ZipCode.From(zipCode!));
 
         act.Should().Throw<ArgumentException>();
     }
@@ -51,9 +51,9 @@ public sealed class AddressTests
     [Fact]
     public void Create_WithTooLongStreet_ShouldThrow()
     {
-        var longStreet = new string('a', Address.MaxStreetLength + 1);
+        var longStreet = new string('a', Street.MaxLength + 1);
 
-        var act = () => Address.Create(longStreet, "Berlin", "10115");
+        var act = () => Address.Create(Street.From(longStreet), City.From("Berlin"), ZipCode.From("10115"));
 
         act.Should().Throw<ArgumentException>();
     }
@@ -61,9 +61,9 @@ public sealed class AddressTests
     [Fact]
     public void Create_WithTooLongCity_ShouldThrow()
     {
-        var longCity = new string('a', Address.MaxCityLength + 1);
+        var longCity = new string('a', City.MaxLength + 1);
 
-        var act = () => Address.Create("Musterstraße 1", longCity, "10115");
+        var act = () => Address.Create(Street.From("Musterstraße 1"), City.From(longCity), ZipCode.From("10115"));
 
         act.Should().Throw<ArgumentException>();
     }
@@ -71,9 +71,9 @@ public sealed class AddressTests
     [Fact]
     public void Create_WithTooLongZipCode_ShouldThrow()
     {
-        var longZip = new string('1', Address.MaxZipCodeLength + 1);
+        var longZip = new string('1', ZipCode.MaxLength + 1);
 
-        var act = () => Address.Create("Musterstraße 1", "Berlin", longZip);
+        var act = () => Address.Create(Street.From("Musterstraße 1"), City.From("Berlin"), ZipCode.From(longZip));
 
         act.Should().Throw<ArgumentException>();
     }
@@ -81,14 +81,14 @@ public sealed class AddressTests
     [Fact]
     public void Create_WithMaxLengthValues_ShouldSucceed()
     {
-        var street = new string('a', Address.MaxStreetLength);
-        var city = new string('b', Address.MaxCityLength);
-        var zip = new string('1', Address.MaxZipCodeLength);
+        var street = new string('a', Street.MaxLength);
+        var city = new string('b', City.MaxLength);
+        var zip = new string('1', ZipCode.MaxLength);
 
-        var address = Address.Create(street, city, zip);
+        var address = Address.Create(Street.From(street), City.From(city), ZipCode.From(zip));
 
-        address.Street.Should().HaveLength(Address.MaxStreetLength);
-        address.City.Should().HaveLength(Address.MaxCityLength);
-        address.ZipCode.Should().HaveLength(Address.MaxZipCodeLength);
+        address.Street.Value.Should().HaveLength(Street.MaxLength);
+        address.City.Value.Should().HaveLength(City.MaxLength);
+        address.ZipCode.Value.Should().HaveLength(ZipCode.MaxLength);
     }
 }

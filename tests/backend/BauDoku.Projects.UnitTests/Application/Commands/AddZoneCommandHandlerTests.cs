@@ -1,10 +1,10 @@
 using AwesomeAssertions;
 using BauDoku.BuildingBlocks.Application.Persistence;
-using BauDoku.Projects.Application.Commands.AddZone;
-using BauDoku.Projects.Application.Contracts;
-using BauDoku.Projects.Domain.Aggregates;
-using BauDoku.Projects.Domain.ValueObjects;
+using BauDoku.Projects.Application.Commands;
+using BauDoku.Projects.Application.Commands.Handlers;
+using BauDoku.Projects.Domain;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 
 namespace BauDoku.Projects.UnitTests.Application.Commands;
 
@@ -25,8 +25,8 @@ public sealed class AddZoneCommandHandlerTests
         Project.Create(
             ProjectIdentifier.New(),
             ProjectName.From("Testprojekt"),
-            Address.Create("Musterstraße 1", "Berlin", "10115"),
-            ClientInfo.Create("Max Mustermann"));
+            Address.Create(Street.From("Musterstraße 1"), City.From("Berlin"), ZipCode.From("10115")),
+            ClientInfo.Create(ClientName.From("Max Mustermann")));
 
     [Fact]
     public async Task Handle_WithValidCommand_ShouldAddZoneAndSave()
@@ -35,7 +35,7 @@ public sealed class AddZoneCommandHandlerTests
         projects.GetByIdAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(project);
 
-        var command = new AddZoneCommand(project.Id.Value, "Erdgeschoss", "floor", null);
+        var command = new AddZoneCommand(project.Id, ZoneName.From("Erdgeschoss"), ZoneType.Floor, null);
 
         await handler.Handle(command);
 
@@ -47,13 +47,13 @@ public sealed class AddZoneCommandHandlerTests
     public async Task Handle_WhenProjectNotFound_ShouldThrow()
     {
         projects.GetByIdAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>())
-            .Returns((Project?)null);
+            .Throws(new KeyNotFoundException());
 
-        var command = new AddZoneCommand(Guid.NewGuid(), "Erdgeschoss", "floor", null);
+        var command = new AddZoneCommand(ProjectIdentifier.New(), ZoneName.From("Erdgeschoss"), ZoneType.Floor, null);
 
         var act = () => handler.Handle(command);
 
-        await act.Should().ThrowAsync<InvalidOperationException>();
+        await act.Should().ThrowAsync<KeyNotFoundException>();
     }
 
     [Fact]
@@ -66,7 +66,7 @@ public sealed class AddZoneCommandHandlerTests
         projects.GetByIdAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(project);
 
-        var command = new AddZoneCommand(project.Id.Value, "Erdgeschoss", "floor", parentId.Value);
+        var command = new AddZoneCommand(project.Id, ZoneName.From("Erdgeschoss"), ZoneType.Floor, parentId);
 
         await handler.Handle(command);
 

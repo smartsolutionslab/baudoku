@@ -79,6 +79,22 @@ public sealed class ProjectAuthTests : IDisposable
         }
     }
 
+    [Fact]
+    public async Task ListProjects_WithoutAuthentication_Returns401()
+    {
+        TestAuthHandler.IsAuthenticated = false;
+        try
+        {
+            var response = await client.GetAsync("/api/projects");
+
+            response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        }
+        finally
+        {
+            TestAuthHandler.IsAuthenticated = true;
+        }
+    }
+
     public void Dispose()
     {
         client.Dispose();

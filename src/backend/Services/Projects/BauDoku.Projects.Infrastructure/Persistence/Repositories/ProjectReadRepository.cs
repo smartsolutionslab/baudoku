@@ -1,39 +1,39 @@
+using System.Linq.Expressions;
 using BauDoku.BuildingBlocks.Application.Pagination;
 using BauDoku.Projects.Application.Contracts;
 using BauDoku.Projects.Application.Queries.Dtos;
+using BauDoku.BuildingBlocks.Domain;
+using BauDoku.BuildingBlocks.Infrastructure.Pagination;
+using BauDoku.Projects.Domain;
 using Microsoft.EntityFrameworkCore;
 
 namespace BauDoku.Projects.Infrastructure.Persistence.Repositories;
 
 public sealed class ProjectReadRepository(ProjectsDbContext context) : IProjectReadRepository
 {
-    public async Task<PagedResult<ProjectListItemDto>> ListAsync(string? search, int page, int pageSize, CancellationToken cancellationToken = default)
+    private static readonly Expression<Func<Project, ProjectListItemDto>> toProjectListItem = p => new ProjectListItemDto(
+        p.Id.Value,
+        p.Name.Value,
+        p.Status.Value,
+        p.Address.City.Value,
+        p.Client.Name.Value,
+        p.CreatedAt,
+        p.Zones.Count);
+
+    public async Task<PagedResult<ProjectListItemDto>> ListAsync(string? search, PaginationParams pagination, CancellationToken cancellationToken = default)
     {
         var query = context.Projects.AsNoTracking();
 
-        if (!string.IsNullOrWhiteSpace(search))
+        if (search.HasValue())
         {
             query = query.Where(p => EF.Functions.ILike(p.Name.Value, $"%{search}%")
-                || EF.Functions.ILike(p.Address.City, $"%{search}%")
-                || EF.Functions.ILike(p.Client.Name, $"%{search}%"));
+                || EF.Functions.ILike(p.Address.City.Value, $"%{search}%")
+                || EF.Functions.ILike(p.Client.Name.Value, $"%{search}%"));
         }
 
-        var totalCount = await query.CountAsync(cancellationToken);
-
-        var items = await query
+        return await query
             .OrderByDescending(p => p.CreatedAt)
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
-            .Select(p => new ProjectListItemDto(
-                p.Id.Value,
-                p.Name.Value,
-                p.Status.Value,
-                p.Address.City,
-                p.Client.Name,
-                p.CreatedAt,
-                p.Zones.Count))
-            .ToListAsync(cancellationToken);
-
-        return new PagedResult<ProjectListItemDto>(items, totalCount, page, pageSize);
+            .Select(toProjectListItem)
+            .ToPagedResultAsync(pagination, cancellationToken);
     }
 }

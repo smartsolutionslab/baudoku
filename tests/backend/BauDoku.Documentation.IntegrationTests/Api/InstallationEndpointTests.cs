@@ -105,7 +105,7 @@ public sealed class InstallationEndpointTests : IDisposable
     }
 
     [Fact]
-    public async Task UpdateInstallation_WithNonExistentId_ShouldReturn500()
+    public async Task UpdateInstallation_WithNonExistentId_ShouldReturn404()
     {
         var updateRequest = new
         {
@@ -114,7 +114,7 @@ public sealed class InstallationEndpointTests : IDisposable
         var response = await client.PutAsJsonAsync(
             $"/api/documentation/installations/{Guid.NewGuid()}", updateRequest);
 
-        response.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
     public void Dispose()

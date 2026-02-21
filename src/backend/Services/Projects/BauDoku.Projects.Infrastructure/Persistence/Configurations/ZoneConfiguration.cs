@@ -1,5 +1,4 @@
-using BauDoku.Projects.Domain.Entities;
-using BauDoku.Projects.Domain.ValueObjects;
+using BauDoku.Projects.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -31,7 +30,7 @@ public sealed class ZoneConfiguration : IEntityTypeConfiguration<Zone>
             .HasColumnName("parent_zone_id")
             .HasConversion(
                 id => id != null ? id.Value : (Guid?)null,
-                value => value.HasValue ? ZoneIdentifier.From(value.Value) : null);
+                value => ZoneIdentifier.FromNullable(value));
 
         builder.Property<ProjectIdentifier>("ProjectId")
             .HasColumnName("project_id")

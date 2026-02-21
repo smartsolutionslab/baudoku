@@ -9,12 +9,12 @@ import {
 import { useRouter } from "expo-router";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { FontAwesome } from "@expo/vector-icons";
-import { useQrScanner } from "../../../src/hooks";
-import { ScanOverlay } from "../../../src/components/capture/ScanOverlay";
-import { Button } from "../../../src/components/core";
-import { Colors, Spacing, FontSize, Radius } from "../../../src/styles/tokens";
-import * as zoneRepo from "../../../src/db/repositories/zoneRepo";
-import * as projectRepo from "../../../src/db/repositories/projectRepo";
+import { useQrScanner } from "@/hooks";
+import { ScanOverlay } from "@/components/capture/ScanOverlay";
+import { Button } from "@/components/core";
+import { Colors, Spacing, FontSize, Radius } from "@/styles/tokens";
+import * as zoneRepo from "@/db/repositories/zoneRepo";
+import * as projectRepo from "@/db/repositories/projectRepo";
 
 export default function ScanScreen() {
   const router = useRouter();

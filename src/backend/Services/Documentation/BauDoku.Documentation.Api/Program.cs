@@ -8,7 +8,7 @@ using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("DocumentationDb") ?? throw new InvalidOperationException("Connection string 'DocumentationDb' not found.");
+var connectionString = builder.Configuration.GetRequiredConnectionString(ConnectionStringNames.DocumentationDb);
 
 builder.AddServiceDefaults(health =>
 {
@@ -18,7 +18,7 @@ builder.AddServiceDefaults(health =>
 
 builder.Services.ConfigureHttpJsonOptions(options => options.SerializerOptions.Converters.Add(new ValueObjectJsonConverterFactory()));
 
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApi(options => options.AddSchemaTransformer<ValueObjectSchemaTransformer>());
 
 builder.Services.AddBauDokuAuthentication(builder.Configuration, builder.Environment);
 

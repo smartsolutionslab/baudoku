@@ -1,9 +1,9 @@
 using AwesomeAssertions;
-using BauDoku.Documentation.Application.Contracts;
-using BauDoku.Documentation.Application.Queries.GetMeasurements;
-using BauDoku.Documentation.Domain.Aggregates;
-using BauDoku.Documentation.Domain.ValueObjects;
+using BauDoku.Documentation.Application.Queries;
+using BauDoku.Documentation.Application.Queries.Handlers;
+using BauDoku.Documentation.Domain;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 
 namespace BauDoku.Documentation.UnitTests.Application.Queries;
 
@@ -26,18 +26,18 @@ public sealed class GetMeasurementsQueryHandlerTests
             ProjectIdentifier.New(),
             null,
             InstallationType.CableTray,
-            GpsPosition.Create(48.0, 11.0, null, 3.5, "gps"));
+            GpsPosition.Create(Latitude.From(48.0), Longitude.From(11.0), null, HorizontalAccuracy.From(3.5), GpsSource.From("gps")));
 
         installation.RecordMeasurement(
             MeasurementIdentifier.New(),
             MeasurementType.InsulationResistance,
             MeasurementValue.Create(500.0, "MΩ", 1.0, null),
-            "Notiz");
+            Notes.From("Notiz"));
 
         installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
 
-        var result = await handler.Handle(new GetMeasurementsQuery(installation.Id.Value), CancellationToken.None);
+        var result = await handler.Handle(new GetMeasurementsQuery(installation.Id), CancellationToken.None);
 
         result.Should().ContainSingle();
         result[0].Type.Should().Be("insulation_resistance");
@@ -50,10 +50,10 @@ public sealed class GetMeasurementsQueryHandlerTests
     public async Task Handle_WhenInstallationNotFound_ShouldThrow()
     {
         installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
-            .Returns((Installation?)null);
+            .Throws(new KeyNotFoundException());
 
-        var act = () => handler.Handle(new GetMeasurementsQuery(Guid.NewGuid()), CancellationToken.None);
+        var act = () => handler.Handle(new GetMeasurementsQuery(InstallationIdentifier.New()), CancellationToken.None);
 
-        await act.Should().ThrowAsync<InvalidOperationException>();
+        await act.Should().ThrowAsync<KeyNotFoundException>();
     }
 }

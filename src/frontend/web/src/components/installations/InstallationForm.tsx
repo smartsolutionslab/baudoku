@@ -4,15 +4,12 @@ import { z } from "zod";
 import {
   installationSchema,
   type InstallationFormData,
-} from "@baudoku/shared-validation";
-import {
   INSTALLATION_STATUS_LABELS,
   INSTALLATION_TYPES,
-  ZONE_TYPE_LABELS,
-} from "@baudoku/shared-constants";
+} from "@baudoku/documentation";
+import { ZONE_TYPE_LABELS, type Zone } from "@baudoku/projects";
 import { FormField } from "../common/FormField";
 import { FormSelect } from "../common/FormSelect";
-import type { Zone } from "@baudoku/shared-types";
 
 interface InstallationFormProps {
   zones: Zone[];

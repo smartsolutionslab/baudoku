@@ -1,36 +1,25 @@
 using BauDoku.BuildingBlocks.Application.Pagination;
 using BauDoku.Documentation.Application.Queries.Dtos;
+using BauDoku.Documentation.Domain;
 
 namespace BauDoku.Documentation.Application.Contracts;
 
 public interface IInstallationReadRepository
 {
     Task<PagedResult<InstallationListItemDto>> ListAsync(
-        Guid? projectId,
-        Guid? zoneId,
-        string? type,
-        string? status,
-        string? search,
-        int page,
-        int pageSize,
+        InstallationListFilter filter,
+        PaginationParams pagination,
         CancellationToken cancellationToken = default);
 
     Task<PagedResult<NearbyInstallationDto>> SearchInRadiusAsync(
-        double latitude,
-        double longitude,
-        double radiusMeters,
-        Guid? projectId,
-        int page,
-        int pageSize,
+        SearchRadius radius,
+        ProjectIdentifier? projectId,
+        PaginationParams pagination,
         CancellationToken cancellationToken = default);
 
     Task<PagedResult<InstallationListItemDto>> SearchInBoundingBoxAsync(
-        double minLatitude,
-        double minLongitude,
-        double maxLatitude,
-        double maxLongitude,
-        Guid? projectId,
-        int page,
-        int pageSize,
+        BoundingBox boundingBox,
+        ProjectIdentifier? projectId,
+        PaginationParams pagination,
         CancellationToken cancellationToken = default);
 }

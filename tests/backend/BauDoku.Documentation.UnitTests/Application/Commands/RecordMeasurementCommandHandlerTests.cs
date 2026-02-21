@@ -1,10 +1,10 @@
 using AwesomeAssertions;
 using BauDoku.BuildingBlocks.Application.Persistence;
-using BauDoku.Documentation.Application.Commands.RecordMeasurement;
-using BauDoku.Documentation.Application.Contracts;
-using BauDoku.Documentation.Domain.Aggregates;
-using BauDoku.Documentation.Domain.ValueObjects;
+using BauDoku.Documentation.Application.Commands;
+using BauDoku.Documentation.Application.Commands.Handlers;
+using BauDoku.Documentation.Domain;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 
 namespace BauDoku.Documentation.UnitTests.Application.Commands;
 
@@ -27,7 +27,7 @@ public sealed class RecordMeasurementCommandHandlerTests
             ProjectIdentifier.New(),
             null,
             InstallationType.CableTray,
-            GpsPosition.Create(48.137154, 11.576124, null, 3.5, "gps"));
+            GpsPosition.Create(Latitude.From(48.137154), Longitude.From(11.576124), null, HorizontalAccuracy.From(3.5), GpsSource.From("gps")));
 
     [Fact]
     public async Task Handle_WithValidCommand_ShouldRecordMeasurementAndReturnId()
@@ -37,7 +37,7 @@ public sealed class RecordMeasurementCommandHandlerTests
             .Returns(installation);
 
         var command = new RecordMeasurementCommand(
-            installation.Id.Value, "insulation_resistance", 500.0, "MΩ", 1.0, null, "Notiz");
+            installation.Id, MeasurementType.InsulationResistance, 500.0, MeasurementUnit.From("MΩ"), 1.0, null, "Notiz");
 
         var result = await handler.Handle(command, CancellationToken.None);
 
@@ -50,13 +50,13 @@ public sealed class RecordMeasurementCommandHandlerTests
     public async Task Handle_WhenInstallationNotFound_ShouldThrow()
     {
         installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
-            .Returns((Installation?)null);
+            .Throws(new KeyNotFoundException());
 
         var command = new RecordMeasurementCommand(
-            Guid.NewGuid(), "insulation_resistance", 500.0, "MΩ", null, null, null);
+            InstallationIdentifier.New(), MeasurementType.InsulationResistance, 500.0, MeasurementUnit.From("MΩ"), null, null, null);
 
         var act = () => handler.Handle(command, CancellationToken.None);
 
-        await act.Should().ThrowAsync<InvalidOperationException>();
+        await act.Should().ThrowAsync<KeyNotFoundException>();
     }
 }

@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Http;
@@ -12,6 +13,7 @@ using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 using Serilog;
 using Serilog.Enrichers.Span;
+using Serilog.Events;
 using Serilog.Sinks.OpenTelemetry;
 
 namespace BauDoku.ServiceDefaults;
@@ -48,14 +50,19 @@ public static class Extensions
         {
             options.EnrichDiagnosticContext = static (diagnosticContext, httpContext) =>
             {
-                diagnosticContext.Set("ClientIP", httpContext.Connection.RemoteIpAddress?.ToString() ?? "-");
-                diagnosticContext.Set("UserAgent", httpContext.Request.Headers.UserAgent.ToString());
+                var remoteIpAddress = httpContext.Connection.RemoteIpAddress;
+                var userAgent = httpContext.Request.Headers.UserAgent;
+                diagnosticContext.Set("ClientIP", remoteIpAddress?.ToString() ?? "-");
+                diagnosticContext.Set("UserAgent", userAgent.ToString());
             };
             options.GetLevel = static (httpContext, _, _) =>
-                httpContext.Request.Path.StartsWithSegments("/health") ||
-                httpContext.Request.Path.StartsWithSegments("/alive")
-                    ? Serilog.Events.LogEventLevel.Verbose
-                    : Serilog.Events.LogEventLevel.Information;
+            {
+                var request = httpContext.Request;
+
+                return request.Path.StartsWithSegments("/health") || request.Path.StartsWithSegments("/alive")
+                    ? LogEventLevel.Verbose
+                    : LogEventLevel.Information;
+            };
         });
 
         app.MapHealthChecks("/health", new HealthCheckOptions
@@ -94,8 +101,7 @@ public static class Extensions
             configuration.WriteTo.Console(new Serilog.Formatting.Compact.CompactJsonFormatter());
         }
 
-        var otlpEndpoint = builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"];
-        if (!string.IsNullOrWhiteSpace(otlpEndpoint))
+        if (builder.Configuration.TryGetOtlpExporterEndpoint(out var otlpEndpoint))
         {
             configuration.WriteTo.OpenTelemetry(options =>
             {
@@ -148,10 +154,7 @@ public static class Extensions
 
     private static void AddOpenTelemetryExporters(IHostApplicationBuilder builder)
     {
-        var useOtlpExporter = !string.IsNullOrWhiteSpace(
-            builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"]);
-
-        if (useOtlpExporter)
+        if (builder.Configuration.TryGetOtlpExporterEndpoint(out _))
         {
             builder.Services.AddOpenTelemetry().UseOtlpExporter();
         }
@@ -163,22 +166,34 @@ public static class Extensions
 
         configureHealthChecks?.Invoke(healthChecks);
 
-        var rabbitConnection = builder.Configuration.GetConnectionString("rabbitmq");
-        if (!string.IsNullOrWhiteSpace(rabbitConnection))
+        var rabbitConnection = builder.Configuration.GetConnectionString(ConnectionStringNames.RabbitMq);
+        if (!string.IsNullOrEmpty(rabbitConnection))
         {
             var rabbitUri = new Uri(rabbitConnection);
             var lazyConnection = new Lazy<Task<IConnection>>(() => new ConnectionFactory { Uri = rabbitUri }.CreateConnectionAsync());
-
             healthChecks.AddRabbitMQ(sp => lazyConnection.Value, name: "rabbitmq", failureStatus: HealthStatus.Degraded, tags: ["ready"]);
         }
 
-        var redisConnection = builder.Configuration.GetConnectionString("redis");
-        if (!string.IsNullOrWhiteSpace(redisConnection))
+        var redisConnection = builder.Configuration.GetConnectionString(ConnectionStringNames.Redis);
+        if (!string.IsNullOrEmpty(redisConnection))
         {
             healthChecks.AddRedis(redisConnection, name: "redis", failureStatus: HealthStatus.Degraded, tags: ["ready"]);
         }
 
         return builder;
+    }
+
+    private static bool TryGetOtlpExporterEndpoint(this IConfiguration configuration, out string endpoint)
+    {
+        var value = configuration["OTEL_EXPORTER_OTLP_ENDPOINT"];
+        if (!string.IsNullOrWhiteSpace(value))
+        {
+            endpoint = value;
+            return true;
+        }
+
+        endpoint = default!;
+        return false;
     }
 
     private static Task WriteHealthCheckResponse(HttpContext context, HealthReport report)
@@ -203,7 +218,7 @@ public static class Extensions
         return context.Response.WriteAsJsonAsync(result, new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
         });
     }
 }

@@ -1,8 +1,6 @@
 using AwesomeAssertions;
 using BauDoku.BuildingBlocks.Domain;
-using BauDoku.Documentation.Domain.Aggregates;
-using BauDoku.Documentation.Domain.Events;
-using BauDoku.Documentation.Domain.ValueObjects;
+using BauDoku.Documentation.Domain;
 using BauDoku.Documentation.UnitTests.Builders;
 
 namespace BauDoku.Documentation.UnitTests.Domain.Aggregates;
@@ -20,9 +18,9 @@ public sealed class InstallationTests
         installation.ProjectId.Should().NotBeNull();
         installation.ZoneId.Should().NotBeNull();
         installation.Type.Should().Be(InstallationType.CableTray);
-        installation.Position.Latitude.Should().Be(48.1351);
+        installation.Position.Latitude.Value.Should().Be(48.1351);
         installation.Description!.Value.Should().Be("Kabeltrasse im Erdgeschoss");
-        installation.CableSpec!.CableType.Should().Be("NYM-J 5x2.5");
+        installation.CableSpec!.CableType.Value.Should().Be("NYM-J 5x2.5");
         installation.Depth!.ValueInMillimeters.Should().Be(600);
         installation.Manufacturer!.Value.Should().Be("Hager");
         installation.ModelName!.Value.Should().Be("VZ312N");
@@ -60,7 +58,7 @@ public sealed class InstallationTests
             ProjectIdentifier.New(),
             null,
             InstallationType.JunctionBox,
-            GpsPosition.Create(48.0, 11.0, null, 150.0, "internal_gps"));
+            GpsPosition.Create(Latitude.From(48.0), Longitude.From(11.0), null, HorizontalAccuracy.From(150.0), GpsSource.From("internal_gps")));
 
         act.Should().Throw<BusinessRuleException>();
     }
@@ -73,7 +71,7 @@ public sealed class InstallationTests
             ProjectIdentifier.New(),
             null,
             InstallationType.Grounding,
-            GpsPosition.Create(48.0, 11.0, null, 5.0, "internal_gps"));
+            GpsPosition.Create(Latitude.From(48.0), Longitude.From(11.0), null, HorizontalAccuracy.From(5.0), GpsSource.From("internal_gps")));
 
         installation.Description.Should().BeNull();
         installation.CableSpec.Should().BeNull();
@@ -116,7 +114,7 @@ public sealed class InstallationTests
             ProjectIdentifier.New(),
             null,
             InstallationType.JunctionBox,
-            GpsPosition.Create(48.0, 11.0, null, 50.0, "internal_gps"));
+            GpsPosition.Create(Latitude.From(48.0), Longitude.From(11.0), null, HorizontalAccuracy.From(50.0), GpsSource.From("internal_gps")));
 
         installation.QualityGrade.Should().Be(GpsQualityGrade.D);
         installation.DomainEvents.Should().HaveCount(2);

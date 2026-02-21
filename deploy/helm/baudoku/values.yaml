@@ -4,6 +4,7 @@ global:
     prefix: smartsolutionslab/baudoku
     tag: latest
     pullPolicy: IfNotPresent
+  imagePullSecrets: []
 
 services:
   projectsApi:

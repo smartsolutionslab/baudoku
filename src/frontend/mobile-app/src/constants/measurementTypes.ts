@@ -1,2 +1,2 @@
-export { MEASUREMENT_TYPES } from "@baudoku/shared-constants";
-export type { MeasurementTypePreset } from "@baudoku/shared-constants";
+export { MEASUREMENT_TYPES } from "@baudoku/documentation";
+export type { MeasurementTypePreset } from "@baudoku/documentation";

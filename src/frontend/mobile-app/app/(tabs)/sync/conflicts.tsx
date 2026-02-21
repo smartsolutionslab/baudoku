@@ -1,8 +1,8 @@
 import { View, Text, ActivityIndicator, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
-import { ConflictList } from "../../../src/components/sync";
-import { useConflicts } from "../../../src/hooks";
-import { Colors, FontSize, Spacing } from "../../../src/styles/tokens";
+import { ConflictList } from "@/components/sync";
+import { useConflicts } from "@/hooks";
+import { Colors, FontSize, Spacing } from "@/styles/tokens";
 
 export default function ConflictsScreen() {
   const router = useRouter();

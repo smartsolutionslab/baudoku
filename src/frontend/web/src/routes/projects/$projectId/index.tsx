@@ -5,10 +5,11 @@ import {
   useZones,
   useDeleteZone,
   useUpdateProject,
-} from "../../../hooks/useProjects";
-import { ZoneTree } from "../../../components/projects/ZoneTree";
-import { StatusBadge } from "../../../components/common/StatusBadge";
-import { ConfirmDialog } from "../../../components/common/ConfirmDialog";
+} from "@/hooks/useProjects";
+import { ZoneTree } from "@/components/projects/ZoneTree";
+import { StatusBadge } from "@/components/common/StatusBadge";
+import { ConfirmDialog } from "@/components/common/ConfirmDialog";
+import { PlusIcon } from "@/components/icons";
 
 export function ProjectDetailPage() {
   const { projectId } = useParams({ strict: false }) as { projectId: string };
@@ -130,10 +131,3 @@ export function ProjectDetailPage() {
   );
 }
 
-function PlusIcon() {
-  return (
-    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-    </svg>
-  );
-}

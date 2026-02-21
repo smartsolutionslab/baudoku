@@ -1,5 +1,4 @@
-using BauDoku.Documentation.Domain.Aggregates;
-using BauDoku.Documentation.Domain.ValueObjects;
+using BauDoku.Documentation.Domain;
 
 namespace BauDoku.Documentation.UnitTests.Builders;
 
@@ -9,9 +8,9 @@ internal sealed class InstallationBuilder
     private ProjectIdentifier projectId = ProjectIdentifier.New();
     private ZoneIdentifier? zoneId = ZoneIdentifier.New();
     private InstallationType type = InstallationType.CableTray;
-    private GpsPosition position = GpsPosition.Create(48.1351, 11.5820, 520.0, 3.5, "internal_gps");
+    private GpsPosition position = GpsPosition.Create(Latitude.From(48.1351), Longitude.From(11.5820), 520.0, HorizontalAccuracy.From(3.5), GpsSource.From("internal_gps"));
     private Description? description = Description.From("Kabeltrasse im Erdgeschoss");
-    private CableSpec? cableSpec = CableSpec.Create("NYM-J 5x2.5", 25);
+    private CableSpec? cableSpec = CableSpec.Create(CableType.From("NYM-J 5x2.5"), CrossSection.From(25));
     private Depth? depth = Depth.From(600);
     private Manufacturer? manufacturer = Manufacturer.From("Hager");
     private ModelName? modelName = ModelName.From("VZ312N");

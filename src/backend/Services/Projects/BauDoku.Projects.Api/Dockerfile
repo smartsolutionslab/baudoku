@@ -1,8 +1,5 @@
-FROM mcr.microsoft.com/dotnet/aspnet:10.0-preview AS base
-WORKDIR /app
-EXPOSE 8080
-
-FROM mcr.microsoft.com/dotnet/sdk:10.0-preview AS build
+ARG RUNTIME_IMAGE=mcr.microsoft.com/dotnet/aspnet:10.0-alpine
+FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine AS build
 ARG BUILD_CONFIGURATION=Release
 ARG VERSION=0.0.0
 WORKDIR /src
@@ -30,10 +27,13 @@ COPY src/backend/ .
 RUN dotnet publish Services/Projects/BauDoku.Projects.Api/BauDoku.Projects.Api.csproj \
     -c $BUILD_CONFIGURATION \
     -o /app/publish \
+    --no-restore \
     /p:Version=$VERSION \
     /p:UseAppHost=false
 
-FROM base AS final
+FROM $RUNTIME_IMAGE AS final
 WORKDIR /app
+EXPOSE 8080
+USER $APP_UID
 COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "BauDoku.Projects.Api.dll"]

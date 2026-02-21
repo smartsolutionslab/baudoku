@@ -1,5 +1,4 @@
-using BauDoku.Sync.Domain.Entities;
-using BauDoku.Sync.Domain.ValueObjects;
+using BauDoku.Sync.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -62,7 +61,7 @@ public sealed class ConflictRecordConfiguration : IEntityTypeConfiguration<Confl
             .HasColumnName("resolved_payload")
             .HasConversion(
                 p => p != null ? p.Value : null,
-                value => value != null ? DeltaPayload.From(value) : null);
+                value => DeltaPayload.FromNullable(value));
 
         builder.Property(c => c.DetectedAt)
             .HasColumnName("detected_at")

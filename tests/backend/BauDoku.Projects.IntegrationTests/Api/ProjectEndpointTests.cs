@@ -93,6 +93,57 @@ public sealed class ProjectEndpointTests : IDisposable
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
     }
 
+    [Fact]
+    public async Task DeleteProject_WithExistingId_ShouldReturn204()
+    {
+        // Create a project first
+        var command = new
+        {
+            Name = "Projekt zum Loeschen",
+            Street = "Löschstraße 1",
+            City = "Frankfurt",
+            ZipCode = "60306",
+            ClientName = "Lösch GmbH"
+        };
+        var createResponse = await client.PostAsJsonAsync("/api/projects", command);
+        var created = await createResponse.Content.ReadFromJsonAsync<IdResponse>();
+
+        var response = await client.DeleteAsync($"/api/projects/{created!.Id}");
+
+        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+    }
+
+    [Fact]
+    public async Task DeleteProject_WithNonExistentId_ShouldReturn404()
+    {
+        var response = await client.DeleteAsync($"/api/projects/{Guid.NewGuid()}");
+
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    public async Task DeleteProject_ThenGet_ShouldReturn404()
+    {
+        // Create a project
+        var command = new
+        {
+            Name = "Projekt Delete-Get",
+            Street = "Teststraße 2",
+            City = "Berlin",
+            ZipCode = "10115",
+            ClientName = "Test"
+        };
+        var createResponse = await client.PostAsJsonAsync("/api/projects", command);
+        var created = await createResponse.Content.ReadFromJsonAsync<IdResponse>();
+
+        // Delete it
+        await client.DeleteAsync($"/api/projects/{created!.Id}");
+
+        // Verify it's gone
+        var getResponse = await client.GetAsync($"/api/projects/{created.Id}");
+        getResponse.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
     public void Dispose()
     {
         client.Dispose();

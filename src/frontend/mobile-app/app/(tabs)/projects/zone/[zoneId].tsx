@@ -7,18 +7,18 @@ import {
   useDeleteZone,
   useUpdateZone,
   useConfirmDelete,
-} from "../../../../src/hooks";
-import { InstallationCard } from "../../../../src/components/installations";
-import { StatusBadge, EmptyState, FloatingActionButton, ActionBar } from "../../../../src/components/common";
-import { ZoneQrSheet } from "../../../../src/components/projects";
-import { encodeZoneQr } from "../../../../src/utils";
-import { Colors, Spacing, FontSize, Radius } from "../../../../src/styles/tokens";
-import type { Zone } from "../../../../src/db/repositories/types";
+} from "@/hooks";
+import { InstallationCard } from "@/components/installations";
+import { StatusBadge, EmptyState, FloatingActionButton, ActionBar } from "@/components/common";
+import { ZoneQrSheet } from "@/components/projects";
+import { encodeZoneQr } from "@/utils";
+import { Colors, Spacing, FontSize, Radius } from "@/styles/tokens";
+import type { Zone } from "@/db/repositories/types";
 import {
   projectId as toProjectId,
   zoneId as toZoneId,
-} from "../../../../src/types/branded";
-import type { ZoneId } from "../../../../src/types/branded";
+} from "@/types/branded";
+import type { ZoneId } from "@/types/branded";
 
 function buildBreadcrumb(zones: Zone[], id: ZoneId): string[] {
   const byId = new Map(zones.map((z) => [z.id as string, z]));

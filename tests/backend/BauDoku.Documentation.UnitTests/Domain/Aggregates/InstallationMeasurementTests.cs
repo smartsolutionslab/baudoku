@@ -1,8 +1,6 @@
 using AwesomeAssertions;
 using BauDoku.BuildingBlocks.Domain;
-using BauDoku.Documentation.Domain.Aggregates;
-using BauDoku.Documentation.Domain.Events;
-using BauDoku.Documentation.Domain.ValueObjects;
+using BauDoku.Documentation.Domain;
 using BauDoku.Documentation.UnitTests.Builders;
 
 namespace BauDoku.Documentation.UnitTests.Domain.Aggregates;
@@ -22,15 +20,15 @@ public sealed class InstallationMeasurementTests
             measurementId,
             MeasurementType.Voltage,
             MeasurementValue.Create(230.0, "V"),
-            "Spannungsmessung");
+            Notes.From("Spannungsmessung"));
 
         installation.Measurements.Should().ContainSingle();
         var measurement = installation.Measurements[0];
         measurement.Id.Should().Be(measurementId);
         measurement.Type.Should().Be(MeasurementType.Voltage);
         measurement.Value.Value.Should().Be(230.0);
-        measurement.Value.Unit.Should().Be("V");
-        measurement.Notes.Should().Be("Spannungsmessung");
+        measurement.Value.Unit.Value.Should().Be("V");
+        measurement.Notes!.Value.Should().Be("Spannungsmessung");
     }
 
     [Fact]

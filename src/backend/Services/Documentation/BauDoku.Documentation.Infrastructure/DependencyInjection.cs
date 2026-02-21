@@ -1,5 +1,6 @@
 using BauDoku.BuildingBlocks.Application.Persistence;
 using BauDoku.Documentation.Application.Contracts;
+using BauDoku.Documentation.Domain;
 using BauDoku.Documentation.Infrastructure.Persistence;
 using BauDoku.Documentation.Infrastructure.Persistence.Repositories;
 using BauDoku.Documentation.Infrastructure.Storage;
@@ -15,7 +16,11 @@ public static class DependencyInjection
     public static IServiceCollection AddDocumentationInfrastructure(this IServiceCollection services, string connectionString, IConfiguration configuration)
     {
         services.AddDbContext<DocumentationDbContext>(options =>
-            options.UseNpgsql(connectionString, o => o.UseNetTopologySuite()));
+            options.UseNpgsql(connectionString, npgsql =>
+            {
+                npgsql.UseNetTopologySuite();
+                npgsql.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
+            }));
 
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<DocumentationDbContext>());
         services.AddScoped<IInstallationRepository, InstallationRepository>();

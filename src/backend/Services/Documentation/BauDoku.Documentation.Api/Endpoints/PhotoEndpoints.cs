@@ -1,10 +1,12 @@
 using BauDoku.BuildingBlocks.Application.Dispatcher;
+using BauDoku.BuildingBlocks.Application.Responses;
 using BauDoku.BuildingBlocks.Infrastructure.Auth;
-using BauDoku.Documentation.Application.Commands.AddPhoto;
-using BauDoku.Documentation.Application.Commands.RemovePhoto;
+using BauDoku.Documentation.Api.Mapping;
+using BauDoku.Documentation.Application.Commands;
 using BauDoku.Documentation.Application.Contracts;
+using BauDoku.Documentation.Application.Queries;
 using BauDoku.Documentation.Application.Queries.Dtos;
-using BauDoku.Documentation.Application.Queries.GetPhoto;
+using BauDoku.Documentation.Domain;
 
 namespace BauDoku.Documentation.Api.Endpoints;
 
@@ -18,44 +20,20 @@ public static class PhotoEndpoints
         group.MapPost("/installations/{installationId:guid}/photos", async (
             Guid installationId,
             IFormFile file,
+            [AsParameters] AddPhotoRequest request,
             IDispatcher dispatcher,
-            CancellationToken ct,
-            string? photoType,
-            string? caption,
-            string? description,
-            double? latitude,
-            double? longitude,
-            double? altitude,
-            double? horizontalAccuracy,
-            string? gpsSource,
-            DateTime? takenAt) =>
+            CancellationToken ct) =>
         {
             await using var stream = file.OpenReadStream();
-
-            var command = new AddPhotoCommand(
-                installationId,
-                file.FileName,
-                file.ContentType,
-                file.Length,
-                photoType ?? "other",
-                caption,
-                description,
-                latitude,
-                longitude,
-                altitude,
-                horizontalAccuracy,
-                gpsSource,
-                stream,
-                takenAt);
-
-            var photoId = await dispatcher.Send(command, ct);
-            return Results.Created($"/api/documentation/photos/{photoId}", new { id = photoId });
+            var command = request.ToCommand(installationId, file, stream);
+            var photoId = await dispatcher.Send<PhotoIdentifier>(command, ct);
+            return Results.Created($"/api/documentation/photos/{photoId.Value}", new CreatedResponse(photoId.Value));
         })
         .RequireAuthorization(AuthPolicies.RequireUser)
         .DisableAntiforgery()
         .WithName("AddPhoto")
         .WithSummary("Foto zu einer Installation hinzufuegen")
-        .Produces<object>(StatusCodes.Status201Created)
+        .Produces<CreatedResponse>(StatusCodes.Status201Created)
         .ProducesValidationProblem();
 
         group.MapGet("/installations/{installationId:guid}/photos", async (
@@ -63,7 +41,7 @@ public static class PhotoEndpoints
             IPhotoReadRepository photos,
             CancellationToken ct) =>
         {
-            var photoList = await photos.ListByInstallationIdAsync(installationId, ct);
+            var photoList = await photos.ListByInstallationIdAsync(InstallationIdentifier.From(installationId), ct);
             return Results.Ok(photoList);
         })
         .RequireAuthorization()
@@ -76,9 +54,9 @@ public static class PhotoEndpoints
             IDispatcher dispatcher,
             CancellationToken ct) =>
         {
-            var query = new GetPhotoQuery(photoId);
+            var query = new GetPhotoQuery(PhotoIdentifier.From(photoId));
             var result = await dispatcher.Query(query, ct);
-            return result is not null ? Results.Ok(result) : Results.NotFound();
+            return Results.Ok(result);
         })
         .RequireAuthorization()
         .WithName("GetPhoto")
@@ -92,7 +70,7 @@ public static class PhotoEndpoints
             IDispatcher dispatcher,
             CancellationToken ct) =>
         {
-            var command = new RemovePhotoCommand(installationId, photoId);
+            var command = new RemovePhotoCommand(InstallationIdentifier.From(installationId), PhotoIdentifier.From(photoId));
             await dispatcher.Send(command, ct);
             return Results.NoContent();
         })

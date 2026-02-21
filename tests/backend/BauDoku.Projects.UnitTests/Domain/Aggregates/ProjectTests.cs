@@ -1,8 +1,6 @@
 using AwesomeAssertions;
 using BauDoku.BuildingBlocks.Domain;
-using BauDoku.Projects.Domain.Aggregates;
-using BauDoku.Projects.Domain.Events;
-using BauDoku.Projects.Domain.ValueObjects;
+using BauDoku.Projects.Domain;
 using BauDoku.Projects.UnitTests.Builders;
 
 namespace BauDoku.Projects.UnitTests.Domain.Aggregates;
@@ -16,8 +14,8 @@ public sealed class ProjectTests
     {
         var id = ProjectIdentifier.New();
         var name = ProjectName.From("Neues Projekt");
-        var address = Address.Create("Hauptstraße 5", "München", "80331");
-        var client = ClientInfo.Create("Firma GmbH");
+        var address = Address.Create(Street.From("Hauptstraße 5"), City.From("München"), ZipCode.From("80331"));
+        var client = ClientInfo.Create(ClientName.From("Firma GmbH"));
 
         var project = Project.Create(id, name, address, client);
 

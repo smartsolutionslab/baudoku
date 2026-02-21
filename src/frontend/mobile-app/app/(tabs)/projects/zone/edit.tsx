@@ -4,14 +4,14 @@ import { useLocalSearchParams, useRouter, Stack } from "expo-router";
 import {
   useZonesByProject,
   useUpdateZone,
-} from "../../../../src/hooks";
-import { ZoneForm } from "../../../../src/components/projects";
-import { Colors, Spacing, FontSize } from "../../../../src/styles/tokens";
-import type { ZoneFormData } from "../../../../src/validation/schemas";
+} from "@/hooks";
+import { ZoneForm } from "@/components/projects";
+import { Colors, Spacing, FontSize } from "@/styles/tokens";
+import type { ZoneFormData } from "@/validation/schemas";
 import {
   projectId as toProjectId,
   zoneId as toZoneId,
-} from "../../../../src/types/branded";
+} from "@/types/branded";
 
 export default function ZoneEditScreen() {
   const { zoneId: rawZoneId, projectId: rawProjectId } = useLocalSearchParams<{
