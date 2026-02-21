@@ -26,6 +26,11 @@ resource "helm_release" "baudoku" {
   namespace = kubernetes_namespace.this.metadata[0].name
   timeout   = 600
 
+  # Don't wait for pods to become ready — they may fail readiness checks
+  # until external DNS is configured for the domain (Keycloak authority
+  # URL must be resolvable from within the cluster)
+  wait = false
+
   values = [
     templatefile("${path.module}/templates/values.yaml.tftpl", {
       environment            = var.environment
