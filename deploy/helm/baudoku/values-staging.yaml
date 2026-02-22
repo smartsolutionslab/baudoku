@@ -47,13 +47,13 @@ services:
 ingress:
   enabled: true
   className: nginx
-  host: staging.baudoku.example.com
+  host: staging.baudoku.apps.smartsolutionslab.tech
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod
   tls:
     - secretName: baudoku-staging-tls
       hosts:
-        - staging.baudoku.example.com
+        - staging.baudoku.apps.smartsolutionslab.tech
 
 dashboard:
   enabled: true
@@ -65,13 +65,13 @@ dashboard:
     secretKey: browser-token
   ingress:
     enabled: true
-    host: monitoring.staging.baudoku.example.com
+    host: monitoring.staging.baudoku.apps.smartsolutionslab.tech
     annotations:
       cert-manager.io/cluster-issuer: letsencrypt-prod
     tls:
       - secretName: baudoku-monitoring-staging-tls
         hosts:
-          - monitoring.staging.baudoku.example.com
+          - monitoring.staging.baudoku.apps.smartsolutionslab.tech
 
 otel:
   enabled: true

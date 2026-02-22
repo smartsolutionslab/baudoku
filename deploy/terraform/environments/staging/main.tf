@@ -30,7 +30,7 @@ module "environment" {
 
   environment            = "staging"
   image_tag              = var.image_tag
-  domain                 = "staging.baudoku.example.com"
+  domain                 = "staging.baudoku.apps.smartsolutionslab.tech"
   aspnetcore_environment = "Staging"
   api_replicas           = 1
   dashboard_enabled      = true

@@ -30,7 +30,7 @@ module "environment" {
 
   environment            = "production"
   image_tag              = var.image_tag
-  domain                 = "baudoku.example.com"
+  domain                 = "baudoku.apps.smartsolutionslab.tech"
   aspnetcore_environment = "Production"
   api_replicas           = 2
   dashboard_enabled      = true
