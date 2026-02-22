@@ -10,7 +10,9 @@ public sealed class DeleteProjectCommandHandler(IProjectRepository projects, IUn
 {
     public async Task Handle(DeleteProjectCommand command, CancellationToken cancellationToken = default)
     {
-        var project = await projects.GetByIdAsync(command.ProjectId, cancellationToken);
+        var projectId = command.ProjectId;
+
+        var project = await projects.GetByIdAsync(projectId, cancellationToken);
 
         project.Delete();
         projects.Remove(project);

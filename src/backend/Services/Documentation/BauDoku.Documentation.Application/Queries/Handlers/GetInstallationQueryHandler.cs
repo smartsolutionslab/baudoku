@@ -10,7 +10,9 @@ public sealed class GetInstallationQueryHandler(IInstallationRepository installa
 {
     public async Task<InstallationDto> Handle(GetInstallationQuery query, CancellationToken cancellationToken = default)
     {
-        var installation = await installations.GetByIdReadOnlyAsync(query.InstallationId, cancellationToken);
+        var installationId = query.InstallationId;
+
+        var installation = await installations.GetByIdReadOnlyAsync(installationId, cancellationToken);
 
         return installation.ToDto();
     }

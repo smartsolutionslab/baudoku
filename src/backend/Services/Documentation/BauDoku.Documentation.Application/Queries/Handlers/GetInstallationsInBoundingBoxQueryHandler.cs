@@ -11,9 +11,11 @@ public sealed class GetInstallationsInBoundingBoxQueryHandler(IInstallationReadR
 {
     public async Task<PagedResult<InstallationListItemDto>> Handle(GetInstallationsInBoundingBoxQuery query, CancellationToken cancellationToken = default)
     {
+        var (bounds, projectId, page, pageSize) = query;
+
         var pagination = new PaginationParams(
-            query.Page ?? PageNumber.Default,
-            query.PageSize ?? PageSize.Default);
-        return await installations.SearchInBoundingBoxAsync(query.Bounds, query.ProjectId, pagination, cancellationToken);
+            page ?? PageNumber.Default,
+            pageSize ?? PageSize.Default);
+        return await installations.SearchInBoundingBoxAsync(bounds, projectId, pagination, cancellationToken);
     }
 }

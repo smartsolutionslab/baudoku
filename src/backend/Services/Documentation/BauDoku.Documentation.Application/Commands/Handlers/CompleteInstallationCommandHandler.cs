@@ -10,7 +10,9 @@ public sealed class CompleteInstallationCommandHandler(IInstallationRepository i
 {
     public async Task Handle(CompleteInstallationCommand command, CancellationToken cancellationToken = default)
     {
-        var installation = await installations.GetByIdAsync(command.InstallationId, cancellationToken);
+        var installationId = command.InstallationId;
+
+        var installation = await installations.GetByIdAsync(installationId, cancellationToken);
 
         installation.MarkAsCompleted();
 

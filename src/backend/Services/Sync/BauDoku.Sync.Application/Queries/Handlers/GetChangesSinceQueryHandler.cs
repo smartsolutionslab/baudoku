@@ -9,11 +9,13 @@ public sealed class GetChangesSinceQueryHandler(IEntityVersionReadStore entityVe
 {
     public async Task<ChangeSetResult> Handle(GetChangesSinceQuery query, CancellationToken cancellationToken = default)
     {
-        var limit = query.Limit ?? 100;
+        var (deviceId, since, queryLimit) = query;
+
+        var limit = queryLimit ?? 100;
         var requestedLimit = limit + 1;
 
         var changes = await entityVersionReadStore.GetChangedSinceAsync(
-            query.Since, query.DeviceId, requestedLimit, cancellationToken);
+            since, deviceId, requestedLimit, cancellationToken);
 
         var hasMore = changes.Count > limit;
         if (hasMore)
