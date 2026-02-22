@@ -144,21 +144,24 @@ jobs:
 
           NS="baudoku-staging"
 
-          # Detect orphaned PVCs (backing volume deleted on DigitalOcean)
-          orphaned_pvcs=0
-          for pvc in $(kubectl get pvc -n "$NS" -o jsonpath='{.items[*].metadata.name}' 2>/dev/null); do
-            pv=$(kubectl get pvc "$pvc" -n "$NS" -o jsonpath='{.spec.volumeName}' 2>/dev/null)
-            if [[ -n "$pv" ]]; then
-              pv_status=$(kubectl get pv "$pv" -o jsonpath='{.status.phase}' 2>/dev/null)
-              if [[ -z "$pv_status" || "$pv_status" == "Failed" ]]; then
-                echo "PVC $pvc references missing/failed PV $pv"
-                orphaned_pvcs=$((orphaned_pvcs + 1))
-              fi
+          # Detect broken volumes via FailedAttachVolume events or missing cloud volumes
+          broken_volumes=0
+          failed_events=$(kubectl get events -n "$NS" --field-selector reason=FailedAttachVolume -o jsonpath='{.items[*].message}' 2>/dev/null)
+          if [[ -n "$failed_events" ]]; then
+            broken_volumes=$(echo "$failed_events" | tr ' ' '\n' | grep -c "does not exist" || true)
+            echo "Found $broken_volumes FailedAttachVolume events referencing deleted volumes"
+          fi
+          # Also check for pods stuck in ContainerCreating for >10 minutes (volume attach failure)
+          if [[ "$broken_volumes" -eq 0 ]]; then
+            stuck_pods=$(kubectl get pods -n "$NS" -o jsonpath='{range .items[?(@.status.phase!="Running")]}{.metadata.name}{" "}{.status.phase}{" "}{.status.startTime}{"\n"}{end}' 2>/dev/null | grep -c "ContainerCreating" || true)
+            if [[ "$stuck_pods" -gt 2 ]]; then
+              echo "Found $stuck_pods pods stuck in ContainerCreating — likely broken volumes"
+              broken_volumes=$stuck_pods
             fi
-          done
+          fi
 
-          if [[ "$orphaned_pvcs" -gt 0 ]]; then
-            echo "Found $orphaned_pvcs orphaned PVCs — wiping staging namespace for clean reinstall"
+          if [[ "$broken_volumes" -gt 0 ]]; then
+            echo "Broken volumes detected — wiping staging namespace for clean reinstall"
             # Uninstall all Helm releases first
             for release in $(helm list -n "$NS" -q 2>/dev/null); do
               echo "Uninstalling Helm release: $release"
