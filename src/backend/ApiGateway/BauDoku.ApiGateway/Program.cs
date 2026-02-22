@@ -42,6 +42,7 @@ app.UseCors();
 app.UseWebSockets();
 app.MapReverseProxy();
 app.MapAuthEndpoints();
+app.MapSystemEndpoints();
 app.MapDefaultEndpoints();
 
 app.Run();
