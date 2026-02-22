@@ -13,7 +13,7 @@ var redis = builder.AddRedis("redis");
 var rabbitmq = builder.AddRabbitMQ("rabbitmq")
     .WithManagementPlugin();
 
-var keycloak = builder.AddContainer("keycloak", "quay.io/keycloak/keycloak", "26.2")
+var keycloak = builder.AddContainer("keycloak", "quay.io/keycloak/keycloak", "26.5")
     .WithHttpEndpoint(port: 8080, targetPort: 8080)
     .WithEnvironment("KC_BOOTSTRAP_ADMIN_USERNAME", "admin")
     .WithEnvironment("KC_BOOTSTRAP_ADMIN_PASSWORD", "admin")

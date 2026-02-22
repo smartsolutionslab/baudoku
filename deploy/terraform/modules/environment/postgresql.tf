@@ -11,7 +11,7 @@ resource "helm_release" "postgresql" {
   name       = "postgresql-${var.environment}"
   repository = "oci://registry-1.docker.io/bitnamicharts"
   chart      = "postgresql"
-  version    = "16.4.3"
+  version    = "18.4.0"
   namespace  = kubernetes_namespace.this.metadata[0].name
   timeout    = 600
 
