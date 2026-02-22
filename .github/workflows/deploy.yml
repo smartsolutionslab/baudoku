@@ -141,22 +141,58 @@ jobs:
         continue-on-error: true
         run: |
           doctl kubernetes cluster kubeconfig save baudoku-k8s 2>/dev/null || exit 0
-          # Clean up failed PostGIS Helm release from previous attempts (now a StatefulSet)
-          postgis_status=$(helm status "postgis-staging" -n "baudoku-staging" -o json 2>/dev/null | jq -r '.info.status // empty')
-          if [[ -n "$postgis_status" ]]; then
-            echo "Legacy PostGIS Helm release found ($postgis_status) — removing"
-            helm uninstall "postgis-staging" -n "baudoku-staging" --no-hooks 2>/dev/null || true
-            terraform state rm "module.environment.helm_release.postgis" 2>/dev/null || true
-          fi
-          for info in "postgresql-staging:baudoku-staging:environment.helm_release.postgresql" "rabbitmq-staging:baudoku-staging:environment.helm_release.rabbitmq" "redis-staging:baudoku-staging:environment.helm_release.redis" "keycloak-staging:baudoku-staging:environment.helm_release.keycloak" "baudoku:baudoku-staging:environment.helm_release.baudoku"; do
-            IFS=: read -r name ns tf_name <<< "$info"
-            status=$(helm status "$name" -n "$ns" -o json 2>/dev/null | jq -r '.info.status // empty')
-            if [[ "$status" == pending-* || "$status" == "failed" ]]; then
-              echo "Release $name in $ns is $status — removing"
-              helm uninstall "$name" -n "$ns" --no-hooks 2>/dev/null || true
-              terraform state rm "module.${tf_name}" 2>/dev/null || true
+
+          NS="baudoku-staging"
+
+          # Detect orphaned PVCs (backing volume deleted on DigitalOcean)
+          orphaned_pvcs=0
+          for pvc in $(kubectl get pvc -n "$NS" -o jsonpath='{.items[*].metadata.name}' 2>/dev/null); do
+            pv=$(kubectl get pvc "$pvc" -n "$NS" -o jsonpath='{.spec.volumeName}' 2>/dev/null)
+            if [[ -n "$pv" ]]; then
+              pv_status=$(kubectl get pv "$pv" -o jsonpath='{.status.phase}' 2>/dev/null)
+              if [[ -z "$pv_status" || "$pv_status" == "Failed" ]]; then
+                echo "PVC $pvc references missing/failed PV $pv"
+                orphaned_pvcs=$((orphaned_pvcs + 1))
+              fi
             fi
           done
+
+          if [[ "$orphaned_pvcs" -gt 0 ]]; then
+            echo "Found $orphaned_pvcs orphaned PVCs — wiping staging namespace for clean reinstall"
+            # Uninstall all Helm releases first
+            for release in $(helm list -n "$NS" -q 2>/dev/null); do
+              echo "Uninstalling Helm release: $release"
+              helm uninstall "$release" -n "$NS" --no-hooks 2>/dev/null || true
+            done
+            # Delete all PVCs
+            kubectl delete pvc --all -n "$NS" 2>/dev/null || true
+            # Delete all StatefulSets (PostGIS etc.)
+            kubectl delete statefulset --all -n "$NS" 2>/dev/null || true
+            # Remove all environment resources from Terraform state
+            terraform state list 2>/dev/null | grep "^module\.environment\." | while read -r resource; do
+              echo "Removing from state: $resource"
+              terraform state rm "$resource" 2>/dev/null || true
+            done
+            echo "Staging namespace cleaned — Terraform will recreate everything"
+          else
+            # Normal cleanup: only fix stuck Helm releases
+            # Clean up failed PostGIS Helm release from previous attempts (now a StatefulSet)
+            postgis_status=$(helm status "postgis-staging" -n "$NS" -o json 2>/dev/null | jq -r '.info.status // empty')
+            if [[ -n "$postgis_status" ]]; then
+              echo "Legacy PostGIS Helm release found ($postgis_status) — removing"
+              helm uninstall "postgis-staging" -n "$NS" --no-hooks 2>/dev/null || true
+              terraform state rm "module.environment.helm_release.postgis" 2>/dev/null || true
+            fi
+            for info in "postgresql-staging:$NS:environment.helm_release.postgresql" "rabbitmq-staging:$NS:environment.helm_release.rabbitmq" "redis-staging:$NS:environment.helm_release.redis" "keycloak-staging:$NS:environment.helm_release.keycloak" "baudoku:$NS:environment.helm_release.baudoku"; do
+              IFS=: read -r name ns tf_name <<< "$info"
+              status=$(helm status "$name" -n "$ns" -o json 2>/dev/null | jq -r '.info.status // empty')
+              if [[ "$status" == pending-* || "$status" == "failed" ]]; then
+                echo "Release $name in $ns is $status — removing"
+                helm uninstall "$name" -n "$ns" --no-hooks 2>/dev/null || true
+                terraform state rm "module.${tf_name}" 2>/dev/null || true
+              fi
+            done
+          fi
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.DO_SPACES_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SPACES_SECRET_KEY }}
