@@ -9,7 +9,9 @@ public sealed class GetProjectQueryHandler(IProjectRepository projects) : IQuery
 {
     public async Task<ProjectDto> Handle(GetProjectQuery query, CancellationToken cancellationToken = default)
     {
-        var project = await projects.GetByIdReadOnlyAsync(query.ProjectId, cancellationToken);
+        var projectId = query.ProjectId;
+
+        var project = await projects.GetByIdReadOnlyAsync(projectId, cancellationToken);
 
         return project.ToDto();
     }

@@ -9,7 +9,9 @@ public sealed class ListProjectsQueryHandler(IProjectReadRepository projects) : 
 {
     public async Task<PagedResult<ProjectListItemDto>> Handle(ListProjectsQuery query, CancellationToken cancellationToken = default)
     {
-        var pagination = new PaginationParams(query.Page, query.PageSize);
-        return await projects.ListAsync(query.Search?.Value, pagination, cancellationToken);
+        var (search, page, pageSize) = query;
+
+        var pagination = new PaginationParams(page, pageSize);
+        return await projects.ListAsync(search?.Value, pagination, cancellationToken);
     }
 }

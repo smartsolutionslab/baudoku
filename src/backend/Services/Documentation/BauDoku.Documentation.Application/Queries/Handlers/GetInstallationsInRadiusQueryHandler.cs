@@ -11,9 +11,11 @@ public sealed class GetInstallationsInRadiusQueryHandler(IInstallationReadReposi
 {
     public async Task<PagedResult<NearbyInstallationDto>> Handle(GetInstallationsInRadiusQuery query, CancellationToken cancellationToken = default)
     {
+        var (radius, projectId, page, pageSize) = query;
+
         var pagination = new PaginationParams(
-            query.Page ?? PageNumber.Default,
-            query.PageSize ?? PageSize.Default);
-        return await installations.SearchInRadiusAsync(query.Radius, query.ProjectId, pagination, cancellationToken);
+            page ?? PageNumber.Default,
+            pageSize ?? PageSize.Default);
+        return await installations.SearchInRadiusAsync(radius, projectId, pagination, cancellationToken);
     }
 }

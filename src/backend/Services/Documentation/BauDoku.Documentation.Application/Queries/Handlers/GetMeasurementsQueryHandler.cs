@@ -10,7 +10,9 @@ public sealed class GetMeasurementsQueryHandler(IInstallationRepository installa
 {
     public async Task<IReadOnlyList<MeasurementDto>> Handle(GetMeasurementsQuery query, CancellationToken cancellationToken = default)
     {
-        var installation = await installations.GetByIdAsync(query.InstallationId, cancellationToken);
+        var installationId = query.InstallationId;
+
+        var installation = await installations.GetByIdAsync(installationId, cancellationToken);
 
         return installation.Measurements.Select(m => m.ToDto(installation.Id.Value)).ToList();
     }
