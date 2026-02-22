@@ -11,7 +11,7 @@ resource "helm_release" "redis" {
   name       = "redis-${var.environment}"
   repository = "oci://registry-1.docker.io/bitnamicharts"
   chart      = "redis"
-  version    = "20.6.2"
+  version    = "25.0.0"
   namespace  = kubernetes_namespace.this.metadata[0].name
   timeout    = 600
 

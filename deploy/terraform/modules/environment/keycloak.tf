@@ -6,7 +6,7 @@ resource "helm_release" "keycloak" {
   name       = "keycloak-${var.environment}"
   repository = "oci://registry-1.docker.io/bitnamicharts"
   chart      = "keycloak"
-  version    = "24.2.3"
+  version    = "25.2.0"
   namespace  = kubernetes_namespace.this.metadata[0].name
   timeout    = 900
 

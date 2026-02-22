@@ -93,7 +93,7 @@ dashboard:
   enabled: false
   image:
     repository: mcr.microsoft.com/dotnet/aspire-dashboard
-    tag: "9.2"
+    tag: "13.0"
     pullPolicy: IfNotPresent
   auth:
     browserToken: false
