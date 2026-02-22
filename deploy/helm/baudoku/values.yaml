@@ -86,7 +86,7 @@ ingress:
   enabled: true
   className: nginx
   annotations: {}
-  host: baudoku.example.com
+  host: baudoku.apps.smartsolutionslab.tech
   tls: []
 
 dashboard:
@@ -101,7 +101,7 @@ dashboard:
     secretKey: browser-token
   ingress:
     enabled: false
-    host: monitoring.baudoku.example.com
+    host: monitoring.baudoku.apps.smartsolutionslab.tech
     annotations: {}
     tls: []
   resources:
