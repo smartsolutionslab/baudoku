@@ -177,6 +177,28 @@ jobs:
           TF_VAR_ghcr_token: ${{ secrets.GITHUB_TOKEN }}
           TF_VAR_keycloak_admin_password: ${{ secrets.KEYCLOAK_ADMIN_PASSWORD }}
 
+      - name: Debug failed pods
+        if: failure()
+        continue-on-error: true
+        run: |
+          doctl kubernetes cluster kubeconfig save baudoku-k8s 2>/dev/null || exit 0
+          echo "=== Pod status ==="
+          kubectl get pods -n baudoku-staging -o wide
+          echo ""
+          echo "=== Keycloak pod describe ==="
+          kubectl describe pods -n baudoku-staging -l app.kubernetes.io/name=keycloak 2>/dev/null | tail -60
+          echo ""
+          echo "=== Keycloak pod logs ==="
+          kubectl logs -n baudoku-staging -l app.kubernetes.io/name=keycloak --tail=80 2>/dev/null || true
+          echo ""
+          echo "=== Keycloak PostgreSQL pod logs ==="
+          kubectl logs -n baudoku-staging -l app.kubernetes.io/name=postgresql --tail=40 2>/dev/null || true
+          echo ""
+          echo "=== Events ==="
+          kubectl get events -n baudoku-staging --sort-by='.lastTimestamp' | tail -30
+        env:
+          DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
   deploy-production:
     name: Deploy to Production
     runs-on: ubuntu-latest
