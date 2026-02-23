@@ -18,3 +18,8 @@ output "kubeconfig" {
   value       = digitalocean_kubernetes_cluster.this.kube_config[0]
   sensitive   = true
 }
+
+output "ingress_ip" {
+  description = "External IP of the nginx-ingress LoadBalancer"
+  value       = data.kubernetes_service_v1.nginx_ingress.status[0].load_balancer[0].ingress[0].ip
+}
