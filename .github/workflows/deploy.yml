@@ -62,13 +62,35 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.DO_SPACES_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SPACES_SECRET_KEY }}
 
-      - name: Clean up stuck Helm releases
+      - name: Detect cluster state
+        id: cluster_check
         continue-on-error: true
         run: |
-          # Get cluster kubeconfig (may fail if cluster doesn't exist yet)
-          doctl kubernetes cluster kubeconfig save baudoku-k8s 2>/dev/null || exit 0
+          if doctl kubernetes cluster get baudoku-k8s --format ID --no-header 2>/dev/null | grep -q .; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+        env:
+          DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
-          # Check each managed Helm release for stuck pending-* state
+      - name: Clean up stale Terraform state (cluster deleted)
+        if: steps.cluster_check.outputs.exists == 'false'
+        run: |
+          echo "DOKS cluster does not exist — removing all cluster module state for clean recreation"
+          terraform state list 2>/dev/null | grep "^module\.cluster\." | while read -r resource; do
+            echo "Removing: $resource"
+            terraform state rm "$resource" 2>/dev/null || true
+          done
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.DO_SPACES_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SPACES_SECRET_KEY }}
+
+      - name: Clean up stuck Helm releases (cluster exists)
+        if: steps.cluster_check.outputs.exists == 'true'
+        continue-on-error: true
+        run: |
+          doctl kubernetes cluster kubeconfig save baudoku-k8s 2>/dev/null || exit 0
           for info in "ingress-nginx:ingress-nginx:nginx_ingress" "cert-manager:cert-manager:cert_manager" "letsencrypt-issuer:cert-manager:cluster_issuer"; do
             IFS=: read -r name ns tf_name <<< "$info"
             status=$(helm status "$name" -n "$ns" -o json 2>/dev/null | jq -r '.info.status // empty')
@@ -78,6 +100,15 @@ jobs:
               terraform state rm "module.cluster.helm_release.${tf_name}" 2>/dev/null || true
             fi
           done
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.DO_SPACES_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SPACES_SECRET_KEY }}
+          DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          TF_VAR_acme_email: ${{ secrets.ACME_EMAIL }}
+
+      - name: Terraform Apply (cluster only)
+        if: steps.cluster_check.outputs.exists == 'false'
+        run: terraform apply -auto-approve -target=module.cluster.digitalocean_kubernetes_cluster.this -target=module.cluster.time_sleep.wait_for_cluster
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.DO_SPACES_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SPACES_SECRET_KEY }}
