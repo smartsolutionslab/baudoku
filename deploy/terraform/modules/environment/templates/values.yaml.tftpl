@@ -89,6 +89,13 @@ services:
 
   web:
     replicaCount: ${api_replicas}
+    env:
+      - name: KEYCLOAK_URL
+        value: "https://auth.${domain}"
+      - name: KEYCLOAK_REALM
+        value: "baudoku"
+      - name: KEYCLOAK_CLIENT_ID
+        value: "baudoku-web"
 
 ingress:
   enabled: true
