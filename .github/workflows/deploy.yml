@@ -224,6 +224,12 @@ jobs:
                 echo "Release $name in $ns is $status — removing"
                 helm uninstall "$name" -n "$ns" --no-hooks 2>/dev/null || true
                 terraform state rm "module.${tf_name}" 2>/dev/null || true
+                # Delete Keycloak PostgreSQL PVC to avoid password mismatch on reinstall
+                # (PVC persists old password, but Helm generates a new one after uninstall)
+                if [[ "$name" == keycloak-* ]]; then
+                  echo "Deleting Keycloak PostgreSQL PVCs to ensure clean reinstall"
+                  kubectl delete pvc -n "$ns" -l app.kubernetes.io/instance="$name",app.kubernetes.io/name=postgresql 2>/dev/null || true
+                fi
               fi
             done
           fi

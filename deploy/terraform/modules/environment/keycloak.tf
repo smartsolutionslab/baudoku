@@ -112,6 +112,12 @@ resource "helm_release" "keycloak" {
     value = "true"
   }
 
+  # Bitnami removed keycloak-config-cli from docker.io/bitnami — use legacy registry
+  set {
+    name  = "keycloakConfigCli.image.repository"
+    value = "bitnamilegacy/keycloak-config-cli"
+  }
+
   set {
     name  = "keycloakConfigCli.existingConfigmap"
     value = kubernetes_config_map.keycloak_realm.metadata[0].name
