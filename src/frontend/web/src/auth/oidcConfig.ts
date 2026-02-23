@@ -1,8 +1,9 @@
 import type { UserManagerSettings } from "oidc-client-ts";
 
-const keycloakUrl = import.meta.env.VITE_KEYCLOAK_URL || "http://localhost:8080";
-const realm = import.meta.env.VITE_KEYCLOAK_REALM || "baudoku";
-const clientId = import.meta.env.VITE_KEYCLOAK_CLIENT_ID || "baudoku-web";
+const runtimeConfig = (window as any).__BAUDOKU_CONFIG__ ?? {};
+const keycloakUrl = runtimeConfig.KEYCLOAK_URL || import.meta.env.VITE_KEYCLOAK_URL || "http://localhost:8080";
+const realm = runtimeConfig.KEYCLOAK_REALM || import.meta.env.VITE_KEYCLOAK_REALM || "baudoku";
+const clientId = runtimeConfig.KEYCLOAK_CLIENT_ID || import.meta.env.VITE_KEYCLOAK_CLIENT_ID || "baudoku-web";
 
 export const oidcConfig: UserManagerSettings = {
   authority: `${keycloakUrl}/realms/${realm}`,
