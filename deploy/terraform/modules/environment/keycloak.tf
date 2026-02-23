@@ -2,6 +2,19 @@
 # Keycloak (Bitnami Helm chart)
 # -----------------------------------------------------------------------------
 
+resource "kubernetes_config_map" "keycloak_realm" {
+  metadata {
+    name      = "keycloak-realm-config"
+    namespace = kubernetes_namespace.this.metadata[0].name
+  }
+
+  data = {
+    "baudoku.json" = templatefile("${path.module}/templates/keycloak-realm.json.tftpl", {
+      domain = var.domain
+    })
+  }
+}
+
 resource "helm_release" "keycloak" {
   name       = "keycloak-${var.environment}"
   repository = "oci://registry-1.docker.io/bitnamicharts"
@@ -92,4 +105,17 @@ resource "helm_release" "keycloak" {
     name  = "resources.limits.memory"
     value = "1Gi"
   }
+
+  # Realm configuration via keycloak-config-cli (creates/updates realm on deploy)
+  set {
+    name  = "keycloakConfigCli.enabled"
+    value = "true"
+  }
+
+  set {
+    name  = "keycloakConfigCli.existingConfigmap"
+    value = kubernetes_config_map.keycloak_realm.metadata[0].name
+  }
+
+  depends_on = [kubernetes_config_map.keycloak_realm]
 }
