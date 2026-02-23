@@ -28,6 +28,27 @@ module "cluster" {
   acme_email   = var.acme_email
 }
 
+# -----------------------------------------------------------------------------
+# DNS — apps.smartsolutionslab.tech zone managed in DigitalOcean
+# (NS delegation configured at Strato)
+# -----------------------------------------------------------------------------
+
+resource "digitalocean_domain" "apps" {
+  name       = "apps.smartsolutionslab.tech"
+  ip_address = module.cluster.ingress_ip
+}
+
+resource "digitalocean_record" "wildcard" {
+  domain = digitalocean_domain.apps.id
+  type   = "A"
+  name   = "*"
+  value  = module.cluster.ingress_ip
+}
+
+# -----------------------------------------------------------------------------
+# Outputs
+# -----------------------------------------------------------------------------
+
 output "cluster_id" {
   value = module.cluster.cluster_id
 }
@@ -38,4 +59,8 @@ output "cluster_name" {
 
 output "endpoint" {
   value = module.cluster.endpoint
+}
+
+output "ingress_ip" {
+  value = module.cluster.ingress_ip
 }

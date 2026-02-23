@@ -65,6 +65,15 @@ resource "helm_release" "nginx_ingress" {
   depends_on = [time_sleep.wait_for_cluster]
 }
 
+# Read the LoadBalancer IP assigned to the nginx-ingress controller
+data "kubernetes_service_v1" "nginx_ingress" {
+  metadata {
+    name      = "ingress-nginx-controller"
+    namespace = "ingress-nginx"
+  }
+  depends_on = [helm_release.nginx_ingress]
+}
+
 # -----------------------------------------------------------------------------
 # cert-manager
 # -----------------------------------------------------------------------------

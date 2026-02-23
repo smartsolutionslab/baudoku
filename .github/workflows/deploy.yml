@@ -77,8 +77,8 @@ jobs:
       - name: Clean up stale Terraform state (cluster deleted)
         if: steps.cluster_check.outputs.exists == 'false'
         run: |
-          echo "DOKS cluster does not exist — removing all cluster module state for clean recreation"
-          terraform state list 2>/dev/null | grep "^module\.cluster\." | while read -r resource; do
+          echo "DOKS cluster does not exist — removing all cluster module and DNS state for clean recreation"
+          terraform state list 2>/dev/null | grep -E "^(module\.cluster\.|digitalocean_domain\.|digitalocean_record\.)" | while read -r resource; do
             echo "Removing: $resource"
             terraform state rm "$resource" 2>/dev/null || true
           done
