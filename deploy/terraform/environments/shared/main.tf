@@ -33,6 +33,11 @@ module "cluster" {
 # (NS delegation configured at Strato)
 # -----------------------------------------------------------------------------
 
+import {
+  to = digitalocean_domain.apps
+  id = "apps.smartsolutionslab.tech"
+}
+
 resource "digitalocean_domain" "apps" {
   name       = "apps.smartsolutionslab.tech"
   ip_address = module.cluster.ingress_ip
