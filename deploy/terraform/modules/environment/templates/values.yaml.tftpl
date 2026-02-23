@@ -86,6 +86,8 @@ services:
         value: "${keycloak_authority}"
       - name: ReverseProxy__Clusters__web-ui-cluster__Destinations__web-ui__Address
         value: "http://web"
+      - name: Cors__AllowedOrigins__0
+        value: "https://${domain}"
 
   web:
     replicaCount: ${api_replicas}
