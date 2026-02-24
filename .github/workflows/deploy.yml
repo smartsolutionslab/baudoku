@@ -254,38 +254,39 @@ jobs:
           TF_VAR_keycloak_admin_password: ${{ secrets.KEYCLOAK_ADMIN_PASSWORD }}
 
       - name: Show staging info
-        if: success()
+        if: always()
         continue-on-error: true
         run: |
           doctl kubernetes cluster kubeconfig save baudoku-k8s 2>/dev/null || exit 0
-          echo "=== Pod status ==="
-          kubectl get pods -n baudoku-staging -o wide
-          echo ""
-          echo "=== Aspire Dashboard Token ==="
-          kubectl get secret baudoku-dashboard-auth -n baudoku-staging -o jsonpath='{.data.browser-token}' | base64 -d
-          echo ""
-        env:
-          DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          NS="baudoku-staging"
 
-      - name: Debug failed pods
-        if: failure()
-        continue-on-error: true
-        run: |
-          doctl kubernetes cluster kubeconfig save baudoku-k8s 2>/dev/null || exit 0
           echo "=== Pod status ==="
-          kubectl get pods -n baudoku-staging -o wide
+          kubectl get pods -n "$NS" -o wide
           echo ""
-          echo "=== Keycloak pod describe ==="
-          kubectl describe pods -n baudoku-staging -l app.kubernetes.io/name=keycloak 2>/dev/null | tail -60
+
+          echo "=== Aspire Dashboard Token ==="
+          kubectl get secret baudoku-dashboard-auth -n "$NS" -o jsonpath='{.data.browser-token}' | base64 -d
           echo ""
-          echo "=== Keycloak pod logs ==="
-          kubectl logs -n baudoku-staging -l app.kubernetes.io/name=keycloak --tail=80 2>/dev/null || true
+
           echo ""
-          echo "=== Keycloak PostgreSQL pod logs ==="
-          kubectl logs -n baudoku-staging -l app.kubernetes.io/name=postgresql --tail=40 2>/dev/null || true
-          echo ""
-          echo "=== Events ==="
-          kubectl get events -n baudoku-staging --sort-by='.lastTimestamp' | tail -30
+          echo "=== Service logs (last 40 lines each) ==="
+          for svc in api-gateway projects-api documentation-api sync-api; do
+            echo "--- $svc ---"
+            kubectl logs -n "$NS" -l app.kubernetes.io/name="$svc" --tail=40 --all-containers 2>/dev/null || echo "(no logs)"
+            echo ""
+          done
+
+          echo "=== Crashed/restarting pod details ==="
+          for pod in $(kubectl get pods -n "$NS" -o jsonpath='{range .items[?(@.status.containerStatuses[0].restartCount > 0)]}{.metadata.name}{"\n"}{end}' 2>/dev/null); do
+            echo "--- describe $pod ---"
+            kubectl describe pod "$pod" -n "$NS" 2>/dev/null | tail -30
+            echo "--- previous logs $pod ---"
+            kubectl logs "$pod" -n "$NS" --previous --tail=60 2>/dev/null || echo "(no previous logs)"
+            echo ""
+          done
+
+          echo "=== Recent events ==="
+          kubectl get events -n "$NS" --sort-by='.lastTimestamp' | tail -30
         env:
           DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
