@@ -253,6 +253,20 @@ jobs:
           TF_VAR_ghcr_token: ${{ secrets.GITHUB_TOKEN }}
           TF_VAR_keycloak_admin_password: ${{ secrets.KEYCLOAK_ADMIN_PASSWORD }}
 
+      - name: Show staging info
+        if: success()
+        continue-on-error: true
+        run: |
+          doctl kubernetes cluster kubeconfig save baudoku-k8s 2>/dev/null || exit 0
+          echo "=== Pod status ==="
+          kubectl get pods -n baudoku-staging -o wide
+          echo ""
+          echo "=== Aspire Dashboard Token ==="
+          kubectl get secret baudoku-dashboard-auth -n baudoku-staging -o jsonpath='{.data.browser-token}' | base64 -d
+          echo ""
+        env:
+          DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
       - name: Debug failed pods
         if: failure()
         continue-on-error: true
