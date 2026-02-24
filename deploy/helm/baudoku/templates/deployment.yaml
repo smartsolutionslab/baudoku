@@ -45,7 +45,7 @@ spec:
             {{- toYaml $svc.resources | nindent 12 }}
           livenessProbe:
             httpGet:
-              path: /health
+              path: /alive
               port: {{ $svc.port }}
             initialDelaySeconds: 15
             periodSeconds: 20
