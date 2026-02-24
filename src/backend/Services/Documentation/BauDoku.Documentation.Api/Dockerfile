@@ -34,6 +34,7 @@ RUN dotnet publish Services/Documentation/BauDoku.Documentation.Api/BauDoku.Docu
 FROM $RUNTIME_IMAGE AS final
 WORKDIR /app
 EXPOSE 8080
+RUN mkdir -p /app/uploads/photos /app/uploads/chunks && chown -R $APP_UID:$APP_UID /app/uploads
 USER $APP_UID
 COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "BauDoku.Documentation.Api.dll"]
