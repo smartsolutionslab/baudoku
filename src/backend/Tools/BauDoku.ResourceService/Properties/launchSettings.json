@@ -1,0 +1,13 @@
+{
+  "profiles": {
+    "BauDoku.ResourceService": {
+      "commandName": "Project",
+      "launchBrowser": false,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "KUBERNETES_NAMESPACE": "baudoku-staging"
+      },
+      "applicationUrl": "http://localhost:5001"
+    }
+  }
+}
