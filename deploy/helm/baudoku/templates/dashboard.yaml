@@ -146,12 +146,14 @@ spec:
               cpu: 200m
               memory: 128Mi
           livenessProbe:
-            grpc:
+            httpGet:
+              path: /alive
               port: 5001
             initialDelaySeconds: 10
             periodSeconds: 30
           readinessProbe:
-            grpc:
+            httpGet:
+              path: /health
               port: 5001
             initialDelaySeconds: 5
             periodSeconds: 10
