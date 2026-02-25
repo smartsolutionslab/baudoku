@@ -384,6 +384,8 @@ jobs:
             dockerfile: src/backend/ApiGateway/BauDoku.ApiGateway/Dockerfile
           - name: web
             dockerfile: src/frontend/web/Dockerfile
+          - name: resource-service
+            dockerfile: src/backend/Tools/BauDoku.ResourceService/Dockerfile
     steps:
       - uses: actions/checkout@v4
 
