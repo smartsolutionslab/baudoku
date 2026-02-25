@@ -1,8 +1,15 @@
 using BauDoku.ResourceService.Services;
 using BauDoku.ServiceDefaults;
 using k8s;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ConfigureEndpointDefaults(listenOptions =>
+        listenOptions.Protocols = HttpProtocols.Http1AndHttp2);
+});
 
 builder.AddServiceDefaults();
 builder.Services.AddGrpc();
