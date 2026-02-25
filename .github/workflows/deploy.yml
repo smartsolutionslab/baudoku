@@ -62,13 +62,35 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.DO_SPACES_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SPACES_SECRET_KEY }}
 
-      - name: Clean up stuck Helm releases
+      - name: Detect cluster state
+        id: cluster_check
         continue-on-error: true
         run: |
-          # Get cluster kubeconfig (may fail if cluster doesn't exist yet)
-          doctl kubernetes cluster kubeconfig save baudoku-k8s 2>/dev/null || exit 0
+          if doctl kubernetes cluster get baudoku-k8s --format ID --no-header 2>/dev/null | grep -q .; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+        env:
+          DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
-          # Check each managed Helm release for stuck pending-* state
+      - name: Clean up stale Terraform state (cluster deleted)
+        if: steps.cluster_check.outputs.exists == 'false'
+        run: |
+          echo "DOKS cluster does not exist — removing all cluster module and DNS state for clean recreation"
+          terraform state list 2>/dev/null | grep -E "^(module\.cluster\.|digitalocean_domain\.|digitalocean_record\.)" | while read -r resource; do
+            echo "Removing: $resource"
+            terraform state rm "$resource" 2>/dev/null || true
+          done
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.DO_SPACES_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SPACES_SECRET_KEY }}
+
+      - name: Clean up stuck Helm releases (cluster exists)
+        if: steps.cluster_check.outputs.exists == 'true'
+        continue-on-error: true
+        run: |
+          doctl kubernetes cluster kubeconfig save baudoku-k8s 2>/dev/null || exit 0
           for info in "ingress-nginx:ingress-nginx:nginx_ingress" "cert-manager:cert-manager:cert_manager" "letsencrypt-issuer:cert-manager:cluster_issuer"; do
             IFS=: read -r name ns tf_name <<< "$info"
             status=$(helm status "$name" -n "$ns" -o json 2>/dev/null | jq -r '.info.status // empty')
@@ -78,6 +100,15 @@ jobs:
               terraform state rm "module.cluster.helm_release.${tf_name}" 2>/dev/null || true
             fi
           done
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.DO_SPACES_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SPACES_SECRET_KEY }}
+          DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          TF_VAR_acme_email: ${{ secrets.ACME_EMAIL }}
+
+      - name: Terraform Apply (cluster only)
+        if: steps.cluster_check.outputs.exists == 'false'
+        run: terraform apply -auto-approve -target=module.cluster.digitalocean_kubernetes_cluster.this -target=module.cluster.time_sleep.wait_for_cluster
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.DO_SPACES_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SPACES_SECRET_KEY }}
@@ -141,22 +172,67 @@ jobs:
         continue-on-error: true
         run: |
           doctl kubernetes cluster kubeconfig save baudoku-k8s 2>/dev/null || exit 0
-          # Clean up failed PostGIS Helm release from previous attempts (now a StatefulSet)
-          postgis_status=$(helm status "postgis-staging" -n "baudoku-staging" -o json 2>/dev/null | jq -r '.info.status // empty')
-          if [[ -n "$postgis_status" ]]; then
-            echo "Legacy PostGIS Helm release found ($postgis_status) — removing"
-            helm uninstall "postgis-staging" -n "baudoku-staging" --no-hooks 2>/dev/null || true
-            terraform state rm "module.environment.helm_release.postgis" 2>/dev/null || true
+
+          NS="baudoku-staging"
+
+          # Detect broken volumes via FailedAttachVolume events or missing cloud volumes
+          broken_volumes=0
+          failed_events=$(kubectl get events -n "$NS" --field-selector reason=FailedAttachVolume -o jsonpath='{.items[*].message}' 2>/dev/null)
+          if [[ -n "$failed_events" ]]; then
+            broken_volumes=$(echo "$failed_events" | tr ' ' '\n' | grep -c "does not exist" || true)
+            echo "Found $broken_volumes FailedAttachVolume events referencing deleted volumes"
           fi
-          for info in "postgresql-staging:baudoku-staging:environment.helm_release.postgresql" "rabbitmq-staging:baudoku-staging:environment.helm_release.rabbitmq" "redis-staging:baudoku-staging:environment.helm_release.redis" "keycloak-staging:baudoku-staging:environment.helm_release.keycloak" "baudoku:baudoku-staging:environment.helm_release.baudoku"; do
-            IFS=: read -r name ns tf_name <<< "$info"
-            status=$(helm status "$name" -n "$ns" -o json 2>/dev/null | jq -r '.info.status // empty')
-            if [[ "$status" == pending-* || "$status" == "failed" ]]; then
-              echo "Release $name in $ns is $status — removing"
-              helm uninstall "$name" -n "$ns" --no-hooks 2>/dev/null || true
-              terraform state rm "module.${tf_name}" 2>/dev/null || true
+          # Also check for pods stuck in ContainerCreating for >10 minutes (volume attach failure)
+          if [[ "$broken_volumes" -eq 0 ]]; then
+            stuck_pods=$(kubectl get pods -n "$NS" -o jsonpath='{range .items[?(@.status.phase!="Running")]}{.metadata.name}{" "}{.status.phase}{" "}{.status.startTime}{"\n"}{end}' 2>/dev/null | grep -c "ContainerCreating" || true)
+            if [[ "$stuck_pods" -gt 2 ]]; then
+              echo "Found $stuck_pods pods stuck in ContainerCreating — likely broken volumes"
+              broken_volumes=$stuck_pods
             fi
-          done
+          fi
+
+          if [[ "$broken_volumes" -gt 0 ]]; then
+            echo "Broken volumes detected — wiping staging namespace for clean reinstall"
+            # Uninstall all Helm releases first
+            for release in $(helm list -n "$NS" -q 2>/dev/null); do
+              echo "Uninstalling Helm release: $release"
+              helm uninstall "$release" -n "$NS" --no-hooks 2>/dev/null || true
+            done
+            # Delete all PVCs
+            kubectl delete pvc --all -n "$NS" 2>/dev/null || true
+            # Delete all StatefulSets (PostGIS etc.)
+            kubectl delete statefulset --all -n "$NS" 2>/dev/null || true
+            # Remove all environment resources from Terraform state
+            terraform state list 2>/dev/null | grep "^module\.environment\." | while read -r resource; do
+              echo "Removing from state: $resource"
+              terraform state rm "$resource" 2>/dev/null || true
+            done
+            echo "Staging namespace cleaned — Terraform will recreate everything"
+          else
+            # Normal cleanup: only fix stuck Helm releases
+            # Clean up failed PostGIS Helm release from previous attempts (now a StatefulSet)
+            postgis_status=$(helm status "postgis-staging" -n "$NS" -o json 2>/dev/null | jq -r '.info.status // empty')
+            if [[ -n "$postgis_status" ]]; then
+              echo "Legacy PostGIS Helm release found ($postgis_status) — removing"
+              helm uninstall "postgis-staging" -n "$NS" --no-hooks 2>/dev/null || true
+              terraform state rm "module.environment.helm_release.postgis" 2>/dev/null || true
+            fi
+            for info in "postgresql-staging:$NS:environment.helm_release.postgresql" "rabbitmq-staging:$NS:environment.helm_release.rabbitmq" "redis-staging:$NS:environment.helm_release.redis" "keycloak-staging:$NS:environment.helm_release.keycloak" "baudoku:$NS:environment.helm_release.baudoku"; do
+              IFS=: read -r name ns tf_name <<< "$info"
+              status=$(helm status "$name" -n "$ns" -o json 2>/dev/null | jq -r '.info.status // empty')
+              if [[ "$status" == pending-* || "$status" == "failed" ]]; then
+                echo "Release $name in $ns is $status — removing"
+                helm uninstall "$name" -n "$ns" --no-hooks 2>/dev/null || true
+                terraform state rm "module.${tf_name}" 2>/dev/null || true
+                # Delete Keycloak PostgreSQL PVC to avoid password mismatch on reinstall
+                # (PVC persists old password, but Helm generates a new one after uninstall)
+                if [[ "$name" == keycloak-* ]]; then
+                  echo "Deleting Keycloak PostgreSQL PVCs to ensure clean reinstall"
+                  kubectl delete pvc -n "$ns" -l app.kubernetes.io/instance="$name",app.kubernetes.io/name=postgresql 2>/dev/null || true
+                fi
+              fi
+            done
+          fi
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.DO_SPACES_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SPACES_SECRET_KEY }}
@@ -176,6 +252,43 @@ jobs:
           TF_VAR_ghcr_username: ${{ github.actor }}
           TF_VAR_ghcr_token: ${{ secrets.GITHUB_TOKEN }}
           TF_VAR_keycloak_admin_password: ${{ secrets.KEYCLOAK_ADMIN_PASSWORD }}
+
+      - name: Show staging info
+        if: always()
+        continue-on-error: true
+        run: |
+          doctl kubernetes cluster kubeconfig save baudoku-k8s 2>/dev/null || exit 0
+          NS="baudoku-staging"
+
+          echo "=== Pod status ==="
+          kubectl get pods -n "$NS" -o wide
+          echo ""
+
+          echo "=== Aspire Dashboard Token ==="
+          kubectl get secret baudoku-dashboard-auth -n "$NS" -o jsonpath='{.data.browser-token}' | base64 -d
+          echo ""
+
+          echo ""
+          echo "=== Service logs (last 40 lines each) ==="
+          for svc in api-gateway projects-api documentation-api sync-api; do
+            echo "--- $svc ---"
+            kubectl logs -n "$NS" -l app.kubernetes.io/name="$svc" --tail=40 --all-containers 2>/dev/null || echo "(no logs)"
+            echo ""
+          done
+
+          echo "=== Crashed/restarting pod details ==="
+          for pod in $(kubectl get pods -n "$NS" -o jsonpath='{range .items[?(@.status.containerStatuses[0].restartCount > 0)]}{.metadata.name}{"\n"}{end}' 2>/dev/null); do
+            echo "--- describe $pod ---"
+            kubectl describe pod "$pod" -n "$NS" 2>/dev/null | tail -30
+            echo "--- previous logs $pod ---"
+            kubectl logs "$pod" -n "$NS" --previous --tail=60 2>/dev/null || echo "(no previous logs)"
+            echo ""
+          done
+
+          echo "=== Recent events ==="
+          kubectl get events -n "$NS" --sort-by='.lastTimestamp' | tail -30
+        env:
+          DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
   deploy-production:
     name: Deploy to Production

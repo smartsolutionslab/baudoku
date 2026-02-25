@@ -2,13 +2,26 @@
 # Keycloak (Bitnami Helm chart)
 # -----------------------------------------------------------------------------
 
+resource "kubernetes_config_map" "keycloak_realm" {
+  metadata {
+    name      = "keycloak-realm-config"
+    namespace = kubernetes_namespace.this.metadata[0].name
+  }
+
+  data = {
+    "baudoku.json" = templatefile("${path.module}/templates/keycloak-realm.json.tftpl", {
+      domain = var.domain
+    })
+  }
+}
+
 resource "helm_release" "keycloak" {
   name       = "keycloak-${var.environment}"
   repository = "oci://registry-1.docker.io/bitnamicharts"
   chart      = "keycloak"
-  version    = "24.2.3"
+  version    = "25.2.0"
   namespace  = kubernetes_namespace.this.metadata[0].name
-  timeout    = 600
+  timeout    = 900
 
   # Bitnami moved images from docker.io/bitnami to docker.io/bitnamilegacy
   set {
@@ -92,4 +105,23 @@ resource "helm_release" "keycloak" {
     name  = "resources.limits.memory"
     value = "1Gi"
   }
+
+  # Realm configuration via keycloak-config-cli (creates/updates realm on deploy)
+  set {
+    name  = "keycloakConfigCli.enabled"
+    value = "true"
+  }
+
+  # Bitnami removed keycloak-config-cli from docker.io/bitnami — use legacy registry
+  set {
+    name  = "keycloakConfigCli.image.repository"
+    value = "bitnamilegacy/keycloak-config-cli"
+  }
+
+  set {
+    name  = "keycloakConfigCli.existingConfigmap"
+    value = kubernetes_config_map.keycloak_realm.metadata[0].name
+  }
+
+  depends_on = [kubernetes_config_map.keycloak_realm]
 }

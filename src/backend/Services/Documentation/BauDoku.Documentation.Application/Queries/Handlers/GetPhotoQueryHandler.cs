@@ -8,6 +8,8 @@ public sealed class GetPhotoQueryHandler(IPhotoReadRepository photos) : IQueryHa
 {
     public async Task<PhotoDto> Handle(GetPhotoQuery query, CancellationToken cancellationToken = default)
     {
-        return await photos.GetByIdAsync(query.PhotoId, cancellationToken);
+        var photoId = query.PhotoId;
+
+        return await photos.GetByIdAsync(photoId, cancellationToken);
     }
 }

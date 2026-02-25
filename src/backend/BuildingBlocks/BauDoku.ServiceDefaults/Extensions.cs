@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Builder;
@@ -59,7 +60,9 @@ public static class Extensions
             {
                 var request = httpContext.Request;
 
-                return request.Path.StartsWithSegments("/health") || request.Path.StartsWithSegments("/alive")
+                return request.Path.StartsWithSegments("/health")
+                    || request.Path.StartsWithSegments("/alive")
+                    || request.Path.StartsWithSegments("/version")
                     ? LogEventLevel.Verbose
                     : LogEventLevel.Information;
             };
@@ -75,6 +78,14 @@ public static class Extensions
             Predicate = r => r.Tags.Contains("live"),
             ResponseWriter = WriteHealthCheckResponse
         });
+
+        var assembly = Assembly.GetEntryAssembly();
+        var version = assembly?.GetCustomAttribute<AssemblyInformationalVersionAttribute>()
+            ?.InformationalVersion ?? "dev";
+        var serviceName = assembly?.GetName().Name ?? "unknown";
+
+        app.MapGet("/version", () => new { service = serviceName, version })
+            .ExcludeFromDescription();
 
         return app;
     }
