@@ -44,8 +44,8 @@ spec:
               value: http://resource-service:5001
             - name: DASHBOARD__RESOURCESERVICECLIENT__AUTHMODE
               value: Unsecured
-            - name: DASHBOARD__FRONTEND__DETAILEDERRORS
-              value: "true"
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Development
             {{- if .Values.dashboard.auth.browserToken }}
             - name: DASHBOARD__FRONTEND__AUTHMODE
               value: BrowserToken
