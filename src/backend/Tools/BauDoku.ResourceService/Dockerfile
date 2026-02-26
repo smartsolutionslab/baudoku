@@ -11,8 +11,6 @@ COPY src/backend/Directory.Packages.props .
 
 # Copy project files for restore
 COPY src/backend/Tools/BauDoku.ResourceService/BauDoku.ResourceService.csproj Tools/BauDoku.ResourceService/
-COPY src/backend/BuildingBlocks/BauDoku.ServiceDefaults/BauDoku.ServiceDefaults.csproj BuildingBlocks/BauDoku.ServiceDefaults/
-COPY src/backend/BuildingBlocks/BauDoku.BuildingBlocks.Domain/BauDoku.BuildingBlocks.Domain.csproj BuildingBlocks/BauDoku.BuildingBlocks.Domain/
 
 RUN dotnet restore Tools/BauDoku.ResourceService/BauDoku.ResourceService.csproj
 
@@ -28,7 +26,7 @@ RUN dotnet publish Tools/BauDoku.ResourceService/BauDoku.ResourceService.csproj 
 
 FROM $RUNTIME_IMAGE AS final
 WORKDIR /app
-EXPOSE 5001 5002
+EXPOSE 5001
 USER $APP_UID
 COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "BauDoku.ResourceService.dll"]
