@@ -7,8 +7,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.WebHost.ConfigureKestrel(options =>
 {
-    options.ConfigureEndpointDefaults(listenOptions =>
-        listenOptions.Protocols = HttpProtocols.Http1AndHttp2);
+    // Port 5001: HTTP/2 only — gRPC from Aspire Dashboard
+    options.ListenAnyIP(5001, listenOptions =>
+        listenOptions.Protocols = HttpProtocols.Http2);
+
+    // Port 5002: HTTP/1.1 only — K8s health probes (/health, /alive)
+    options.ListenAnyIP(5002, listenOptions =>
+        listenOptions.Protocols = HttpProtocols.Http1);
 });
 
 builder.AddServiceDefaults();
