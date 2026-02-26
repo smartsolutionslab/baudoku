@@ -133,9 +133,10 @@ spec:
             - name: grpc
               containerPort: 5001
               protocol: TCP
+            - name: http
+              containerPort: 5002
+              protocol: TCP
           env:
-            - name: ASPNETCORE_URLS
-              value: http://+:5001
             - name: KUBERNETES_NAMESPACE
               valueFrom:
                 fieldRef:
@@ -150,14 +151,14 @@ spec:
           livenessProbe:
             httpGet:
               path: /alive
-              port: 5001
+              port: 5002
             initialDelaySeconds: 15
             periodSeconds: 30
             timeoutSeconds: 5
           readinessProbe:
             httpGet:
               path: /health
-              port: 5001
+              port: 5002
             initialDelaySeconds: 10
             periodSeconds: 10
             timeoutSeconds: 5

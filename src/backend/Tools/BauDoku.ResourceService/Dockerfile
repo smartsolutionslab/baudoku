@@ -28,7 +28,7 @@ RUN dotnet publish Tools/BauDoku.ResourceService/BauDoku.ResourceService.csproj 
 
 FROM $RUNTIME_IMAGE AS final
 WORKDIR /app
-EXPOSE 5001
+EXPOSE 5001 5002
 USER $APP_UID
 COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "BauDoku.ResourceService.dll"]
