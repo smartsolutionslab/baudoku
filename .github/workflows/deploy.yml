@@ -270,7 +270,7 @@ jobs:
 
           echo ""
           echo "=== Service logs (last 40 lines each) ==="
-          for svc in api-gateway projects-api documentation-api sync-api; do
+          for svc in api-gateway projects-api documentation-api sync-api resource-service aspire-dashboard; do
             echo "--- $svc ---"
             kubectl logs -n "$NS" -l app.kubernetes.io/name="$svc" --tail=40 --all-containers 2>/dev/null || echo "(no logs)"
             echo ""
