@@ -46,6 +46,8 @@ spec:
               value: Unsecured
             - name: ASPNETCORE_ENVIRONMENT
               value: Development
+            - name: ASPIRE_ALLOW_UNSECURED_TRANSPORT
+              value: "true"
             {{- if .Values.dashboard.auth.browserToken }}
             - name: DASHBOARD__FRONTEND__AUTHMODE
               value: BrowserToken
@@ -175,6 +177,7 @@ spec:
       port: 5001
       targetPort: 5001
       protocol: TCP
+      appProtocol: kubernetes.io/h2c
   selector:
     app.kubernetes.io/name: resource-service
     app.kubernetes.io/instance: {{ .Release.Name }}
