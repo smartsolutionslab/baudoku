@@ -1,12 +1,11 @@
 using BauDoku.BuildingBlocks.Application.Commands;
-using BauDoku.BuildingBlocks.Application.Persistence;
 using BauDoku.Documentation.Application.Contracts;
 using BauDoku.Documentation.Application.Diagnostics;
 using BauDoku.Documentation.Domain;
 
 namespace BauDoku.Documentation.Application.Commands.Handlers;
 
-public sealed class CompleteChunkedUploadCommandHandler(IChunkedUploadStorage chunkedUploadStorage, IPhotoStorage photoStorage, IInstallationRepository installations, IUnitOfWork unitOfWork)
+public sealed class CompleteChunkedUploadCommandHandler(IChunkedUploadStorage chunkedUploadStorage, IPhotoStorage photoStorage, IInstallationRepository installations)
     : ICommandHandler<CompleteChunkedUploadCommand, PhotoIdentifier>
 {
     public async Task<PhotoIdentifier> Handle(CompleteChunkedUploadCommand command, CancellationToken cancellationToken = default)
@@ -45,7 +44,7 @@ public sealed class CompleteChunkedUploadCommandHandler(IChunkedUploadStorage ch
 
         installation.AddPhoto(photoId, fileNameVo, blobUrl, contentTypeVo, FileSize.From(session.TotalSize), photoType, caption, description, position);
 
-        await unitOfWork.SaveChangesAsync(cancellationToken);
+        await installations.SaveAsync(installation, cancellationToken);
 
         DocumentationMetrics.PhotosAdded.Add(1);
         DocumentationMetrics.PhotoFileSize.Record(session.TotalSize);

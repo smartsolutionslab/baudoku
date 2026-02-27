@@ -112,6 +112,17 @@ dashboard:
       cpu: 500m
       memory: 512Mi
 
+migrationRunner:
+  image:
+    name: migration-runner
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
 otel:
   enabled: false
   endpoint: ""

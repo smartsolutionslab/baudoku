@@ -6,8 +6,7 @@ using BauDoku.Documentation.Application.Queries.Dtos;
 
 namespace BauDoku.Documentation.Application.Queries.Handlers;
 
-public sealed class ListInstallationsQueryHandler(IInstallationReadRepository installations)
-    : IQueryHandler<ListInstallationsQuery, PagedResult<InstallationListItemDto>>
+public sealed class ListInstallationsQueryHandler(IInstallationReadRepository installations): IQueryHandler<ListInstallationsQuery, PagedResult<InstallationListItemDto>>
 {
     public async Task<PagedResult<InstallationListItemDto>> Handle(ListInstallationsQuery query, CancellationToken cancellationToken = default)
     {
@@ -18,10 +17,8 @@ public sealed class ListInstallationsQueryHandler(IInstallationReadRepository in
             zoneId,
             type,
             status,
-            search?.Value);
-        var pagination = new PaginationParams(
-            page ?? PageNumber.Default,
-            pageSize ?? PageSize.Default);
+            search);
+        var pagination = new PaginationParams(page ?? PageNumber.Default, pageSize ?? PageSize.Default);
         return await installations.ListAsync(filter, pagination, cancellationToken);
     }
 }

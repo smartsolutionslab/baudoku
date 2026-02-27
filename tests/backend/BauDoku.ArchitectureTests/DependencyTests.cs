@@ -118,6 +118,20 @@ public sealed class DependencyTests
     }
 
     [Theory]
+    [InlineData("BauDoku.Projects.Domain")]
+    [InlineData("BauDoku.Documentation.Domain")]
+    [InlineData("BauDoku.Sync.Domain")]
+    public void ServiceDomain_ShouldNotReferenceMarten(string assemblyName)
+    {
+        var assembly = LoadAssembly(assemblyName);
+
+        var refs = assembly.GetReferencedAssemblies().Select(a => a.Name!).ToList();
+        refs.Should().NotContain(
+            name => name.Contains("Marten"),
+            "Domain must not reference Marten event store");
+    }
+
+    [Theory]
     [InlineData("BauDoku.Projects.Api", "Documentation", "Sync")]
     [InlineData("BauDoku.Documentation.Api", "Projects", "Sync")]
     [InlineData("BauDoku.Sync.Api", "Projects", "Documentation")]

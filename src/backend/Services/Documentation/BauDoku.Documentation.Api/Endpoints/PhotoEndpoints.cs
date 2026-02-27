@@ -14,8 +14,7 @@ public static class PhotoEndpoints
 {
     public static void MapPhotoEndpoints(this IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/api/documentation")
-            .WithTags("Photos");
+        var group = app.MapGroup("/api/documentation").WithTags("Photos");
 
         group.MapPost("/installations/{installationId:guid}/photos", async (
             Guid installationId,
@@ -36,10 +35,7 @@ public static class PhotoEndpoints
         .Produces<CreatedResponse>(StatusCodes.Status201Created)
         .ProducesValidationProblem();
 
-        group.MapGet("/installations/{installationId:guid}/photos", async (
-            Guid installationId,
-            IPhotoReadRepository photos,
-            CancellationToken ct) =>
+        group.MapGet("/installations/{installationId:guid}/photos", async (Guid installationId, IPhotoReadRepository photos, CancellationToken ct) =>
         {
             var photoList = await photos.ListByInstallationIdAsync(InstallationIdentifier.From(installationId), ct);
             return Results.Ok(photoList);
@@ -49,10 +45,7 @@ public static class PhotoEndpoints
         .WithSummary("Fotos einer Installation auflisten")
         .Produces<IReadOnlyList<PhotoDto>>(StatusCodes.Status200OK);
 
-        group.MapGet("/photos/{photoId:guid}", async (
-            Guid photoId,
-            IDispatcher dispatcher,
-            CancellationToken ct) =>
+        group.MapGet("/photos/{photoId:guid}", async (Guid photoId, IDispatcher dispatcher, CancellationToken ct) =>
         {
             var query = new GetPhotoQuery(PhotoIdentifier.From(photoId));
             var result = await dispatcher.Query(query, ct);

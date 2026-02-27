@@ -17,4 +17,6 @@ public sealed record PageSize : IValueObject
         Ensure.That(value).IsBetween(1, Max, $"Seitengröße muss zwischen 1 und {Max} liegen.");
         return new PageSize(value);
     }
+
+    public static PageSize? FromNullable(int? value) => value.HasValue ? From(value.Value) : null;
 }

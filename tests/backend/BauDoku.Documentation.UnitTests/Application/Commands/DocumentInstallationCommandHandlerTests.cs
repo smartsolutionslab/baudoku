@@ -1,5 +1,4 @@
 using AwesomeAssertions;
-using BauDoku.BuildingBlocks.Application.Persistence;
 using BauDoku.Documentation.Application.Commands;
 using BauDoku.Documentation.Application.Commands.Handlers;
 using BauDoku.Documentation.Domain;
@@ -10,14 +9,12 @@ namespace BauDoku.Documentation.UnitTests.Application.Commands;
 public sealed class DocumentInstallationCommandHandlerTests
 {
     private readonly IInstallationRepository installations;
-    private readonly IUnitOfWork unitOfWork;
     private readonly DocumentInstallationCommandHandler handler;
 
     public DocumentInstallationCommandHandlerTests()
     {
         installations = Substitute.For<IInstallationRepository>();
-        unitOfWork = Substitute.For<IUnitOfWork>();
-        handler = new DocumentInstallationCommandHandler(installations, unitOfWork);
+        handler = new DocumentInstallationCommandHandler(installations);
     }
 
     private static DocumentInstallationCommand CreateValidCommand() =>
@@ -34,9 +31,8 @@ public sealed class DocumentInstallationCommandHandlerTests
 
         var result = await handler.Handle(command, CancellationToken.None);
 
-        result.Should().NotBe(Guid.Empty);
-        await installations.Received(1).AddAsync(Arg.Any<Installation>(), Arg.Any<CancellationToken>());
-        await unitOfWork.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+        result.Value.Should().NotBe(Guid.Empty);
+        await installations.Received(1).SaveAsync(Arg.Any<Installation>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -44,7 +40,7 @@ public sealed class DocumentInstallationCommandHandlerTests
     {
         var command = CreateValidCommand();
         Installation? captured = null;
-        await installations.AddAsync(Arg.Do<Installation>(i => captured = i), Arg.Any<CancellationToken>());
+        await installations.SaveAsync(Arg.Do<Installation>(i => captured = i), Arg.Any<CancellationToken>());
 
         await handler.Handle(command, CancellationToken.None);
 
@@ -59,7 +55,7 @@ public sealed class DocumentInstallationCommandHandlerTests
     {
         var command = CreateValidCommand();
         Installation? captured = null;
-        await installations.AddAsync(Arg.Do<Installation>(i => captured = i), Arg.Any<CancellationToken>());
+        await installations.SaveAsync(Arg.Do<Installation>(i => captured = i), Arg.Any<CancellationToken>());
 
         await handler.Handle(command, CancellationToken.None);
 
@@ -80,7 +76,7 @@ public sealed class DocumentInstallationCommandHandlerTests
             null, null, null, null, null, null, null, null, null);
 
         Installation? captured = null;
-        await installations.AddAsync(Arg.Do<Installation>(i => captured = i), Arg.Any<CancellationToken>());
+        await installations.SaveAsync(Arg.Do<Installation>(i => captured = i), Arg.Any<CancellationToken>());
 
         await handler.Handle(command, CancellationToken.None);
 

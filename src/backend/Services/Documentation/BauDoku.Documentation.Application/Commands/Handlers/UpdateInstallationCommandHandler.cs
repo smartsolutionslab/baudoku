@@ -1,10 +1,9 @@
 using BauDoku.BuildingBlocks.Application.Commands;
-using BauDoku.BuildingBlocks.Application.Persistence;
 using BauDoku.Documentation.Domain;
 
 namespace BauDoku.Documentation.Application.Commands.Handlers;
 
-public sealed class UpdateInstallationCommandHandler(IInstallationRepository installations, IUnitOfWork unitOfWork)
+public sealed class UpdateInstallationCommandHandler(IInstallationRepository installations)
     : ICommandHandler<UpdateInstallationCommand>
 {
     public async Task Handle(UpdateInstallationCommand command, CancellationToken cancellationToken = default)
@@ -51,6 +50,6 @@ public sealed class UpdateInstallationCommandHandler(IInstallationRepository ins
             installation.UpdateDeviceInfo(manufacturer, modelName, serialNumber);
         }
 
-        await unitOfWork.SaveChangesAsync(cancellationToken);
+        await installations.SaveAsync(installation, cancellationToken);
     }
 }

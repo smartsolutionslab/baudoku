@@ -12,10 +12,7 @@ public static class ChunkedUploadEndpoints
     {
         var group = app.MapGroup("/api/documentation/uploads").WithTags("Chunked Upload");
 
-        group.MapPost("/init", async (
-            InitChunkedUploadCommand command,
-            IDispatcher dispatcher,
-            CancellationToken ct) =>
+        group.MapPost("/init", async (InitChunkedUploadCommand command, IDispatcher dispatcher, CancellationToken ct) =>
         {
             var sessionId = await dispatcher.Send<UploadSessionIdentifier>(command, ct);
             return Results.Ok(new CreatedResponse(sessionId.Value));
@@ -43,10 +40,7 @@ public static class ChunkedUploadEndpoints
         .WithSummary("Einen Chunk hochladen")
         .Produces(StatusCodes.Status204NoContent);
 
-        group.MapPost("/{sessionId:guid}/complete", async (
-            Guid sessionId,
-            IDispatcher dispatcher,
-            CancellationToken ct) =>
+        group.MapPost("/{sessionId:guid}/complete", async (Guid sessionId, IDispatcher dispatcher, CancellationToken ct) =>
         {
             var command = new CompleteChunkedUploadCommand(UploadSessionIdentifier.From(sessionId));
             var photoId = await dispatcher.Send<PhotoIdentifier>(command, ct);

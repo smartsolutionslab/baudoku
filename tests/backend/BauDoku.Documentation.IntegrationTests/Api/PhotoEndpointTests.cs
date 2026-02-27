@@ -43,15 +43,13 @@ public sealed class PhotoEndpointTests : IDisposable
     }
 
     [Fact]
-    public async Task ListPhotos_ShouldReturnSuccessOrError()
+    public async Task ListPhotos_ShouldReturn200()
     {
         var installationId = await CreateInstallationAsync();
 
-        var response = await client.GetAsync(
-            $"/api/documentation/installations/{installationId}/photos");
+        var response = await client.GetAsync($"/api/documentation/installations/{installationId}/photos");
 
-        // PhotoReadRepository uses EF shadow property projection that may fail on some providers
-        response.StatusCode.Should().BeOneOf(HttpStatusCode.OK, HttpStatusCode.InternalServerError);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 
     [Fact]
@@ -65,8 +63,7 @@ public sealed class PhotoEndpointTests : IDisposable
         fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/jpeg");
         content.Add(fileContent, "file", "test-photo.jpg");
 
-        var response = await client.PostAsync(
-            $"/api/documentation/installations/{installationId}/photos", content);
+        var response = await client.PostAsync($"/api/documentation/installations/{installationId}/photos", content);
 
         response.StatusCode.Should().Be(HttpStatusCode.Created);
         var body = await response.Content.ReadFromJsonAsync<IdResponse>();

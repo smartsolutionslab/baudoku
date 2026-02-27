@@ -5,14 +5,13 @@ using BauDoku.Documentation.Domain;
 
 namespace BauDoku.Documentation.Application.Queries.Handlers;
 
-public sealed class GetInstallationQueryHandler(IInstallationRepository installations)
-    : IQueryHandler<GetInstallationQuery, InstallationDto>
+public sealed class GetInstallationQueryHandler(IInstallationRepository installations): IQueryHandler<GetInstallationQuery, InstallationDto>
 {
     public async Task<InstallationDto> Handle(GetInstallationQuery query, CancellationToken cancellationToken = default)
     {
         var installationId = query.InstallationId;
 
-        var installation = await installations.GetByIdReadOnlyAsync(installationId, cancellationToken);
+        var installation = await installations.GetByIdAsync(installationId, cancellationToken);
 
         return installation.ToDto();
     }

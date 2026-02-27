@@ -2,7 +2,6 @@ using BauDoku.BuildingBlocks.Domain;
 
 namespace BauDoku.Documentation.Domain;
 
-public interface IInstallationRepository : IRepository<Installation, InstallationIdentifier>
+public interface IInstallationRepository : IEventSourcedRepository<Installation, InstallationIdentifier>
 {
-    void Remove(Installation installation);
 }

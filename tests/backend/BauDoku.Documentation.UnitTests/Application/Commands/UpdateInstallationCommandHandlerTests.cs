@@ -1,5 +1,4 @@
 using AwesomeAssertions;
-using BauDoku.BuildingBlocks.Application.Persistence;
 using BauDoku.Documentation.Application.Commands;
 using BauDoku.Documentation.Application.Commands.Handlers;
 using BauDoku.Documentation.Domain;
@@ -11,14 +10,12 @@ namespace BauDoku.Documentation.UnitTests.Application.Commands;
 public sealed class UpdateInstallationCommandHandlerTests
 {
     private readonly IInstallationRepository installations;
-    private readonly IUnitOfWork unitOfWork;
     private readonly UpdateInstallationCommandHandler handler;
 
     public UpdateInstallationCommandHandlerTests()
     {
         installations = Substitute.For<IInstallationRepository>();
-        unitOfWork = Substitute.For<IUnitOfWork>();
-        handler = new UpdateInstallationCommandHandler(installations, unitOfWork);
+        handler = new UpdateInstallationCommandHandler(installations);
     }
 
     private static Installation CreateValidInstallation() =>
@@ -60,7 +57,7 @@ public sealed class UpdateInstallationCommandHandlerTests
 
         installation.Position.Latitude.Value.Should().Be(52.520008);
         installation.Position.Longitude.Value.Should().Be(13.404954);
-        await unitOfWork.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+        await installations.Received(1).SaveAsync(Arg.Any<Installation>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -85,7 +82,7 @@ public sealed class UpdateInstallationCommandHandlerTests
 
         installation.Description.Should().NotBeNull();
         installation.Description!.Value.Should().Be("Neue Beschreibung");
-        await unitOfWork.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+        await installations.Received(1).SaveAsync(Arg.Any<Installation>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -114,7 +111,7 @@ public sealed class UpdateInstallationCommandHandlerTests
         installation.CableSpec.Should().NotBeNull();
         installation.CableSpec!.CableType.Value.Should().Be("NYM-J");
         installation.CableSpec.CrossSection!.Value.Should().Be(2.5m);
-        await unitOfWork.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+        await installations.Received(1).SaveAsync(Arg.Any<Installation>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -140,7 +137,7 @@ public sealed class UpdateInstallationCommandHandlerTests
 
         installation.Depth.Should().NotBeNull();
         installation.Depth!.ValueInMillimeters.Should().Be(600);
-        await unitOfWork.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+        await installations.Received(1).SaveAsync(Arg.Any<Installation>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -185,6 +182,6 @@ public sealed class UpdateInstallationCommandHandlerTests
 
         await handler.Handle(command, CancellationToken.None);
 
-        await unitOfWork.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+        await installations.Received(1).SaveAsync(Arg.Any<Installation>(), Arg.Any<CancellationToken>());
     }
 }

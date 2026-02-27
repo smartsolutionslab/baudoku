@@ -1,7 +1,7 @@
 using AwesomeAssertions;
 using BauDoku.Documentation.Domain;
 using BauDoku.Documentation.IntegrationTests.Fixtures;
-using Microsoft.EntityFrameworkCore;
+using Marten;
 
 namespace BauDoku.Documentation.IntegrationTests;
 
@@ -9,7 +9,7 @@ namespace BauDoku.Documentation.IntegrationTests;
 public sealed class InstallationMeasurementPersistenceTests(PostgreSqlFixture fixture)
 {
     [Fact]
-    public async Task RecordMeasurement_WithThresholds_ShouldPersistAndLoad()
+    public async Task RecordMeasurement_WithThresholds_ShouldRehydrate()
     {
         var installation = Installation.Create(
             InstallationIdentifier.New(),
@@ -25,36 +25,31 @@ public sealed class InstallationMeasurementPersistenceTests(PostgreSqlFixture fi
             MeasurementValue.Create(230.0, "V", 220.0, 240.0),
             Notes.From("Spannungsmessung Phase L1"));
 
-        await using (var writeContext = fixture.CreateContext())
-        {
-            writeContext.Installations.Add(installation);
-            await writeContext.SaveChangesAsync();
-        }
+        await using var session = fixture.Store.LightweightSession();
 
-        await using (var readContext = fixture.CreateContext())
-        {
-            var loaded = await readContext.Installations
-                .Include(i => i.Measurements)
-                .FirstOrDefaultAsync(i => i.Id == installation.Id);
+        var events = installation.DomainEvents.ToArray();
+        session.Events.StartStream<Installation>(installation.Id.Value, events);
+        await session.SaveChangesAsync();
 
-            loaded.Should().NotBeNull();
-            loaded!.Measurements.Should().ContainSingle();
+        var loaded = await PostgreSqlFixture.RehydrateInstallationAsync(session, installation.Id.Value);
 
-            var measurement = loaded.Measurements[0];
-            measurement.Id.Should().Be(measurementId);
-            measurement.Type.Should().Be(MeasurementType.Voltage);
-            measurement.Value.Value.Should().Be(230.0);
-            measurement.Value.Unit.Value.Should().Be("V");
-            measurement.Value.MinThreshold.Should().Be(220.0);
-            measurement.Value.MaxThreshold.Should().Be(240.0);
-            measurement.Result.Should().Be(MeasurementResult.Passed);
-            measurement.Notes!.Value.Should().Be("Spannungsmessung Phase L1");
-            measurement.MeasuredAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromMinutes(1));
-        }
+        loaded.Should().NotBeNull();
+        loaded!.Measurements.Should().ContainSingle();
+
+        var measurement = loaded.Measurements[0];
+        measurement.Id.Should().Be(measurementId);
+        measurement.Type.Should().Be(MeasurementType.Voltage);
+        measurement.Value.Value.Should().Be(230.0);
+        measurement.Value.Unit.Value.Should().Be("V");
+        measurement.Value.MinThreshold.Should().Be(220.0);
+        measurement.Value.MaxThreshold.Should().Be(240.0);
+        measurement.Result.Should().Be(MeasurementResult.Passed);
+        measurement.Notes!.Value.Should().Be("Spannungsmessung Phase L1");
+        measurement.MeasuredAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromMinutes(1));
     }
 
     [Fact]
-    public async Task RecordMeasurement_WithoutThresholds_ShouldPersist()
+    public async Task RecordMeasurement_WithoutThresholds_ShouldRehydrate()
     {
         var installation = Installation.Create(
             InstallationIdentifier.New(),
@@ -68,30 +63,24 @@ public sealed class InstallationMeasurementPersistenceTests(PostgreSqlFixture fi
             MeasurementType.Continuity,
             MeasurementValue.Create(0.3, "Ohm"));
 
-        await using (var writeContext = fixture.CreateContext())
-        {
-            writeContext.Installations.Add(installation);
-            await writeContext.SaveChangesAsync();
-        }
+        await using var session = fixture.Store.LightweightSession();
 
-        await using (var readContext = fixture.CreateContext())
-        {
-            var loaded = await readContext.Installations
-                .Include(i => i.Measurements)
-                .FirstOrDefaultAsync(i => i.Id == installation.Id);
+        var events = installation.DomainEvents.ToArray();
+        session.Events.StartStream<Installation>(installation.Id.Value, events);
+        await session.SaveChangesAsync();
 
-            loaded.Should().NotBeNull();
-            var measurement = loaded!.Measurements[0];
-            measurement.Value.MinThreshold.Should().BeNull();
-            measurement.Value.MaxThreshold.Should().BeNull();
-            measurement.Result.Should().Be(MeasurementResult.Passed);
-            measurement.Notes.Should().BeNull();
+        var loaded = await PostgreSqlFixture.RehydrateInstallationAsync(session, installation.Id.Value);
 
-        }
+        loaded.Should().NotBeNull();
+        var measurement = loaded!.Measurements[0];
+        measurement.Value.MinThreshold.Should().BeNull();
+        measurement.Value.MaxThreshold.Should().BeNull();
+        measurement.Result.Should().Be(MeasurementResult.Passed);
+        measurement.Notes.Should().BeNull();
     }
 
     [Fact]
-    public async Task RecordMeasurement_WithFailedResult_ShouldPersist()
+    public async Task RecordMeasurement_WithFailedResult_ShouldRehydrate()
     {
         var installation = Installation.Create(
             InstallationIdentifier.New(),
@@ -105,25 +94,20 @@ public sealed class InstallationMeasurementPersistenceTests(PostgreSqlFixture fi
             MeasurementType.InsulationResistance,
             MeasurementValue.Create(0.5, "MOhm", 1.0, 100.0));
 
-        await using (var writeContext = fixture.CreateContext())
-        {
-            writeContext.Installations.Add(installation);
-            await writeContext.SaveChangesAsync();
-        }
+        await using var session = fixture.Store.LightweightSession();
 
-        await using (var readContext = fixture.CreateContext())
-        {
-            var loaded = await readContext.Installations
-                .Include(i => i.Measurements)
-                .FirstOrDefaultAsync(i => i.Id == installation.Id);
+        var events = installation.DomainEvents.ToArray();
+        session.Events.StartStream<Installation>(installation.Id.Value, events);
+        await session.SaveChangesAsync();
 
-            loaded.Should().NotBeNull();
-            loaded!.Measurements[0].Result.Should().Be(MeasurementResult.Failed);
-        }
+        var loaded = await PostgreSqlFixture.RehydrateInstallationAsync(session, installation.Id.Value);
+
+        loaded.Should().NotBeNull();
+        loaded!.Measurements[0].Result.Should().Be(MeasurementResult.Failed);
     }
 
     [Fact]
-    public async Task RecordMultipleMeasurements_ShouldPersistAll()
+    public async Task RecordMultipleMeasurements_ShouldRehydrateAll()
     {
         var installation = Installation.Create(
             InstallationIdentifier.New(),
@@ -136,20 +120,15 @@ public sealed class InstallationMeasurementPersistenceTests(PostgreSqlFixture fi
         installation.RecordMeasurement(MeasurementIdentifier.New(), MeasurementType.Continuity, MeasurementValue.Create(0.3, "Ohm"));
         installation.RecordMeasurement(MeasurementIdentifier.New(), MeasurementType.RcdTripCurrent, MeasurementValue.Create(28.0, "mA", 15.0, 30.0));
 
-        await using (var writeContext = fixture.CreateContext())
-        {
-            writeContext.Installations.Add(installation);
-            await writeContext.SaveChangesAsync();
-        }
+        await using var session = fixture.Store.LightweightSession();
 
-        await using (var readContext = fixture.CreateContext())
-        {
-            var loaded = await readContext.Installations
-                .Include(i => i.Measurements)
-                .FirstOrDefaultAsync(i => i.Id == installation.Id);
+        var events = installation.DomainEvents.ToArray();
+        session.Events.StartStream<Installation>(installation.Id.Value, events);
+        await session.SaveChangesAsync();
 
-            loaded.Should().NotBeNull();
-            loaded!.Measurements.Should().HaveCount(3);
-        }
+        var loaded = await PostgreSqlFixture.RehydrateInstallationAsync(session, installation.Id.Value);
+
+        loaded.Should().NotBeNull();
+        loaded!.Measurements.Should().HaveCount(3);
     }
 }

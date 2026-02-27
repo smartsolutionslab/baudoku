@@ -56,7 +56,7 @@ public sealed class ListInstallationsQueryHandlerTests
                     zoneId,
                     InstallationType.From("cable_tray"),
                     InstallationStatus.From("in_progress"),
-                    "test"),
+                    SearchTerm.From("test")),
                 new PaginationParams(PageNumber.From(2), PageSize.From(10)),
                 Arg.Any<CancellationToken>())
             .Returns(expected);

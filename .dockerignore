@@ -20,6 +20,8 @@ docs/
 !src/backend/**
 !Directory.Build.props
 !Directory.Packages.props
+src/backend/**/bin
+src/backend/**/obj
 
 **/*.user
 **/*.suo

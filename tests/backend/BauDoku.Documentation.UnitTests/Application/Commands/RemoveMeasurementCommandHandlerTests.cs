@@ -1,5 +1,4 @@
 using AwesomeAssertions;
-using BauDoku.BuildingBlocks.Application.Persistence;
 using BauDoku.Documentation.Application.Commands;
 using BauDoku.Documentation.Application.Commands.Handlers;
 using BauDoku.Documentation.Domain;
@@ -11,14 +10,12 @@ namespace BauDoku.Documentation.UnitTests.Application.Commands;
 public sealed class RemoveMeasurementCommandHandlerTests
 {
     private readonly IInstallationRepository installations;
-    private readonly IUnitOfWork unitOfWork;
     private readonly RemoveMeasurementCommandHandler handler;
 
     public RemoveMeasurementCommandHandlerTests()
     {
         installations = Substitute.For<IInstallationRepository>();
-        unitOfWork = Substitute.For<IUnitOfWork>();
-        handler = new RemoveMeasurementCommandHandler(installations, unitOfWork);
+        handler = new RemoveMeasurementCommandHandler(installations);
     }
 
     private static Installation CreateInstallationWithMeasurement(out MeasurementIdentifier measurementId)
@@ -51,7 +48,7 @@ public sealed class RemoveMeasurementCommandHandlerTests
         await handler.Handle(command, CancellationToken.None);
 
         installation.Measurements.Should().BeEmpty();
-        await unitOfWork.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+        await installations.Received(1).SaveAsync(Arg.Any<Installation>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]

@@ -1,9 +1,13 @@
-using BauDoku.BuildingBlocks.Application.Persistence;
 using BauDoku.Documentation.Application.Contracts;
 using BauDoku.Documentation.Domain;
 using BauDoku.Documentation.Infrastructure.Persistence;
 using BauDoku.Documentation.Infrastructure.Persistence.Repositories;
+using BauDoku.Documentation.Infrastructure.Projections;
+using BauDoku.Documentation.Infrastructure.ReadModel;
 using BauDoku.Documentation.Infrastructure.Storage;
+using Marten;
+using Marten.Events.Daemon.Resiliency;
+using Marten.Events.Projections;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,14 +19,23 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddDocumentationInfrastructure(this IServiceCollection services, string connectionString, IConfiguration configuration)
     {
-        services.AddDbContext<DocumentationDbContext>(options =>
-            options.UseNpgsql(connectionString, npgsql =>
+        services.AddMarten(sp =>
             {
-                npgsql.UseNetTopologySuite();
-                npgsql.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
-            }));
+                var options = new StoreOptions();
+                MartenConfiguration.Configure(options, connectionString);
+                var scopeFactory = sp.GetRequiredService<IServiceScopeFactory>();
+                options.Listeners.Add(new MartenEventPublisher(scopeFactory));
+                options.Projections.Add(new InstallationReadModelProjection(scopeFactory), ProjectionLifecycle.Async);
+                return options;
+            })
+            .AddAsyncDaemon(DaemonMode.Solo);
 
-        services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<DocumentationDbContext>());
+        services.AddDbContext<ReadModelDbContext>(options => options.UseNpgsql(connectionString, npgsql =>
+        {
+            npgsql.UseNetTopologySuite();
+            npgsql.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
+        }));
+
         services.AddScoped<IInstallationRepository, InstallationRepository>();
         services.AddScoped<IInstallationReadRepository, InstallationReadRepository>();
         services.AddScoped<IPhotoReadRepository, PhotoReadRepository>();

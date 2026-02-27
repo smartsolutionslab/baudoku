@@ -2,30 +2,13 @@ using BauDoku.BuildingBlocks.Domain;
 
 namespace BauDoku.Documentation.Domain;
 
-public sealed class MeasurementTypeMustMatchInstallationType(
-    InstallationType installationType,
-    MeasurementType measurementType)
+public sealed class MeasurementTypeMustMatchInstallationType(InstallationType installationType, MeasurementType measurementType)
     : IBusinessRule
 {
-    private static readonly HashSet<string> ElectricalInstallationTypes =
-    [
-        "switchgear", "transformer", "junction_box"
-    ];
-
-    private static readonly HashSet<string> ElectricalWithGroundingTypes =
-    [
-        "switchgear", "transformer", "junction_box", "grounding", "lightning_protection"
-    ];
-
-    private static readonly HashSet<string> RestrictedToElectricalOnly =
-    [
-        "rcd_trip_time", "rcd_trip_current"
-    ];
-
-    private static readonly HashSet<string> RestrictedToElectricalWithGrounding =
-    [
-        "loop_impedance"
-    ];
+    private static readonly HashSet<string> ElectricalInstallationTypes = ["switchgear", "transformer", "junction_box"];
+    private static readonly HashSet<string> ElectricalWithGroundingTypes = ["switchgear", "transformer", "junction_box", "grounding", "lightning_protection"];
+    private static readonly HashSet<string> RestrictedToElectricalOnly = ["rcd_trip_time", "rcd_trip_current"];
+    private static readonly HashSet<string> RestrictedToElectricalWithGrounding = ["loop_impedance"];
 
     public bool IsBroken()
     {
@@ -36,6 +19,5 @@ public sealed class MeasurementTypeMustMatchInstallationType(
         return false;
     }
 
-    public string Message =>
-        $"Messungstyp '{measurementType.Value}' ist für Installationstyp '{installationType.Value}' nicht zulässig.";
+    public string Message => $"Messungstyp '{measurementType.Value}' ist für Installationstyp '{installationType.Value}' nicht zulässig.";
 }

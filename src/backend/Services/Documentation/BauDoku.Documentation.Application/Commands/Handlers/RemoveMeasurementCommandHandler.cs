@@ -1,12 +1,10 @@
 using BauDoku.BuildingBlocks.Application.Commands;
-using BauDoku.BuildingBlocks.Application.Persistence;
 using BauDoku.Documentation.Application.Diagnostics;
 using BauDoku.Documentation.Domain;
 
 namespace BauDoku.Documentation.Application.Commands.Handlers;
 
-public sealed class RemoveMeasurementCommandHandler(IInstallationRepository installations, IUnitOfWork unitOfWork)
-    : ICommandHandler<RemoveMeasurementCommand>
+public sealed class RemoveMeasurementCommandHandler(IInstallationRepository installations): ICommandHandler<RemoveMeasurementCommand>
 {
     public async Task Handle(RemoveMeasurementCommand command, CancellationToken cancellationToken = default)
     {
@@ -16,7 +14,7 @@ public sealed class RemoveMeasurementCommandHandler(IInstallationRepository inst
 
         installation.RemoveMeasurement(measurementId);
 
-        await unitOfWork.SaveChangesAsync(cancellationToken);
+        await installations.SaveAsync(installation, cancellationToken);
 
         DocumentationMetrics.MeasurementsRemoved.Add(1);
     }

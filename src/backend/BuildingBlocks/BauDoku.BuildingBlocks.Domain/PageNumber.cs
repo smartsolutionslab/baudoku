@@ -15,4 +15,6 @@ public sealed record PageNumber : IValueObject
         Ensure.That(value).IsPositive("Seitennummer muss mindestens 1 sein.");
         return new PageNumber(value);
     }
+
+    public static PageNumber? FromNullable(int? value) => value.HasValue ? From(value.Value) : null;
 }

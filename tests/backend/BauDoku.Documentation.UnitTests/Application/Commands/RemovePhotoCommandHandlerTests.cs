@@ -1,5 +1,4 @@
 using AwesomeAssertions;
-using BauDoku.BuildingBlocks.Application.Persistence;
 using BauDoku.Documentation.Application.Commands;
 using BauDoku.Documentation.Application.Commands.Handlers;
 using BauDoku.Documentation.Application.Contracts;
@@ -13,15 +12,13 @@ public sealed class RemovePhotoCommandHandlerTests
 {
     private readonly IInstallationRepository installations;
     private readonly IPhotoStorage photoStorage;
-    private readonly IUnitOfWork unitOfWork;
     private readonly RemovePhotoCommandHandler handler;
 
     public RemovePhotoCommandHandlerTests()
     {
         installations = Substitute.For<IInstallationRepository>();
         photoStorage = Substitute.For<IPhotoStorage>();
-        unitOfWork = Substitute.For<IUnitOfWork>();
-        handler = new RemovePhotoCommandHandler(installations, photoStorage, unitOfWork);
+        handler = new RemovePhotoCommandHandler(installations, photoStorage);
     }
 
     private static Installation CreateInstallationWithPhoto(out PhotoIdentifier photoId)
@@ -52,8 +49,8 @@ public sealed class RemovePhotoCommandHandlerTests
         await handler.Handle(command, CancellationToken.None);
 
         installation.Photos.Should().BeEmpty();
+        await installations.Received(1).SaveAsync(Arg.Any<Installation>(), Arg.Any<CancellationToken>());
         await photoStorage.Received(1).DeleteAsync(BlobUrl.From("https://blob/photo.jpg"), Arg.Any<CancellationToken>());
-        await unitOfWork.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
     [Fact]

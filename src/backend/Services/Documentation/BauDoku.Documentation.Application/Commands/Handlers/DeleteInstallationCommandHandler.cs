@@ -1,12 +1,10 @@
 using BauDoku.BuildingBlocks.Application.Commands;
-using BauDoku.BuildingBlocks.Application.Persistence;
 using BauDoku.Documentation.Application.Diagnostics;
 using BauDoku.Documentation.Domain;
 
 namespace BauDoku.Documentation.Application.Commands.Handlers;
 
-public sealed class DeleteInstallationCommandHandler(IInstallationRepository installations, IUnitOfWork unitOfWork)
-    : ICommandHandler<DeleteInstallationCommand>
+public sealed class DeleteInstallationCommandHandler(IInstallationRepository installations) : ICommandHandler<DeleteInstallationCommand>
 {
     public async Task Handle(DeleteInstallationCommand command, CancellationToken cancellationToken = default)
     {
@@ -15,9 +13,8 @@ public sealed class DeleteInstallationCommandHandler(IInstallationRepository ins
         var installation = await installations.GetByIdAsync(installationId, cancellationToken);
 
         installation.Delete();
-        installations.Remove(installation);
 
-        await unitOfWork.SaveChangesAsync(cancellationToken);
+        await installations.SaveAsync(installation, cancellationToken);
 
         DocumentationMetrics.InstallationsDeleted.Add(1);
     }

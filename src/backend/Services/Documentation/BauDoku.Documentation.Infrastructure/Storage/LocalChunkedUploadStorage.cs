@@ -32,8 +32,7 @@ public sealed class LocalChunkedUploadStorage(IOptions<PhotoStorageOptions> opti
         var metadataPath = Path.Combine(sessionId.Value.ToString(), "metadata.json");
         if (!storage.FileExists(metadataPath)) throw new KeyNotFoundException($"Upload-Session mit ID {sessionId.Value} nicht gefunden.");
 
-        return await storage.ReadJsonAsync<ChunkedUploadSession>(metadataPath, cancellationToken)
-            ?? throw new KeyNotFoundException($"Upload-Session mit ID {sessionId.Value} nicht gefunden.");
+        return await storage.ReadJsonAsync<ChunkedUploadSession>(metadataPath, cancellationToken) ?? throw new KeyNotFoundException($"Upload-Session mit ID {sessionId.Value} nicht gefunden.");
     }
 
     public Task<int> GetUploadedChunkCountAsync(UploadSessionIdentifier sessionId, CancellationToken cancellationToken = default)

@@ -9,6 +9,8 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <!-- Marten 7.38.1 transitive dependencies have version constraints incompatible with .NET 10 -->
+    <NoWarn>$(NoWarn);NU1608</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,6 +23,7 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.NetTopologySuite" />
     <PackageReference Include="Azure.Storage.Blobs" />
+    <PackageReference Include="Marten" />
   </ItemGroup>
 
 </Project>

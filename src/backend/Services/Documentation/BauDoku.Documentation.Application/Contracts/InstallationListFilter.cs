@@ -1,3 +1,4 @@
+using BauDoku.BuildingBlocks.Domain;
 using BauDoku.Documentation.Domain;
 
 namespace BauDoku.Documentation.Application.Contracts;
@@ -7,4 +8,4 @@ public sealed record InstallationListFilter(
     ZoneIdentifier? ZoneId = null,
     InstallationType? Type = null,
     InstallationStatus? Status = null,
-    string? Search = null);
+    SearchTerm? Search = null);

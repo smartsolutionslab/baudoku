@@ -20,7 +20,7 @@ public static class InstallationEndpoints
 
         group.MapPost("/", async (DocumentInstallationCommand command, IDispatcher dispatcher, CancellationToken cancellationToken) =>
         {
-            var id = await dispatcher.Send<InstallationIdentifier>(command, cancellationToken);
+            var id = await dispatcher.Send(command, cancellationToken);
             return Results.Created($"/api/documentation/installations/{id.Value}", new CreatedResponse(id.Value));
         })
         .RequireAuthorization(AuthPolicies.RequireUser)
@@ -46,8 +46,8 @@ public static class InstallationEndpoints
                 InstallationType.FromNullable(type),
                 InstallationStatus.FromNullable(status),
                 SearchTerm.FromNullable(search),
-                page.HasValue ? PageNumber.From(page.Value) : null,
-                pageSize.HasValue ? PageSize.From(pageSize.Value) : null);
+                PageNumber.FromNullable(page),
+                PageSize.FromNullable(pageSize));
             var result = await dispatcher.Query(query, ct);
             return Results.Ok(result);
         })
@@ -69,8 +69,8 @@ public static class InstallationEndpoints
             var query = new GetInstallationsInRadiusQuery(
                 new SearchRadius(latitude, longitude, radiusMeters),
                 ProjectIdentifier.FromNullable(projectId),
-                page.HasValue ? PageNumber.From(page.Value) : null,
-                pageSize.HasValue ? PageSize.From(pageSize.Value) : null);
+                PageNumber.FromNullable(page),
+                PageSize.FromNullable(pageSize));
             return Results.Ok(await dispatcher.Query(query, ct));
         })
         .RequireAuthorization()
@@ -92,8 +92,8 @@ public static class InstallationEndpoints
             var query = new GetInstallationsInBoundingBoxQuery(
                 new BoundingBox(minLatitude, minLongitude, maxLatitude, maxLongitude),
                 ProjectIdentifier.FromNullable(projectId),
-                page.HasValue ? PageNumber.From(page.Value) : null,
-                pageSize.HasValue ? PageSize.From(pageSize.Value) : null);
+                PageNumber.FromNullable(page),
+                PageSize.FromNullable(pageSize));
             return Results.Ok(await dispatcher.Query(query, ct));
         })
         .RequireAuthorization()

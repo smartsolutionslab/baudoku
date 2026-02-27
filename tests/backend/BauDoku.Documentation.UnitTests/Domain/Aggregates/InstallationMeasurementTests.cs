@@ -45,7 +45,7 @@ public sealed class InstallationMeasurementTests
 
         installation.DomainEvents.Should().ContainSingle()
             .Which.Should().BeOfType<MeasurementRecorded>()
-            .Which.MeasurementIdentifier.Should().Be(measurementId);
+            .Which.MeasurementId.Should().Be(measurementId.Value);
     }
 
     [Fact]
@@ -243,7 +243,7 @@ public sealed class InstallationMeasurementTests
 
         installation.DomainEvents.Should().ContainSingle()
             .Which.Should().BeOfType<MeasurementRemoved>()
-            .Which.MeasurementIdentifier.Should().Be(measurementId);
+            .Which.MeasurementId.Should().Be(measurementId.Value);
     }
 
     [Fact]
