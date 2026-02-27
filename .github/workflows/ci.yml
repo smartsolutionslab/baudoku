@@ -353,7 +353,8 @@ jobs:
           dotnet CycloneDX src/backend/BauDoku.slnx \
             -o ./sbom \
             -fn sbom.json \
-            -F Json
+            -F Json \
+            --exclude-test-projects
 
       - name: Upload SBOM
         uses: actions/upload-artifact@v4
