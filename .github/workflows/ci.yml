@@ -345,6 +345,9 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
+      - name: Restore dependencies
+        run: dotnet restore src/backend/BauDoku.slnx
+
       - name: Install CycloneDX
         run: dotnet tool install --global CycloneDX
 
@@ -354,7 +357,8 @@ jobs:
             -o ./sbom \
             -fn sbom.json \
             -F Json \
-            --exclude-test-projects
+            --exclude-test-projects \
+            --disable-package-restore
 
       - name: Upload SBOM
         uses: actions/upload-artifact@v4
