@@ -1,3 +1,4 @@
+using System.Collections.Frozen;
 using BauDoku.Documentation.Domain;
 using BauDoku.Documentation.Infrastructure.ReadModel;
 using Marten;
@@ -9,10 +10,27 @@ namespace BauDoku.Documentation.Infrastructure.Projections;
 
 public sealed class InstallationReadModelProjection(IServiceScopeFactory scopeFactory) : IProjection
 {
-    public void Apply(IDocumentOperations operations, IReadOnlyList<StreamAction> streams)
+    private delegate Task EventHandler(ReadModelDbContext dbContext, object eventData);
+
+    private static readonly FrozenDictionary<Type, EventHandler> eventHandlers = new Dictionary<Type, EventHandler>
     {
-        throw new NotSupportedException("Use async projection only.");
-    }
+        [typeof(InstallationDocumented)] = Dispatch<InstallationDocumented>(ApplyInstallationDocumented),
+        [typeof(PhotoAdded)] = Dispatch<PhotoAdded>(ApplyPhotoAdded),
+        [typeof(PhotoRemoved)] = Dispatch<PhotoRemoved>(ApplyPhotoRemoved),
+        [typeof(MeasurementRecorded)] = Dispatch<MeasurementRecorded>(ApplyMeasurementRecorded),
+        [typeof(MeasurementRemoved)] = Dispatch<MeasurementRemoved>(ApplyMeasurementRemoved),
+        [typeof(InstallationPositionUpdated)] = Dispatch<InstallationPositionUpdated>(ApplyPositionUpdated),
+        [typeof(InstallationDescriptionUpdated)] = Dispatch<InstallationDescriptionUpdated>(ApplyDescriptionUpdated),
+        [typeof(InstallationCableSpecUpdated)] = Dispatch<InstallationCableSpecUpdated>(ApplyCableSpecUpdated),
+        [typeof(InstallationDepthUpdated)] = Dispatch<InstallationDepthUpdated>(ApplyDepthUpdated),
+        [typeof(InstallationDeviceInfoUpdated)] = Dispatch<InstallationDeviceInfoUpdated>(ApplyDeviceInfoUpdated),
+        [typeof(InstallationCompleted)] = Dispatch<InstallationCompleted>(ApplyCompleted),
+        [typeof(InstallationDeleted)] = Dispatch<InstallationDeleted>(ApplyDeleted),
+    }.ToFrozenDictionary();
+
+    private static EventHandler Dispatch<TEvent>(Func<ReadModelDbContext, TEvent, Task> handler) => (db, e) => handler(db, (TEvent)e);
+
+    public void Apply(IDocumentOperations operations, IReadOnlyList<StreamAction> streams) => throw new NotSupportedException("Use async projection only.");
 
     public async Task ApplyAsync(IDocumentOperations operations, IReadOnlyList<StreamAction> streams, CancellationToken cancellation)
     {
@@ -23,46 +41,11 @@ public sealed class InstallationReadModelProjection(IServiceScopeFactory scopeFa
         {
             foreach (var @event in stream.Events)
             {
-                switch (@event.Data)
+                var eventType = @event.Data.GetType();
+                if (eventHandlers.ContainsKey(eventType))
                 {
-                    case InstallationDocumented e:
-                        await HandleInstallationDocumented(dbContext, e);
-                        break;
-                    case PhotoAdded e:
-                        await HandlePhotoAdded(dbContext, e);
-                        break;
-                    case PhotoRemoved e:
-                        await HandlePhotoRemoved(dbContext, e);
-                        break;
-                    case MeasurementRecorded e:
-                        await HandleMeasurementRecorded(dbContext, e);
-                        break;
-                    case MeasurementRemoved e:
-                        await HandleMeasurementRemoved(dbContext, e);
-                        break;
-                    case InstallationPositionUpdated e:
-                        await HandlePositionUpdated(dbContext, e);
-                        break;
-                    case InstallationDescriptionUpdated e:
-                        await HandleDescriptionUpdated(dbContext, e);
-                        break;
-                    case InstallationCableSpecUpdated e:
-                        await HandleCableSpecUpdated(dbContext, e);
-                        break;
-                    case InstallationDepthUpdated e:
-                        await HandleDepthUpdated(dbContext, e);
-                        break;
-                    case InstallationDeviceInfoUpdated e:
-                        await HandleDeviceInfoUpdated(dbContext, e);
-                        break;
-                    case InstallationCompleted e:
-                        await HandleCompleted(dbContext, e);
-                        break;
-                    case InstallationDeleted e:
-                        await HandleDeleted(dbContext, e);
-                        break;
-                    case LowGpsQualityDetected:
-                        break; // notification only
+                    EventHandler handler = eventHandlers[eventType];
+                    await handler(dbContext, @event.Data);
                 }
             }
         }
@@ -70,9 +53,17 @@ public sealed class InstallationReadModelProjection(IServiceScopeFactory scopeFa
         await dbContext.SaveChangesAsync(cancellation);
     }
 
-    private static Task HandleInstallationDocumented(ReadModelDbContext dbContext, InstallationDocumented @event)
+    private static async Task UpdateInstallation(ReadModelDbContext dbContext, Guid installationId, Action<InstallationReadModel> apply)
     {
-        InstallationReadModel model = new()
+        var installation = await dbContext.Installations.FindAsync(installationId);
+        if (installation is null) return;
+
+        apply(installation);
+    }
+
+    private static Task ApplyInstallationDocumented(ReadModelDbContext dbContext, InstallationDocumented @event)
+    {
+        dbContext.Installations.Add(new InstallationReadModel
         {
             Id = @event.InstallationId,
             ProjectId = @event.ProjectId,
@@ -103,16 +94,14 @@ public sealed class InstallationReadModelProjection(IServiceScopeFactory scopeFa
             PhotoCount = 0,
             MeasurementCount = 0,
             IsDeleted = false
-        };
-
-        dbContext.Installations.Add(model);
+        });
 
         return Task.CompletedTask;
     }
 
-    private static async Task HandlePhotoAdded(ReadModelDbContext dbContext, PhotoAdded @event)
+    private static async Task ApplyPhotoAdded(ReadModelDbContext dbContext, PhotoAdded @event)
     {
-        PhotoReadModel photo = new()
+        dbContext.Photos.Add(new PhotoReadModel
         {
             Id = @event.PhotoId,
             InstallationId = @event.InstallationId,
@@ -134,136 +123,98 @@ public sealed class InstallationReadModelProjection(IServiceScopeFactory scopeFa
             Hdop = @event.Hdop,
             CorrectionAge = @event.CorrectionAge,
             TakenAt = @event.TakenAt
-        };
+        });
 
-        dbContext.Photos.Add(photo);
-
-        var installation = await dbContext.Installations.FindAsync(@event.InstallationId);
-        if (installation is null) return;
-
-        installation.PhotoCount++;
+        await UpdateInstallation(dbContext, @event.InstallationId, i => i.PhotoCount++);
     }
 
-    private static async Task HandlePhotoRemoved(ReadModelDbContext dbContext, PhotoRemoved @event)
+    private static async Task ApplyPhotoRemoved(ReadModelDbContext dbContext, PhotoRemoved @event)
     {
         var photo = await dbContext.Photos.FindAsync(@event.PhotoId);
-        if (photo is null) return;
-
-        dbContext.Photos.Remove(photo);
-
-        var installation = await dbContext.Installations.FindAsync(@event.InstallationId);
-        if (installation is null) return;
-
-        installation.PhotoCount--;
-
-    }
-
-    private static async Task HandleMeasurementRecorded(ReadModelDbContext dbContext, MeasurementRecorded @event)
-    {
-        MeasurementReadModel measurement = new()
+        if (photo is not null)
         {
-            Id = @event.MeasurementId,
-            InstallationId = @event.InstallationId,
-            Type = @event.Type,
-            Value = @event.Value,
-            Unit = @event.Unit,
-            MinThreshold = @event.MinThreshold,
-            MaxThreshold = @event.MaxThreshold,
-            Result = @event.Result,
-            Notes = @event.Notes,
-            MeasuredAt = @event.MeasuredAt
-        };
+            dbContext.Photos.Remove(photo);
+        }
 
-        dbContext.Measurements.Add(measurement);
-
-        var installation = await dbContext.Installations.FindAsync(@event.InstallationId);
-        if (installation is null) return;
-
-        installation.MeasurementCount++;
+        await UpdateInstallation(dbContext, @event.InstallationId, i => i.PhotoCount--);
     }
 
-    private static async Task HandleMeasurementRemoved(ReadModelDbContext dbContext, MeasurementRemoved @event)
+    private static async Task ApplyMeasurementRecorded(ReadModelDbContext dbContext, MeasurementRecorded e)
+    {
+        dbContext.Measurements.Add(new MeasurementReadModel
+        {
+            Id = e.MeasurementId,
+            InstallationId = e.InstallationId,
+            Type = e.Type,
+            Value = e.Value,
+            Unit = e.Unit,
+            MinThreshold = e.MinThreshold,
+            MaxThreshold = e.MaxThreshold,
+            Result = e.Result,
+            Notes = e.Notes,
+            MeasuredAt = e.MeasuredAt
+        });
+
+        await UpdateInstallation(dbContext, e.InstallationId, i => i.MeasurementCount++);
+    }
+
+    private static async Task ApplyMeasurementRemoved(ReadModelDbContext dbContext, MeasurementRemoved @event)
     {
         var measurement = await dbContext.Measurements.FindAsync(@event.MeasurementId);
-        if (measurement is null) return;
+        if (measurement is not null)
+        {
+            dbContext.Measurements.Remove(measurement);
+        }
 
-        dbContext.Measurements.Remove(measurement);
-
-        var installation = await dbContext.Installations.FindAsync(@event.InstallationId);
-        if (installation is null) return;
-
-        installation.MeasurementCount--;
+        await UpdateInstallation(dbContext, @event.InstallationId, i => i.MeasurementCount--);
     }
 
-    private static async Task HandlePositionUpdated(ReadModelDbContext dbContext, InstallationPositionUpdated @event)
-    {
-        var installation = await dbContext.Installations.FindAsync(@event.InstallationId);
-        if (installation is null) return;
+    private static Task ApplyPositionUpdated(ReadModelDbContext dbContext, InstallationPositionUpdated @event) =>
+        UpdateInstallation(dbContext, @event.InstallationId, i =>
+        {
+            i.Latitude = @event.Latitude;
+            i.Longitude = @event.Longitude;
+            i.Altitude = @event.Altitude;
+            i.HorizontalAccuracy = @event.HorizontalAccuracy;
+            i.GpsSource = @event.GpsSource;
+            i.CorrectionService = @event.CorrectionService;
+            i.RtkFixStatus = @event.RtkFixStatus;
+            i.SatelliteCount = @event.SatelliteCount;
+            i.Hdop = @event.Hdop;
+            i.CorrectionAge = @event.CorrectionAge;
+            i.QualityGrade = @event.QualityGrade;
+        });
 
-        installation.Latitude = @event.Latitude;
-        installation.Longitude = @event.Longitude;
-        installation.Altitude = @event.Altitude;
-        installation.HorizontalAccuracy = @event.HorizontalAccuracy;
-        installation.GpsSource = @event.GpsSource;
-        installation.CorrectionService = @event.CorrectionService;
-        installation.RtkFixStatus = @event.RtkFixStatus;
-        installation.SatelliteCount = @event.SatelliteCount;
-        installation.Hdop = @event.Hdop;
-        installation.CorrectionAge = @event.CorrectionAge;
-        installation.QualityGrade = @event.QualityGrade;
-    }
+    private static Task ApplyDescriptionUpdated(ReadModelDbContext dbContext, InstallationDescriptionUpdated @event) =>
+        UpdateInstallation(dbContext, @event.InstallationId, i => i.Description = @event.Description);
 
-    private static async Task HandleDescriptionUpdated(ReadModelDbContext dbContext, InstallationDescriptionUpdated @event)
-    {
-        var installation = await dbContext.Installations.FindAsync(@event.InstallationId);
-        if (installation is null) return;
+    private static Task ApplyCableSpecUpdated(ReadModelDbContext dbContext, InstallationCableSpecUpdated @event) =>
+        UpdateInstallation(dbContext, @event.InstallationId, i =>
+        {
+            i.CableType = @event.CableType;
+            i.CrossSection = @event.CrossSection;
+            i.CableColor = @event.CableColor;
+            i.ConductorCount = @event.ConductorCount;
+        });
 
-        installation.Description = @event.Description;
-    }
+    private static Task ApplyDepthUpdated(ReadModelDbContext dbContext, InstallationDepthUpdated @event) =>
+        UpdateInstallation(dbContext, @event.InstallationId, i => i.DepthMm = @event.DepthMm);
 
-    private static async Task HandleCableSpecUpdated(ReadModelDbContext dbContext, InstallationCableSpecUpdated @event)
-    {
-        var installation = await dbContext.Installations.FindAsync(@event.InstallationId);
-        if (installation is null) return;
+    private static Task ApplyDeviceInfoUpdated(ReadModelDbContext dbContext, InstallationDeviceInfoUpdated @event) =>
+        UpdateInstallation(dbContext, @event.InstallationId, i =>
+        {
+            i.Manufacturer = @event.Manufacturer;
+            i.ModelName = @event.ModelName;
+            i.SerialNumber = @event.SerialNumber;
+        });
 
-        installation.CableType = @event.CableType;
-        installation.CrossSection = @event.CrossSection;
-        installation.CableColor = @event.CableColor;
-        installation.ConductorCount = @event.ConductorCount;
-    }
+    private static Task ApplyCompleted(ReadModelDbContext dbContext, InstallationCompleted @event) =>
+        UpdateInstallation(dbContext, @event.InstallationId, i =>
+        {
+            i.Status = "completed";
+            i.CompletedAt = @event.CompletedAt;
+        });
 
-    private static async Task HandleDepthUpdated(ReadModelDbContext dbContext, InstallationDepthUpdated @event)
-    {
-        var installation = await dbContext.Installations.FindAsync(@event.InstallationId);
-        if (installation is null) return;
-
-        installation.DepthMm = @event.DepthMm;
-    }
-
-    private static async Task HandleDeviceInfoUpdated(ReadModelDbContext dbContext, InstallationDeviceInfoUpdated @event)
-    {
-        var installation = await dbContext.Installations.FindAsync(@event.InstallationId);
-        if (installation is null) return;
-
-        installation.Manufacturer = @event.Manufacturer;
-        installation.ModelName = @event.ModelName;
-        installation.SerialNumber = @event.SerialNumber;
-    }
-
-    private static async Task HandleCompleted(ReadModelDbContext dbContext, InstallationCompleted @event)
-    {
-        var installation = await dbContext.Installations.FindAsync(@event.InstallationId);
-        if (installation is null) return;
-
-        installation.Status = "completed";
-        installation.CompletedAt = @event.CompletedAt;
-    }
-
-    private static async Task HandleDeleted(ReadModelDbContext dbContext, InstallationDeleted @event)
-    {
-        var installation = await dbContext.Installations.FindAsync(@event.InstallationId);
-        if (installation is null) return;
-
-        installation.IsDeleted = true;
-    }
+    private static Task ApplyDeleted(ReadModelDbContext dbContext, InstallationDeleted @evet) =>
+        UpdateInstallation(dbContext, evet.InstallationId, i => i.IsDeleted = true);
 }
