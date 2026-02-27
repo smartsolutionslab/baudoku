@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiGet, apiPost, apiPut, apiDelete } from "@baudoku/core";
+import type { PagedResult } from "@baudoku/core";
 import type {
   Installation,
   Photo,
@@ -13,10 +14,12 @@ import type {
 export function useInstallations(projectId: string) {
   return useQuery({
     queryKey: ["projects", projectId, "installations"],
-    queryFn: () =>
-      apiGet<Installation[]>(
+    queryFn: async () => {
+      const result = await apiGet<PagedResult<Installation>>(
         `/api/documentation/installations?projectId=${projectId}`
-      ),
+      );
+      return result.items;
+    },
     enabled: !!projectId,
   });
 }
