@@ -10,23 +10,20 @@ import { useRouter } from "expo-router";
 import { useProjects, useSyncStatus } from "@/hooks";
 import { Button } from "@/components/core";
 import { useAuthStore, useSettingsStore } from "@/store";
-import { clearTokens } from "@/auth";
-import { setAuthToken } from "@baudoku/core";
+import { performLogout } from "@/auth";
 import { Colors, Spacing, FontSize, Radius } from "@/styles/tokens";
 
 export default function ProfileScreen() {
   const router = useRouter();
   const { data: projects } = useProjects();
   const { isOnline, unsyncedCount, lastSyncTimestamp } = useSyncStatus();
-  const { isAuthenticated, user, clearAuth } = useAuthStore();
+  const { isAuthenticated, user } = useAuthStore();
   const { allowMockLocation, setAllowMockLocation } = useSettingsStore();
 
   const projectCount = projects?.length ?? 0;
 
   const handleLogout = async () => {
-    clearAuth();
-    setAuthToken(null);
-    await clearTokens();
+    await performLogout();
   };
 
   const displayRole = (roles: string[]) => {

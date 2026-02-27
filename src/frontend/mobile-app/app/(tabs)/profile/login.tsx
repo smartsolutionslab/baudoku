@@ -26,9 +26,9 @@ export default function LoginScreen() {
     try {
       const tokens = await loginWithKeycloak();
 
-      await saveTokens(tokens.accessToken, tokens.refreshToken);
+      await saveTokens(tokens.accessToken, tokens.refreshToken, tokens.idToken);
 
-      setTokens(tokens.accessToken, tokens.refreshToken);
+      setTokens(tokens.accessToken, tokens.refreshToken, tokens.idToken);
       setAuthToken(tokens.accessToken);
 
       const user = parseUserFromToken(tokens.idToken);
