@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useCallback } from "react";
 import { useAuthStore } from "../store";
-import { loadTokens, saveTokens, clearTokens, refreshAccessToken, parseUserFromToken } from "../auth";
+import { loadTokens, saveTokens, refreshAccessToken, parseUserFromToken, performLogout } from "../auth";
 import { setAuthToken, setBaseUrl, onUnauthorized } from "@baudoku/core";
 import { API_BASE_URL } from "../config/environment";
 
@@ -19,24 +19,22 @@ function getTokenExpiresIn(token: string): number {
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const refreshTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const { setTokens, setUser, clearAuth } = useAuthStore();
+  const { setTokens, setUser } = useAuthStore();
 
   useEffect(() => {
     setBaseUrl(API_BASE_URL);
   }, []);
 
   const handleLogout = useCallback(async () => {
-    clearAuth();
-    setAuthToken(null);
-    await clearTokens();
+    await performLogout();
     if (refreshTimerRef.current) {
       clearTimeout(refreshTimerRef.current);
       refreshTimerRef.current = null;
     }
-  }, [clearAuth]);
+  }, []);
 
   const scheduleRefresh = useCallback(
-    (accessToken: string, currentRefreshToken: string) => {
+    (accessToken: string, currentRefreshToken: string, currentIdToken: string) => {
       if (refreshTimerRef.current) {
         clearTimeout(refreshTimerRef.current);
       }
@@ -47,8 +45,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       refreshTimerRef.current = setTimeout(async () => {
         try {
           const tokens = await refreshAccessToken(currentRefreshToken);
-          await saveTokens(tokens.accessToken, tokens.refreshToken);
-          setTokens(tokens.accessToken, tokens.refreshToken);
+          const newIdToken = tokens.idToken || currentIdToken;
+          await saveTokens(tokens.accessToken, tokens.refreshToken, newIdToken);
+          setTokens(tokens.accessToken, tokens.refreshToken, newIdToken);
           setAuthToken(tokens.accessToken);
 
           if (tokens.idToken) {
@@ -56,7 +55,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             setUser(user);
           }
 
-          scheduleRefresh(tokens.accessToken, tokens.refreshToken);
+          scheduleRefresh(tokens.accessToken, tokens.refreshToken, newIdToken);
         } catch {
           await handleLogout();
         }
@@ -69,28 +68,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     let mounted = true;
 
     async function initAuth() {
-      const { accessToken, refreshToken } = await loadTokens();
+      const { accessToken, refreshToken, idToken } = await loadTokens();
 
       if (!mounted || !accessToken || !refreshToken) return;
 
       const expiresIn = getTokenExpiresIn(accessToken);
 
       if (expiresIn > 30_000) {
-        setTokens(accessToken, refreshToken);
+        setTokens(accessToken, refreshToken, idToken ?? "");
         setAuthToken(accessToken);
         try {
-          const user = parseUserFromToken(accessToken);
+          const tokenToParse = idToken || accessToken;
+          const user = parseUserFromToken(tokenToParse);
           setUser(user);
         } catch {
           // Token parsing failed — user info will be missing
         }
-        scheduleRefresh(accessToken, refreshToken);
+        scheduleRefresh(accessToken, refreshToken, idToken ?? "");
       } else {
         try {
           const tokens = await refreshAccessToken(refreshToken);
           if (!mounted) return;
-          await saveTokens(tokens.accessToken, tokens.refreshToken);
-          setTokens(tokens.accessToken, tokens.refreshToken);
+          const newIdToken = tokens.idToken || idToken || "";
+          await saveTokens(tokens.accessToken, tokens.refreshToken, newIdToken);
+          setTokens(tokens.accessToken, tokens.refreshToken, newIdToken);
           setAuthToken(tokens.accessToken);
 
           if (tokens.idToken) {
@@ -98,7 +99,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             setUser(user);
           }
 
-          scheduleRefresh(tokens.accessToken, tokens.refreshToken);
+          scheduleRefresh(tokens.accessToken, tokens.refreshToken, newIdToken);
         } catch {
           if (mounted) await handleLogout();
         }
