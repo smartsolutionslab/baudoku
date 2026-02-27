@@ -345,23 +345,24 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
-      - name: Restore dependencies
-        run: dotnet restore src/backend/BauDoku.slnx
-
       - name: Install CycloneDX
         run: dotnet tool install --global CycloneDX
 
       - name: Generate SBOM
+        # CycloneDX 6.0.0 exits with code 7 for transitive Roslyn packages
+        # from Marten (unfixed upstream bug: cyclonedx-dotnet#903).
+        # SBOM is still generated, just missing one BOM reference.
+        continue-on-error: true
         run: |
           dotnet CycloneDX src/backend/BauDoku.slnx \
             -o ./sbom \
             -fn sbom.json \
             -F Json \
-            --exclude-test-projects \
-            --disable-package-restore
+            --exclude-test-projects
 
       - name: Upload SBOM
         uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: sbom
           path: sbom/sbom.json
