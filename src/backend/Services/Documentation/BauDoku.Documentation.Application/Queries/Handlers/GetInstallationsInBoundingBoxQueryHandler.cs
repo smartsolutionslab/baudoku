@@ -13,9 +13,7 @@ public sealed class GetInstallationsInBoundingBoxQueryHandler(IInstallationReadR
     {
         var (bounds, projectId, page, pageSize) = query;
 
-        var pagination = new PaginationParams(
-            page ?? PageNumber.Default,
-            pageSize ?? PageSize.Default);
+        var pagination = new PaginationParams(page ?? PageNumber.Default, pageSize ?? PageSize.Default);
         return await installations.SearchInBoundingBoxAsync(bounds, projectId, pagination, cancellationToken);
     }
 }

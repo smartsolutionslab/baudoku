@@ -23,7 +23,9 @@ public abstract class EventSourcedAggregateRoot<TIdentity> : Entity<TIdentity>, 
     public void LoadFromHistory(IReadOnlyList<IDomainEvent> history, long version)
     {
         foreach (var @event in history)
+        {
             Apply(@event);
+        }
         Version = version;
     }
 

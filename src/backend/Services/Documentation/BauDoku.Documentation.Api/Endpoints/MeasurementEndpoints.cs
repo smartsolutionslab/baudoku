@@ -23,9 +23,8 @@ public static class MeasurementEndpoints
         {
             var command = request.ToCommand(installationId);
 
-            var measurementId = await dispatcher.Send<MeasurementIdentifier>(command, ct);
-            return Results.Created(
-                $"/api/documentation/installations/{installationId}/measurements", new CreatedResponse(measurementId.Value));
+            var measurementId = await dispatcher.Send(command, ct);
+            return Results.Created($"/api/documentation/installations/{installationId}/measurements", new CreatedResponse(measurementId.Value));
         })
         .RequireAuthorization(AuthPolicies.RequireUser)
         .WithName("RecordMeasurement")
@@ -33,10 +32,7 @@ public static class MeasurementEndpoints
         .Produces<CreatedResponse>(StatusCodes.Status201Created)
         .ProducesValidationProblem();
 
-        group.MapGet("/installations/{installationId:guid}/measurements", async (
-            Guid installationId,
-            IDispatcher dispatcher,
-            CancellationToken ct) =>
+        group.MapGet("/installations/{installationId:guid}/measurements", async (Guid installationId, IDispatcher dispatcher, CancellationToken ct) =>
         {
             var query = new GetMeasurementsQuery(InstallationIdentifier.From(installationId));
             var result = await dispatcher.Query(query, ct);

@@ -29,23 +29,12 @@ public sealed class InstallationReadRepository(ReadModelDbContext context) : IIn
         if (status is not null)
             query = query.Where(i => i.Status == status.Value);
 
-        if (search.HasValue())
-            query = query.Where(i => i.Description != null && EF.Functions.ILike(i.Description, $"%{search}%"));
+        if (search is not null)
+            query = query.Where(i => i.Description != null && EF.Functions.ILike(i.Description, $"%{search.Value}%"));
 
         return await query
             .OrderByDescending(i => i.CreatedAt)
-            .Select(i => new InstallationListItemDto(
-                i.Id,
-                i.ProjectId,
-                i.Type,
-                i.Status,
-                i.QualityGrade,
-                i.Latitude,
-                i.Longitude,
-                i.Description,
-                i.CreatedAt,
-                i.PhotoCount,
-                i.MeasurementCount))
+            .SelectListItems()
             .ToPagedResultAsync(pagination, cancellationToken);
     }
 
@@ -115,18 +104,7 @@ public sealed class InstallationReadRepository(ReadModelDbContext context) : IIn
 
         return await query
             .OrderByDescending(i => i.CreatedAt)
-            .Select(i => new InstallationListItemDto(
-                i.Id,
-                i.ProjectId,
-                i.Type,
-                i.Status,
-                i.QualityGrade,
-                i.Latitude,
-                i.Longitude,
-                i.Description,
-                i.CreatedAt,
-                i.PhotoCount,
-                i.MeasurementCount))
+            .SelectListItems()
             .ToPagedResultAsync(pagination, cancellationToken);
     }
 }

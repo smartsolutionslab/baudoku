@@ -1,3 +1,4 @@
+using System.Collections.Frozen;
 using BauDoku.BuildingBlocks.Domain;
 
 namespace BauDoku.Documentation.Domain;
@@ -45,9 +46,9 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
         var qualityGrade = position.CalculateQualityGrade();
         var now = DateTime.UtcNow;
 
-        var installation = new Installation();
+        Installation installation = new();
 
-        installation.RaiseEvent(new InstallationDocumented(
+        InstallationDocumented @event = new (
             id.Value,
             projectId.Value,
             zoneId?.Value,
@@ -74,10 +75,13 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
             modelName?.Value,
             serialNumber?.Value,
             now,
-            now));
+            now);
+        installation.RaiseEvent(@event);
 
         if (qualityGrade == GpsQualityGrade.D)
+        {
             installation.RaiseEvent(new LowGpsQualityDetected(id.Value, qualityGrade.Value, now));
+        }
 
         return installation;
     }
@@ -98,7 +102,7 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
 
         var actualTakenAt = takenAt ?? DateTime.UtcNow;
 
-        RaiseEvent(new PhotoAdded(
+        PhotoAdded @event = new(
             Id.Value,
             photoId.Value,
             fileName.Value,
@@ -119,15 +123,15 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
             position?.Hdop,
             position?.CorrectionAge,
             actualTakenAt,
-            DateTime.UtcNow));
+            DateTime.UtcNow);
+        RaiseEvent(@event);
     }
 
     public void RemovePhoto(PhotoIdentifier photoId)
     {
         CheckRule(new CompletedInstallationCannotBeModified(Status));
 
-        _ = photos.FirstOrDefault(p => p.Id == photoId)
-            ?? throw new InvalidOperationException($"Foto mit ID {photoId.Value} nicht gefunden.");
+        _ = photos.FirstOrDefault(p => p.Id == photoId) ?? throw new InvalidOperationException($"Foto mit ID {photoId.Value} nicht gefunden.");
 
         RaiseEvent(new PhotoRemoved(Id.Value, photoId.Value, DateTime.UtcNow));
     }
@@ -141,7 +145,7 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
         var result = Measurement.Evaluate(value);
         var now = DateTime.UtcNow;
 
-        RaiseEvent(new MeasurementRecorded(
+        MeasurementRecorded @event = new(
             Id.Value,
             measurementId.Value,
             type.Value,
@@ -152,15 +156,15 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
             result.Value,
             notes?.Value,
             now,
-            now));
+            now);
+        RaiseEvent(@event);
     }
 
     public void RemoveMeasurement(MeasurementIdentifier measurementId)
     {
         CheckRule(new CompletedInstallationCannotBeModified(Status));
 
-        _ = measurements.FirstOrDefault(m => m.Id == measurementId)
-            ?? throw new InvalidOperationException($"Messung mit ID {measurementId.Value} nicht gefunden.");
+        _ = measurements.FirstOrDefault(m => m.Id == measurementId) ?? throw new InvalidOperationException($"Messung mit ID {measurementId.Value} nicht gefunden.");
 
         RaiseEvent(new MeasurementRemoved(Id.Value, measurementId.Value, DateTime.UtcNow));
     }
@@ -172,7 +176,7 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
 
         var qualityGrade = position.CalculateQualityGrade();
 
-        RaiseEvent(new InstallationPositionUpdated(
+        InstallationPositionUpdated @event = new(
             Id.Value,
             position.Latitude.Value,
             position.Longitude.Value,
@@ -185,7 +189,8 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
             position.Hdop,
             position.CorrectionAge,
             qualityGrade.Value,
-            DateTime.UtcNow));
+            DateTime.UtcNow);
+        RaiseEvent(@event);
     }
 
     public void UpdateDescription(Description? description)
@@ -199,13 +204,14 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
     {
         CheckRule(new CompletedInstallationCannotBeModified(Status));
 
-        RaiseEvent(new InstallationCableSpecUpdated(
+        InstallationCableSpecUpdated @event = new(
             Id.Value,
             cableSpec?.CableType.Value,
             cableSpec?.CrossSection?.Value,
             cableSpec?.Color?.Value,
             cableSpec?.ConductorCount,
-            DateTime.UtcNow));
+            DateTime.UtcNow);
+        RaiseEvent(@event);
     }
 
     public void UpdateDepth(Depth? depth)
@@ -232,29 +238,36 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
     {
         CheckRule(new CompletedInstallationCannotBeModified(Status));
 
-        RaiseEvent(new InstallationDeviceInfoUpdated(
-            Id.Value, manufacturer?.Value, modelName?.Value, serialNumber?.Value, DateTime.UtcNow));
+        RaiseEvent(new InstallationDeviceInfoUpdated(Id.Value, manufacturer?.Value, modelName?.Value, serialNumber?.Value, DateTime.UtcNow));
     }
 
     // --- Event Application (state reconstitution) ---
 
+    private static readonly FrozenDictionary<Type, Action<Installation, IDomainEvent>> eventAppliers =
+        new Dictionary<Type, Action<Installation, IDomainEvent>>
+        {
+            [typeof(InstallationDocumented)] = Dispatch<InstallationDocumented>((i, e) => i.Apply(e)),
+            [typeof(PhotoAdded)] = Dispatch<PhotoAdded>((i, e) => i.Apply(e)),
+            [typeof(PhotoRemoved)] = Dispatch<PhotoRemoved>((i, e) => i.Apply(e)),
+            [typeof(MeasurementRecorded)] = Dispatch<MeasurementRecorded>((i, e) => i.Apply(e)),
+            [typeof(MeasurementRemoved)] = Dispatch<MeasurementRemoved>((i, e) => i.Apply(e)),
+            [typeof(InstallationPositionUpdated)] = Dispatch<InstallationPositionUpdated>((i, e) => i.Apply(e)),
+            [typeof(InstallationDescriptionUpdated)] = Dispatch<InstallationDescriptionUpdated>((i, e) => i.Apply(e)),
+            [typeof(InstallationCableSpecUpdated)] = Dispatch<InstallationCableSpecUpdated>((i, e) => i.Apply(e)),
+            [typeof(InstallationDepthUpdated)] = Dispatch<InstallationDepthUpdated>((i, e) => i.Apply(e)),
+            [typeof(InstallationDeviceInfoUpdated)] = Dispatch<InstallationDeviceInfoUpdated>((i, e) => i.Apply(e)),
+            [typeof(InstallationCompleted)] = Dispatch<InstallationCompleted>((i, e) => i.Apply(e)),
+            [typeof(InstallationDeleted)] = Dispatch<InstallationDeleted>((i, e) => i.Apply(e)),
+        }.ToFrozenDictionary();
+
+    private static Action<Installation, IDomainEvent> Dispatch<TEvent>(Action<Installation, TEvent> handler) where TEvent : IDomainEvent =>
+        (i, e) => handler(i, (TEvent)e);
+
     public override void Apply(IDomainEvent @event)
     {
-        switch (@event)
+        if (eventAppliers.TryGetValue(@event.GetType(), out var applier))
         {
-            case InstallationDocumented e: Apply(e); break;
-            case PhotoAdded e: Apply(e); break;
-            case PhotoRemoved e: Apply(e); break;
-            case MeasurementRecorded e: Apply(e); break;
-            case MeasurementRemoved e: Apply(e); break;
-            case InstallationPositionUpdated e: Apply(e); break;
-            case InstallationDescriptionUpdated e: Apply(e); break;
-            case InstallationCableSpecUpdated e: Apply(e); break;
-            case InstallationDepthUpdated e: Apply(e); break;
-            case InstallationDeviceInfoUpdated e: Apply(e); break;
-            case InstallationCompleted e: Apply(e); break;
-            case InstallationDeleted e: Apply(e); break;
-            case LowGpsQualityDetected: break; // notification only, no state change
+            applier(this, @event);
         }
     }
 

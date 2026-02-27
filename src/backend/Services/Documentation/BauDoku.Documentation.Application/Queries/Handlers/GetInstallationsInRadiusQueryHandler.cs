@@ -13,9 +13,7 @@ public sealed class GetInstallationsInRadiusQueryHandler(IInstallationReadReposi
     {
         var (radius, projectId, page, pageSize) = query;
 
-        var pagination = new PaginationParams(
-            page ?? PageNumber.Default,
-            pageSize ?? PageSize.Default);
+        var pagination = new PaginationParams(page ?? PageNumber.Default, pageSize ?? PageSize.Default);
         return await installations.SearchInRadiusAsync(radius, projectId, pagination, cancellationToken);
     }
 }
