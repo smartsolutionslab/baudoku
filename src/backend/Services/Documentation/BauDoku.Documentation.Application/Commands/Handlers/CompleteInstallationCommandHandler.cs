@@ -1,12 +1,10 @@
 using BauDoku.BuildingBlocks.Application.Commands;
-using BauDoku.BuildingBlocks.Application.Persistence;
 using BauDoku.Documentation.Application.Diagnostics;
 using BauDoku.Documentation.Domain;
 
 namespace BauDoku.Documentation.Application.Commands.Handlers;
 
-public sealed class CompleteInstallationCommandHandler(IInstallationRepository installations, IUnitOfWork unitOfWork)
-    : ICommandHandler<CompleteInstallationCommand>
+public sealed class CompleteInstallationCommandHandler(IInstallationRepository installations) : ICommandHandler<CompleteInstallationCommand>
 {
     public async Task Handle(CompleteInstallationCommand command, CancellationToken cancellationToken = default)
     {
@@ -16,7 +14,7 @@ public sealed class CompleteInstallationCommandHandler(IInstallationRepository i
 
         installation.MarkAsCompleted();
 
-        await unitOfWork.SaveChangesAsync(cancellationToken);
+        await installations.SaveAsync(installation, cancellationToken);
 
         DocumentationMetrics.InstallationsCompleted.Add(1);
     }

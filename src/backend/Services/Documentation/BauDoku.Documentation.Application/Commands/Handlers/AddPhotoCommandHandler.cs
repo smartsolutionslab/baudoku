@@ -1,12 +1,11 @@
 using BauDoku.BuildingBlocks.Application.Commands;
-using BauDoku.BuildingBlocks.Application.Persistence;
 using BauDoku.Documentation.Application.Contracts;
 using BauDoku.Documentation.Application.Diagnostics;
 using BauDoku.Documentation.Domain;
 
 namespace BauDoku.Documentation.Application.Commands.Handlers;
 
-public sealed class AddPhotoCommandHandler(IInstallationRepository installations, IPhotoStorage photoStorage, IUnitOfWork unitOfWork)
+public sealed class AddPhotoCommandHandler(IInstallationRepository installations, IPhotoStorage photoStorage)
     : ICommandHandler<AddPhotoCommand, PhotoIdentifier>
 {
     public async Task<PhotoIdentifier> Handle(AddPhotoCommand command, CancellationToken cancellationToken = default)
@@ -35,7 +34,7 @@ public sealed class AddPhotoCommandHandler(IInstallationRepository installations
 
         try
         {
-            await unitOfWork.SaveChangesAsync(cancellationToken);
+            await installations.SaveAsync(installation, cancellationToken);
         }
         catch
         {

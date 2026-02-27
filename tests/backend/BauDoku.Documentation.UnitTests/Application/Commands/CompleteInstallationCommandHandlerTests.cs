@@ -1,5 +1,4 @@
 using AwesomeAssertions;
-using BauDoku.BuildingBlocks.Application.Persistence;
 using BauDoku.Documentation.Application.Commands;
 using BauDoku.Documentation.Application.Commands.Handlers;
 using BauDoku.Documentation.Domain;
@@ -11,14 +10,12 @@ namespace BauDoku.Documentation.UnitTests.Application.Commands;
 public sealed class CompleteInstallationCommandHandlerTests
 {
     private readonly IInstallationRepository installations;
-    private readonly IUnitOfWork unitOfWork;
     private readonly CompleteInstallationCommandHandler handler;
 
     public CompleteInstallationCommandHandlerTests()
     {
         installations = Substitute.For<IInstallationRepository>();
-        unitOfWork = Substitute.For<IUnitOfWork>();
-        handler = new CompleteInstallationCommandHandler(installations, unitOfWork);
+        handler = new CompleteInstallationCommandHandler(installations);
     }
 
     private static Installation CreateValidInstallation() =>
@@ -40,7 +37,7 @@ public sealed class CompleteInstallationCommandHandlerTests
 
         installation.Status.Should().Be(InstallationStatus.Completed);
         installation.CompletedAt.Should().NotBeNull();
-        await unitOfWork.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+        await installations.Received(1).SaveAsync(Arg.Any<Installation>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]

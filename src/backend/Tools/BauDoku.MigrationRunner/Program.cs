@@ -3,9 +3,11 @@ using BauDoku.BuildingBlocks.Application.Dispatcher;
 using BauDoku.BuildingBlocks.Application.Queries;
 using BauDoku.BuildingBlocks.Domain;
 using BauDoku.Documentation.Infrastructure.Persistence;
+using BauDoku.Documentation.Infrastructure.ReadModel;
 using BauDoku.Projects.Infrastructure.Persistence;
 using BauDoku.ServiceDefaults;
 using BauDoku.Sync.Infrastructure.Persistence;
+using Marten;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,7 +25,9 @@ var syncCs = builder.Configuration.GetRequiredConnectionString(ConnectionStringN
 
 builder.Services.AddDbContext<ProjectsDbContext>((sp, options) => options.UseNpgsql(projectsCs));
 
-builder.Services.AddDbContext<DocumentationDbContext>(options => options.UseNpgsql(documentationCs, o => o.UseNetTopologySuite()));
+builder.Services.AddMarten(options => MartenConfiguration.Configure(options, documentationCs));
+
+builder.Services.AddDbContext<ReadModelDbContext>(options => options.UseNpgsql(documentationCs, o => o.UseNetTopologySuite()));
 
 builder.Services.AddDbContext<SyncDbContext>((sp, options) => options.UseNpgsql(syncCs));
 
@@ -34,7 +38,8 @@ try
     Log.Information("Starting migration runner...");
 
     await MigrateAsync<ProjectsDbContext>(host, "Projects");
-    await MigrateAsync<DocumentationDbContext>(host, "Documentation");
+    await MigrateMartenAsync(host);
+    await MigrateAsync<ReadModelDbContext>(host, "Documentation ReadModel");
     await MigrateAsync<SyncDbContext>(host, "Sync");
 
     Log.Information("All migrations applied successfully.");
@@ -70,6 +75,16 @@ static async Task MigrateAsync<TContext>(IHost host, string contextName) where T
     await db.Database.MigrateAsync();
 
     Log.Information("{Context}: Migrations applied successfully", contextName);
+}
+
+static async Task MigrateMartenAsync(IHost host)
+{
+    using var scope = host.Services.CreateScope();
+    var store = scope.ServiceProvider.GetRequiredService<IDocumentStore>();
+
+    Log.Information("Documentation EventStore: Applying Marten schema changes...");
+    await store.Storage.ApplyAllConfiguredChangesToDatabaseAsync();
+    Log.Information("Documentation EventStore: Schema changes applied successfully");
 }
 
 sealed class NoOpDispatcher : IDispatcher

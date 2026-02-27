@@ -1,5 +1,4 @@
 using AwesomeAssertions;
-using BauDoku.BuildingBlocks.Application.Persistence;
 using BauDoku.Documentation.Application.Commands;
 using BauDoku.Documentation.Application.Commands.Handlers;
 using BauDoku.Documentation.Application.Contracts;
@@ -13,15 +12,13 @@ public sealed class AddPhotoCommandHandlerTests
 {
     private readonly IInstallationRepository installations;
     private readonly IPhotoStorage photoStorage;
-    private readonly IUnitOfWork unitOfWork;
     private readonly AddPhotoCommandHandler handler;
 
     public AddPhotoCommandHandlerTests()
     {
         installations = Substitute.For<IInstallationRepository>();
         photoStorage = Substitute.For<IPhotoStorage>();
-        unitOfWork = Substitute.For<IUnitOfWork>();
-        handler = new AddPhotoCommandHandler(installations, photoStorage, unitOfWork);
+        handler = new AddPhotoCommandHandler(installations, photoStorage);
     }
 
     private static Installation CreateValidInstallation() =>
@@ -49,10 +46,10 @@ public sealed class AddPhotoCommandHandlerTests
 
         var result = await handler.Handle(command, CancellationToken.None);
 
-        result.Should().NotBe(Guid.Empty);
+        result.Value.Should().NotBe(Guid.Empty);
         installation.Photos.Should().ContainSingle();
         await photoStorage.Received(1).UploadAsync(Arg.Any<Stream>(), FileName.From("photo.jpg"), ContentType.From("image/jpeg"), Arg.Any<CancellationToken>());
-        await unitOfWork.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+        await installations.Received(1).SaveAsync(Arg.Any<Installation>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]

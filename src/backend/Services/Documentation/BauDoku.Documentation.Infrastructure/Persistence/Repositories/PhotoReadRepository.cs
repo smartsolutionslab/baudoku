@@ -1,42 +1,40 @@
-using System.Linq.Expressions;
 using BauDoku.Documentation.Application.Contracts;
 using BauDoku.Documentation.Application.Queries.Dtos;
 using BauDoku.Documentation.Domain;
+using BauDoku.Documentation.Infrastructure.ReadModel;
 using Microsoft.EntityFrameworkCore;
 
 namespace BauDoku.Documentation.Infrastructure.Persistence.Repositories;
 
-public sealed class PhotoReadRepository(DocumentationDbContext context) : IPhotoReadRepository
+public sealed class PhotoReadRepository(ReadModelDbContext context) : IPhotoReadRepository
 {
-    private static readonly Expression<Func<Photo, PhotoDto>> toPhotoDto = p => new PhotoDto(
-        p.Id.Value,
-        EF.Property<InstallationIdentifier>(p, "InstallationId").Value,
-        p.FileName.Value,
-        p.BlobUrl.Value,
-        p.ContentType.Value,
-        p.FileSize.Value,
-        p.PhotoType.Value,
-        p.Caption != null ? p.Caption.Value : null,
-        p.Description != null ? p.Description.Value : null,
-        p.Position != null ? p.Position.Latitude.Value : null,
-        p.Position != null ? p.Position.Longitude.Value : null,
-        p.Position != null ? p.Position.Altitude : null,
-        p.Position != null ? (double?)p.Position.HorizontalAccuracy.Value : null,
-        p.Position != null ? p.Position.Source.Value : null,
-        p.Position != null ? (p.Position.CorrectionService != null ? p.Position.CorrectionService.Value : null) : null,
-        p.Position != null ? (p.Position.RtkFixStatus != null ? p.Position.RtkFixStatus.Value : null) : null,
-        p.Position != null ? p.Position.SatelliteCount : null,
-        p.Position != null ? p.Position.Hdop : null,
-        p.Position != null ? p.Position.CorrectionAge : null,
-        p.TakenAt);
-
     public async Task<PhotoDto> GetByIdAsync(PhotoIdentifier photoId, CancellationToken cancellationToken = default)
     {
         var id = photoId.Value;
         return await context.Photos
             .AsNoTracking()
-            .Where(p => p.Id == photoId)
-            .Select(toPhotoDto)
+            .Where(p => p.Id == id)
+            .Select(p => new PhotoDto(
+                p.Id,
+                p.InstallationId,
+                p.FileName,
+                p.BlobUrl,
+                p.ContentType,
+                p.FileSize,
+                p.PhotoType,
+                p.Caption,
+                p.Description,
+                p.Latitude,
+                p.Longitude,
+                p.Altitude,
+                p.HorizontalAccuracy,
+                p.GpsSource,
+                p.CorrectionService,
+                p.RtkFixStatus,
+                p.SatelliteCount,
+                p.Hdop,
+                p.CorrectionAge,
+                p.TakenAt))
             .FirstOrDefaultAsync(cancellationToken)
             ?? throw new KeyNotFoundException($"Foto mit ID '{id}' nicht gefunden.");
     }
@@ -45,9 +43,29 @@ public sealed class PhotoReadRepository(DocumentationDbContext context) : IPhoto
     {
         return await context.Photos
             .AsNoTracking()
-            .Where(p => EF.Property<InstallationIdentifier>(p, "InstallationId").Value == installationId.Value)
+            .Where(p => p.InstallationId == installationId.Value)
             .OrderByDescending(p => p.TakenAt)
-            .Select(toPhotoDto)
+            .Select(p => new PhotoDto(
+                p.Id,
+                p.InstallationId,
+                p.FileName,
+                p.BlobUrl,
+                p.ContentType,
+                p.FileSize,
+                p.PhotoType,
+                p.Caption,
+                p.Description,
+                p.Latitude,
+                p.Longitude,
+                p.Altitude,
+                p.HorizontalAccuracy,
+                p.GpsSource,
+                p.CorrectionService,
+                p.RtkFixStatus,
+                p.SatelliteCount,
+                p.Hdop,
+                p.CorrectionAge,
+                p.TakenAt))
             .ToListAsync(cancellationToken);
     }
 }

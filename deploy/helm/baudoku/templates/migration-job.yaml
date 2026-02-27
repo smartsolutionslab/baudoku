@@ -1,0 +1,52 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}-migration-runner
+  labels:
+    app.kubernetes.io/name: migration-runner
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-weight: "-5"
+    helm.sh/hook-delete-policy: before-hook-creation
+spec:
+  activeDeadlineSeconds: 120
+  backoffLimit: 3
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: migration-runner
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      restartPolicy: Never
+      containers:
+        - name: migration-runner
+          image: "{{ .Values.global.image.registry }}/{{ .Values.global.image.prefix }}-{{ .Values.migrationRunner.image.name }}:{{ .Values.global.image.tag }}"
+          imagePullPolicy: {{ .Values.global.image.pullPolicy }}
+          env:
+            - name: ConnectionStrings__ProjectsDb
+              valueFrom:
+                secretKeyRef:
+                  name: baudoku-db-credentials
+                  key: projects-connection-string
+            - name: ConnectionStrings__DocumentationDb
+              valueFrom:
+                secretKeyRef:
+                  name: baudoku-db-credentials
+                  key: documentation-connection-string
+            - name: ConnectionStrings__SyncDb
+              valueFrom:
+                secretKeyRef:
+                  name: baudoku-db-credentials
+                  key: sync-connection-string
+            {{- if .Values.otel.enabled }}
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: {{ .Values.otel.endpoint | quote }}
+            {{- end }}
+          resources:
+            {{- toYaml .Values.migrationRunner.resources | nindent 12 }}

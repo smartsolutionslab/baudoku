@@ -1,12 +1,11 @@
 using BauDoku.BuildingBlocks.Application.Commands;
-using BauDoku.BuildingBlocks.Application.Persistence;
 using BauDoku.Documentation.Application.Contracts;
 using BauDoku.Documentation.Application.Diagnostics;
 using BauDoku.Documentation.Domain;
 
 namespace BauDoku.Documentation.Application.Commands.Handlers;
 
-public sealed class RemovePhotoCommandHandler(IInstallationRepository installations, IPhotoStorage photoStorage, IUnitOfWork unitOfWork)
+public sealed class RemovePhotoCommandHandler(IInstallationRepository installations, IPhotoStorage photoStorage)
     : ICommandHandler<RemovePhotoCommand>
 {
     public async Task Handle(RemovePhotoCommand command, CancellationToken cancellationToken = default)
@@ -20,7 +19,7 @@ public sealed class RemovePhotoCommandHandler(IInstallationRepository installati
 
         installation.RemovePhoto(photoId);
 
-        await unitOfWork.SaveChangesAsync(cancellationToken);
+        await installations.SaveAsync(installation, cancellationToken);
 
         await photoStorage.DeleteAsync(photo.BlobUrl, cancellationToken);
 

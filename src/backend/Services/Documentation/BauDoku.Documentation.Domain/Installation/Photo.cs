@@ -42,4 +42,31 @@ public sealed class Photo : Entity<PhotoIdentifier>
             Position = position
         };
     }
+
+    internal static Photo Reconstitute(
+        PhotoIdentifier id,
+        FileName fileName,
+        BlobUrl blobUrl,
+        ContentType contentType,
+        FileSize fileSize,
+        PhotoType photoType,
+        Caption? caption,
+        Description? description,
+        GpsPosition? position,
+        DateTime takenAt)
+    {
+        return new Photo
+        {
+            Id = id,
+            FileName = fileName,
+            BlobUrl = blobUrl,
+            ContentType = contentType,
+            FileSize = fileSize,
+            PhotoType = photoType,
+            Caption = caption,
+            Description = description,
+            TakenAt = takenAt,
+            Position = position
+        };
+    }
 }

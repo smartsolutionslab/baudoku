@@ -38,7 +38,7 @@ public sealed class GetInstallationQueryHandlerTests
             MeasurementType.InsulationResistance,
             MeasurementValue.Create(500.0, "MΩ", 1.0, null));
 
-        installations.GetByIdReadOnlyAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
+        installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
 
         var result = await handler.Handle(new GetInstallationQuery(installation.Id), CancellationToken.None);
@@ -56,7 +56,7 @@ public sealed class GetInstallationQueryHandlerTests
     [Fact]
     public async Task Handle_WhenNotFound_ShouldThrow()
     {
-        installations.GetByIdReadOnlyAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
+        installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Throws(new KeyNotFoundException());
 
         var act = () => handler.Handle(new GetInstallationQuery(InstallationIdentifier.New()), CancellationToken.None);
@@ -74,7 +74,7 @@ public sealed class GetInstallationQueryHandlerTests
             InstallationType.JunctionBox,
             GpsPosition.Create(Latitude.From(48.0), Longitude.From(11.0), 500.0, HorizontalAccuracy.From(2.5), GpsSource.From("dgnss"), CorrectionService.From("SAPOS-EPS"), RtkFixStatus.From("fix"), 12, 0.8, 1.5));
 
-        installations.GetByIdReadOnlyAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
+        installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(installation);
 
         var result = await handler.Handle(new GetInstallationQuery(installation.Id), CancellationToken.None);

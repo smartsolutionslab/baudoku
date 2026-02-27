@@ -46,7 +46,7 @@ public sealed class InitChunkedUploadCommandHandlerTests
 
         var result = await handler.Handle(command, CancellationToken.None);
 
-        result.Should().NotBe(Guid.Empty);
+        result.Value.Should().NotBe(Guid.Empty);
         await chunkedUploadStorage.Received(1)
             .InitSessionAsync(Arg.Is<ChunkedUploadSession>(s =>
                 s.InstallationId == installation.Id.Value &&

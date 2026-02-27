@@ -2,7 +2,9 @@ using BauDoku.BuildingBlocks.Domain;
 
 namespace BauDoku.Documentation.Domain;
 
-public sealed record LowGpsQualityDetected(
+public sealed record InstallationDeviceInfoUpdated(
     Guid InstallationId,
-    string QualityGrade,
+    string? Manufacturer,
+    string? ModelName,
+    string? SerialNumber,
     DateTime OccurredOn) : IDomainEvent;

@@ -1,12 +1,10 @@
 using BauDoku.BuildingBlocks.Application.Commands;
-using BauDoku.BuildingBlocks.Application.Persistence;
 using BauDoku.Documentation.Application.Diagnostics;
 using BauDoku.Documentation.Domain;
 
 namespace BauDoku.Documentation.Application.Commands.Handlers;
 
-public sealed class DocumentInstallationCommandHandler(IInstallationRepository installations, IUnitOfWork unitOfWork)
-    : ICommandHandler<DocumentInstallationCommand, InstallationIdentifier>
+public sealed class DocumentInstallationCommandHandler(IInstallationRepository installations): ICommandHandler<DocumentInstallationCommand, InstallationIdentifier>
 {
     public async Task<InstallationIdentifier> Handle(DocumentInstallationCommand command, CancellationToken cancellationToken = default)
     {
@@ -40,8 +38,7 @@ public sealed class DocumentInstallationCommandHandler(IInstallationRepository i
             modelName,
             serialNumber);
 
-        await installations.AddAsync(installation, cancellationToken);
-        await unitOfWork.SaveChangesAsync(cancellationToken);
+        await installations.SaveAsync(installation, cancellationToken);
 
         DocumentationMetrics.InstallationsDocumented.Add(1);
         DocumentationMetrics.GpsHorizontalAccuracy.Record(horizontalAccuracy.Value);

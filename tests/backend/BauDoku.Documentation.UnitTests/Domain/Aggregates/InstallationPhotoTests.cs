@@ -51,7 +51,7 @@ public sealed class InstallationPhotoTests
 
         installation.DomainEvents.Should().ContainSingle()
             .Which.Should().BeOfType<PhotoAdded>()
-            .Which.PhotoIdentifier.Should().Be(photoId);
+            .Which.PhotoId.Should().Be(photoId.Value);
     }
 
     [Fact]
@@ -106,7 +106,7 @@ public sealed class InstallationPhotoTests
 
         installation.DomainEvents.Should().ContainSingle()
             .Which.Should().BeOfType<PhotoRemoved>()
-            .Which.PhotoIdentifier.Should().Be(photoId);
+            .Which.PhotoId.Should().Be(photoId.Value);
     }
 
     [Fact]

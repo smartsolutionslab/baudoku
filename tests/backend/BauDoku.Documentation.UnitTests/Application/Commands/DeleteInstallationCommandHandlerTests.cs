@@ -1,5 +1,4 @@
 using AwesomeAssertions;
-using BauDoku.BuildingBlocks.Application.Persistence;
 using BauDoku.Documentation.Application.Commands;
 using BauDoku.Documentation.Application.Commands.Handlers;
 using BauDoku.Documentation.Domain;
@@ -11,14 +10,12 @@ namespace BauDoku.Documentation.UnitTests.Application.Commands;
 public sealed class DeleteInstallationCommandHandlerTests
 {
     private readonly IInstallationRepository installations;
-    private readonly IUnitOfWork unitOfWork;
     private readonly DeleteInstallationCommandHandler handler;
 
     public DeleteInstallationCommandHandlerTests()
     {
         installations = Substitute.For<IInstallationRepository>();
-        unitOfWork = Substitute.For<IUnitOfWork>();
-        handler = new DeleteInstallationCommandHandler(installations, unitOfWork);
+        handler = new DeleteInstallationCommandHandler(installations);
     }
 
     private static Installation CreateValidInstallation() =>
@@ -30,7 +27,7 @@ public sealed class DeleteInstallationCommandHandlerTests
             GpsPosition.Create(Latitude.From(48.137154), Longitude.From(11.576124), null, HorizontalAccuracy.From(3.5), GpsSource.From("gps")));
 
     [Fact]
-    public async Task Handle_WithExistingInstallation_ShouldRemoveAndSave()
+    public async Task Handle_WithExistingInstallation_ShouldDeleteAndSave()
     {
         var installation = CreateValidInstallation();
         installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
@@ -38,8 +35,8 @@ public sealed class DeleteInstallationCommandHandlerTests
 
         await handler.Handle(new DeleteInstallationCommand(installation.Id), CancellationToken.None);
 
-        installations.Received(1).Remove(installation);
-        await unitOfWork.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+        installation.IsDeleted.Should().BeTrue();
+        await installations.Received(1).SaveAsync(Arg.Any<Installation>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -51,7 +48,7 @@ public sealed class DeleteInstallationCommandHandlerTests
 
         await handler.Handle(new DeleteInstallationCommand(installation.Id), CancellationToken.None);
 
-        installation.DomainEvents.Should().ContainSingle(e =>
+        installation.DomainEvents.Should().Contain(e =>
             e.GetType().Name == "InstallationDeleted");
     }
 

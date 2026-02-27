@@ -27,7 +27,26 @@ public sealed class Measurement : Entity<MeasurementIdentifier>
         };
     }
 
-    private static MeasurementResult Evaluate(MeasurementValue value)
+    internal static Measurement Reconstitute(
+        MeasurementIdentifier id,
+        MeasurementType type,
+        MeasurementValue value,
+        MeasurementResult result,
+        Notes? notes,
+        DateTime measuredAt)
+    {
+        return new Measurement
+        {
+            Id = id,
+            Type = type,
+            Value = value,
+            Result = result,
+            MeasuredAt = measuredAt,
+            Notes = notes
+        };
+    }
+
+    internal static MeasurementResult Evaluate(MeasurementValue value)
     {
         if (value.MinThreshold is null && value.MaxThreshold is null) return MeasurementResult.Passed;
 
