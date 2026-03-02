@@ -1,4 +1,4 @@
-using BauDoku.BuildingBlocks.Infrastructure.Storage;
+using BauDoku.BuildingBlocks.Storage;
 using BauDoku.Documentation.Application.Contracts;
 using BauDoku.Documentation.Domain;
 using Microsoft.Extensions.Options;

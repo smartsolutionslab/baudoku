@@ -1,7 +1,7 @@
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 
-namespace BauDoku.BuildingBlocks.Infrastructure.Storage;
+namespace BauDoku.BuildingBlocks.Storage;
 
 public sealed class LocalStorageDirectory
 {

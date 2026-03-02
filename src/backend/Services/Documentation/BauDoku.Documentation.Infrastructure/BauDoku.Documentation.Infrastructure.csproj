@@ -2,7 +2,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BauDoku.Documentation.Application\BauDoku.Documentation.Application.csproj" />
-    <ProjectReference Include="..\..\..\BuildingBlocks\BauDoku.BuildingBlocks.Infrastructure\BauDoku.BuildingBlocks.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\BauDoku.BuildingBlocks.Persistence\BauDoku.BuildingBlocks.Persistence.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\BauDoku.BuildingBlocks.Storage\BauDoku.BuildingBlocks.Storage.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -16,6 +17,8 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

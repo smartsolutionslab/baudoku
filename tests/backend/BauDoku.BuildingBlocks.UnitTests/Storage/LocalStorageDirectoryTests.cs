@@ -1,5 +1,5 @@
 using AwesomeAssertions;
-using BauDoku.BuildingBlocks.Infrastructure.Storage;
+using BauDoku.BuildingBlocks.Storage;
 
 namespace BauDoku.BuildingBlocks.UnitTests.Storage;
 

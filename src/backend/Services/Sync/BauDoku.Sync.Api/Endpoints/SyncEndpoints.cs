@@ -1,5 +1,5 @@
 using BauDoku.BuildingBlocks.Application.Dispatcher;
-using BauDoku.BuildingBlocks.Infrastructure.Auth;
+using BauDoku.BuildingBlocks.Auth;
 using BauDoku.Sync.Api.Mapping;
 using BauDoku.Sync.Application.Commands;
 using BauDoku.Sync.Application.Queries.Dtos;

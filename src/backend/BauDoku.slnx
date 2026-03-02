@@ -6,7 +6,10 @@
     <Project Path="BuildingBlocks/BauDoku.BuildingBlocks.Application/BauDoku.BuildingBlocks.Application.csproj" />
     <Project Path="BuildingBlocks/BauDoku.BuildingBlocks.Domain/BauDoku.BuildingBlocks.Domain.csproj" />
     <Project Path="BuildingBlocks/BauDoku.BuildingBlocks.Guards/BauDoku.BuildingBlocks.Guards.csproj" />
-    <Project Path="BuildingBlocks/BauDoku.BuildingBlocks.Infrastructure/BauDoku.BuildingBlocks.Infrastructure.csproj" />
+    <Project Path="BuildingBlocks/BauDoku.BuildingBlocks.Auth/BauDoku.BuildingBlocks.Auth.csproj" />
+    <Project Path="BuildingBlocks/BauDoku.BuildingBlocks.Persistence/BauDoku.BuildingBlocks.Persistence.csproj" />
+    <Project Path="BuildingBlocks/BauDoku.BuildingBlocks.Serialization/BauDoku.BuildingBlocks.Serialization.csproj" />
+    <Project Path="BuildingBlocks/BauDoku.BuildingBlocks.Storage/BauDoku.BuildingBlocks.Storage.csproj" />
     <Project Path="BuildingBlocks/BauDoku.ServiceDefaults/BauDoku.ServiceDefaults.csproj" />
   </Folder>
   <Folder Name="/Gateway/">

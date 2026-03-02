@@ -1,5 +1,5 @@
 using BauDoku.BuildingBlocks.Application.Dispatcher;
-using BauDoku.BuildingBlocks.Infrastructure.Persistence;
+using BauDoku.BuildingBlocks.Persistence;
 using BauDoku.Sync.Domain;
 using Microsoft.EntityFrameworkCore;
 

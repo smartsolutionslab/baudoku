@@ -3,7 +3,7 @@ using BauDoku.BuildingBlocks.Application.Persistence;
 using BauDoku.BuildingBlocks.Domain;
 using Microsoft.EntityFrameworkCore;
 
-namespace BauDoku.BuildingBlocks.Infrastructure.Persistence;
+namespace BauDoku.BuildingBlocks.Persistence;
 
 public abstract class BaseDbContext(DbContextOptions options, IDispatcher dispatcher) : DbContext(options), IUnitOfWork
 {

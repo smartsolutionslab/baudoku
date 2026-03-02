@@ -1,5 +1,5 @@
 using BauDoku.ApiGateway.Endpoints;
-using BauDoku.BuildingBlocks.Infrastructure.Auth;
+using BauDoku.BuildingBlocks.Auth;
 using BauDoku.ServiceDefaults;
 
 var builder = WebApplication.CreateBuilder(args);

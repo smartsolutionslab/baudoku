@@ -1,6 +1,6 @@
 using BauDoku.BuildingBlocks.Application;
-using BauDoku.BuildingBlocks.Infrastructure.Auth;
-using BauDoku.BuildingBlocks.Infrastructure.Serialization;
+using BauDoku.BuildingBlocks.Auth;
+using BauDoku.BuildingBlocks.Serialization;
 using BauDoku.Projects.Api.Endpoints;
 using BauDoku.Projects.Infrastructure;
 using BauDoku.ServiceDefaults;

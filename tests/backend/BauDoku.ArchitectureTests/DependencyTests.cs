@@ -11,8 +11,8 @@ public sealed class DependencyTests
     private static readonly Assembly BuildingBlocksApplication =
         typeof(BauDoku.BuildingBlocks.Application.DependencyInjection).Assembly;
 
-    private static readonly Assembly BuildingBlocksInfrastructure =
-        typeof(BauDoku.BuildingBlocks.Infrastructure.Persistence.BaseDbContext).Assembly;
+    private static readonly Assembly BuildingBlocksPersistence =
+        typeof(BauDoku.BuildingBlocks.Persistence.BaseDbContext).Assembly;
 
     private static Assembly LoadAssembly(string name) => Assembly.Load(name);
 
@@ -28,8 +28,11 @@ public sealed class DependencyTests
     public void Domain_ShouldNotDependOn_Infrastructure()
     {
         var refs = BuildingBlocksDomain.GetReferencedAssemblies().Select(a => a.Name!).ToList();
-        refs.Should().NotContain(name => name.Contains("Infrastructure"),
-            "Domain layer must not depend on Infrastructure layer");
+        refs.Should().NotContain(name =>
+            name.Contains("Infrastructure") || name.Contains("Persistence")
+            || name.Contains(".Auth") || name.Contains("Serialization")
+            || name.Contains("Storage"),
+            "Domain must not depend on infrastructure concerns");
     }
 
     [Fact]
@@ -44,8 +47,11 @@ public sealed class DependencyTests
     public void Application_ShouldNotDependOn_Infrastructure()
     {
         var refs = BuildingBlocksApplication.GetReferencedAssemblies().Select(a => a.Name!).ToList();
-        refs.Should().NotContain(name => name.Contains("Infrastructure"),
-            "Application layer must not depend on Infrastructure layer");
+        refs.Should().NotContain(name =>
+            name.Contains("Infrastructure") || name.Contains("Persistence")
+            || name.Contains(".Auth") || name.Contains("Serialization")
+            || name.Contains("Storage"),
+            "Application must not depend on infrastructure concerns");
     }
 
     [Fact]
@@ -85,8 +91,12 @@ public sealed class DependencyTests
 
         var refs = assembly.GetReferencedAssemblies().Select(a => a.Name!).ToList();
         refs.Should().NotContain(
-            name => name.Contains("Infrastructure"),
-            "Service Application should not reference Infrastructure");
+            name => name.Contains("Infrastructure")
+                 || name.Contains("BuildingBlocks.Persistence")
+                 || name.Contains("BuildingBlocks.Auth")
+                 || name.Contains("BuildingBlocks.Serialization")
+                 || name.Contains("BuildingBlocks.Storage"),
+            "Service Application should not reference infrastructure concerns");
     }
 
     [Theory]

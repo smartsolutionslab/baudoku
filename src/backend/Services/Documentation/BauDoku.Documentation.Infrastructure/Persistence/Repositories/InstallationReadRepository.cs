@@ -2,7 +2,7 @@ using BauDoku.BuildingBlocks.Application.Pagination;
 using BauDoku.BuildingBlocks.Domain;
 using BauDoku.Documentation.Application.Contracts;
 using BauDoku.Documentation.Application.Queries.Dtos;
-using BauDoku.BuildingBlocks.Infrastructure.Pagination;
+using BauDoku.BuildingBlocks.Persistence.Pagination;
 using BauDoku.Documentation.Domain;
 using BauDoku.Documentation.Infrastructure.ReadModel;
 using Microsoft.EntityFrameworkCore;

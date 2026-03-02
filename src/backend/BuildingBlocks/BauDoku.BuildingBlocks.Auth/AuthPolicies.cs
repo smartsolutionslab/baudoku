@@ -1,4 +1,4 @@
-namespace BauDoku.BuildingBlocks.Infrastructure.Auth;
+namespace BauDoku.BuildingBlocks.Auth;
 
 public static class AuthPolicies
 {

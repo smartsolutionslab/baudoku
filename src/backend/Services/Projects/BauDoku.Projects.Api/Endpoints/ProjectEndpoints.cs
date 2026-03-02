@@ -2,7 +2,7 @@ using BauDoku.BuildingBlocks.Application.Dispatcher;
 using BauDoku.BuildingBlocks.Application.Pagination;
 using BauDoku.BuildingBlocks.Application.Responses;
 using BauDoku.BuildingBlocks.Domain;
-using BauDoku.BuildingBlocks.Infrastructure.Auth;
+using BauDoku.BuildingBlocks.Auth;
 using BauDoku.Projects.Api.Mapping;
 using BauDoku.Projects.Application.Commands;
 using BauDoku.Projects.Application.Queries;

@@ -4,7 +4,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using BauDoku.BuildingBlocks.Domain;
 
-namespace BauDoku.BuildingBlocks.Infrastructure.Serialization;
+namespace BauDoku.BuildingBlocks.Serialization;
 
 public sealed class ValueObjectJsonConverterFactory : JsonConverterFactory
 {

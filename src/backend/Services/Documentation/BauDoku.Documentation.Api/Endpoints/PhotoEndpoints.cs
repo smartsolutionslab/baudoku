@@ -1,7 +1,7 @@
 using System.Text.Json;
 using BauDoku.BuildingBlocks.Application.Dispatcher;
 using BauDoku.BuildingBlocks.Application.Responses;
-using BauDoku.BuildingBlocks.Infrastructure.Auth;
+using BauDoku.BuildingBlocks.Auth;
 using BauDoku.Documentation.Api.Mapping;
 using BauDoku.Documentation.Application.Commands;
 using BauDoku.Documentation.Application.Contracts;

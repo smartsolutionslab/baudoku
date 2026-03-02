@@ -1,5 +1,5 @@
 using BauDoku.BuildingBlocks.Domain;
-using BauDoku.BuildingBlocks.Infrastructure.Auth;
+using BauDoku.BuildingBlocks.Auth;
 using Microsoft.Extensions.Options;
 
 namespace BauDoku.ApiGateway.Endpoints;
