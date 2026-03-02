@@ -1,12 +1,14 @@
-# Standalone Aspire Dashboard for local development without Aspire orchestration.
+# BauDoku Observability Stack — Aspire Dashboard + Grafana (Prometheus, Tempo, Loki).
 #
 # Usage:
 #   docker compose -f docker-compose.monitoring.yml up -d
 #
 # Then set for each .NET service you run locally:
-#   OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:18889
+#   OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317
 #
-# Dashboard UI: http://localhost:18888
+# Aspire Dashboard UI: http://localhost:18888
+# Grafana UI:          http://localhost:3000
+# Prometheus UI:       http://localhost:9090
 
 services:
   aspire-dashboard:
@@ -14,10 +16,93 @@ services:
     container_name: baudoku-aspire-dashboard
     ports:
       - "18888:18888"  # Dashboard UI
-      - "18889:18889"  # OTLP gRPC
+      - "18889:18889"  # OTLP gRPC (internal — Collector forwards here)
       - "18890:18890"  # OTLP HTTP
     environment:
       DOTNET_DASHBOARD_UNSECURED_ALLOW_ANONYMOUS: "true"
       DASHBOARD__OTLP__GRPC__ENDPOINT: http://0.0.0.0:18889
       DASHBOARD__OTLP__HTTP__ENDPOINT: http://0.0.0.0:18890
     restart: unless-stopped
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.120.0
+    container_name: baudoku-otel-collector
+    command: ["--config=/etc/otelcol/config.yml"]
+    volumes:
+      - ./monitoring/otel-collector.yml:/etc/otelcol/config.yml:ro
+    ports:
+      - "4317:4317"   # OTLP gRPC ingest (services send here)
+      - "4318:4318"   # OTLP HTTP ingest
+      - "8889:8889"   # Prometheus metrics endpoint
+    depends_on:
+      - aspire-dashboard
+      - tempo
+      - loki
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:v3.2.1
+    container_name: baudoku-prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.retention.time=24h
+      - --enable-feature=exemplar-storage
+      - --enable-feature=remote-write-receiver
+      - --web.enable-lifecycle
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./grafana/alerting:/etc/prometheus/rules:ro
+      - prometheus-data:/prometheus
+    ports:
+      - "9090:9090"
+    restart: unless-stopped
+
+  tempo:
+    image: grafana/tempo:2.7.1
+    container_name: baudoku-tempo
+    command: ["-config.file=/etc/tempo/tempo.yml"]
+    volumes:
+      - ./monitoring/tempo.yml:/etc/tempo/tempo.yml:ro
+      - tempo-data:/var/tempo
+    ports:
+      - "3200:3200"   # Tempo query API
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+
+  loki:
+    image: grafana/loki:3.4.2
+    container_name: baudoku-loki
+    command: ["-config.file=/etc/loki/loki.yml"]
+    volumes:
+      - ./monitoring/loki.yml:/etc/loki/loki.yml:ro
+      - loki-data:/loki
+    ports:
+      - "3100:3100"   # Loki push + query API
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:11.5.2
+    container_name: baudoku-grafana
+    environment:
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Admin
+      GF_AUTH_DISABLE_LOGIN_FORM: "true"
+      GF_FEATURE_TOGGLES_ENABLE: traceToMetrics tempoServiceGraph tempoSearch tempoApmTable
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana-data:/var/lib/grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+      - tempo
+      - loki
+    restart: unless-stopped
+
+volumes:
+  prometheus-data:
+  tempo-data:
+  loki-data:
+  grafana-data:

@@ -39,6 +39,10 @@ module "environment" {
   ghcr_token             = var.ghcr_token
   keycloak_admin_password = var.keycloak_admin_password
 
+  monitoring_enabled      = true
+  grafana_admin_password  = var.grafana_admin_password
+  monitoring_retention    = "30d"
+
   postgresql_storage_size = "50Gi"
   postgis_storage_size    = "50Gi"
   rabbitmq_storage_size   = "5Gi"
@@ -51,6 +55,10 @@ output "app_url" {
 
 output "monitoring_url" {
   value = module.environment.monitoring_url
+}
+
+output "grafana_url" {
+  value = module.environment.grafana_url
 }
 
 output "auth_url" {

@@ -1,0 +1,57 @@
+groups:
+  - name: baudoku-alerts
+    rules:
+      - alert: HighErrorRate
+        expr: >
+          100 * sum(rate(http_server_request_duration_seconds_count{job=~"baudoku.*",http_response_status_code=~"5.."}[5m]))
+          / sum(rate(http_server_request_duration_seconds_count{job=~"baudoku.*"}[5m]))
+          > 5
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "High error rate detected (> 5%)"
+          description: "Error rate is {{ $value | printf \"%.1f\" }}% across BauDoku services."
+
+      - alert: HighLatency
+        expr: >
+          histogram_quantile(0.95,
+            sum(rate(http_server_request_duration_seconds_bucket{job=~"baudoku.*"}[5m])) by (le, job)
+          ) > 2
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High p95 latency detected (> 2s)"
+          description: "p95 latency for {{ $labels.job }} is {{ $value | printf \"%.2f\" }}s."
+
+      - alert: HealthCheckFailure
+        expr: up{job=~"baudoku.*"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Service health check failing"
+          description: "{{ $labels.job }} has been down for more than 1 minute."
+
+      - alert: HighSyncConflictRate
+        expr: >
+          sum(rate(baudoku_sync_conflicts_detected_total[15m])) > 1
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High sync conflict rate"
+          description: "Sync conflicts are being detected at {{ $value | printf \"%.1f\" }}/s."
+
+      - alert: DatabaseConnectionPoolExhausted
+        expr: >
+          db_client_connections_usage{job=~"baudoku.*", state="used"}
+          / (db_client_connections_usage{job=~"baudoku.*", state="used"} + db_client_connections_usage{job=~"baudoku.*", state="idle"})
+          > 0.9
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Database connection pool nearly exhausted"
+          description: "{{ $labels.job }} is using > 90% of its DB connection pool."

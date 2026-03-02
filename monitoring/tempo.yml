@@ -1,0 +1,45 @@
+# Tempo config for BauDoku local development.
+# Receives traces from OTel Collector, generates service graph metrics.
+
+stream_over_http_enabled: true
+
+server:
+  http_listen_port: 3200
+
+distributor:
+  receivers:
+    otlp:
+      protocols:
+        grpc:
+          endpoint: 0.0.0.0:4317
+
+storage:
+  trace:
+    backend: local
+    local:
+      path: /var/tempo/traces
+    wal:
+      path: /var/tempo/wal
+    block:
+      bloom_filter_false_positive: 0.05
+
+metrics_generator:
+  storage:
+    path: /var/tempo/generator/wal
+    remote_write:
+      - url: http://prometheus:9090/api/v1/write
+  traces_storage:
+    path: /var/tempo/generator/traces
+  processor:
+    service_graphs:
+      dimensions:
+        - service.namespace
+    span_metrics:
+      dimensions:
+        - service.namespace
+
+overrides:
+  metrics_generator_processors:
+    - service-graphs
+    - span-metrics
+  block_retention: 24h

@@ -20,6 +20,19 @@ resource "kubernetes_secret" "dashboard_auth" {
   }
 }
 
+resource "kubernetes_secret" "grafana_auth" {
+  count = var.monitoring_enabled ? 1 : 0
+
+  metadata {
+    name      = "grafana-admin-credentials"
+    namespace = kubernetes_namespace.this.metadata[0].name
+  }
+
+  data = {
+    "admin-password" = var.grafana_admin_password
+  }
+}
+
 resource "helm_release" "baudoku" {
   name      = "baudoku"
   chart     = var.helm_chart_path
@@ -41,6 +54,8 @@ resource "helm_release" "baudoku" {
       dashboard_enabled      = var.dashboard_enabled
       pull_policy            = var.environment == "staging" ? "Always" : "IfNotPresent"
       keycloak_authority     = "https://auth.${var.domain}/realms/baudoku"
+      monitoring_enabled     = var.monitoring_enabled
+      monitoring_retention   = var.monitoring_retention
     })
   ]
 
@@ -54,5 +69,6 @@ resource "helm_release" "baudoku" {
     kubernetes_secret.rabbitmq_credentials,
     kubernetes_secret.redis_credentials,
     kubernetes_secret.ghcr_credentials,
+    kubernetes_secret.grafana_auth,
   ]
 }
