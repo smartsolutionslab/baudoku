@@ -29,7 +29,7 @@ public sealed class ListProjectsQueryHandlerTests
         };
         var expected = new PagedResult<ProjectListItemDto>(items, 1, PageNumber.From(1), PageSize.From(20));
 
-        readRepository.ListAsync("test", new PaginationParams(PageNumber.From(1), PageSize.From(20)), Arg.Any<CancellationToken>())
+        readRepository.ListAsync(SearchTerm.From("test"), new PaginationParams(PageNumber.From(1), PageSize.From(20)), Arg.Any<CancellationToken>())
             .Returns(expected);
 
         var result = await handler.Handle(new ListProjectsQuery(SearchTerm.From("test"), PageNumber.From(1), PageSize.From(20)));

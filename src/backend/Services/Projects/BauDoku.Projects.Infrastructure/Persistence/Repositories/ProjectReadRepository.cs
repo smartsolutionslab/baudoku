@@ -20,15 +20,16 @@ public sealed class ProjectReadRepository(ProjectsDbContext context) : IProjectR
         p.CreatedAt,
         p.Zones.Count);
 
-    public async Task<PagedResult<ProjectListItemDto>> ListAsync(string? search, PaginationParams pagination, CancellationToken cancellationToken = default)
+    public async Task<PagedResult<ProjectListItemDto>> ListAsync(SearchTerm? search, PaginationParams pagination, CancellationToken cancellationToken = default)
     {
         var query = context.Projects.AsNoTracking();
 
-        if (search.HasValue())
+        if (search is not null)
         {
-            query = query.Where(p => EF.Functions.ILike(p.Name.Value, $"%{search}%")
-                || EF.Functions.ILike(p.Address.City.Value, $"%{search}%")
-                || EF.Functions.ILike(p.Client.Name.Value, $"%{search}%"));
+            var term = search.Value;
+            query = query.Where(p => EF.Functions.ILike(p.Name.Value, $"%{term}%")
+                || EF.Functions.ILike(p.Address.City.Value, $"%{term}%")
+                || EF.Functions.ILike(p.Client.Name.Value, $"%{term}%"));
         }
 
         return await query
