@@ -44,7 +44,9 @@ public sealed class InstallationReadRepository(ReadModelDbContext context) : IIn
         PaginationParams pagination,
         CancellationToken cancellationToken = default)
     {
-        var (latitude, longitude, radiusMeters) = radius;
+        var latitude = radius.Latitude.Value;
+        var longitude = radius.Longitude.Value;
+        var radiusMeters = radius.RadiusMeters.Value;
 
         var baseQuery = context.Database.SqlQuery<NearbyInstallationDto>(
             $"""
@@ -86,7 +88,10 @@ public sealed class InstallationReadRepository(ReadModelDbContext context) : IIn
         PaginationParams pagination,
         CancellationToken cancellationToken = default)
     {
-        var (minLatitude, minLongitude, maxLatitude, maxLongitude) = boundingBox;
+        var minLatitude = boundingBox.MinLatitude.Value;
+        var minLongitude = boundingBox.MinLongitude.Value;
+        var maxLatitude = boundingBox.MaxLatitude.Value;
+        var maxLongitude = boundingBox.MaxLongitude.Value;
 
         var query = context.Installations
             .FromSqlInterpolated(

@@ -34,7 +34,7 @@ public sealed class RecordMeasurementCommandHandlerTests
             .Returns(installation);
 
         var command = new RecordMeasurementCommand(
-            installation.Id, MeasurementType.InsulationResistance, 500.0, MeasurementUnit.From("MΩ"), 1.0, null, "Notiz");
+            installation.Id, MeasurementType.InsulationResistance, 500.0, MeasurementUnit.From("MΩ"), 1.0, null, Notes.From("Notiz"));
 
         var result = await handler.Handle(command, CancellationToken.None);
 

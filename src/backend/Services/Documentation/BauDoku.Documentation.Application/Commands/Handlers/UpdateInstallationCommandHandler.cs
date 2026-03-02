@@ -25,9 +25,9 @@ public sealed class UpdateInstallationCommandHandler(IInstallationRepository ins
             installation.UpdateCableSpec(CableSpec.Create(command.CableType, command.CrossSection, command.CableColor, command.ConductorCount));
         }
 
-        if (command.DepthMm.HasValue)
+        if (command.Depth is not null)
         {
-            installation.UpdateDepth(Depth.From(command.DepthMm.Value));
+            installation.UpdateDepth(command.Depth);
         }
 
         if (command.Manufacturer is not null || command.ModelName is not null || command.SerialNumber is not null)

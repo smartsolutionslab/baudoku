@@ -19,7 +19,7 @@ public sealed class InstallationMeasurementTests
         installation.RecordMeasurement(
             measurementId,
             MeasurementType.Voltage,
-            MeasurementValue.Create(230.0, "V"),
+            MeasurementValue.Create(230.0, MeasurementUnit.From("V")),
             Notes.From("Spannungsmessung"));
 
         installation.Measurements.Should().ContainSingle();
@@ -41,7 +41,7 @@ public sealed class InstallationMeasurementTests
         installation.RecordMeasurement(
             measurementId,
             MeasurementType.Voltage,
-            MeasurementValue.Create(230.0, "V"));
+            MeasurementValue.Create(230.0, MeasurementUnit.From("V")));
 
         installation.DomainEvents.Should().ContainSingle()
             .Which.Should().BeOfType<MeasurementRecorded>()
@@ -57,7 +57,7 @@ public sealed class InstallationMeasurementTests
         installation.RecordMeasurement(
             MeasurementIdentifier.New(),
             MeasurementType.Voltage,
-            MeasurementValue.Create(230.0, "V", 220.0, 240.0));
+            MeasurementValue.Create(230.0, MeasurementUnit.From("V"), 220.0, 240.0));
 
         var measurement = installation.Measurements[0];
         measurement.Result.Should().Be(MeasurementResult.Passed);
@@ -72,7 +72,7 @@ public sealed class InstallationMeasurementTests
         installation.RecordMeasurement(
             MeasurementIdentifier.New(),
             MeasurementType.Voltage,
-            MeasurementValue.Create(200.0, "V", 220.0, 240.0));
+            MeasurementValue.Create(200.0, MeasurementUnit.From("V"), 220.0, 240.0));
 
         var measurement = installation.Measurements[0];
         measurement.Result.Should().Be(MeasurementResult.Failed);
@@ -87,7 +87,7 @@ public sealed class InstallationMeasurementTests
         installation.RecordMeasurement(
             MeasurementIdentifier.New(),
             MeasurementType.Voltage,
-            MeasurementValue.Create(250.0, "V", 220.0, 240.0));
+            MeasurementValue.Create(250.0, MeasurementUnit.From("V"), 220.0, 240.0));
 
         var measurement = installation.Measurements[0];
         measurement.Result.Should().Be(MeasurementResult.Failed);
@@ -102,7 +102,7 @@ public sealed class InstallationMeasurementTests
         installation.RecordMeasurement(
             MeasurementIdentifier.New(),
             MeasurementType.Voltage,
-            MeasurementValue.Create(230.0, "V"));
+            MeasurementValue.Create(230.0, MeasurementUnit.From("V")));
 
         var measurement = installation.Measurements[0];
         measurement.Result.Should().Be(MeasurementResult.Passed);
@@ -117,7 +117,7 @@ public sealed class InstallationMeasurementTests
         installation.RecordMeasurement(
             MeasurementIdentifier.New(),
             MeasurementType.Voltage,
-            MeasurementValue.Create(220.0, "V", 220.0, 240.0));
+            MeasurementValue.Create(220.0, MeasurementUnit.From("V"), 220.0, 240.0));
 
         var measurement = installation.Measurements[0];
         measurement.Result.Should().Be(MeasurementResult.Passed);
@@ -132,7 +132,7 @@ public sealed class InstallationMeasurementTests
         installation.RecordMeasurement(
             MeasurementIdentifier.New(),
             MeasurementType.Voltage,
-            MeasurementValue.Create(240.0, "V", 220.0, 240.0));
+            MeasurementValue.Create(240.0, MeasurementUnit.From("V"), 220.0, 240.0));
 
         var measurement = installation.Measurements[0];
         measurement.Result.Should().Be(MeasurementResult.Passed);
@@ -146,7 +146,7 @@ public sealed class InstallationMeasurementTests
         installation.RecordMeasurement(
             MeasurementIdentifier.New(),
             MeasurementType.InsulationResistance,
-            MeasurementValue.Create(1.5, "MOhm", minThreshold: 1.0));
+            MeasurementValue.Create(1.5, MeasurementUnit.From("MOhm"), minThreshold: 1.0));
 
         installation.Measurements[0].Result.Should().Be(MeasurementResult.Passed);
     }
@@ -159,7 +159,7 @@ public sealed class InstallationMeasurementTests
         installation.RecordMeasurement(
             MeasurementIdentifier.New(),
             MeasurementType.InsulationResistance,
-            MeasurementValue.Create(0.5, "MOhm", minThreshold: 1.0));
+            MeasurementValue.Create(0.5, MeasurementUnit.From("MOhm"), minThreshold: 1.0));
 
         installation.Measurements[0].Result.Should().Be(MeasurementResult.Failed);
     }
@@ -173,7 +173,7 @@ public sealed class InstallationMeasurementTests
         installation.RecordMeasurement(
             MeasurementIdentifier.New(),
             MeasurementType.Continuity,
-            MeasurementValue.Create(0.5, "Ohm"));
+            MeasurementValue.Create(0.5, MeasurementUnit.From("Ohm")));
 
         installation.Measurements[0].Notes.Should().BeNull();
     }
@@ -187,7 +187,7 @@ public sealed class InstallationMeasurementTests
         var act = () => installation.RecordMeasurement(
             MeasurementIdentifier.New(),
             MeasurementType.Voltage,
-            MeasurementValue.Create(230.0, "V"));
+            MeasurementValue.Create(230.0, MeasurementUnit.From("V")));
 
         act.Should().Throw<BusinessRuleException>();
     }
@@ -200,7 +200,7 @@ public sealed class InstallationMeasurementTests
         installation.RecordMeasurement(
             MeasurementIdentifier.New(),
             MeasurementType.Voltage,
-            MeasurementValue.Create(0.0, "V"));
+            MeasurementValue.Create(0.0, MeasurementUnit.From("V")));
 
         installation.Measurements.Should().ContainSingle();
     }
@@ -213,7 +213,7 @@ public sealed class InstallationMeasurementTests
         var act = () => installation.RecordMeasurement(
             MeasurementIdentifier.New(),
             MeasurementType.Voltage,
-            MeasurementValue.Create(-5.0, "V"));
+            MeasurementValue.Create(-5.0, MeasurementUnit.From("V")));
 
         act.Should().Throw<BusinessRuleException>();
     }
@@ -223,7 +223,7 @@ public sealed class InstallationMeasurementTests
     {
         var installation = CreateValidInstallation();
         var measurementId = MeasurementIdentifier.New();
-        installation.RecordMeasurement(measurementId, MeasurementType.Voltage, MeasurementValue.Create(230.0, "V"));
+        installation.RecordMeasurement(measurementId, MeasurementType.Voltage, MeasurementValue.Create(230.0, MeasurementUnit.From("V")));
         installation.ClearDomainEvents();
 
         installation.RemoveMeasurement(measurementId);
@@ -236,7 +236,7 @@ public sealed class InstallationMeasurementTests
     {
         var installation = CreateValidInstallation();
         var measurementId = MeasurementIdentifier.New();
-        installation.RecordMeasurement(measurementId, MeasurementType.Voltage, MeasurementValue.Create(230.0, "V"));
+        installation.RecordMeasurement(measurementId, MeasurementType.Voltage, MeasurementValue.Create(230.0, MeasurementUnit.From("V")));
         installation.ClearDomainEvents();
 
         installation.RemoveMeasurement(measurementId);
@@ -261,7 +261,7 @@ public sealed class InstallationMeasurementTests
     {
         var installation = CreateValidInstallation();
         var measurementId = MeasurementIdentifier.New();
-        installation.RecordMeasurement(measurementId, MeasurementType.Voltage, MeasurementValue.Create(230.0, "V"));
+        installation.RecordMeasurement(measurementId, MeasurementType.Voltage, MeasurementValue.Create(230.0, MeasurementUnit.From("V")));
         installation.MarkAsCompleted();
 
         var act = () => installation.RemoveMeasurement(measurementId);
@@ -274,9 +274,9 @@ public sealed class InstallationMeasurementTests
     {
         var installation = CreateValidInstallation();
 
-        installation.RecordMeasurement(MeasurementIdentifier.New(), MeasurementType.Voltage, MeasurementValue.Create(230.0, "V"));
-        installation.RecordMeasurement(MeasurementIdentifier.New(), MeasurementType.Continuity, MeasurementValue.Create(0.3, "Ohm"));
-        installation.RecordMeasurement(MeasurementIdentifier.New(), MeasurementType.InsulationResistance, MeasurementValue.Create(500.0, "MOhm"));
+        installation.RecordMeasurement(MeasurementIdentifier.New(), MeasurementType.Voltage, MeasurementValue.Create(230.0, MeasurementUnit.From("V")));
+        installation.RecordMeasurement(MeasurementIdentifier.New(), MeasurementType.Continuity, MeasurementValue.Create(0.3, MeasurementUnit.From("Ohm")));
+        installation.RecordMeasurement(MeasurementIdentifier.New(), MeasurementType.InsulationResistance, MeasurementValue.Create(500.0, MeasurementUnit.From("MOhm")));
 
         installation.Measurements.Should().HaveCount(3);
     }
@@ -289,7 +289,7 @@ public sealed class InstallationMeasurementTests
         installation.RecordMeasurement(
             MeasurementIdentifier.New(),
             MeasurementType.RcdTripCurrent,
-            MeasurementValue.Create(30.0, "mA", 15.0, 30.0));
+            MeasurementValue.Create(30.0, MeasurementUnit.From("mA"), 15.0, 30.0));
 
         installation.Measurements.Should().ContainSingle();
         installation.Measurements[0].Type.Should().Be(MeasurementType.RcdTripCurrent);
@@ -303,7 +303,7 @@ public sealed class InstallationMeasurementTests
         var act = () => installation.RecordMeasurement(
             MeasurementIdentifier.New(),
             MeasurementType.RcdTripTime,
-            MeasurementValue.Create(25.0, "ms"));
+            MeasurementValue.Create(25.0, MeasurementUnit.From("ms")));
 
         act.Should().Throw<BusinessRuleException>();
     }
@@ -316,7 +316,7 @@ public sealed class InstallationMeasurementTests
         var act = () => installation.RecordMeasurement(
             MeasurementIdentifier.New(),
             MeasurementType.RcdTripCurrent,
-            MeasurementValue.Create(30.0, "mA"));
+            MeasurementValue.Create(30.0, MeasurementUnit.From("mA")));
 
         act.Should().Throw<BusinessRuleException>();
     }
@@ -329,7 +329,7 @@ public sealed class InstallationMeasurementTests
         var act = () => installation.RecordMeasurement(
             MeasurementIdentifier.New(),
             MeasurementType.LoopImpedance,
-            MeasurementValue.Create(0.5, "Ohm"));
+            MeasurementValue.Create(0.5, MeasurementUnit.From("Ohm")));
 
         act.Should().Throw<BusinessRuleException>();
     }
@@ -342,7 +342,7 @@ public sealed class InstallationMeasurementTests
         installation.RecordMeasurement(
             MeasurementIdentifier.New(),
             MeasurementType.Voltage,
-            MeasurementValue.Create(230.0, "V"));
+            MeasurementValue.Create(230.0, MeasurementUnit.From("V")));
 
         installation.Measurements.Should().ContainSingle();
     }

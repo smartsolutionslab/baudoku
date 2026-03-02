@@ -1,7 +1,9 @@
+using BauDoku.Documentation.Domain;
+
 namespace BauDoku.Documentation.Application.Contracts;
 
 public sealed record BoundingBox(
-    double MinLatitude,
-    double MinLongitude,
-    double MaxLatitude,
-    double MaxLongitude);
+    Latitude MinLatitude,
+    Longitude MinLongitude,
+    Latitude MaxLatitude,
+    Longitude MaxLongitude);

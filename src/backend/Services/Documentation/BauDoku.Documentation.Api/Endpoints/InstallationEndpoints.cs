@@ -68,7 +68,7 @@ public static class InstallationEndpoints
             CancellationToken ct) =>
         {
             var query = new GetInstallationsInRadiusQuery(
-                new SearchRadius(latitude, longitude, radiusMeters),
+                new SearchRadius(Latitude.From(latitude), Longitude.From(longitude), RadiusMeters.From(radiusMeters)),
                 ProjectIdentifier.FromNullable(projectId),
                 PageNumber.FromNullable(page),
                 PageSize.FromNullable(pageSize));
@@ -91,7 +91,7 @@ public static class InstallationEndpoints
             CancellationToken ct) =>
         {
             var query = new GetInstallationsInBoundingBoxQuery(
-                new BoundingBox(minLatitude, minLongitude, maxLatitude, maxLongitude),
+                new BoundingBox(Latitude.From(minLatitude), Longitude.From(minLongitude), Latitude.From(maxLatitude), Longitude.From(maxLongitude)),
                 ProjectIdentifier.FromNullable(projectId),
                 PageNumber.FromNullable(page),
                 PageSize.FromNullable(pageSize));

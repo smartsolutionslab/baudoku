@@ -8,10 +8,10 @@ public sealed class GpsPositionTests
     [Fact]
     public void Create_WithValidPosition_ShouldSucceed()
     {
-        var position = GpsPosition.Create(Latitude.From(48.1351), Longitude.From(11.5820), 520.0, HorizontalAccuracy.From(3.5), GpsSource.From("internal_gps"));
+        var position = GpsPosition.Create(Latitude.From(48.1351), Longitude.From(11.5820), Altitude.From(520.0), HorizontalAccuracy.From(3.5), GpsSource.From("internal_gps"));
         position.Latitude.Value.Should().Be(48.1351);
         position.Longitude.Value.Should().Be(11.5820);
-        position.Altitude.Should().Be(520.0);
+        position.Altitude!.Value.Should().Be(520.0);
         position.HorizontalAccuracy.Value.Should().Be(3.5);
         position.Source.Value.Should().Be("internal_gps");
     }
@@ -20,14 +20,14 @@ public sealed class GpsPositionTests
     public void Create_WithAllOptionalFields_ShouldSucceed()
     {
         var position = GpsPosition.Create(
-            Latitude.From(48.1351), Longitude.From(11.5820), 520.0, HorizontalAccuracy.From(0.03), GpsSource.From("rtk"),
-            CorrectionService.From("sapos_heps"), RtkFixStatus.From("fix"), 14, 0.8, 1.2);
+            Latitude.From(48.1351), Longitude.From(11.5820), Altitude.From(520.0), HorizontalAccuracy.From(0.03), GpsSource.From("rtk"),
+            CorrectionService.From("sapos_heps"), RtkFixStatus.From("fix"), SatelliteCount.From(14), Hdop.From(0.8), CorrectionAge.From(1.2));
 
         position.CorrectionService!.Value.Should().Be("sapos_heps");
         position.RtkFixStatus!.Value.Should().Be("fix");
-        position.SatelliteCount.Should().Be(14);
-        position.Hdop.Should().Be(0.8);
-        position.CorrectionAge.Should().Be(1.2);
+        position.SatelliteCount!.Value.Should().Be(14);
+        position.Hdop!.Value.Should().Be(0.8);
+        position.CorrectionAge!.Value.Should().Be(1.2);
     }
 
     [Theory]

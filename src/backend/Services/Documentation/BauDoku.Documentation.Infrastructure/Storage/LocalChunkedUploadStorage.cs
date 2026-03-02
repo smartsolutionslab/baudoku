@@ -23,12 +23,12 @@ public sealed class LocalChunkedUploadStorage(IOptions<PhotoStorageOptions> opti
         return UploadSessionIdentifier.From(session.SessionId);
     }
 
-    public async Task StoreChunkAsync(UploadSessionIdentifier sessionId, int chunkIndex, Stream data, CancellationToken cancellationToken = default)
+    public async Task StoreChunkAsync(UploadSessionIdentifier sessionId, ChunkIndex chunkIndex, Stream data, CancellationToken cancellationToken = default)
     {
         var sessionDir = sessionId.Value.ToString();
         if (!storage.DirectoryExists(sessionDir)) throw new InvalidOperationException($"Upload-Session {sessionId.Value} nicht gefunden.");
 
-        await storage.WriteStreamAsync(Path.Combine(sessionDir, $"{chunkIndex}.chunk"), data, cancellationToken);
+        await storage.WriteStreamAsync(Path.Combine(sessionDir, $"{chunkIndex.Value}.chunk"), data, cancellationToken);
     }
 
     public async Task<ChunkedUploadSession> GetSessionAsync(UploadSessionIdentifier sessionId, CancellationToken cancellationToken = default)

@@ -16,7 +16,7 @@ public sealed class InstallationPhotoPersistenceTests(PostgreSqlFixture fixture)
             ProjectIdentifier.New(),
             null,
             InstallationType.CableTray,
-            GpsPosition.Create(Latitude.From(48.1351), Longitude.From(11.5820), 520.0, HorizontalAccuracy.From(3.5), GpsSource.From("internal_gps")));
+            GpsPosition.Create(Latitude.From(48.1351), Longitude.From(11.5820), Altitude.From(520.0), HorizontalAccuracy.From(3.5), GpsSource.From("internal_gps")));
 
         var photoId = PhotoIdentifier.New();
         installation.AddPhoto(
@@ -28,7 +28,7 @@ public sealed class InstallationPhotoPersistenceTests(PostgreSqlFixture fixture)
             PhotoType.Before,
             Caption.From("Vorher-Bild"),
             Description.From("Detailansicht der Kabeltrasse"),
-            GpsPosition.Create(Latitude.From(48.1351), Longitude.From(11.5820), 520.0, HorizontalAccuracy.From(3.5), GpsSource.From("internal_gps")));
+            GpsPosition.Create(Latitude.From(48.1351), Longitude.From(11.5820), Altitude.From(520.0), HorizontalAccuracy.From(3.5), GpsSource.From("internal_gps")));
 
         await using var session = fixture.Store.LightweightSession();
 

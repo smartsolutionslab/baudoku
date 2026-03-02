@@ -32,13 +32,13 @@ public sealed class GetInstallationsInRadiusQueryHandlerTests
         var expected = new PagedResult<NearbyInstallationDto>(items, 1, PageNumber.Default, PageSize.Default);
 
         readRepository.SearchInRadiusAsync(
-                new SearchRadius(48.0, 11.0, 500.0),
+                new SearchRadius(Latitude.From(48.0), Longitude.From(11.0), RadiusMeters.From(500.0)),
                 (ProjectIdentifier?)null,
                 new PaginationParams(PageNumber.Default, PageSize.Default),
                 Arg.Any<CancellationToken>())
             .Returns(expected);
 
-        var query = new GetInstallationsInRadiusQuery(new SearchRadius(48.0, 11.0, 500.0));
+        var query = new GetInstallationsInRadiusQuery(new SearchRadius(Latitude.From(48.0), Longitude.From(11.0), RadiusMeters.From(500.0)));
         var result = await handler.Handle(query, CancellationToken.None);
 
         result.Should().BeSameAs(expected);
@@ -53,18 +53,18 @@ public sealed class GetInstallationsInRadiusQueryHandlerTests
         var expected = new PagedResult<NearbyInstallationDto>([], 0, PageNumber.Default, PageSize.Default);
 
         readRepository.SearchInRadiusAsync(
-                new SearchRadius(48.0, 11.0, 1000.0),
+                new SearchRadius(Latitude.From(48.0), Longitude.From(11.0), RadiusMeters.From(1000.0)),
                 projectId,
                 new PaginationParams(PageNumber.Default, PageSize.Default),
                 Arg.Any<CancellationToken>())
             .Returns(expected);
 
-        var query = new GetInstallationsInRadiusQuery(new SearchRadius(48.0, 11.0, 1000.0), projectId);
+        var query = new GetInstallationsInRadiusQuery(new SearchRadius(Latitude.From(48.0), Longitude.From(11.0), RadiusMeters.From(1000.0)), projectId);
         var result = await handler.Handle(query, CancellationToken.None);
 
         result.Should().BeSameAs(expected);
         await readRepository.Received(1).SearchInRadiusAsync(
-            new SearchRadius(48.0, 11.0, 1000.0),
+            new SearchRadius(Latitude.From(48.0), Longitude.From(11.0), RadiusMeters.From(1000.0)),
             projectId,
             new PaginationParams(PageNumber.Default, PageSize.Default),
             Arg.Any<CancellationToken>());
@@ -76,13 +76,13 @@ public sealed class GetInstallationsInRadiusQueryHandlerTests
         var expected = new PagedResult<NearbyInstallationDto>([], 0, PageNumber.From(3), PageSize.From(10));
 
         readRepository.SearchInRadiusAsync(
-                new SearchRadius(48.0, 11.0, 500.0),
+                new SearchRadius(Latitude.From(48.0), Longitude.From(11.0), RadiusMeters.From(500.0)),
                 (ProjectIdentifier?)null,
                 new PaginationParams(PageNumber.From(3), PageSize.From(10)),
                 Arg.Any<CancellationToken>())
             .Returns(expected);
 
-        var query = new GetInstallationsInRadiusQuery(new SearchRadius(48.0, 11.0, 500.0), Page: PageNumber.From(3), PageSize: PageSize.From(10));
+        var query = new GetInstallationsInRadiusQuery(new SearchRadius(Latitude.From(48.0), Longitude.From(11.0), RadiusMeters.From(500.0)), Page: PageNumber.From(3), PageSize: PageSize.From(10));
         var result = await handler.Handle(query, CancellationToken.None);
 
         result.Page.Should().Be(3);

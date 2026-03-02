@@ -30,7 +30,7 @@ public sealed class InitChunkedUploadCommandHandlerTests
             GpsPosition.Create(Latitude.From(48.137154), Longitude.From(11.576124), null, HorizontalAccuracy.From(3.5), GpsSource.From("gps")));
 
     private static InitChunkedUploadCommand CreateValidCommand(InstallationIdentifier installationId) =>
-        new(installationId, FileName.From("photo.jpg"), ContentType.From("image/jpeg"), FileSize.From(5 * 1024 * 1024), 5,
+        new(installationId, FileName.From("photo.jpg"), ContentType.From("image/jpeg"), FileSize.From(5 * 1024 * 1024), ChunkCount.From(5),
             PhotoType.Before, null, null, null);
 
     [Fact]

@@ -5,5 +5,5 @@ namespace BauDoku.Documentation.Application.Commands;
 
 public sealed record UploadChunkCommand(
     UploadSessionIdentifier SessionId,
-    int ChunkIndex,
+    ChunkIndex ChunkIndex,
     Stream Data) : ICommand;

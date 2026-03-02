@@ -18,7 +18,7 @@ public sealed class DocumentInstallationCommandHandler(IInstallationRepository i
             command.Position,
             command.Description,
             command.CableType is not null ? CableSpec.Create(command.CableType, command.CrossSection, command.CableColor, command.ConductorCount) : null,
-            Depth.FromNullable(command.DepthMm),
+            command.Depth,
             command.Manufacturer,
             command.ModelName,
             command.SerialNumber);

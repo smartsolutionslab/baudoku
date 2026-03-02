@@ -76,7 +76,7 @@ public sealed class AddPhotoCommandHandlerTests
 
         var command = new AddPhotoCommand(
             installation.Id, FileName.From("photo.jpg"), ContentType.From("image/jpeg"), FileSize.From(1024), PhotoType.Before,
-            null, null, GpsPosition.Create(Latitude.From(48.0), Longitude.From(11.0), 500.0, HorizontalAccuracy.From(5.0), GpsSource.From("gps")),
+            null, null, GpsPosition.Create(Latitude.From(48.0), Longitude.From(11.0), Altitude.From(500.0), HorizontalAccuracy.From(5.0), GpsSource.From("gps")),
             new MemoryStream([1, 2, 3]));
 
         await handler.Handle(command, CancellationToken.None);

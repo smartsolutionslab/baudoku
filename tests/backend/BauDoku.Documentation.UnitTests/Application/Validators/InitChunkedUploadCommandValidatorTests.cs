@@ -1,3 +1,4 @@
+using AwesomeAssertions;
 using BauDoku.Documentation.Application.Commands;
 using BauDoku.Documentation.Application.Commands.Validators;
 using BauDoku.Documentation.Domain;
@@ -10,7 +11,7 @@ public sealed class InitChunkedUploadCommandValidatorTests
     private readonly InitChunkedUploadCommandValidator validator = new();
 
     private static InitChunkedUploadCommand CreateValidCommand() =>
-        new(InstallationIdentifier.New(), FileName.From("photo.jpg"), ContentType.From("image/jpeg"), FileSize.From(5 * 1024 * 1024), 5,
+        new(InstallationIdentifier.New(), FileName.From("photo.jpg"), ContentType.From("image/jpeg"), FileSize.From(5 * 1024 * 1024), ChunkCount.From(5),
             PhotoType.Before, null, null, null);
 
     [Fact]
@@ -45,16 +46,16 @@ public sealed class InitChunkedUploadCommandValidatorTests
     }
 
     [Fact]
-    public void TotalChunks_WhenZero_ShouldHaveError()
+    public void TotalChunks_WhenZero_ShouldThrowInValueObject()
     {
-        var cmd = CreateValidCommand() with { TotalChunks = 0 };
-        validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.TotalChunks);
+        var act = () => ChunkCount.From(0);
+        act.Should().Throw<ArgumentOutOfRangeException>();
     }
 
     [Fact]
     public void TotalChunks_WhenExceeds50_ShouldHaveError()
     {
-        var cmd = CreateValidCommand() with { TotalChunks = 51 };
+        var cmd = CreateValidCommand() with { TotalChunks = ChunkCount.From(51) };
         validator.TestValidate(cmd).ShouldHaveValidationErrorFor(x => x.TotalChunks);
     }
 }

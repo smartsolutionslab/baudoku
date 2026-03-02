@@ -10,14 +10,14 @@ public static class InstallationRequestMappingExtensions
         GpsPosition.Create(
             Latitude.From(request.Latitude),
             Longitude.From(request.Longitude),
-            request.Altitude,
+            Altitude.FromNullable(request.Altitude),
             HorizontalAccuracy.From(request.HorizontalAccuracy),
             GpsSource.From(request.GpsSource),
             CorrectionService.FromNullable(request.CorrectionService),
             RtkFixStatus.FromNullable(request.RtkFixStatus),
-            request.SatelliteCount,
-            request.Hdop,
-            request.CorrectionAge);
+            SatelliteCount.FromNullable(request.SatelliteCount),
+            Hdop.FromNullable(request.Hdop),
+            CorrectionAge.FromNullable(request.CorrectionAge));
 
     public static DocumentInstallationCommand ToCommand(this CreateInstallationRequest request) =>
         new(ProjectIdentifier.From(request.ProjectId),
@@ -28,8 +28,8 @@ public static class InstallationRequestMappingExtensions
             CableType.FromNullable(request.CableType),
             CrossSection.FromNullable(request.CrossSection),
             CableColor.FromNullable(request.CableColor),
-            request.ConductorCount,
-            request.DepthMm,
+            ConductorCount.FromNullable(request.ConductorCount),
+            Depth.FromNullable(request.DepthMm),
             Manufacturer.FromNullable(request.Manufacturer),
             ModelName.FromNullable(request.ModelName),
             SerialNumber.FromNullable(request.SerialNumber));
@@ -53,8 +53,8 @@ public static class InstallationRequestMappingExtensions
             CableType.FromNullable(request.CableType),
             CrossSection.FromNullable(request.CrossSection),
             CableColor.FromNullable(request.CableColor),
-            request.ConductorCount,
-            request.DepthMm,
+            ConductorCount.FromNullable(request.ConductorCount),
+            Depth.FromNullable(request.DepthMm),
             Manufacturer.FromNullable(request.Manufacturer),
             ModelName.FromNullable(request.ModelName),
             SerialNumber.FromNullable(request.SerialNumber));
@@ -64,7 +64,7 @@ public static class InstallationRequestMappingExtensions
             FileName.From(request.FileName),
             ContentType.From(request.ContentType),
             FileSize.From(request.TotalSize),
-            request.TotalChunks,
+            ChunkCount.From(request.TotalChunks),
             PhotoType.From(request.PhotoType),
             Caption.FromNullable(request.Caption),
             Description.FromNullable(request.Description),
@@ -77,5 +77,5 @@ public static class InstallationRequestMappingExtensions
             MeasurementUnit.From(request.Unit),
             request.MinThreshold,
             request.MaxThreshold,
-            request.Notes);
+            Notes.FromNullable(request.Notes));
 }

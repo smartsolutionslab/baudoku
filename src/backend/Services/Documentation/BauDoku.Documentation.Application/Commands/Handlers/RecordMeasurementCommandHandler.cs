@@ -13,8 +13,8 @@ public sealed class RecordMeasurementCommandHandler(IInstallationRepository inst
         var installation = await installations.GetByIdAsync(installationId, cancellationToken);
 
         var measurementId = MeasurementIdentifier.New();
-        var measurementValue = MeasurementValue.Create(value, unit.Value, minThreshold, maxThreshold);
-        var notesVo = Notes.FromNullable(notes);
+        var measurementValue = MeasurementValue.Create(value, unit, minThreshold, maxThreshold);
+        var notesVo = notes;
 
         installation.RecordMeasurement(measurementId, type, measurementValue, notesVo);
 

@@ -19,7 +19,7 @@ public sealed class InitChunkedUploadCommandHandler(IInstallationRepository inst
             FileName: command.FileName.Value,
             ContentType: command.ContentType.Value,
             TotalSize: command.TotalSize.Value,
-            TotalChunks: command.TotalChunks,
+            TotalChunks: command.TotalChunks.Value,
             PhotoType: command.PhotoType.Value,
             Caption: command.Caption?.Value,
             Description: command.Description?.Value,

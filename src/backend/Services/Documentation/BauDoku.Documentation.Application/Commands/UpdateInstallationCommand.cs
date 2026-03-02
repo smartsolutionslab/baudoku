@@ -10,8 +10,8 @@ public sealed record UpdateInstallationCommand(
     CableType? CableType,
     CrossSection? CrossSection,
     CableColor? CableColor,
-    int? ConductorCount,
-    int? DepthMm,
+    ConductorCount? ConductorCount,
+    Depth? Depth,
     Manufacturer? Manufacturer,
     ModelName? ModelName,
     SerialNumber? SerialNumber) : ICommand;

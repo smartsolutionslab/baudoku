@@ -17,6 +17,8 @@ public sealed class InitChunkedUploadCommandValidator : AbstractValidator<InitCh
         RuleFor(x => x.TotalSize)
             .Must(fs => fs.Value <= MaxFileSize)
             .WithMessage($"Dateigröße darf max. {MaxFileSize} Bytes betragen.");
-        RuleFor(x => x.TotalChunks).GreaterThan(0).LessThanOrEqualTo(MaxChunks);
+        RuleFor(x => x.TotalChunks)
+            .Must(tc => tc.Value <= MaxChunks)
+            .WithMessage($"Maximal {MaxChunks} Chunks erlaubt.");
     }
 }
