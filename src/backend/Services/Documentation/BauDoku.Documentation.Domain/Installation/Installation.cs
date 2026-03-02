@@ -278,26 +278,10 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
         ZoneId = ZoneIdentifier.FromNullable(e.ZoneId);
         Type = InstallationType.From(e.Type);
         Status = InstallationStatus.From(e.Status);
-        Position = GpsPosition.Create(
-            Latitude.From(e.Latitude),
-            Longitude.From(e.Longitude),
-            e.Altitude,
-            HorizontalAccuracy.From(e.HorizontalAccuracy),
-            GpsSource.From(e.GpsSource),
-            CorrectionService.FromNullable(e.CorrectionService),
-            RtkFixStatus.FromNullable(e.RtkFixStatus),
-            e.SatelliteCount,
-            e.Hdop,
-            e.CorrectionAge);
+        Position = ReconstructPosition(e.Latitude, e.Longitude, e.Altitude, e.HorizontalAccuracy, e.GpsSource, e.CorrectionService, e.RtkFixStatus, e.SatelliteCount, e.Hdop, e.CorrectionAge);
         QualityGrade = GpsQualityGrade.From(e.QualityGrade);
         Description = Description.FromNullable(e.Description);
-        CableSpec = e.CableType is not null
-            ? CableSpec.Create(
-                CableType.From(e.CableType),
-                CrossSection.FromNullable(e.CrossSection),
-                CableColor.FromNullable(e.CableColor),
-                e.ConductorCount)
-            : null;
+        CableSpec = ReconstructCableSpec(e.CableType, e.CrossSection, e.CableColor, e.ConductorCount);
         Depth = Depth.FromNullable(e.DepthMm);
         Manufacturer = Manufacturer.FromNullable(e.Manufacturer);
         ModelName = ModelName.FromNullable(e.ModelName);
@@ -307,19 +291,7 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
 
     public void Apply(PhotoAdded e)
     {
-        GpsPosition? position = e.Latitude.HasValue
-            ? GpsPosition.Create(
-                Latitude.From(e.Latitude.Value),
-                Longitude.From(e.Longitude!.Value),
-                e.Altitude,
-                HorizontalAccuracy.From(e.HorizontalAccuracy!.Value),
-                GpsSource.From(e.GpsSource!),
-                CorrectionService.FromNullable(e.CorrectionService),
-                RtkFixStatus.FromNullable(e.RtkFixStatus),
-                e.SatelliteCount,
-                e.Hdop,
-                e.CorrectionAge)
-            : null;
+        var position = ReconstructNullablePosition(e.Latitude, e.Longitude, e.Altitude, e.HorizontalAccuracy, e.GpsSource, e.CorrectionService, e.RtkFixStatus, e.SatelliteCount, e.Hdop, e.CorrectionAge);
 
         var photo = Photo.Reconstitute(
             PhotoIdentifier.From(e.PhotoId),
@@ -365,17 +337,7 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
 
     public void Apply(InstallationPositionUpdated e)
     {
-        Position = GpsPosition.Create(
-            Latitude.From(e.Latitude),
-            Longitude.From(e.Longitude),
-            e.Altitude,
-            HorizontalAccuracy.From(e.HorizontalAccuracy),
-            GpsSource.From(e.GpsSource),
-            CorrectionService.FromNullable(e.CorrectionService),
-            RtkFixStatus.FromNullable(e.RtkFixStatus),
-            e.SatelliteCount,
-            e.Hdop,
-            e.CorrectionAge);
+        Position = ReconstructPosition(e.Latitude, e.Longitude, e.Altitude, e.HorizontalAccuracy, e.GpsSource, e.CorrectionService, e.RtkFixStatus, e.SatelliteCount, e.Hdop, e.CorrectionAge);
         QualityGrade = GpsQualityGrade.From(e.QualityGrade);
     }
 
@@ -386,13 +348,7 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
 
     public void Apply(InstallationCableSpecUpdated e)
     {
-        CableSpec = e.CableType is not null
-            ? CableSpec.Create(
-                CableType.From(e.CableType),
-                CrossSection.FromNullable(e.CrossSection),
-                CableColor.FromNullable(e.CableColor),
-                e.ConductorCount)
-            : null;
+        CableSpec = ReconstructCableSpec(e.CableType, e.CrossSection, e.CableColor, e.ConductorCount);
     }
 
     public void Apply(InstallationDepthUpdated e)
@@ -416,5 +372,35 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
     public void Apply(InstallationDeleted e)
     {
         IsDeleted = true;
+    }
+
+    // --- Reconstruction helpers ---
+
+    private static GpsPosition ReconstructPosition(
+        double latitude, double longitude, double? altitude, double horizontalAccuracy, string gpsSource,
+        string? correctionService, string? rtkFixStatus, int? satelliteCount, double? hdop, double? correctionAge)
+    {
+        return GpsPosition.Create(
+            Latitude.From(latitude), Longitude.From(longitude), altitude,
+            HorizontalAccuracy.From(horizontalAccuracy), GpsSource.From(gpsSource),
+            CorrectionService.FromNullable(correctionService), RtkFixStatus.FromNullable(rtkFixStatus),
+            satelliteCount, hdop, correctionAge);
+    }
+
+    private static GpsPosition? ReconstructNullablePosition(
+        double? latitude, double? longitude, double? altitude, double? horizontalAccuracy, string? gpsSource,
+        string? correctionService, string? rtkFixStatus, int? satelliteCount, double? hdop, double? correctionAge)
+    {
+        if (!latitude.HasValue) return null;
+        return ReconstructPosition(
+            latitude.Value, longitude!.Value, altitude, horizontalAccuracy!.Value, gpsSource!,
+            correctionService, rtkFixStatus, satelliteCount, hdop, correctionAge);
+    }
+
+    private static CableSpec? ReconstructCableSpec(string? cableType, decimal? crossSection, string? cableColor, int? conductorCount)
+    {
+        return cableType is not null
+            ? CableSpec.Create(CableType.From(cableType), CrossSection.FromNullable(crossSection), CableColor.FromNullable(cableColor), conductorCount)
+            : null;
     }
 }

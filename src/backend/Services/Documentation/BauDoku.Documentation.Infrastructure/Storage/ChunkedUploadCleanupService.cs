@@ -9,6 +9,8 @@ namespace BauDoku.Documentation.Infrastructure.Storage;
 public sealed class ChunkedUploadCleanupService(IOptions<PhotoStorageOptions> options, ILogger<ChunkedUploadCleanupService> logger)
     : BackgroundService
 {
+    private const string MetadataFileName = "metadata.json";
+
     private readonly LocalStorageDirectory storage = new(options.Value.ChunkedPath);
     private readonly TimeSpan interval = TimeSpan.FromMinutes(15);
     private readonly TimeSpan maxAge = TimeSpan.FromHours(1);
@@ -30,7 +32,7 @@ public sealed class ChunkedUploadCleanupService(IOptions<PhotoStorageOptions> op
         foreach (var sessionDir in sessionDirs)
         {
             var sessionName = Path.GetFileName(sessionDir);
-            var metadataPath = Path.Combine(sessionName, "metadata.json");
+            var metadataPath = Path.Combine(sessionName, MetadataFileName);
 
             if (!storage.FileExists(metadataPath))
             {

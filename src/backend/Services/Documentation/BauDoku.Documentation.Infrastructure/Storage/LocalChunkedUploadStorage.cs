@@ -7,6 +7,10 @@ namespace BauDoku.Documentation.Infrastructure.Storage;
 
 public sealed class LocalChunkedUploadStorage(IOptions<PhotoStorageOptions> options) : IChunkedUploadStorage
 {
+    private const string MetadataFileName = "metadata.json";
+    private const string ChunkFilePattern = "*.chunk";
+    private const string AssembledFileName = "assembled";
+
     private readonly LocalStorageDirectory storage = new(options.Value.ChunkedPath);
 
     public async Task<UploadSessionIdentifier> InitSessionAsync(ChunkedUploadSession session, CancellationToken cancellationToken = default)
@@ -14,7 +18,7 @@ public sealed class LocalChunkedUploadStorage(IOptions<PhotoStorageOptions> opti
         var sessionDir = session.SessionId.ToString();
         storage.CreateSubdirectory(sessionDir);
 
-        await storage.WriteJsonAsync(Path.Combine(sessionDir, "metadata.json"), session, cancellationToken);
+        await storage.WriteJsonAsync(Path.Combine(sessionDir, MetadataFileName), session, cancellationToken);
 
         return UploadSessionIdentifier.From(session.SessionId);
     }
@@ -29,7 +33,7 @@ public sealed class LocalChunkedUploadStorage(IOptions<PhotoStorageOptions> opti
 
     public async Task<ChunkedUploadSession> GetSessionAsync(UploadSessionIdentifier sessionId, CancellationToken cancellationToken = default)
     {
-        var metadataPath = Path.Combine(sessionId.Value.ToString(), "metadata.json");
+        var metadataPath = Path.Combine(sessionId.Value.ToString(), MetadataFileName);
         if (!storage.FileExists(metadataPath)) throw new KeyNotFoundException($"Upload-Session mit ID {sessionId.Value} nicht gefunden.");
 
         return await storage.ReadJsonAsync<ChunkedUploadSession>(metadataPath, cancellationToken) ?? throw new KeyNotFoundException($"Upload-Session mit ID {sessionId.Value} nicht gefunden.");
@@ -40,17 +44,17 @@ public sealed class LocalChunkedUploadStorage(IOptions<PhotoStorageOptions> opti
         var sessionDir = sessionId.Value.ToString();
         if (!storage.DirectoryExists(sessionDir)) return Task.FromResult(0);
 
-        var chunkCount = storage.GetFiles(sessionDir, "*.chunk").Length;
+        var chunkCount = storage.GetFiles(sessionDir, ChunkFilePattern).Length;
         return Task.FromResult(chunkCount);
     }
 
     public async Task<Stream> AssembleAsync(UploadSessionIdentifier sessionId, CancellationToken cancellationToken = default)
     {
         var sessionDir = sessionId.Value.ToString();
-        var metadataPath = Path.Combine(sessionDir, "metadata.json");
+        var metadataPath = Path.Combine(sessionDir, MetadataFileName);
         var session = await storage.ReadJsonAsync<ChunkedUploadSession>(metadataPath, cancellationToken) ?? throw new InvalidOperationException($"Session-Metadaten für {sessionId.Value} nicht lesbar.");
 
-        var assembledPath = Path.Combine(sessionDir, "assembled");
+        var assembledPath = Path.Combine(sessionDir, AssembledFileName);
         await using (var assembledStream = storage.OpenWrite(assembledPath))
         {
             for (var index = 0; index < session.TotalChunks; index++)

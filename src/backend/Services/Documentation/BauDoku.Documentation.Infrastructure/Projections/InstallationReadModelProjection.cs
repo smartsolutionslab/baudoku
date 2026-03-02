@@ -215,6 +215,6 @@ public sealed class InstallationReadModelProjection(IServiceScopeFactory scopeFa
             i.CompletedAt = @event.CompletedAt;
         });
 
-    private static Task ApplyDeleted(ReadModelDbContext dbContext, InstallationDeleted @evet) =>
-        UpdateInstallation(dbContext, evet.InstallationId, i => i.IsDeleted = true);
+    private static Task ApplyDeleted(ReadModelDbContext dbContext, InstallationDeleted @event) =>
+        UpdateInstallation(dbContext, @event.InstallationId, i => i.IsDeleted = true);
 }

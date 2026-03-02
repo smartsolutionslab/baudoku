@@ -45,7 +45,7 @@ public sealed class SyncSchedulerService(
         var syncBatches = scope.ServiceProvider.GetRequiredService<ISyncBatchRepository>();
         var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
 
-        var pendingBatches = await syncBatches.GetPendingBatchesAsync(limit: 10, ct);
+        var pendingBatches = await syncBatches.GetPendingBatchesAsync(limit: syncOptions.Value.PendingBatchLimit, ct);
 
         if (pendingBatches.Count == 0)
             return;

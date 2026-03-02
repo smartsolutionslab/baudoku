@@ -56,24 +56,32 @@ public sealed record GpsPosition : IValueObject
             correctionService, rtkFixStatus, satelliteCount, hdop, correctionAge);
     }
 
+    private const double HighAccuracyThresholdMeters = 1.0;
+    private const double MediumAccuracyThresholdMeters = 5.0;
+    private const double LowAccuracyThresholdMeters = 30.0;
+    private const double GoodHdopThreshold = 2.0;
+    private const double PoorHdopThreshold = 5.0;
+    private const int GoodSatelliteCount = 8;
+    private const int PoorSatelliteCount = 4;
+
     public GpsQualityGrade CalculateQualityGrade()
     {
         var baseGrade = HorizontalAccuracy.Value switch
         {
-            < 1.0 => 0,
-            < 5.0 => 1,
-            < 30.0 => 2,
+            < HighAccuracyThresholdMeters => 0,
+            < MediumAccuracyThresholdMeters => 1,
+            < LowAccuracyThresholdMeters => 2,
             _ => 3
         };
 
         var bonus = 0;
-        if (Hdop.HasValue && Hdop.Value < 2.0) bonus++;
-        if (SatelliteCount.HasValue && SatelliteCount.Value >= 8) bonus++;
+        if (Hdop.HasValue && Hdop.Value < GoodHdopThreshold) bonus++;
+        if (SatelliteCount.HasValue && SatelliteCount.Value >= GoodSatelliteCount) bonus++;
         if (CorrectionService is not null) bonus++;
 
         var penalty = 0;
-        if (Hdop.HasValue && Hdop.Value > 5.0) penalty++;
-        if (SatelliteCount.HasValue && SatelliteCount.Value < 4) penalty++;
+        if (Hdop.HasValue && Hdop.Value > PoorHdopThreshold) penalty++;
+        if (SatelliteCount.HasValue && SatelliteCount.Value < PoorSatelliteCount) penalty++;
 
         var adjustment = Math.Clamp(bonus - penalty, -1, 1);
         var finalGrade = Math.Clamp(baseGrade - adjustment, 0, 3);
