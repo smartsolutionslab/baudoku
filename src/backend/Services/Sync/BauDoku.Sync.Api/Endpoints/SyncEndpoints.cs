@@ -16,7 +16,7 @@ public static class SyncEndpoints
 
         group.MapPost("/batch", async (ProcessSyncBatchCommand command, IDispatcher dispatcher, CancellationToken cancellationToken) =>
         {
-            var result = await dispatcher.Send<ProcessSyncBatchResult>(command, cancellationToken);
+            var result = await dispatcher.Send(command, cancellationToken);
             return Results.Ok(result);
         })
         .RequireAuthorization(AuthPolicies.RequireUser)
@@ -38,9 +38,7 @@ public static class SyncEndpoints
 
         group.MapGet("/conflicts", async (string? deviceId, string? status, IDispatcher dispatcher, CancellationToken cancellationToken) =>
         {
-            var query = new GetConflictsQuery(
-                DeviceIdentifier.FromNullable(deviceId),
-                ConflictStatus.FromNullable(status));
+            var query = new GetConflictsQuery(DeviceIdentifier.FromNullable(deviceId), ConflictStatus.FromNullable(status));
             var result = await dispatcher.Query(query, cancellationToken);
             return Results.Ok(result);
         })

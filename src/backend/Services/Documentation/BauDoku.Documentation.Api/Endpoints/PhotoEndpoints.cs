@@ -25,7 +25,7 @@ public static class PhotoEndpoints
         {
             await using var stream = file.OpenReadStream();
             var command = request.ToCommand(installationId, file, stream);
-            var photoId = await dispatcher.Send<PhotoIdentifier>(command, ct);
+            var photoId = await dispatcher.Send(command, ct);
             return Results.Created($"/api/documentation/photos/{photoId.Value}", new CreatedResponse(photoId.Value));
         })
         .RequireAuthorization(AuthPolicies.RequireUser)

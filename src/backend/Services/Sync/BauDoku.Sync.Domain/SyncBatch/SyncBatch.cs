@@ -82,13 +82,9 @@ public sealed class SyncBatch : AggregateRoot<SyncBatchIdentifier>
         AddDomainEvent(new SyncBatchProcessed(Id, deltas.Count, conflicts.Count, DateTime.UtcNow));
     }
 
-    public void ResolveConflict(
-        ConflictRecordIdentifier conflictId,
-        ConflictResolutionStrategy strategy,
-        DeltaPayload? mergedPayload = null)
+    public void ResolveConflict(ConflictRecordIdentifier conflictId, ConflictResolutionStrategy strategy, DeltaPayload? mergedPayload = null)
     {
-        var conflict = conflicts.FirstOrDefault(c => c.Id == conflictId)
-            ?? throw new InvalidOperationException($"Konflikt {conflictId.Value} nicht gefunden.");
+        var conflict = conflicts.FirstOrDefault(c => c.Id == conflictId) ?? throw new InvalidOperationException($"Konflikt {conflictId.Value} nicht gefunden.");
 
         conflict.Resolve(strategy, mergedPayload);
         AddDomainEvent(new ConflictResolved(conflictId, strategy, DateTime.UtcNow));
