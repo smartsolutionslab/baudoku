@@ -10,6 +10,8 @@ namespace BauDoku.BuildingBlocks.Infrastructure.Auth;
 
 public static class AuthenticationExtensions
 {
+    private const string AuthLogCategory = "BauDoku.Auth";
+
     public static IServiceCollection AddBauDokuAuthentication(this IServiceCollection services, IConfiguration configuration, IHostEnvironment environment)
     {
         services.AddTransient<IClaimsTransformation, KeycloakClaimsTransformation>();
@@ -43,7 +45,7 @@ public static class AuthenticationExtensions
                 OnTokenValidated = context =>
                 {
                     var loggerFactory = context.HttpContext.RequestServices.GetRequiredService<ILoggerFactory>();
-                    var logger = loggerFactory.CreateLogger("BauDoku.Auth");
+                    var logger = loggerFactory.CreateLogger(AuthLogCategory);
                     var principal = context.Principal;
                     var userId = principal?.FindFirstValue(ClaimTypes.NameIdentifier);
                     var roles = principal?.FindAll(ClaimTypes.Role).Select(c => c.Value).ToArray() ?? [];
@@ -54,7 +56,7 @@ public static class AuthenticationExtensions
                 OnAuthenticationFailed = context =>
                 {
                     var loggerFactory = context.HttpContext.RequestServices.GetRequiredService<ILoggerFactory>();
-                    var logger = loggerFactory.CreateLogger("BauDoku.Auth");
+                    var logger = loggerFactory.CreateLogger(AuthLogCategory);
                     logger.LogWarning(context.Exception, "Authentication failed");
                     return Task.CompletedTask;
                 },

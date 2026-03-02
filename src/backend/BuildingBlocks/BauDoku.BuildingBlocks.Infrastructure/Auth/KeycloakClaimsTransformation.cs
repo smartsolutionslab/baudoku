@@ -24,7 +24,6 @@ public sealed class KeycloakClaimsTransformation : IClaimsTransformation
         var claims = roles.Select(role => new Claim(ClaimTypes.Role, role)).ToList();
         identity.AddClaims(claims);
 
-
         return Task.FromResult(principal);
     }
 }

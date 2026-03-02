@@ -10,7 +10,7 @@ public sealed class ReadModelDbContext(DbContextOptions<ReadModelDbContext> opti
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.HasDefaultSchema("documentation_read");
+        modelBuilder.HasDefaultSchema(DocumentationSchemas.ReadModel);
         modelBuilder.HasPostgresExtension("postgis");
 
         modelBuilder.Entity<InstallationReadModel>(entity =>

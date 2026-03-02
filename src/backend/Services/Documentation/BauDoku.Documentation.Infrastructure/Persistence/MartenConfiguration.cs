@@ -10,8 +10,8 @@ public static class MartenConfiguration
     public static void Configure(StoreOptions options, string connectionString)
     {
         options.Connection(connectionString);
-        options.Events.DatabaseSchemaName = "documentation_events";
-        options.DatabaseSchemaName = "documentation_events";
+        options.Events.DatabaseSchemaName = DocumentationSchemas.Events;
+        options.DatabaseSchemaName = DocumentationSchemas.Events;
         options.Events.StreamIdentity = StreamIdentity.AsGuid;
         options.AutoCreateSchemaObjects = AutoCreate.CreateOrUpdate;
 

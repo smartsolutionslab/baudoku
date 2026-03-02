@@ -9,10 +9,11 @@ public sealed class ValidationBehaviorVoid<TCommand>(ICommandHandler<TCommand> i
 {
     public async Task Handle(TCommand command, CancellationToken cancellationToken = default)
     {
-        if (validators.Any())
+        var validatorList = validators as IReadOnlyList<IValidator<TCommand>> ?? validators.ToList();
+        if (validatorList.Count > 0)
         {
             var context = new ValidationContext<TCommand>(command);
-            var validationResults = await Task.WhenAll(validators.Select(v => v.ValidateAsync(context, cancellationToken)));
+            var validationResults = await Task.WhenAll(validatorList.Select(v => v.ValidateAsync(context, cancellationToken)));
 
             var failures = validationResults
                 .SelectMany(r => r.Errors)

@@ -10,8 +10,8 @@ public sealed class MartenEventPublisher(IServiceScopeFactory scopeFactory) : Do
 {
     public override async Task AfterCommitAsync(IDocumentSession session, IChangeSet commit, CancellationToken token)
     {
-        var events = commit.GetEvents();
-        if (!events.Any()) return;
+        var events = commit.GetEvents().ToList();
+        if (events.Count == 0) return;
 
         using var scope = scopeFactory.CreateScope();
         var dispatcher = scope.ServiceProvider.GetRequiredService<IDispatcher>();
