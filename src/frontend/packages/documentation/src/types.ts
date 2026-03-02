@@ -1,3 +1,16 @@
+export type GpsPosition = {
+  latitude: number;
+  longitude: number;
+  altitude: number | null;
+  horizontalAccuracy: number;
+  gpsSource: string;
+  correctionService: string | null;
+  rtkFixStatus: string | null;
+  satelliteCount: number | null;
+  hdop: number | null;
+  correctionAge: number | null;
+};
+
 export interface Installation {
   id: string;
   projectId: string;
@@ -6,17 +19,7 @@ export interface Installation {
   status: InstallationStatus;
 
   // GPS / GNSS
-  gpsLat: number | null;
-  gpsLng: number | null;
-  gpsAltitude: number | null;
-  gpsAltitudeMsl: number | null;
-  gpsAccuracy: number | null;
-  gpsSource: GpsSource | null;
-  gpsCorrService: GpsCorrectionService | null;
-  gpsRtkStatus: RtkFixStatus | null;
-  gpsSatCount: number | null;
-  gpsHdop: number | null;
-  gpsCorrAge: number | null;
+  position: GpsPosition | null;
   depthMm: number | null;
   positionOnPlan: string | null;
 
@@ -77,11 +80,7 @@ export interface Photo {
   thumbnailPath: string | null;
   type: PhotoType;
   annotations: string | null;
-  gpsLat: number | null;
-  gpsLng: number | null;
-  gpsAccuracy: number | null;
-  gpsSource: GpsSource | null;
-  gpsCorrService: string | null;
+  position: GpsPosition | null;
   caption: string | null;
   exifLatitude: number | null;
   exifLongitude: number | null;

@@ -24,11 +24,14 @@ public sealed class InstallationEndpointTests : IDisposable
         {
             ProjectId = Guid.NewGuid(),
             Type = "cable_tray",
-            Latitude = 48.1351,
-            Longitude = 11.5820,
-            Altitude = 520.0,
-            HorizontalAccuracy = 3.5,
-            GpsSource = "internal_gps",
+            Position = new
+            {
+                Latitude = 48.1351,
+                Longitude = 11.5820,
+                Altitude = 520.0,
+                HorizontalAccuracy = 3.5,
+                GpsSource = "internal_gps"
+            },
             Description = "Kabeltrasse Test"
         };
 
@@ -55,10 +58,13 @@ public sealed class InstallationEndpointTests : IDisposable
         {
             ProjectId = Guid.NewGuid(),
             Type = "junction_box",
-            Latitude = 48.0,
-            Longitude = 11.0,
-            HorizontalAccuracy = 5.0,
-            GpsSource = "internal_gps"
+            Position = new
+            {
+                Latitude = 48.0,
+                Longitude = 11.0,
+                HorizontalAccuracy = 5.0,
+                GpsSource = "internal_gps"
+            }
         };
         var createResponse = await client.PostAsJsonAsync("/api/documentation/installations", command);
         var created = await createResponse.Content.ReadFromJsonAsync<IdResponse>();
@@ -84,10 +90,13 @@ public sealed class InstallationEndpointTests : IDisposable
         {
             ProjectId = Guid.NewGuid(),
             Type = "cable_tray",
-            Latitude = 48.0,
-            Longitude = 11.0,
-            HorizontalAccuracy = 5.0,
-            GpsSource = "internal_gps"
+            Position = new
+            {
+                Latitude = 48.0,
+                Longitude = 11.0,
+                HorizontalAccuracy = 5.0,
+                GpsSource = "internal_gps"
+            }
         };
         var createResponse = await client.PostAsJsonAsync("/api/documentation/installations", createCommand);
         var created = await createResponse.Content.ReadFromJsonAsync<IdResponse>();

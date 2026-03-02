@@ -23,10 +23,13 @@ public sealed class PhotoEndpointTests : IDisposable
         {
             ProjectId = Guid.NewGuid(),
             Type = "junction_box",
-            Latitude = 48.1351,
-            Longitude = 11.5820,
-            HorizontalAccuracy = 3.5,
-            GpsSource = "internal_gps"
+            Position = new
+            {
+                Latitude = 48.1351,
+                Longitude = 11.5820,
+                HorizontalAccuracy = 3.5,
+                GpsSource = "internal_gps"
+            }
         };
         var response = await client.PostAsJsonAsync("/api/documentation/installations", command);
         response.EnsureSuccessStatusCode();

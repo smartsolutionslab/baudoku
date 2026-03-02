@@ -37,10 +37,10 @@ export function InstallationDetails({ installation }: InstallationDetailsProps) 
           {i.gpsAccuracy != null && (
             <View style={styles.qualityRow}>
               <QualityIndicator
-                gpsAccuracy={i.gpsAccuracy}
-                gpsHdop={i.gpsHdop}
-                gpsSatCount={i.gpsSatCount}
-                gpsCorrService={i.gpsCorrService}
+                horizontalAccuracy={i.gpsAccuracy}
+                hdop={i.gpsHdop}
+                satelliteCount={i.gpsSatCount}
+                correctionService={i.gpsCorrService}
                 gpsSource={i.gpsSource}
               />
             </View>

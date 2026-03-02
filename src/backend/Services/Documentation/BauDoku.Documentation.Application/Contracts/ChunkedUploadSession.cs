@@ -1,3 +1,5 @@
+using BauDoku.Documentation.Application.Queries.Dtos;
+
 namespace BauDoku.Documentation.Application.Contracts;
 
 public sealed record ChunkedUploadSession(
@@ -10,9 +12,5 @@ public sealed record ChunkedUploadSession(
     string PhotoType,
     string? Caption,
     string? Description,
-    double? Latitude,
-    double? Longitude,
-    double? Altitude,
-    double? HorizontalAccuracy,
-    string? GpsSource,
+    GpsPositionDto? Position,
     DateTime CreatedAt);

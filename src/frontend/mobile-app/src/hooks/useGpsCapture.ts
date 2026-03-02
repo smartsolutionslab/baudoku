@@ -7,35 +7,38 @@ export type GpsSource = "internal_gps" | "external_dgnss" | "external_rtk";
 export type GpsCorrService = "none" | "sapos_eps" | "sapos_heps" | "sapos_gpps";
 export type GpsRtkStatus = "no_fix" | "autonomous" | "dgps" | "rtk_float" | "rtk_fixed";
 
-export type GpsPosition = {
-  gpsLat: number;
-  gpsLng: number;
-  gpsAltitude: number | null;
-  gpsAccuracy: number;
+export type CapturedGpsPosition = {
+  latitude: number;
+  longitude: number;
+  altitude: number | null;
+  horizontalAccuracy: number;
   gpsSource: GpsSource;
-  gpsCorrService: GpsCorrService;
-  gpsRtkStatus: GpsRtkStatus;
-  gpsSatCount: number | null;
-  gpsHdop: number | null;
-  gpsCorrAge: number | null;
+  correctionService: GpsCorrService;
+  rtkFixStatus: GpsRtkStatus;
+  satelliteCount: number | null;
+  hdop: number | null;
+  correctionAge: number | null;
   isMocked: boolean;
 };
 
+/** Alias used by form components and hooks that handle GPS data. */
+export type GpsPosition = CapturedGpsPosition;
+
 export type UseGpsCaptureReturn = {
-  position: GpsPosition | null;
+  position: CapturedGpsPosition | null;
   capturing: boolean;
   error: string | null;
-  capturePosition: () => Promise<GpsPosition | null>;
+  capturePosition: () => Promise<CapturedGpsPosition | null>;
   clearPosition: () => void;
 };
 
 export function useGpsCapture(): UseGpsCaptureReturn {
-  const [position, setPosition] = useState<GpsPosition | null>(null);
+  const [position, setPosition] = useState<CapturedGpsPosition | null>(null);
   const [capturing, setCapturing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const allowMockLocation = useSettingsStore((s) => s.allowMockLocation);
 
-  const capturePosition = useCallback(async (): Promise<GpsPosition | null> => {
+  const capturePosition = useCallback(async (): Promise<CapturedGpsPosition | null> => {
     setCapturing(true);
     setError(null);
 
@@ -61,17 +64,17 @@ export function useGpsCapture(): UseGpsCaptureReturn {
         return null;
       }
 
-      const gps: GpsPosition = {
-        gpsLat: location.coords.latitude,
-        gpsLng: location.coords.longitude,
-        gpsAltitude: location.coords.altitude,
-        gpsAccuracy: location.coords.accuracy ?? 0,
+      const gps: CapturedGpsPosition = {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        altitude: location.coords.altitude,
+        horizontalAccuracy: location.coords.accuracy ?? 0,
         gpsSource: isMocked ? "external_dgnss" : "internal_gps",
-        gpsCorrService: isMocked ? "sapos_eps" : "none",
-        gpsRtkStatus: isMocked ? "dgps" : "autonomous",
-        gpsSatCount: null,
-        gpsHdop: null,
-        gpsCorrAge: null,
+        correctionService: isMocked ? "sapos_eps" : "none",
+        rtkFixStatus: isMocked ? "dgps" : "autonomous",
+        satelliteCount: null,
+        hdop: null,
+        correctionAge: null,
         isMocked,
       };
 

@@ -1,3 +1,4 @@
+using System.Text.Json;
 using BauDoku.BuildingBlocks.Application.Dispatcher;
 using BauDoku.BuildingBlocks.Application.Responses;
 using BauDoku.BuildingBlocks.Infrastructure.Auth;
@@ -7,11 +8,14 @@ using BauDoku.Documentation.Application.Contracts;
 using BauDoku.Documentation.Application.Queries;
 using BauDoku.Documentation.Application.Queries.Dtos;
 using BauDoku.Documentation.Domain;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BauDoku.Documentation.Api.Endpoints;
 
 public static class PhotoEndpoints
 {
+    private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
+
     public static void MapPhotoEndpoints(this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("/api/documentation").WithTags("Photos");
@@ -19,10 +23,13 @@ public static class PhotoEndpoints
         group.MapPost("/installations/{installationId:guid}/photos", async (
             Guid installationId,
             IFormFile file,
-            [AsParameters] AddPhotoRequest request,
+            [FromForm] string? metadata,
             IDispatcher dispatcher,
             CancellationToken ct) =>
         {
+            var request = metadata is not null
+                ? JsonSerializer.Deserialize<AddPhotoRequest>(metadata, JsonOptions) ?? new AddPhotoRequest(null, null, null, null, null)
+                : new AddPhotoRequest(null, null, null, null, null);
             await using var stream = file.OpenReadStream();
             var command = request.ToCommand(installationId, file, stream);
             var photoId = await dispatcher.Send(command, ct);

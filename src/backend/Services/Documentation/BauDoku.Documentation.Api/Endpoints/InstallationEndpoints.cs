@@ -18,8 +18,9 @@ public static class InstallationEndpoints
     {
         var group = app.MapGroup("/api/documentation/installations").WithTags("Installations");
 
-        group.MapPost("/", async (DocumentInstallationCommand command, IDispatcher dispatcher, CancellationToken cancellationToken) =>
+        group.MapPost("/", async (CreateInstallationRequest request, IDispatcher dispatcher, CancellationToken cancellationToken) =>
         {
+            var command = request.ToCommand();
             var id = await dispatcher.Send(command, cancellationToken);
             return Results.Created($"/api/documentation/installations/{id.Value}", new CreatedResponse(id.Value));
         })

@@ -34,17 +34,17 @@ export default function NewInstallationScreen() {
         phase: data.phase || null,
         depthMm: data.depthMm ?? null,
         notes: data.notes || null,
-        // GPS fields
-        gpsLat: gps?.gpsLat ?? null,
-        gpsLng: gps?.gpsLng ?? null,
-        gpsAltitude: gps?.gpsAltitude ?? null,
-        gpsAccuracy: gps?.gpsAccuracy ?? null,
+        // GPS fields (map CapturedGpsPosition → flat DB columns)
+        gpsLat: gps?.latitude ?? null,
+        gpsLng: gps?.longitude ?? null,
+        gpsAltitude: gps?.altitude ?? null,
+        gpsAccuracy: gps?.horizontalAccuracy ?? null,
         gpsSource: gps?.gpsSource ?? null,
-        gpsCorrService: gps?.gpsCorrService ?? null,
-        gpsRtkStatus: gps?.gpsRtkStatus ?? null,
-        gpsSatCount: gps?.gpsSatCount ?? null,
-        gpsHdop: gps?.gpsHdop ?? null,
-        gpsCorrAge: gps?.gpsCorrAge ?? null,
+        gpsCorrService: gps?.correctionService ?? null,
+        gpsRtkStatus: gps?.rtkFixStatus ?? null,
+        gpsSatCount: gps?.satelliteCount ?? null,
+        gpsHdop: gps?.hdop ?? null,
+        gpsCorrAge: gps?.correctionAge ?? null,
       });
       router.replace(`/(tabs)/projects/installation/${result.id}`);
     } catch {

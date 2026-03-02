@@ -11,10 +11,6 @@ public sealed record AddPhotoCommand(
     PhotoType PhotoType,
     Caption? Caption,
     Description? Description,
-    Latitude? Latitude,
-    Longitude? Longitude,
-    double? Altitude,
-    HorizontalAccuracy? HorizontalAccuracy,
-    GpsSource? GpsSource,
+    GpsPosition? Position,
     Stream Stream,
     DateTime? TakenAt = null) : ICommand<PhotoIdentifier>;

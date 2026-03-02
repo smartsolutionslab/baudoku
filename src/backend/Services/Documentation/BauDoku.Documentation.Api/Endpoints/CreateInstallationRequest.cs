@@ -1,7 +1,10 @@
 namespace BauDoku.Documentation.Api.Endpoints;
 
-public sealed record UpdateInstallationRequest(
-    GpsPositionRequest? Position,
+public sealed record CreateInstallationRequest(
+    Guid ProjectId,
+    Guid? ZoneId,
+    string Type,
+    GpsPositionRequest Position,
     string? Description,
     string? CableType,
     decimal? CrossSection,

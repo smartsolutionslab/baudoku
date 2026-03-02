@@ -19,8 +19,7 @@ public sealed class DocumentInstallationCommandHandlerTests
 
     private static DocumentInstallationCommand CreateValidCommand() =>
         new(ProjectIdentifier.New(), null, InstallationType.CableTray,
-            Latitude.From(48.137154), Longitude.From(11.576124), 520.0, HorizontalAccuracy.From(3.5), GpsSource.From("gps"),
-            null, null, null, null, null,
+            GpsPosition.Create(Latitude.From(48.137154), Longitude.From(11.576124), 520.0, HorizontalAccuracy.From(3.5), GpsSource.From("gps")),
             Description.From("Testbeschreibung"), CableType.From("NYM"), CrossSection.From(4m), CableColor.From("grau"), 5, 600,
             Manufacturer.From("Siemens"), ModelName.From("Model X"), SerialNumber.From("SN-123"));
 
@@ -71,8 +70,7 @@ public sealed class DocumentInstallationCommandHandlerTests
     {
         var command = new DocumentInstallationCommand(
             ProjectIdentifier.New(), null, InstallationType.CableTray,
-            Latitude.From(48.137154), Longitude.From(11.576124), null, HorizontalAccuracy.From(3.5), GpsSource.From("gps"),
-            null, null, null, null, null,
+            GpsPosition.Create(Latitude.From(48.137154), Longitude.From(11.576124), null, HorizontalAccuracy.From(3.5), GpsSource.From("gps")),
             null, null, null, null, null, null, null, null, null);
 
         Installation? captured = null;

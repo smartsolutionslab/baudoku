@@ -35,16 +35,7 @@ public sealed class UpdateInstallationCommandHandlerTests
 
         var command = new UpdateInstallationCommand(
             installation.Id,
-            Latitude: Latitude.From(52.520008),
-            Longitude: Longitude.From(13.404954),
-            Altitude: 34.0,
-            HorizontalAccuracy: HorizontalAccuracy.From(1.5),
-            GpsSource: GpsSource.From("dgnss"),
-            CorrectionService: null,
-            RtkFixStatus: null,
-            SatelliteCount: null,
-            Hdop: null,
-            CorrectionAge: null,
+            Position: GpsPosition.Create(Latitude.From(52.520008), Longitude.From(13.404954), 34.0, HorizontalAccuracy.From(1.5), GpsSource.From("dgnss")),
             Description: null,
             CableType: null,
             CrossSection: null,
@@ -69,10 +60,7 @@ public sealed class UpdateInstallationCommandHandlerTests
 
         var command = new UpdateInstallationCommand(
             installation.Id,
-            Latitude: null, Longitude: null, Altitude: null,
-            HorizontalAccuracy: null, GpsSource: null,
-            CorrectionService: null, RtkFixStatus: null,
-            SatelliteCount: null, Hdop: null, CorrectionAge: null,
+            Position: null,
             Description: Description.From("Neue Beschreibung"),
             CableType: null, CrossSection: null, CableColor: null,
             ConductorCount: null, DepthMm: null,
@@ -94,10 +82,7 @@ public sealed class UpdateInstallationCommandHandlerTests
 
         var command = new UpdateInstallationCommand(
             installation.Id,
-            Latitude: null, Longitude: null, Altitude: null,
-            HorizontalAccuracy: null, GpsSource: null,
-            CorrectionService: null, RtkFixStatus: null,
-            SatelliteCount: null, Hdop: null, CorrectionAge: null,
+            Position: null,
             Description: null,
             CableType: CableType.From("NYM-J"),
             CrossSection: CrossSection.From(2.5m),
@@ -123,10 +108,7 @@ public sealed class UpdateInstallationCommandHandlerTests
 
         var command = new UpdateInstallationCommand(
             installation.Id,
-            Latitude: null, Longitude: null, Altitude: null,
-            HorizontalAccuracy: null, GpsSource: null,
-            CorrectionService: null, RtkFixStatus: null,
-            SatelliteCount: null, Hdop: null, CorrectionAge: null,
+            Position: null,
             Description: null,
             CableType: null, CrossSection: null, CableColor: null,
             ConductorCount: null,
@@ -148,10 +130,7 @@ public sealed class UpdateInstallationCommandHandlerTests
 
         var command = new UpdateInstallationCommand(
             InstallationIdentifier.New(),
-            Latitude: null, Longitude: null, Altitude: null,
-            HorizontalAccuracy: null, GpsSource: null,
-            CorrectionService: null, RtkFixStatus: null,
-            SatelliteCount: null, Hdop: null, CorrectionAge: null,
+            Position: null,
             Description: null,
             CableType: null, CrossSection: null, CableColor: null,
             ConductorCount: null, DepthMm: null,
@@ -171,10 +150,7 @@ public sealed class UpdateInstallationCommandHandlerTests
 
         var command = new UpdateInstallationCommand(
             installation.Id,
-            Latitude: null, Longitude: null, Altitude: null,
-            HorizontalAccuracy: null, GpsSource: null,
-            CorrectionService: null, RtkFixStatus: null,
-            SatelliteCount: null, Hdop: null, CorrectionAge: null,
+            Position: null,
             Description: null,
             CableType: null, CrossSection: null, CableColor: null,
             ConductorCount: null, DepthMm: null,

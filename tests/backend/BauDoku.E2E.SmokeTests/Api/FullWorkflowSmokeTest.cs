@@ -62,11 +62,14 @@ public sealed class FullWorkflowSmokeTest : IDisposable
         {
             ProjectId = projectId,
             Type = "cable_tray",
-            Latitude = 52.5200,
-            Longitude = 13.4050,
-            Altitude = 34.0,
-            HorizontalAccuracy = 3.5,
-            GpsSource = "internal_gps",
+            Position = new
+            {
+                Latitude = 52.5200,
+                Longitude = 13.4050,
+                Altitude = 34.0,
+                HorizontalAccuracy = 3.5,
+                GpsSource = "internal_gps"
+            },
             Description = "E2E Kabeltrasse"
         };
 
@@ -179,14 +182,15 @@ public sealed class FullWorkflowSmokeTest : IDisposable
 
     private sealed record ZoneDto(Guid Id, string Name, string Type, Guid? ParentZoneId);
 
+    private sealed record PositionDto(double Latitude, double Longitude);
+
     private sealed record InstallationDto(
         Guid Id,
         Guid ProjectId,
         Guid? ZoneId,
         string Type,
         string Status,
-        double Latitude,
-        double Longitude,
+        PositionDto Position,
         IReadOnlyList<PhotoDto> Photos,
         IReadOnlyList<MeasurementDto> Measurements);
 

@@ -27,11 +27,14 @@ public sealed class DocumentationAuthTests : IDisposable
             {
                 ProjectId = Guid.NewGuid(),
                 Type = "cable_tray",
-                Latitude = 52.52,
-                Longitude = 13.405,
-                Altitude = 34.0,
-                HorizontalAccuracy = 3.5,
-                GpsSource = "internal_gps",
+                Position = new
+                {
+                    Latitude = 52.52,
+                    Longitude = 13.405,
+                    Altitude = 34.0,
+                    HorizontalAccuracy = 3.5,
+                    GpsSource = "internal_gps"
+                },
                 Description = "Auth test installation"
             });
 
@@ -53,11 +56,14 @@ public sealed class DocumentationAuthTests : IDisposable
             {
                 ProjectId = Guid.NewGuid(),
                 Type = "cable_tray",
-                Latitude = 52.52,
-                Longitude = 13.405,
-                Altitude = 34.0,
-                HorizontalAccuracy = 3.5,
-                GpsSource = "internal_gps",
+                Position = new
+                {
+                    Latitude = 52.52,
+                    Longitude = 13.405,
+                    Altitude = 34.0,
+                    HorizontalAccuracy = 3.5,
+                    GpsSource = "internal_gps"
+                },
                 Description = "Auth test installation"
             });
 

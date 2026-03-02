@@ -70,13 +70,13 @@ export function GpsButton({ position, capturing, error, onCapture, onClear}: Gps
           </View>
         </View>
         <Text style={styles.coordText}>
-          {position.gpsLat.toFixed(6)}, {position.gpsLng.toFixed(6)}
+          {position.latitude.toFixed(6)}, {position.longitude.toFixed(6)}
         </Text>
         <QualityIndicator
-          gpsAccuracy={position.gpsAccuracy}
-          gpsHdop={position.gpsHdop}
-          gpsSatCount={position.gpsSatCount}
-          gpsCorrService={position.gpsCorrService}
+          horizontalAccuracy={position.horizontalAccuracy}
+          hdop={position.hdop}
+          satelliteCount={position.satelliteCount}
+          correctionService={position.correctionService}
           gpsSource={position.gpsSource}
         />
       </View>

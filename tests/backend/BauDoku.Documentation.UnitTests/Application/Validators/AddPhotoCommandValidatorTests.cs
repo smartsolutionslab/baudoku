@@ -11,7 +11,7 @@ public sealed class AddPhotoCommandValidatorTests
 
     private static AddPhotoCommand CreateValidCommand() =>
         new(InstallationIdentifier.New(), FileName.From("photo.jpg"), ContentType.From("image/jpeg"), FileSize.From(1024 * 100), PhotoType.Before,
-            null, null, null, null, null, null, null, new MemoryStream([1, 2, 3]));
+            null, null, null, new MemoryStream([1, 2, 3]));
 
     [Fact]
     public void ValidCommand_ShouldHaveNoErrors()

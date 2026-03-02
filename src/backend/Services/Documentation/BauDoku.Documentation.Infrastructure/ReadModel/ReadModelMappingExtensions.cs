@@ -29,15 +29,18 @@ internal static class ReadModelMappingExtensions
             p.PhotoType,
             p.Caption,
             p.Description,
-            p.Latitude,
-            p.Longitude,
-            p.Altitude,
-            p.HorizontalAccuracy,
-            p.GpsSource,
-            p.CorrectionService,
-            p.RtkFixStatus,
-            p.SatelliteCount,
-            p.Hdop,
-            p.CorrectionAge,
+            p.Latitude.HasValue
+                ? new GpsPositionDto(
+                    p.Latitude.Value,
+                    p.Longitude!.Value,
+                    p.Altitude,
+                    p.HorizontalAccuracy!.Value,
+                    p.GpsSource!,
+                    p.CorrectionService,
+                    p.RtkFixStatus,
+                    p.SatelliteCount,
+                    p.Hdop,
+                    p.CorrectionAge)
+                : null,
             p.TakenAt));
 }

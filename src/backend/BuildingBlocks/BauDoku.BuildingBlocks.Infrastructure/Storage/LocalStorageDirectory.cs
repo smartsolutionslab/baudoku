@@ -49,8 +49,7 @@ public sealed class LocalStorageDirectory
     public void EnsureFileExists(string relativePath)
     {
         var fullPath = Resolve(relativePath);
-        if (!File.Exists(fullPath))
-            throw new FileNotFoundException($"Datei nicht gefunden: {relativePath}", relativePath);
+        if (!File.Exists(fullPath)) throw new FileNotFoundException($"Datei nicht gefunden: {relativePath}", relativePath);
     }
 
     public void DeleteFile(string relativePath)

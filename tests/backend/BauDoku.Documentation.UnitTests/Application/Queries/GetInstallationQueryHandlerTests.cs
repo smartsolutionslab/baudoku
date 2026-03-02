@@ -46,7 +46,7 @@ public sealed class GetInstallationQueryHandlerTests
         result.Should().NotBeNull();
         result.Type.Should().Be("cable_tray");
         result.Description.Should().Be("Testbeschreibung");
-        result.Latitude.Should().Be(48.137154);
+        result.Position.Latitude.Should().Be(48.137154);
         result.Photos.Should().ContainSingle();
         result.Photos[0].FileName.Should().Be("photo.jpg");
         result.Measurements.Should().ContainSingle();
@@ -80,11 +80,11 @@ public sealed class GetInstallationQueryHandlerTests
         var result = await handler.Handle(new GetInstallationQuery(installation.Id), CancellationToken.None);
 
         result.Should().NotBeNull();
-        result.GpsSource.Should().Be("dgnss");
-        result.CorrectionService.Should().Be("SAPOS-EPS");
-        result.RtkFixStatus.Should().Be("fix");
-        result.SatelliteCount.Should().Be(12);
-        result.Hdop.Should().Be(0.8);
-        result.CorrectionAge.Should().Be(1.5);
+        result.Position.GpsSource.Should().Be("dgnss");
+        result.Position.CorrectionService.Should().Be("SAPOS-EPS");
+        result.Position.RtkFixStatus.Should().Be("fix");
+        result.Position.SatelliteCount.Should().Be(12);
+        result.Position.Hdop.Should().Be(0.8);
+        result.Position.CorrectionAge.Should().Be(1.5);
     }
 }

@@ -21,7 +21,7 @@ public sealed class UploadChunkCommandHandlerTests
 
     private static ChunkedUploadSession CreateValidSession(Guid sessionId) =>
         new(sessionId, Guid.NewGuid(), "photo.jpg", "image/jpeg",
-            5 * 1024 * 1024, 5, "before", null, null, null, null, null, null, null,
+            5 * 1024 * 1024, 5, "before", null, null, null,
             DateTime.UtcNow);
 
     [Fact]

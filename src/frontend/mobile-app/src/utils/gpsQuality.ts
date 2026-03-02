@@ -10,10 +10,10 @@ export type GpsQualityResult = {
 };
 
 type GpsQualityInput = {
-  gpsAccuracy: number;
-  gpsHdop?: number | null;
-  gpsSatCount?: number | null;
-  gpsCorrService?: string | null;
+  horizontalAccuracy: number;
+  hdop?: number | null;
+  satelliteCount?: number | null;
+  correctionService?: string | null;
 };
 
 const gradeLabels: Record<GpsQualityGrade, string> = {
@@ -57,25 +57,25 @@ const grades: GpsQualityGrade[] = ["A", "B", "C", "D"];
  * Stage 4 – adjustment clamped to [−1, +1], final grade clamped to [0, 3].
  */
 export function calculateGpsQuality(input: GpsQualityInput): GpsQualityResult {
-  const { gpsAccuracy, gpsHdop, gpsSatCount, gpsCorrService } = input;
+  const { horizontalAccuracy, hdop, satelliteCount, correctionService } = input;
 
   // Stage 1: base grade from accuracy
   let baseGrade: number;
-  if (gpsAccuracy < 1) baseGrade = 0;
-  else if (gpsAccuracy < 5) baseGrade = 1;
-  else if (gpsAccuracy < 30) baseGrade = 2;
+  if (horizontalAccuracy < 1) baseGrade = 0;
+  else if (horizontalAccuracy < 5) baseGrade = 1;
+  else if (horizontalAccuracy < 30) baseGrade = 2;
   else baseGrade = 3;
 
   // Stage 2: bonus
   let bonus = 0;
-  if (gpsHdop != null && gpsHdop < 2.0) bonus++;
-  if (gpsSatCount != null && gpsSatCount >= 8) bonus++;
-  if (gpsCorrService != null && gpsCorrService !== "none") bonus++;
+  if (hdop != null && hdop < 2.0) bonus++;
+  if (satelliteCount != null && satelliteCount >= 8) bonus++;
+  if (correctionService != null && correctionService !== "none") bonus++;
 
   // Stage 3: penalty
   let penalty = 0;
-  if (gpsHdop != null && gpsHdop > 5.0) penalty++;
-  if (gpsSatCount != null && gpsSatCount < 4) penalty++;
+  if (hdop != null && hdop > 5.0) penalty++;
+  if (satelliteCount != null && satelliteCount < 4) penalty++;
 
   // Stage 4: clamp adjustment and final grade
   const adjustment = Math.max(-1, Math.min(1, bonus - penalty));
