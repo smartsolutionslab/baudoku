@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace BauDoku.BuildingBlocks.Domain.Guards;
+namespace BauDoku.BuildingBlocks.Guards;
 
 public readonly ref struct StringGuard
 {

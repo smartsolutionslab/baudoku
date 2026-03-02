@@ -1,6 +1,6 @@
 using System.Numerics;
 
-namespace BauDoku.BuildingBlocks.Domain.Guards;
+namespace BauDoku.BuildingBlocks.Guards;
 
 public readonly ref struct NumericGuard<T> where T : struct, INumber<T>
 {

@@ -1,5 +1,5 @@
 using BauDoku.BuildingBlocks.Domain;
-using BauDoku.BuildingBlocks.Domain.Guards;
+using BauDoku.BuildingBlocks.Guards;
 
 namespace BauDoku.Projects.Domain;
 

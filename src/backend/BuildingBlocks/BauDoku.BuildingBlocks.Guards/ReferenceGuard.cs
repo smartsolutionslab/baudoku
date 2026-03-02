@@ -1,4 +1,4 @@
-namespace BauDoku.BuildingBlocks.Domain.Guards;
+namespace BauDoku.BuildingBlocks.Guards;
 
 public readonly ref struct ReferenceGuard<T> where T : class
 {
