@@ -1,3 +1,4 @@
+using BauDoku.BuildingBlocks.Serialization;
 using BauDoku.Documentation.Domain;
 using Marten;
 using Marten.Events;
@@ -14,6 +15,11 @@ public static class MartenConfiguration
         options.DatabaseSchemaName = DocumentationSchemas.Events;
         options.Events.StreamIdentity = StreamIdentity.AsGuid;
         options.AutoCreateSchemaObjects = AutoCreate.CreateOrUpdate;
+
+        options.UseSystemTextJsonForSerialization(configure: stj =>
+        {
+            stj.Converters.Add(new ValueObjectJsonConverterFactory());
+        });
 
         options.Events.AddEventTypes([
             typeof(InstallationDocumented),

@@ -3,6 +3,6 @@ using BauDoku.BuildingBlocks.Domain;
 namespace BauDoku.Documentation.Domain;
 
 public sealed record InstallationDescriptionUpdated(
-    Guid InstallationId,
-    string? Description,
+    InstallationIdentifier InstallationId,
+    Description? Description,
     DateTime OccurredOn) : IDomainEvent;

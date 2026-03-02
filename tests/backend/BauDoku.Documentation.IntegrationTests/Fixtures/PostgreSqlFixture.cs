@@ -1,4 +1,5 @@
 using BauDoku.BuildingBlocks.Domain;
+using BauDoku.BuildingBlocks.Serialization;
 using BauDoku.Documentation.Domain;
 using BauDoku.Documentation.Infrastructure.Persistence;
 using BauDoku.Documentation.Infrastructure.ReadModel;
@@ -30,6 +31,10 @@ public sealed class PostgreSqlFixture : IAsyncLifetime
         {
             MartenConfiguration.Configure(options, ConnectionString);
             options.AutoCreateSchemaObjects = AutoCreate.All;
+            options.UseSystemTextJsonForSerialization(configure: stj =>
+            {
+                stj.Converters.Add(new ValueObjectJsonConverterFactory());
+            });
         });
 
         await Store.Storage.ApplyAllConfiguredChangesToDatabaseAsync();

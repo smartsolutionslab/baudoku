@@ -48,39 +48,39 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
 
         Installation installation = new();
 
-        InstallationDocumented @event = new (
-            id.Value,
-            projectId.Value,
-            zoneId?.Value,
-            type.Value,
-            InstallationStatus.InProgress.Value,
-            position.Latitude.Value,
-            position.Longitude.Value,
-            position.Altitude?.Value,
-            position.HorizontalAccuracy.Value,
-            position.Source.Value,
-            position.CorrectionService?.Value,
-            position.RtkFixStatus?.Value,
-            position.SatelliteCount?.Value,
-            position.Hdop?.Value,
-            position.CorrectionAge?.Value,
-            qualityGrade.Value,
-            description?.Value,
-            cableSpec?.CableType.Value,
-            cableSpec?.CrossSection?.Value,
-            cableSpec?.Color?.Value,
-            cableSpec?.ConductorCount?.Value,
+        InstallationDocumented @event = new(
+            id,
+            projectId,
+            zoneId,
+            type,
+            InstallationStatus.InProgress,
+            position.Latitude,
+            position.Longitude,
+            position.Altitude,
+            position.HorizontalAccuracy,
+            position.Source,
+            position.CorrectionService,
+            position.RtkFixStatus,
+            position.SatelliteCount,
+            position.Hdop,
+            position.CorrectionAge,
+            qualityGrade,
+            description,
+            cableSpec?.CableType,
+            cableSpec?.CrossSection,
+            cableSpec?.Color,
+            cableSpec?.ConductorCount,
             depth?.ValueInMillimeters,
-            manufacturer?.Value,
-            modelName?.Value,
-            serialNumber?.Value,
+            manufacturer,
+            modelName,
+            serialNumber,
             now,
             now);
         installation.RaiseEvent(@event);
 
         if (qualityGrade == GpsQualityGrade.D)
         {
-            installation.RaiseEvent(new LowGpsQualityDetected(id.Value, qualityGrade.Value, now));
+            installation.RaiseEvent(new LowGpsQualityDetected(id, qualityGrade, now));
         }
 
         return installation;
@@ -103,25 +103,25 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
         var actualTakenAt = takenAt ?? DateTime.UtcNow;
 
         PhotoAdded @event = new(
-            Id.Value,
-            photoId.Value,
-            fileName.Value,
-            blobUrl.Value,
-            contentType.Value,
-            fileSize.Value,
-            photoType.Value,
-            caption?.Value,
-            description?.Value,
-            position?.Latitude.Value,
-            position?.Longitude.Value,
-            position?.Altitude?.Value,
-            position?.HorizontalAccuracy.Value,
-            position?.Source.Value,
-            position?.CorrectionService?.Value,
-            position?.RtkFixStatus?.Value,
-            position?.SatelliteCount?.Value,
-            position?.Hdop?.Value,
-            position?.CorrectionAge?.Value,
+            Id,
+            photoId,
+            fileName,
+            blobUrl,
+            contentType,
+            fileSize,
+            photoType,
+            caption,
+            description,
+            position?.Latitude,
+            position?.Longitude,
+            position?.Altitude,
+            position?.HorizontalAccuracy,
+            position?.Source,
+            position?.CorrectionService,
+            position?.RtkFixStatus,
+            position?.SatelliteCount,
+            position?.Hdop,
+            position?.CorrectionAge,
             actualTakenAt,
             DateTime.UtcNow);
         RaiseEvent(@event);
@@ -133,7 +133,7 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
 
         _ = photos.FirstOrDefault(p => p.Id == photoId) ?? throw new InvalidOperationException($"Foto mit ID {photoId.Value} nicht gefunden.");
 
-        RaiseEvent(new PhotoRemoved(Id.Value, photoId.Value, DateTime.UtcNow));
+        RaiseEvent(new PhotoRemoved(Id, photoId, DateTime.UtcNow));
     }
 
     public void RecordMeasurement(MeasurementIdentifier measurementId, MeasurementType type, MeasurementValue value, Notes? notes = null)
@@ -146,15 +146,15 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
         var now = DateTime.UtcNow;
 
         MeasurementRecorded @event = new(
-            Id.Value,
-            measurementId.Value,
-            type.Value,
+            Id,
+            measurementId,
+            type,
             value.Value,
-            value.Unit.Value,
+            value.Unit,
             value.MinThreshold,
             value.MaxThreshold,
-            result.Value,
-            notes?.Value,
+            result,
+            notes,
             now,
             now);
         RaiseEvent(@event);
@@ -166,7 +166,7 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
 
         _ = measurements.FirstOrDefault(m => m.Id == measurementId) ?? throw new InvalidOperationException($"Messung mit ID {measurementId.Value} nicht gefunden.");
 
-        RaiseEvent(new MeasurementRemoved(Id.Value, measurementId.Value, DateTime.UtcNow));
+        RaiseEvent(new MeasurementRemoved(Id, measurementId, DateTime.UtcNow));
     }
 
     public void UpdatePosition(GpsPosition position)
@@ -177,18 +177,18 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
         var qualityGrade = position.CalculateQualityGrade();
 
         InstallationPositionUpdated @event = new(
-            Id.Value,
-            position.Latitude.Value,
-            position.Longitude.Value,
-            position.Altitude?.Value,
-            position.HorizontalAccuracy.Value,
-            position.Source.Value,
-            position.CorrectionService?.Value,
-            position.RtkFixStatus?.Value,
-            position.SatelliteCount?.Value,
-            position.Hdop?.Value,
-            position.CorrectionAge?.Value,
-            qualityGrade.Value,
+            Id,
+            position.Latitude,
+            position.Longitude,
+            position.Altitude,
+            position.HorizontalAccuracy,
+            position.Source,
+            position.CorrectionService,
+            position.RtkFixStatus,
+            position.SatelliteCount,
+            position.Hdop,
+            position.CorrectionAge,
+            qualityGrade,
             DateTime.UtcNow);
         RaiseEvent(@event);
     }
@@ -197,7 +197,7 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
     {
         CheckRule(new CompletedInstallationCannotBeModified(Status));
 
-        RaiseEvent(new InstallationDescriptionUpdated(Id.Value, description?.Value, DateTime.UtcNow));
+        RaiseEvent(new InstallationDescriptionUpdated(Id, description, DateTime.UtcNow));
     }
 
     public void UpdateCableSpec(CableSpec? cableSpec)
@@ -205,11 +205,11 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
         CheckRule(new CompletedInstallationCannotBeModified(Status));
 
         InstallationCableSpecUpdated @event = new(
-            Id.Value,
-            cableSpec?.CableType.Value,
-            cableSpec?.CrossSection?.Value,
-            cableSpec?.Color?.Value,
-            cableSpec?.ConductorCount?.Value,
+            Id,
+            cableSpec?.CableType,
+            cableSpec?.CrossSection,
+            cableSpec?.Color,
+            cableSpec?.ConductorCount,
             DateTime.UtcNow);
         RaiseEvent(@event);
     }
@@ -218,7 +218,7 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
     {
         CheckRule(new CompletedInstallationCannotBeModified(Status));
 
-        RaiseEvent(new InstallationDepthUpdated(Id.Value, depth?.ValueInMillimeters, DateTime.UtcNow));
+        RaiseEvent(new InstallationDepthUpdated(Id, depth?.ValueInMillimeters, DateTime.UtcNow));
     }
 
     public void MarkAsCompleted()
@@ -226,19 +226,19 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
         CheckRule(new CompletedInstallationCannotBeModified(Status));
 
         var now = DateTime.UtcNow;
-        RaiseEvent(new InstallationCompleted(Id.Value, now, now));
+        RaiseEvent(new InstallationCompleted(Id, now, now));
     }
 
     public void Delete()
     {
-        RaiseEvent(new InstallationDeleted(Id.Value, ProjectId.Value, DateTime.UtcNow));
+        RaiseEvent(new InstallationDeleted(Id, ProjectId, DateTime.UtcNow));
     }
 
     public void UpdateDeviceInfo(Manufacturer? manufacturer, ModelName? modelName, SerialNumber? serialNumber)
     {
         CheckRule(new CompletedInstallationCannotBeModified(Status));
 
-        RaiseEvent(new InstallationDeviceInfoUpdated(Id.Value, manufacturer?.Value, modelName?.Value, serialNumber?.Value, DateTime.UtcNow));
+        RaiseEvent(new InstallationDeviceInfoUpdated(Id, manufacturer, modelName, serialNumber, DateTime.UtcNow));
     }
 
     // --- Event Application (state reconstitution) ---
@@ -273,19 +273,19 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
 
     public void Apply(InstallationDocumented e)
     {
-        Id = InstallationIdentifier.From(e.InstallationId);
-        ProjectId = ProjectIdentifier.From(e.ProjectId);
-        ZoneId = ZoneIdentifier.FromNullable(e.ZoneId);
-        Type = InstallationType.From(e.Type);
-        Status = InstallationStatus.From(e.Status);
+        Id = e.InstallationId;
+        ProjectId = e.ProjectId;
+        ZoneId = e.ZoneId;
+        Type = e.Type;
+        Status = e.Status;
         Position = ReconstructPosition(e.Latitude, e.Longitude, e.Altitude, e.HorizontalAccuracy, e.GpsSource, e.CorrectionService, e.RtkFixStatus, e.SatelliteCount, e.Hdop, e.CorrectionAge);
-        QualityGrade = GpsQualityGrade.From(e.QualityGrade);
-        Description = Description.FromNullable(e.Description);
+        QualityGrade = e.QualityGrade;
+        Description = e.Description;
         CableSpec = ReconstructCableSpec(e.CableType, e.CrossSection, e.CableColor, e.ConductorCount);
         Depth = Depth.FromNullable(e.DepthMm);
-        Manufacturer = Manufacturer.FromNullable(e.Manufacturer);
-        ModelName = ModelName.FromNullable(e.ModelName);
-        SerialNumber = SerialNumber.FromNullable(e.SerialNumber);
+        Manufacturer = e.Manufacturer;
+        ModelName = e.ModelName;
+        SerialNumber = e.SerialNumber;
         CreatedAt = e.CreatedAt;
     }
 
@@ -294,14 +294,14 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
         var position = ReconstructNullablePosition(e.Latitude, e.Longitude, e.Altitude, e.HorizontalAccuracy, e.GpsSource, e.CorrectionService, e.RtkFixStatus, e.SatelliteCount, e.Hdop, e.CorrectionAge);
 
         var photo = Photo.Reconstitute(
-            PhotoIdentifier.From(e.PhotoId),
-            FileName.From(e.FileName),
-            BlobUrl.From(e.BlobUrl),
-            ContentType.From(e.ContentType),
-            FileSize.From(e.FileSize),
-            PhotoType.From(e.PhotoType),
-            Caption.FromNullable(e.Caption),
-            Description.FromNullable(e.Description),
+            e.PhotoId,
+            e.FileName,
+            e.BlobUrl,
+            e.ContentType,
+            e.FileSize,
+            e.PhotoType,
+            e.Caption,
+            e.Description,
             position,
             e.TakenAt);
 
@@ -310,7 +310,7 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
 
     public void Apply(PhotoRemoved e)
     {
-        var photo = photos.FirstOrDefault(p => p.Id.Value == e.PhotoId);
+        var photo = photos.FirstOrDefault(p => p.Id == e.PhotoId);
         if (photo is not null)
             photos.Remove(photo);
     }
@@ -318,11 +318,11 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
     public void Apply(MeasurementRecorded e)
     {
         var measurement = Measurement.Reconstitute(
-            MeasurementIdentifier.From(e.MeasurementId),
-            MeasurementType.From(e.Type),
-            MeasurementValue.Create(e.Value, MeasurementUnit.From(e.Unit), e.MinThreshold, e.MaxThreshold),
-            MeasurementResult.From(e.Result),
-            Notes.FromNullable(e.Notes),
+            e.MeasurementId,
+            e.Type,
+            MeasurementValue.Create(e.Value, e.Unit, e.MinThreshold, e.MaxThreshold),
+            e.Result,
+            e.Notes,
             e.MeasuredAt);
 
         measurements.Add(measurement);
@@ -330,7 +330,7 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
 
     public void Apply(MeasurementRemoved e)
     {
-        var measurement = measurements.FirstOrDefault(m => m.Id.Value == e.MeasurementId);
+        var measurement = measurements.FirstOrDefault(m => m.Id == e.MeasurementId);
         if (measurement is not null)
             measurements.Remove(measurement);
     }
@@ -338,12 +338,12 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
     public void Apply(InstallationPositionUpdated e)
     {
         Position = ReconstructPosition(e.Latitude, e.Longitude, e.Altitude, e.HorizontalAccuracy, e.GpsSource, e.CorrectionService, e.RtkFixStatus, e.SatelliteCount, e.Hdop, e.CorrectionAge);
-        QualityGrade = GpsQualityGrade.From(e.QualityGrade);
+        QualityGrade = e.QualityGrade;
     }
 
     public void Apply(InstallationDescriptionUpdated e)
     {
-        Description = Description.FromNullable(e.Description);
+        Description = e.Description;
     }
 
     public void Apply(InstallationCableSpecUpdated e)
@@ -358,9 +358,9 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
 
     public void Apply(InstallationDeviceInfoUpdated e)
     {
-        Manufacturer = Manufacturer.FromNullable(e.Manufacturer);
-        ModelName = ModelName.FromNullable(e.ModelName);
-        SerialNumber = SerialNumber.FromNullable(e.SerialNumber);
+        Manufacturer = e.Manufacturer;
+        ModelName = e.ModelName;
+        SerialNumber = e.SerialNumber;
     }
 
     public void Apply(InstallationCompleted e)
@@ -377,30 +377,30 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
     // --- Reconstruction helpers ---
 
     private static GpsPosition ReconstructPosition(
-        double latitude, double longitude, double? altitude, double horizontalAccuracy, string gpsSource,
-        string? correctionService, string? rtkFixStatus, int? satelliteCount, double? hdop, double? correctionAge)
+        Latitude latitude, Longitude longitude, Altitude? altitude, HorizontalAccuracy horizontalAccuracy, GpsSource gpsSource,
+        CorrectionService? correctionService, RtkFixStatus? rtkFixStatus, SatelliteCount? satelliteCount, Hdop? hdop, CorrectionAge? correctionAge)
     {
         return GpsPosition.Create(
-            Latitude.From(latitude), Longitude.From(longitude), Altitude.FromNullable(altitude),
-            HorizontalAccuracy.From(horizontalAccuracy), GpsSource.From(gpsSource),
-            CorrectionService.FromNullable(correctionService), RtkFixStatus.FromNullable(rtkFixStatus),
-            SatelliteCount.FromNullable(satelliteCount), Hdop.FromNullable(hdop), CorrectionAge.FromNullable(correctionAge));
+            latitude, longitude, altitude,
+            horizontalAccuracy, gpsSource,
+            correctionService, rtkFixStatus,
+            satelliteCount, hdop, correctionAge);
     }
 
     private static GpsPosition? ReconstructNullablePosition(
-        double? latitude, double? longitude, double? altitude, double? horizontalAccuracy, string? gpsSource,
-        string? correctionService, string? rtkFixStatus, int? satelliteCount, double? hdop, double? correctionAge)
+        Latitude? latitude, Longitude? longitude, Altitude? altitude, HorizontalAccuracy? horizontalAccuracy, GpsSource? gpsSource,
+        CorrectionService? correctionService, RtkFixStatus? rtkFixStatus, SatelliteCount? satelliteCount, Hdop? hdop, CorrectionAge? correctionAge)
     {
-        if (!latitude.HasValue) return null;
+        if (latitude is null) return null;
         return ReconstructPosition(
-            latitude.Value, longitude!.Value, altitude, horizontalAccuracy!.Value, gpsSource!,
+            latitude, longitude!, altitude, horizontalAccuracy!, gpsSource!,
             correctionService, rtkFixStatus, satelliteCount, hdop, correctionAge);
     }
 
-    private static CableSpec? ReconstructCableSpec(string? cableType, decimal? crossSection, string? cableColor, int? conductorCount)
+    private static CableSpec? ReconstructCableSpec(CableType? cableType, CrossSection? crossSection, CableColor? cableColor, ConductorCount? conductorCount)
     {
         return cableType is not null
-            ? CableSpec.Create(CableType.From(cableType), CrossSection.FromNullable(crossSection), CableColor.FromNullable(cableColor), ConductorCount.FromNullable(conductorCount))
+            ? CableSpec.Create(cableType, crossSection, cableColor, conductorCount)
             : null;
     }
 }

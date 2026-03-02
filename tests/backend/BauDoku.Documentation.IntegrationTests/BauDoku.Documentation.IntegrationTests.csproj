@@ -33,6 +33,7 @@
     <ProjectReference Include="..\..\..\src\backend\Services\Documentation\BauDoku.Documentation.Infrastructure\BauDoku.Documentation.Infrastructure.csproj" />
     <ProjectReference Include="..\..\..\src\backend\Services\Documentation\BauDoku.Documentation.Api\BauDoku.Documentation.Api.csproj" />
     <ProjectReference Include="..\..\..\src\backend\BuildingBlocks\BauDoku.BuildingBlocks.Application\BauDoku.BuildingBlocks.Application.csproj" />
+    <ProjectReference Include="..\..\..\src\backend\BuildingBlocks\BauDoku.BuildingBlocks.Serialization\BauDoku.BuildingBlocks.Serialization.csproj" />
   </ItemGroup>
 
 </Project>
