@@ -8,40 +8,25 @@ public sealed class DocumentInstallationCommandHandler(IInstallationRepository i
 {
     public async Task<InstallationIdentifier> Handle(DocumentInstallationCommand command, CancellationToken cancellationToken = default)
     {
-        var (projectId, zoneId, type,
-            latitude, longitude, altitude,
-            horizontalAccuracy, gpsSource,
-            correctionService, rtkFixStatus,
-            satelliteCount, hdop, correctionAge,
-            description,
-            cableType, crossSection, cableColor, conductorCount, depthMm,
-            manufacturer, modelName, serialNumber) = command;
-
         var installationId = InstallationIdentifier.New();
-
-        var position = GpsPosition.Create(
-            latitude, longitude, altitude,
-            horizontalAccuracy, gpsSource,
-            correctionService, rtkFixStatus,
-            satelliteCount, hdop, correctionAge);
 
         var installation = Installation.Create(
             installationId,
-            projectId,
-            zoneId,
-            type,
-            position,
-            description,
-            cableType is not null ? CableSpec.Create(cableType, crossSection, cableColor, conductorCount) : null,
-            Depth.FromNullable(depthMm),
-            manufacturer,
-            modelName,
-            serialNumber);
+            command.ProjectId,
+            command.ZoneId,
+            command.Type,
+            command.Position,
+            command.Description,
+            command.CableType is not null ? CableSpec.Create(command.CableType, command.CrossSection, command.CableColor, command.ConductorCount) : null,
+            Depth.FromNullable(command.DepthMm),
+            command.Manufacturer,
+            command.ModelName,
+            command.SerialNumber);
 
         await installations.SaveAsync(installation, cancellationToken);
 
         DocumentationMetrics.InstallationsDocumented.Add(1);
-        DocumentationMetrics.GpsHorizontalAccuracy.Record(horizontalAccuracy.Value);
+        DocumentationMetrics.GpsHorizontalAccuracy.Record(command.Position.HorizontalAccuracy.Value);
 
         return installationId;
     }

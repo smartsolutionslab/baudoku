@@ -31,7 +31,7 @@ public sealed class AddPhotoCommandHandlerTests
 
     private static AddPhotoCommand CreateValidCommand(InstallationIdentifier installationId) =>
         new(installationId, FileName.From("photo.jpg"), ContentType.From("image/jpeg"), FileSize.From(1024 * 100), PhotoType.Before,
-            null, null, null, null, null, null, null, new MemoryStream([1, 2, 3]));
+            null, null, null, new MemoryStream([1, 2, 3]));
 
     [Fact]
     public async Task Handle_WithValidCommand_ShouldUploadAndAddPhoto()
@@ -76,7 +76,7 @@ public sealed class AddPhotoCommandHandlerTests
 
         var command = new AddPhotoCommand(
             installation.Id, FileName.From("photo.jpg"), ContentType.From("image/jpeg"), FileSize.From(1024), PhotoType.Before,
-            null, null, Latitude.From(48.0), Longitude.From(11.0), 500.0, HorizontalAccuracy.From(5.0), GpsSource.From("gps"),
+            null, null, GpsPosition.Create(Latitude.From(48.0), Longitude.From(11.0), 500.0, HorizontalAccuracy.From(5.0), GpsSource.From("gps")),
             new MemoryStream([1, 2, 3]));
 
         await handler.Handle(command, CancellationToken.None);

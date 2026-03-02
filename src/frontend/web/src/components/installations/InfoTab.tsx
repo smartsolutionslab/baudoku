@@ -51,17 +51,17 @@ export function InfoTab({ installation }: { installation: any }) {
         {
           label: "Koordinaten",
           value:
-            installation.gpsLat && installation.gpsLng
-              ? `${installation.gpsLat.toFixed(6)}, ${installation.gpsLng.toFixed(6)}`
+            installation.position?.latitude && installation.position?.longitude
+              ? `${installation.position.latitude.toFixed(6)}, ${installation.position.longitude.toFixed(6)}`
               : null,
         },
         {
           label: "Genauigkeit",
-          value: installation.gpsAccuracy
-            ? `±${installation.gpsAccuracy.toFixed(1)} m`
+          value: installation.position?.horizontalAccuracy
+            ? `±${installation.position.horizontalAccuracy.toFixed(1)} m`
             : null,
         },
-        { label: "Quelle", value: installation.gpsSource },
+        { label: "Quelle", value: installation.position?.gpsSource },
       ],
     },
   ];

@@ -2,6 +2,7 @@ using AwesomeAssertions;
 using BauDoku.Documentation.Application.Commands;
 using BauDoku.Documentation.Application.Commands.Handlers;
 using BauDoku.Documentation.Application.Contracts;
+using BauDoku.Documentation.Application.Queries.Dtos;
 using BauDoku.Documentation.Domain;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
@@ -39,7 +40,7 @@ public sealed class CompleteChunkedUploadCommandHandlerTests
 
     private static ChunkedUploadSession CreateValidSession(Guid sessionId, Guid installationId) =>
         new(sessionId, installationId, "photo.jpg", "image/jpeg",
-            5 * 1024 * 1024, 5, "before", null, null, null, null, null, null, null,
+            5 * 1024 * 1024, 5, "before", null, null, null,
             DateTime.UtcNow);
 
     [Fact]
@@ -114,7 +115,8 @@ public sealed class CompleteChunkedUploadCommandHandlerTests
         var session = new ChunkedUploadSession(
             sessionId, installation.Id.Value, "photo.jpg", "image/jpeg",
             5 * 1024 * 1024, 5, "before", null, null,
-            48.0, 11.0, 500.0, 5.0, "gps", DateTime.UtcNow);
+            new GpsPositionDto(48.0, 11.0, 500.0, 5.0, "gps", null, null, null, null, null),
+            DateTime.UtcNow);
 
         chunkedUploadStorage.GetSessionAsync(sessionIdentifier, Arg.Any<CancellationToken>()).Returns(session);
         chunkedUploadStorage.GetUploadedChunkCountAsync(sessionIdentifier, Arg.Any<CancellationToken>()).Returns(5);

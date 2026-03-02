@@ -16,10 +16,10 @@ export function InstallationCard({ installation, onPress }: InstallationCardProp
 
   const gpsQuality = installation.gpsAccuracy != null
       ? calculateGpsQuality({
-          gpsAccuracy: installation.gpsAccuracy,
-          gpsHdop: installation.gpsHdop,
-          gpsSatCount: installation.gpsSatCount,
-          gpsCorrService: installation.gpsCorrService,
+          horizontalAccuracy: installation.gpsAccuracy,
+          hdop: installation.gpsHdop,
+          satelliteCount: installation.gpsSatCount,
+          correctionService: installation.gpsCorrService,
         })
       : null;
 

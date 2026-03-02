@@ -34,16 +34,7 @@ public sealed class GetPhotoQueryHandlerTests
             "before",
             "Vorher-Foto",
             "Kabeltrasse vor Installation",
-            48.137154,
-            11.576124,
-            520.0,
-            3.5,
-            "internal_gps",
-            null,
-            null,
-            null,
-            null,
-            null,
+            new GpsPositionDto(48.137154, 11.576124, 520.0, 3.5, "internal_gps", null, null, null, null, null),
             DateTime.UtcNow);
 
         readRepository.GetByIdAsync(Arg.Any<PhotoIdentifier>(), Arg.Any<CancellationToken>())
@@ -74,7 +65,7 @@ public sealed class GetPhotoQueryHandlerTests
         var photoId = PhotoIdentifier.New();
         var expected = new PhotoDto(
             photoId.Value, Guid.NewGuid(), "photo.jpg", "https://blob/photo.jpg", "image/jpeg",
-            1024, "before", null, null, null, null, null, null, null, null, null, null, null, null, DateTime.UtcNow);
+            1024, "before", null, null, null, DateTime.UtcNow);
 
         readRepository.GetByIdAsync(Arg.Any<PhotoIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(expected);

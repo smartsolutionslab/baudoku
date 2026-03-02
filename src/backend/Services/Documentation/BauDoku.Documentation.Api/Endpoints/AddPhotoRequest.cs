@@ -4,9 +4,5 @@ public sealed record AddPhotoRequest(
     string? PhotoType,
     string? Caption,
     string? Description,
-    double? Latitude,
-    double? Longitude,
-    double? Altitude,
-    double? HorizontalAccuracy,
-    string? GpsSource,
+    GpsPositionRequest? Position,
     DateTime? TakenAt);

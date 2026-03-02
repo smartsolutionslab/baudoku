@@ -5,16 +5,7 @@ namespace BauDoku.Documentation.Application.Commands;
 
 public sealed record UpdateInstallationCommand(
     InstallationIdentifier InstallationId,
-    Latitude? Latitude,
-    Longitude? Longitude,
-    double? Altitude,
-    HorizontalAccuracy? HorizontalAccuracy,
-    GpsSource? GpsSource,
-    CorrectionService? CorrectionService,
-    RtkFixStatus? RtkFixStatus,
-    int? SatelliteCount,
-    double? Hdop,
-    double? CorrectionAge,
+    GpsPosition? Position,
     Description? Description,
     CableType? CableType,
     CrossSection? CrossSection,

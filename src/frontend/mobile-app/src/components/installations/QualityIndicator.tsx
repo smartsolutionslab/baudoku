@@ -8,27 +8,27 @@ import {
 import { Colors, Spacing, FontSize, FontFamily } from "../../styles/tokens";
 
 type QualityIndicatorProps = {
-  gpsAccuracy: number;
-  gpsHdop?: number | null;
-  gpsSatCount?: number | null;
-  gpsCorrService?: string | null;
+  horizontalAccuracy: number;
+  hdop?: number | null;
+  satelliteCount?: number | null;
+  correctionService?: string | null;
   gpsSource?: string | null;
   compact?: boolean;
 };
 
 export function QualityIndicator({
-  gpsAccuracy,
-  gpsHdop,
-  gpsSatCount,
-  gpsCorrService,
+  horizontalAccuracy,
+  hdop,
+  satelliteCount,
+  correctionService,
   gpsSource,
   compact = false,
 }: QualityIndicatorProps) {
   const quality = calculateGpsQuality({
-    gpsAccuracy,
-    gpsHdop,
-    gpsSatCount,
-    gpsCorrService,
+    horizontalAccuracy,
+    hdop,
+    satelliteCount,
+    correctionService,
   });
 
   if (compact) {
@@ -41,12 +41,12 @@ export function QualityIndicator({
         <GradeBadge quality={quality} />
         <Text style={styles.qualityLabel}>{quality.label}</Text>
         <Text style={styles.accuracyText}>
-          {gpsAccuracy.toFixed(1)} m
+          {horizontalAccuracy.toFixed(1)} m
         </Text>
       </View>
 
       <View style={styles.detailRow}>
-        {gpsSatCount != null && (
+        {satelliteCount != null && (
           <View style={styles.detailItem}>
             <FontAwesome
               name="signal"
@@ -54,7 +54,7 @@ export function QualityIndicator({
               color={Colors.textTertiary}
               style={styles.detailIcon}
             />
-            <Text style={styles.detailText}>{gpsSatCount} Sat.</Text>
+            <Text style={styles.detailText}>{satelliteCount} Sat.</Text>
           </View>
         )}
         {gpsSource && (
@@ -70,9 +70,9 @@ export function QualityIndicator({
             </Text>
           </View>
         )}
-        {gpsHdop != null && (
+        {hdop != null && (
           <View style={styles.detailItem}>
-            <Text style={styles.detailText}>HDOP {gpsHdop.toFixed(1)}</Text>
+            <Text style={styles.detailText}>HDOP {hdop.toFixed(1)}</Text>
           </View>
         )}
       </View>

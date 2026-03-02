@@ -1,6 +1,7 @@
 using BauDoku.BuildingBlocks.Application.Commands;
 using BauDoku.Documentation.Application.Contracts;
 using BauDoku.Documentation.Application.Diagnostics;
+using BauDoku.Documentation.Application.Queries.Dtos;
 using BauDoku.Documentation.Domain;
 
 namespace BauDoku.Documentation.Application.Commands.Handlers;
@@ -31,16 +32,7 @@ public sealed class CompleteChunkedUploadCommandHandler(IChunkedUploadStorage ch
         var caption = Caption.FromNullable(session.Caption);
         var description = Description.FromNullable(session.Description);
 
-        GpsPosition? position = null;
-        if (session.Latitude.HasValue && session.Longitude.HasValue && session.HorizontalAccuracy.HasValue && session.GpsSource is not null)
-        {
-            position = GpsPosition.Create(
-                Latitude.From(session.Latitude.Value),
-                Longitude.From(session.Longitude.Value),
-                session.Altitude,
-                HorizontalAccuracy.From(session.HorizontalAccuracy.Value),
-                GpsSource.From(session.GpsSource));
-        }
+        var position = session.Position?.ToDomain();
 
         installation.AddPhoto(photoId, fileNameVo, blobUrl, contentTypeVo, FileSize.From(session.TotalSize), photoType, caption, description, position);
 

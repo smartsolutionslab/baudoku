@@ -31,7 +31,7 @@ public sealed class InitChunkedUploadCommandHandlerTests
 
     private static InitChunkedUploadCommand CreateValidCommand(InstallationIdentifier installationId) =>
         new(installationId, FileName.From("photo.jpg"), ContentType.From("image/jpeg"), FileSize.From(5 * 1024 * 1024), 5,
-            PhotoType.Before, null, null, null, null, null, null, null);
+            PhotoType.Before, null, null, null);
 
     [Fact]
     public async Task Handle_WithValidCommand_ShouldInitSession()

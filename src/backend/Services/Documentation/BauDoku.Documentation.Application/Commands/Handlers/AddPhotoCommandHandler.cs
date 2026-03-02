@@ -10,27 +10,15 @@ public sealed class AddPhotoCommandHandler(IInstallationRepository installations
 {
     public async Task<PhotoIdentifier> Handle(AddPhotoCommand command, CancellationToken cancellationToken = default)
     {
-        var (installationId, fileName, contentType, fileSize,
-            photoType, caption, description,
-            latitude, longitude, altitude,
-            horizontalAccuracy, gpsSource,
-            stream, takenAt) = command;
+        var installation = await installations.GetByIdAsync(command.InstallationId, cancellationToken);
 
-        var installation = await installations.GetByIdAsync(installationId, cancellationToken);
-
-        var blobUrl = await photoStorage.UploadAsync(stream, fileName, contentType, cancellationToken);
+        var blobUrl = await photoStorage.UploadAsync(command.Stream, command.FileName, command.ContentType, cancellationToken);
 
         var photoId = PhotoIdentifier.New();
 
-        GpsPosition? position = null;
-        if (latitude is not null && longitude is not null && horizontalAccuracy is not null && gpsSource is not null)
-        {
-            position = GpsPosition.Create(latitude, longitude, altitude, horizontalAccuracy, gpsSource);
-        }
-
         installation.AddPhoto(
-            photoId, fileName, blobUrl, contentType, fileSize,
-            photoType, caption, description, position, takenAt);
+            photoId, command.FileName, blobUrl, command.ContentType, command.FileSize,
+            command.PhotoType, command.Caption, command.Description, command.Position, command.TakenAt);
 
         try
         {
@@ -43,7 +31,7 @@ public sealed class AddPhotoCommandHandler(IInstallationRepository installations
         }
 
         DocumentationMetrics.PhotosAdded.Add(1);
-        DocumentationMetrics.PhotoFileSize.Record(fileSize.Value);
+        DocumentationMetrics.PhotoFileSize.Record(command.FileSize.Value);
 
         return photoId;
     }

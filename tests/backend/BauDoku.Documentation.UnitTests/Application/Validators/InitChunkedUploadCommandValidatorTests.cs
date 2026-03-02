@@ -11,7 +11,7 @@ public sealed class InitChunkedUploadCommandValidatorTests
 
     private static InitChunkedUploadCommand CreateValidCommand() =>
         new(InstallationIdentifier.New(), FileName.From("photo.jpg"), ContentType.From("image/jpeg"), FileSize.From(5 * 1024 * 1024), 5,
-            PhotoType.Before, null, null, null, null, null, null, null);
+            PhotoType.Before, null, null, null);
 
     [Fact]
     public void ValidCommand_ShouldHaveNoErrors()

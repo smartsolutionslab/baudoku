@@ -2,7 +2,7 @@ export { useConfirmDelete } from "./useConfirmDelete";
 export { useFormValidation } from "./useFormValidation";
 export { useConflicts, useResolveConflict } from "./useConflicts";
 export { useDashboardStats, type DashboardStats } from "./useDashboardStats";
-export { useGpsCapture, type GpsPosition, type GpsSource, type GpsCorrService, type GpsRtkStatus, type UseGpsCaptureReturn } from "./useGpsCapture";
+export { useGpsCapture, type CapturedGpsPosition, type GpsPosition, type GpsSource, type GpsCorrService, type GpsRtkStatus, type UseGpsCaptureReturn } from "./useGpsCapture";
 export { useInstallationForm, type UseInstallationFormOptions, type UseInstallationFormReturn } from "./useInstallationForm";
 export { useInstallationSearch } from "./useInstallationSearch";
 export { usePhotoCapture, type CapturedPhoto, type ExifData, type UsePhotoCaptureReturn } from "./usePhotoCapture";

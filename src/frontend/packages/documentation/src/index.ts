@@ -1,4 +1,5 @@
 export type {
+  GpsPosition,
   Installation,
   InstallationStatus,
   Photo,

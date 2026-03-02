@@ -1,6 +1,7 @@
 using BauDoku.BuildingBlocks.Application.Dispatcher;
 using BauDoku.BuildingBlocks.Application.Responses;
 using BauDoku.BuildingBlocks.Infrastructure.Auth;
+using BauDoku.Documentation.Api.Mapping;
 using BauDoku.Documentation.Application.Commands;
 using BauDoku.Documentation.Domain;
 
@@ -12,8 +13,9 @@ public static class ChunkedUploadEndpoints
     {
         var group = app.MapGroup("/api/documentation/uploads").WithTags("Chunked Upload");
 
-        group.MapPost("/init", async (InitChunkedUploadCommand command, IDispatcher dispatcher, CancellationToken ct) =>
+        group.MapPost("/init", async (InitChunkedUploadRequest request, IDispatcher dispatcher, CancellationToken ct) =>
         {
+            var command = request.ToCommand();
             var sessionId = await dispatcher.Send(command, ct);
             return Results.Ok(new CreatedResponse(sessionId.Value));
         })

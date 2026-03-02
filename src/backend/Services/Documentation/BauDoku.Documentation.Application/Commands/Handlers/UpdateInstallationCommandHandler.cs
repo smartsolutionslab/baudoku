@@ -8,46 +8,31 @@ public sealed class UpdateInstallationCommandHandler(IInstallationRepository ins
 {
     public async Task Handle(UpdateInstallationCommand command, CancellationToken cancellationToken = default)
     {
-        var (installationId,
-            latitude, longitude, altitude,
-            horizontalAccuracy, gpsSource,
-            correctionService, rtkFixStatus,
-            satelliteCount, hdop, correctionAge,
-            description,
-            cableType, crossSection, cableColor, conductorCount, depthMm,
-            manufacturer, modelName, serialNumber) = command;
+        var installation = await installations.GetByIdAsync(command.InstallationId, cancellationToken);
 
-        var installation = await installations.GetByIdAsync(installationId, cancellationToken);
-
-        if (latitude is not null && longitude is not null && horizontalAccuracy is not null && gpsSource is not null)
+        if (command.Position is not null)
         {
-            var position = GpsPosition.Create(
-                latitude, longitude, altitude,
-                horizontalAccuracy, gpsSource,
-                correctionService, rtkFixStatus,
-                satelliteCount, hdop, correctionAge);
-
-            installation.UpdatePosition(position);
+            installation.UpdatePosition(command.Position);
         }
 
-        if (description is not null)
+        if (command.Description is not null)
         {
-            installation.UpdateDescription(description);
+            installation.UpdateDescription(command.Description);
         }
 
-        if (cableType is not null)
+        if (command.CableType is not null)
         {
-            installation.UpdateCableSpec(CableSpec.Create(cableType, crossSection, cableColor, conductorCount));
+            installation.UpdateCableSpec(CableSpec.Create(command.CableType, command.CrossSection, command.CableColor, command.ConductorCount));
         }
 
-        if (depthMm.HasValue)
+        if (command.DepthMm.HasValue)
         {
-            installation.UpdateDepth(Depth.From(depthMm.Value));
+            installation.UpdateDepth(Depth.From(command.DepthMm.Value));
         }
 
-        if (manufacturer is not null || modelName is not null || serialNumber is not null)
+        if (command.Manufacturer is not null || command.ModelName is not null || command.SerialNumber is not null)
         {
-            installation.UpdateDeviceInfo(manufacturer, modelName, serialNumber);
+            installation.UpdateDeviceInfo(command.Manufacturer, command.ModelName, command.SerialNumber);
         }
 
         await installations.SaveAsync(installation, cancellationToken);
