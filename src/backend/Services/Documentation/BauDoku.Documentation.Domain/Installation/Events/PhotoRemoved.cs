@@ -3,6 +3,6 @@ using BauDoku.BuildingBlocks.Domain;
 namespace BauDoku.Documentation.Domain;
 
 public sealed record PhotoRemoved(
-    Guid InstallationId,
-    Guid PhotoId,
+    InstallationIdentifier InstallationId,
+    PhotoIdentifier PhotoId,
     DateTime OccurredOn) : IDomainEvent;

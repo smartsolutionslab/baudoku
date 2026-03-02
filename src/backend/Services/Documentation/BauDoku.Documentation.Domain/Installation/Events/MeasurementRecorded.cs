@@ -3,14 +3,14 @@ using BauDoku.BuildingBlocks.Domain;
 namespace BauDoku.Documentation.Domain;
 
 public sealed record MeasurementRecorded(
-    Guid InstallationId,
-    Guid MeasurementId,
-    string Type,
+    InstallationIdentifier InstallationId,
+    MeasurementIdentifier MeasurementId,
+    MeasurementType Type,
     double Value,
-    string Unit,
+    MeasurementUnit Unit,
     double? MinThreshold,
     double? MaxThreshold,
-    string Result,
-    string? Notes,
+    MeasurementResult Result,
+    Notes? Notes,
     DateTime MeasuredAt,
     DateTime OccurredOn) : IDomainEvent;

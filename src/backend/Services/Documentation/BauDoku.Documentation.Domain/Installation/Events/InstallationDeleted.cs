@@ -3,6 +3,6 @@ using BauDoku.BuildingBlocks.Domain;
 namespace BauDoku.Documentation.Domain;
 
 public sealed record InstallationDeleted(
-    Guid InstallationId,
-    Guid ProjectId,
+    InstallationIdentifier InstallationId,
+    ProjectIdentifier ProjectId,
     DateTime OccurredOn) : IDomainEvent;

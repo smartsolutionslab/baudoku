@@ -3,9 +3,9 @@ using BauDoku.BuildingBlocks.Domain;
 namespace BauDoku.Documentation.Domain;
 
 public sealed record InstallationCableSpecUpdated(
-    Guid InstallationId,
-    string? CableType,
-    decimal? CrossSection,
-    string? CableColor,
-    int? ConductorCount,
+    InstallationIdentifier InstallationId,
+    CableType? CableType,
+    CrossSection? CrossSection,
+    CableColor? CableColor,
+    ConductorCount? ConductorCount,
     DateTime OccurredOn) : IDomainEvent;

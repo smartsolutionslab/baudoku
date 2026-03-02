@@ -4,6 +4,7 @@
     <ProjectReference Include="..\BauDoku.Documentation.Application\BauDoku.Documentation.Application.csproj" />
     <ProjectReference Include="..\..\..\BuildingBlocks\BauDoku.BuildingBlocks.Persistence\BauDoku.BuildingBlocks.Persistence.csproj" />
     <ProjectReference Include="..\..\..\BuildingBlocks\BauDoku.BuildingBlocks.Storage\BauDoku.BuildingBlocks.Storage.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\BauDoku.BuildingBlocks.Serialization\BauDoku.BuildingBlocks.Serialization.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

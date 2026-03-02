@@ -3,16 +3,16 @@ using BauDoku.BuildingBlocks.Domain;
 namespace BauDoku.Documentation.Domain;
 
 public sealed record InstallationPositionUpdated(
-    Guid InstallationId,
-    double Latitude,
-    double Longitude,
-    double? Altitude,
-    double HorizontalAccuracy,
-    string GpsSource,
-    string? CorrectionService,
-    string? RtkFixStatus,
-    int? SatelliteCount,
-    double? Hdop,
-    double? CorrectionAge,
-    string QualityGrade,
+    InstallationIdentifier InstallationId,
+    Latitude Latitude,
+    Longitude Longitude,
+    Altitude? Altitude,
+    HorizontalAccuracy HorizontalAccuracy,
+    GpsSource GpsSource,
+    CorrectionService? CorrectionService,
+    RtkFixStatus? RtkFixStatus,
+    SatelliteCount? SatelliteCount,
+    Hdop? Hdop,
+    CorrectionAge? CorrectionAge,
+    GpsQualityGrade QualityGrade,
     DateTime OccurredOn) : IDomainEvent;

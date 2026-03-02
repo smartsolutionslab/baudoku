@@ -65,31 +65,31 @@ public sealed class InstallationReadModelProjection(IServiceScopeFactory scopeFa
     {
         dbContext.Installations.Add(new InstallationReadModel
         {
-            Id = @event.InstallationId,
-            ProjectId = @event.ProjectId,
-            ZoneId = @event.ZoneId,
-            Type = @event.Type,
-            Status = @event.Status,
-            Latitude = @event.Latitude,
-            Longitude = @event.Longitude,
-            Altitude = @event.Altitude,
-            HorizontalAccuracy = @event.HorizontalAccuracy,
-            GpsSource = @event.GpsSource,
-            CorrectionService = @event.CorrectionService,
-            RtkFixStatus = @event.RtkFixStatus,
-            SatelliteCount = @event.SatelliteCount,
-            Hdop = @event.Hdop,
-            CorrectionAge = @event.CorrectionAge,
-            QualityGrade = @event.QualityGrade,
-            Description = @event.Description,
-            CableType = @event.CableType,
-            CrossSection = @event.CrossSection,
-            CableColor = @event.CableColor,
-            ConductorCount = @event.ConductorCount,
+            Id = @event.InstallationId.Value,
+            ProjectId = @event.ProjectId.Value,
+            ZoneId = @event.ZoneId?.Value,
+            Type = @event.Type.Value,
+            Status = @event.Status.Value,
+            Latitude = @event.Latitude.Value,
+            Longitude = @event.Longitude.Value,
+            Altitude = @event.Altitude?.Value,
+            HorizontalAccuracy = @event.HorizontalAccuracy.Value,
+            GpsSource = @event.GpsSource.Value,
+            CorrectionService = @event.CorrectionService?.Value,
+            RtkFixStatus = @event.RtkFixStatus?.Value,
+            SatelliteCount = @event.SatelliteCount?.Value,
+            Hdop = @event.Hdop?.Value,
+            CorrectionAge = @event.CorrectionAge?.Value,
+            QualityGrade = @event.QualityGrade.Value,
+            Description = @event.Description?.Value,
+            CableType = @event.CableType?.Value,
+            CrossSection = @event.CrossSection?.Value,
+            CableColor = @event.CableColor?.Value,
+            ConductorCount = @event.ConductorCount?.Value,
             DepthMm = @event.DepthMm,
-            Manufacturer = @event.Manufacturer,
-            ModelName = @event.ModelName,
-            SerialNumber = @event.SerialNumber,
+            Manufacturer = @event.Manufacturer?.Value,
+            ModelName = @event.ModelName?.Value,
+            SerialNumber = @event.SerialNumber?.Value,
             CreatedAt = @event.CreatedAt,
             PhotoCount = 0,
             MeasurementCount = 0,
@@ -103,118 +103,118 @@ public sealed class InstallationReadModelProjection(IServiceScopeFactory scopeFa
     {
         dbContext.Photos.Add(new PhotoReadModel
         {
-            Id = @event.PhotoId,
-            InstallationId = @event.InstallationId,
-            FileName = @event.FileName,
-            BlobUrl = @event.BlobUrl,
-            ContentType = @event.ContentType,
-            FileSize = @event.FileSize,
-            PhotoType = @event.PhotoType,
-            Caption = @event.Caption,
-            Description = @event.Description,
-            Latitude = @event.Latitude,
-            Longitude = @event.Longitude,
-            Altitude = @event.Altitude,
-            HorizontalAccuracy = @event.HorizontalAccuracy,
-            GpsSource = @event.GpsSource,
-            CorrectionService = @event.CorrectionService,
-            RtkFixStatus = @event.RtkFixStatus,
-            SatelliteCount = @event.SatelliteCount,
-            Hdop = @event.Hdop,
-            CorrectionAge = @event.CorrectionAge,
+            Id = @event.PhotoId.Value,
+            InstallationId = @event.InstallationId.Value,
+            FileName = @event.FileName.Value,
+            BlobUrl = @event.BlobUrl.Value,
+            ContentType = @event.ContentType.Value,
+            FileSize = @event.FileSize.Value,
+            PhotoType = @event.PhotoType.Value,
+            Caption = @event.Caption?.Value,
+            Description = @event.Description?.Value,
+            Latitude = @event.Latitude?.Value,
+            Longitude = @event.Longitude?.Value,
+            Altitude = @event.Altitude?.Value,
+            HorizontalAccuracy = @event.HorizontalAccuracy?.Value,
+            GpsSource = @event.GpsSource?.Value,
+            CorrectionService = @event.CorrectionService?.Value,
+            RtkFixStatus = @event.RtkFixStatus?.Value,
+            SatelliteCount = @event.SatelliteCount?.Value,
+            Hdop = @event.Hdop?.Value,
+            CorrectionAge = @event.CorrectionAge?.Value,
             TakenAt = @event.TakenAt
         });
 
-        await UpdateInstallation(dbContext, @event.InstallationId, i => i.PhotoCount++);
+        await UpdateInstallation(dbContext, @event.InstallationId.Value, i => i.PhotoCount++);
     }
 
     private static async Task ApplyPhotoRemoved(ReadModelDbContext dbContext, PhotoRemoved @event)
     {
-        var photo = await dbContext.Photos.FindAsync(@event.PhotoId);
+        var photo = await dbContext.Photos.FindAsync(@event.PhotoId.Value);
         if (photo is not null)
         {
             dbContext.Photos.Remove(photo);
         }
 
-        await UpdateInstallation(dbContext, @event.InstallationId, i => i.PhotoCount--);
+        await UpdateInstallation(dbContext, @event.InstallationId.Value, i => i.PhotoCount--);
     }
 
     private static async Task ApplyMeasurementRecorded(ReadModelDbContext dbContext, MeasurementRecorded e)
     {
         dbContext.Measurements.Add(new MeasurementReadModel
         {
-            Id = e.MeasurementId,
-            InstallationId = e.InstallationId,
-            Type = e.Type,
+            Id = e.MeasurementId.Value,
+            InstallationId = e.InstallationId.Value,
+            Type = e.Type.Value,
             Value = e.Value,
-            Unit = e.Unit,
+            Unit = e.Unit.Value,
             MinThreshold = e.MinThreshold,
             MaxThreshold = e.MaxThreshold,
-            Result = e.Result,
-            Notes = e.Notes,
+            Result = e.Result.Value,
+            Notes = e.Notes?.Value,
             MeasuredAt = e.MeasuredAt
         });
 
-        await UpdateInstallation(dbContext, e.InstallationId, i => i.MeasurementCount++);
+        await UpdateInstallation(dbContext, e.InstallationId.Value, i => i.MeasurementCount++);
     }
 
     private static async Task ApplyMeasurementRemoved(ReadModelDbContext dbContext, MeasurementRemoved @event)
     {
-        var measurement = await dbContext.Measurements.FindAsync(@event.MeasurementId);
+        var measurement = await dbContext.Measurements.FindAsync(@event.MeasurementId.Value);
         if (measurement is not null)
         {
             dbContext.Measurements.Remove(measurement);
         }
 
-        await UpdateInstallation(dbContext, @event.InstallationId, i => i.MeasurementCount--);
+        await UpdateInstallation(dbContext, @event.InstallationId.Value, i => i.MeasurementCount--);
     }
 
     private static Task ApplyPositionUpdated(ReadModelDbContext dbContext, InstallationPositionUpdated @event) =>
-        UpdateInstallation(dbContext, @event.InstallationId, i =>
+        UpdateInstallation(dbContext, @event.InstallationId.Value, i =>
         {
-            i.Latitude = @event.Latitude;
-            i.Longitude = @event.Longitude;
-            i.Altitude = @event.Altitude;
-            i.HorizontalAccuracy = @event.HorizontalAccuracy;
-            i.GpsSource = @event.GpsSource;
-            i.CorrectionService = @event.CorrectionService;
-            i.RtkFixStatus = @event.RtkFixStatus;
-            i.SatelliteCount = @event.SatelliteCount;
-            i.Hdop = @event.Hdop;
-            i.CorrectionAge = @event.CorrectionAge;
-            i.QualityGrade = @event.QualityGrade;
+            i.Latitude = @event.Latitude.Value;
+            i.Longitude = @event.Longitude.Value;
+            i.Altitude = @event.Altitude?.Value;
+            i.HorizontalAccuracy = @event.HorizontalAccuracy.Value;
+            i.GpsSource = @event.GpsSource.Value;
+            i.CorrectionService = @event.CorrectionService?.Value;
+            i.RtkFixStatus = @event.RtkFixStatus?.Value;
+            i.SatelliteCount = @event.SatelliteCount?.Value;
+            i.Hdop = @event.Hdop?.Value;
+            i.CorrectionAge = @event.CorrectionAge?.Value;
+            i.QualityGrade = @event.QualityGrade.Value;
         });
 
     private static Task ApplyDescriptionUpdated(ReadModelDbContext dbContext, InstallationDescriptionUpdated @event) =>
-        UpdateInstallation(dbContext, @event.InstallationId, i => i.Description = @event.Description);
+        UpdateInstallation(dbContext, @event.InstallationId.Value, i => i.Description = @event.Description?.Value);
 
     private static Task ApplyCableSpecUpdated(ReadModelDbContext dbContext, InstallationCableSpecUpdated @event) =>
-        UpdateInstallation(dbContext, @event.InstallationId, i =>
+        UpdateInstallation(dbContext, @event.InstallationId.Value, i =>
         {
-            i.CableType = @event.CableType;
-            i.CrossSection = @event.CrossSection;
-            i.CableColor = @event.CableColor;
-            i.ConductorCount = @event.ConductorCount;
+            i.CableType = @event.CableType?.Value;
+            i.CrossSection = @event.CrossSection?.Value;
+            i.CableColor = @event.CableColor?.Value;
+            i.ConductorCount = @event.ConductorCount?.Value;
         });
 
     private static Task ApplyDepthUpdated(ReadModelDbContext dbContext, InstallationDepthUpdated @event) =>
-        UpdateInstallation(dbContext, @event.InstallationId, i => i.DepthMm = @event.DepthMm);
+        UpdateInstallation(dbContext, @event.InstallationId.Value, i => i.DepthMm = @event.DepthMm);
 
     private static Task ApplyDeviceInfoUpdated(ReadModelDbContext dbContext, InstallationDeviceInfoUpdated @event) =>
-        UpdateInstallation(dbContext, @event.InstallationId, i =>
+        UpdateInstallation(dbContext, @event.InstallationId.Value, i =>
         {
-            i.Manufacturer = @event.Manufacturer;
-            i.ModelName = @event.ModelName;
-            i.SerialNumber = @event.SerialNumber;
+            i.Manufacturer = @event.Manufacturer?.Value;
+            i.ModelName = @event.ModelName?.Value;
+            i.SerialNumber = @event.SerialNumber?.Value;
         });
 
     private static Task ApplyCompleted(ReadModelDbContext dbContext, InstallationCompleted @event) =>
-        UpdateInstallation(dbContext, @event.InstallationId, i =>
+        UpdateInstallation(dbContext, @event.InstallationId.Value, i =>
         {
             i.Status = "completed";
             i.CompletedAt = @event.CompletedAt;
         });
 
     private static Task ApplyDeleted(ReadModelDbContext dbContext, InstallationDeleted @event) =>
-        UpdateInstallation(dbContext, @event.InstallationId, i => i.IsDeleted = true);
+        UpdateInstallation(dbContext, @event.InstallationId.Value, i => i.IsDeleted = true);
 }
