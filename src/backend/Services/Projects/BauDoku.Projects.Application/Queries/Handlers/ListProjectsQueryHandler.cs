@@ -12,6 +12,6 @@ public sealed class ListProjectsQueryHandler(IProjectReadRepository projects) : 
         var (search, page, pageSize) = query;
 
         var pagination = new PaginationParams(page, pageSize);
-        return await projects.ListAsync(search?.Value, pagination, cancellationToken);
+        return await projects.ListAsync(search, pagination, cancellationToken);
     }
 }
