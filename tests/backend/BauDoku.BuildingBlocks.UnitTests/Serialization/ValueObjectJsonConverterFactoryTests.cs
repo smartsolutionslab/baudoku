@@ -1,7 +1,7 @@
 using System.Text.Json;
 using AwesomeAssertions;
 using BauDoku.BuildingBlocks.Domain;
-using BauDoku.BuildingBlocks.Infrastructure.Serialization;
+using BauDoku.BuildingBlocks.Serialization;
 
 namespace BauDoku.BuildingBlocks.UnitTests.Serialization;
 

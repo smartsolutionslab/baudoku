@@ -28,7 +28,8 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\backend\BuildingBlocks\BauDoku.BuildingBlocks.Domain\BauDoku.BuildingBlocks.Domain.csproj" />
     <ProjectReference Include="..\..\..\src\backend\BuildingBlocks\BauDoku.BuildingBlocks.Application\BauDoku.BuildingBlocks.Application.csproj" />
-    <ProjectReference Include="..\..\..\src\backend\BuildingBlocks\BauDoku.BuildingBlocks.Infrastructure\BauDoku.BuildingBlocks.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\src\backend\BuildingBlocks\BauDoku.BuildingBlocks.Serialization\BauDoku.BuildingBlocks.Serialization.csproj" />
+    <ProjectReference Include="..\..\..\src\backend\BuildingBlocks\BauDoku.BuildingBlocks.Storage\BauDoku.BuildingBlocks.Storage.csproj" />
     <ProjectReference Include="..\..\..\src\backend\BuildingBlocks\BauDoku.ServiceDefaults\BauDoku.ServiceDefaults.csproj" />
   </ItemGroup>
 

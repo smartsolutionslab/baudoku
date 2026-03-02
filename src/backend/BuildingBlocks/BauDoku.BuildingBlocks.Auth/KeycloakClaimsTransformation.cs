@@ -2,7 +2,7 @@ using System.Security.Claims;
 using System.Text.Json;
 using Microsoft.AspNetCore.Authentication;
 
-namespace BauDoku.BuildingBlocks.Infrastructure.Auth;
+namespace BauDoku.BuildingBlocks.Auth;
 
 public sealed class KeycloakClaimsTransformation : IClaimsTransformation
 {

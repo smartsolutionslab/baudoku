@@ -2,7 +2,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
-namespace BauDoku.BuildingBlocks.Infrastructure.Auth;
+namespace BauDoku.BuildingBlocks.Auth;
 
 public sealed class AuthAuditMiddleware(RequestDelegate next, ILogger<AuthAuditMiddleware> logger)
 {
