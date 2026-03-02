@@ -14,7 +14,7 @@ public static class ChunkedUploadEndpoints
 
         group.MapPost("/init", async (InitChunkedUploadCommand command, IDispatcher dispatcher, CancellationToken ct) =>
         {
-            var sessionId = await dispatcher.Send<UploadSessionIdentifier>(command, ct);
+            var sessionId = await dispatcher.Send(command, ct);
             return Results.Ok(new CreatedResponse(sessionId.Value));
         })
         .RequireAuthorization(AuthPolicies.RequireUser)
@@ -43,7 +43,7 @@ public static class ChunkedUploadEndpoints
         group.MapPost("/{sessionId:guid}/complete", async (Guid sessionId, IDispatcher dispatcher, CancellationToken ct) =>
         {
             var command = new CompleteChunkedUploadCommand(UploadSessionIdentifier.From(sessionId));
-            var photoId = await dispatcher.Send<PhotoIdentifier>(command, ct);
+            var photoId = await dispatcher.Send(command, ct);
             return Results.Created($"/api/documentation/photos/{photoId.Value}", new CreatedResponse(photoId.Value));
         })
         .RequireAuthorization(AuthPolicies.RequireUser)

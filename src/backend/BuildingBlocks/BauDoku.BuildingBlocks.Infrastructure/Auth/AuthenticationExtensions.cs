@@ -14,65 +14,68 @@ public static class AuthenticationExtensions
     {
         services.AddTransient<IClaimsTransformation, KeycloakClaimsTransformation>();
 
+        var keycloakOptions = GetKeycloakOptions(services, configuration);
+
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(jwtBearerOptions =>
+        {
+            jwtBearerOptions.Authority = keycloakOptions.Authority;
+            jwtBearerOptions.RequireHttpsMetadata = !environment.IsDevelopment();
+
+            List<string> validIssuers = [keycloakOptions.Authority];
+
+            // In Development, also accept tokens issued via LAN IP (for mobile device testing)
+            if (keycloakOptions.AdditionalIssuers is { Length: > 0 })
+            {
+                validIssuers.AddRange(keycloakOptions.AdditionalIssuers);
+            }
+
+            jwtBearerOptions.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+            {
+                ValidateAudience = true,
+                ValidAudiences = keycloakOptions.Audiences ?? [keycloakOptions.Audience],
+                ValidateIssuer = true,
+                ValidIssuers = validIssuers,
+                RoleClaimType = ClaimTypes.Role,
+            };
+
+            jwtBearerOptions.Events = new JwtBearerEvents
+            {
+                OnTokenValidated = context =>
+                {
+                    var loggerFactory = context.HttpContext.RequestServices.GetRequiredService<ILoggerFactory>();
+                    var logger = loggerFactory.CreateLogger("BauDoku.Auth");
+                    var principal = context.Principal;
+                    var userId = principal?.FindFirstValue(ClaimTypes.NameIdentifier);
+                    var roles = principal?.FindAll(ClaimTypes.Role).Select(c => c.Value).ToArray() ?? [];
+                    var ipAddress = context.HttpContext.Connection.RemoteIpAddress;
+                    logger.LogInformation("User authenticated: {UserId}, Roles: [{Roles}], IP: {IpAddress}", userId, string.Join(", ", roles), ipAddress);
+                    return Task.CompletedTask;
+                },
+                OnAuthenticationFailed = context =>
+                {
+                    var loggerFactory = context.HttpContext.RequestServices.GetRequiredService<ILoggerFactory>();
+                    var logger = loggerFactory.CreateLogger("BauDoku.Auth");
+                    logger.LogWarning(context.Exception, "Authentication failed");
+                    return Task.CompletedTask;
+                },
+            };
+        });
+
+        services.AddAuthorization(options =>
+        {
+            options.AddPolicy(AuthPolicies.RequireUser, policy => policy.RequireRole("user", "admin"));
+            options.AddPolicy(AuthPolicies.RequireAdmin, policy => policy.RequireRole("admin"));
+        });
+
+        return services;
+    }
+
+    private static KeycloakOptions GetKeycloakOptions(IServiceCollection services, IConfiguration configuration)
+    {
         var keycloakSection = configuration.GetSection("Authentication:Keycloak");
         services.Configure<KeycloakOptions>(keycloakSection);
 
         var keycloak = keycloakSection.Get<KeycloakOptions>() ?? new KeycloakOptions();
-
-        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(options =>
-            {
-                options.Authority = keycloak.Authority;
-                options.RequireHttpsMetadata = !environment.IsDevelopment();
-
-                var validIssuers = new List<string> { keycloak.Authority };
-
-                // In Development, also accept tokens issued via LAN IP (for mobile device testing)
-                if (keycloak.AdditionalIssuers is { Length: > 0 })
-                {
-                    validIssuers.AddRange(keycloak.AdditionalIssuers);
-                }
-
-                options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
-                {
-                    ValidateAudience = true,
-                    ValidAudiences = keycloak.Audiences ?? [keycloak.Audience],
-                    ValidateIssuer = true,
-                    ValidIssuers = validIssuers,
-                    RoleClaimType = ClaimTypes.Role,
-                };
-
-                options.Events = new JwtBearerEvents
-                {
-                    OnTokenValidated = context =>
-                    {
-                        var loggerFactory = context.HttpContext.RequestServices.GetRequiredService<ILoggerFactory>();
-                        var logger = loggerFactory.CreateLogger("BauDoku.Auth");
-                        var userId = context.Principal?.FindFirstValue(ClaimTypes.NameIdentifier);
-                        var roles = context.Principal?.FindAll(ClaimTypes.Role).Select(c => c.Value).ToArray() ?? [];
-                        var ipAddress = context.HttpContext.Connection.RemoteIpAddress;
-                        logger.LogInformation("User authenticated: {UserId}, Roles: [{Roles}], IP: {IpAddress}", userId, string.Join(", ", roles), ipAddress);
-                        return Task.CompletedTask;
-                    },
-                    OnAuthenticationFailed = context =>
-                    {
-                        var loggerFactory = context.HttpContext.RequestServices.GetRequiredService<ILoggerFactory>();
-                        var logger = loggerFactory.CreateLogger("BauDoku.Auth");
-                        logger.LogWarning(context.Exception, "Authentication failed");
-                        return Task.CompletedTask;
-                    },
-                };
-            });
-
-        services.AddAuthorization(options =>
-        {
-            options.AddPolicy(AuthPolicies.RequireUser, policy =>
-                policy.RequireRole("user", "admin"));
-
-            options.AddPolicy(AuthPolicies.RequireAdmin, policy =>
-                policy.RequireRole("admin"));
-        });
-
-        return services;
+        return keycloak;
     }
 }

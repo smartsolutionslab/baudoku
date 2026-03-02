@@ -19,7 +19,7 @@ public static class ProjectEndpoints
 
         group.MapPost("/", async (CreateProjectCommand command, IDispatcher dispatcher, CancellationToken cancellationToken) =>
         {
-            var projectId = await dispatcher.Send<ProjectIdentifier>(command, cancellationToken);
+            var projectId = await dispatcher.Send(command, cancellationToken);
             return Results.Created($"/api/projects/{projectId.Value}", new CreatedResponse(projectId.Value));
         })
         .RequireAuthorization(AuthPolicies.RequireUser)

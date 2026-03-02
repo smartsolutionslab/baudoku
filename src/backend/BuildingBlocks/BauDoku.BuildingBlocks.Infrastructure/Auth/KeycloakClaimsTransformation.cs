@@ -17,14 +17,13 @@ public sealed class KeycloakClaimsTransformation : IClaimsTransformation
         using var doc = JsonDocument.Parse(realmAccessClaim.Value);
         if (!doc.RootElement.TryGetProperty("roles", out var rolesElement)) return Task.FromResult(principal);
 
-        foreach (var role in rolesElement.EnumerateArray())
-        {
-            var roleValue = role.GetString();
-            if (roleValue is not null && !principal.IsInRole(roleValue))
-            {
-                identity.AddClaim(new Claim(ClaimTypes.Role, roleValue));
-            }
-        }
+        var roles = rolesElement.EnumerateArray()
+            .Select(role => role.GetString()).OfType<string>()
+            .Where(roleValue => !principal.IsInRole(roleValue));
+
+        var claims = roles.Select(role => new Claim(ClaimTypes.Role, role)).ToList();
+        identity.AddClaims(claims);
+
 
         return Task.FromResult(principal);
     }

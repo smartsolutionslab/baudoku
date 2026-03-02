@@ -8,8 +8,7 @@ public sealed class ReadModelDbContextFactory : IDesignTimeDbContextFactory<Read
     public ReadModelDbContext CreateDbContext(string[] args)
     {
         var options = new DbContextOptionsBuilder<ReadModelDbContext>()
-            .UseNpgsql("Host=localhost;Database=baudoku_documentation;Username=postgres;Password=postgres",
-                o => o.UseNetTopologySuite())
+            .UseNpgsql("Host=localhost;Database=baudoku_documentation;Username=postgres;Password=postgres", o => o.UseNetTopologySuite())
             .Options;
 
         return new ReadModelDbContext(options);
