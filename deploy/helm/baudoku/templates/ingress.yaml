@@ -37,6 +37,39 @@ spec:
                 port:
                   number: 80
 {{- end }}
+{{- if and .Values.monitoring.enabled .Values.monitoring.grafana.ingress.enabled }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-grafana-ingress
+  labels:
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+  {{- with .Values.monitoring.grafana.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- if .Values.ingress.className }}
+  ingressClassName: {{ .Values.ingress.className }}
+  {{- end }}
+  {{- if .Values.monitoring.grafana.ingress.tls }}
+  tls:
+    {{- toYaml .Values.monitoring.grafana.ingress.tls | nindent 4 }}
+  {{- end }}
+  rules:
+    - host: {{ .Values.monitoring.grafana.ingress.host }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: grafana
+                port:
+                  number: 80
+{{- end }}
 {{- if and .Values.dashboard.enabled .Values.dashboard.ingress.enabled }}
 ---
 apiVersion: networking.k8s.io/v1

@@ -8,6 +8,11 @@ output "monitoring_url" {
   value       = var.dashboard_enabled ? "https://monitoring.${var.domain}" : null
 }
 
+output "grafana_url" {
+  description = "Grafana monitoring URL"
+  value       = var.monitoring_enabled ? "https://grafana.${var.domain}" : null
+}
+
 output "auth_url" {
   description = "Keycloak authentication URL"
   value       = "https://auth.${var.domain}"

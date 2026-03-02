@@ -130,4 +130,35 @@ dashboard:
 
 otel:
   enabled: true
-  endpoint: http://aspire-dashboard:18889
+  endpoint: ${monitoring_enabled ? "http://otel-collector:4317" : "http://aspire-dashboard:18889"}
+
+monitoring:
+  enabled: ${monitoring_enabled}
+%{ if monitoring_enabled ~}
+
+  prometheus:
+    retention: ${monitoring_retention}
+    storage:
+      size: ${environment == "production" ? "50Gi" : "10Gi"}
+
+  tempo:
+    retention: ${monitoring_retention == "30d" ? "720h" : "168h"}
+    storage:
+      size: ${environment == "production" ? "50Gi" : "10Gi"}
+
+  loki:
+    retention: ${monitoring_retention == "30d" ? "720h" : "168h"}
+    storage:
+      size: ${environment == "production" ? "50Gi" : "10Gi"}
+
+  grafana:
+    ingress:
+      enabled: true
+      host: grafana.${domain}
+      annotations:
+        cert-manager.io/cluster-issuer: letsencrypt-prod
+      tls:
+        - secretName: baudoku-grafana-${environment}-tls
+          hosts:
+            - grafana.${domain}
+%{ endif ~}

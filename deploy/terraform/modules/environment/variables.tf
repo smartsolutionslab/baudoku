@@ -84,6 +84,26 @@ variable "redis_storage_size" {
   default     = "1Gi"
 }
 
+# --- Monitoring ---
+
+variable "monitoring_enabled" {
+  description = "Whether to deploy the Grafana monitoring stack (OTel Collector, Prometheus, Tempo, Loki, Grafana)"
+  type        = bool
+  default     = true
+}
+
+variable "grafana_admin_password" {
+  description = "Grafana admin password"
+  type        = string
+  sensitive   = true
+}
+
+variable "monitoring_retention" {
+  description = "Data retention period for Prometheus (e.g. 7d, 30d)"
+  type        = string
+  default     = "7d"
+}
+
 # --- Helm chart ---
 
 variable "helm_chart_path" {

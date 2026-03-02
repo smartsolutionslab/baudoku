@@ -75,4 +75,33 @@ dashboard:
 
 otel:
   enabled: true
-  endpoint: http://aspire-dashboard:18889
+  endpoint: http://otel-collector:4317
+
+monitoring:
+  enabled: true
+
+  prometheus:
+    retention: 7d
+    storage:
+      size: 10Gi
+
+  tempo:
+    retention: 168h
+    storage:
+      size: 10Gi
+
+  loki:
+    retention: 168h
+    storage:
+      size: 10Gi
+
+  grafana:
+    ingress:
+      enabled: true
+      host: grafana.staging.baudoku.apps.smartsolutionslab.tech
+      annotations:
+        cert-manager.io/cluster-issuer: letsencrypt-prod
+      tls:
+        - secretName: baudoku-grafana-staging-tls
+          hosts:
+            - grafana.staging.baudoku.apps.smartsolutionslab.tech

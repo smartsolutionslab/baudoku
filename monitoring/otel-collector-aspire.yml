@@ -1,0 +1,66 @@
+# OpenTelemetry Collector config — Aspire variant.
+# Same fan-out as otel-collector.yml, but Aspire Dashboard runs on the HOST
+# (not as a Docker container), so we reach it via host.docker.internal.
+#
+# Used when running: dotnet run --project src/backend/AppHost/BauDoku.AppHost -- --grafana
+
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  batch:
+    send_batch_size: 1024
+    timeout: 5s
+
+  resource:
+    attributes:
+      - key: service.namespace
+        value: baudoku
+        action: upsert
+
+exporters:
+  # Forward all signals to Aspire Dashboard (running on host, HTTPS with self-signed cert)
+  otlp/aspire:
+    endpoint: host.docker.internal:18889
+    tls:
+      insecure_skip_verify: true
+
+  # Forward traces to Tempo (container-to-container)
+  otlp/tempo:
+    endpoint: tempo:4317
+    tls:
+      insecure: true
+
+  # Forward logs to Loki via OTLP (container-to-container)
+  otlphttp/loki:
+    endpoint: http://loki:3100/otlp
+    tls:
+      insecure: true
+
+  # Expose metrics for Prometheus scraping
+  prometheus:
+    endpoint: 0.0.0.0:8889
+    resource_to_telemetry_conversion:
+      enabled: true
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch, resource]
+      exporters: [otlp/aspire, otlp/tempo]
+
+    metrics:
+      receivers: [otlp]
+      processors: [batch, resource]
+      exporters: [otlp/aspire, prometheus]
+
+    logs:
+      receivers: [otlp]
+      processors: [batch, resource]
+      exporters: [otlp/aspire, otlphttp/loki]

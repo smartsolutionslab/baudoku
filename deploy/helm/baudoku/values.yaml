@@ -126,3 +126,91 @@ migrationRunner:
 otel:
   enabled: false
   endpoint: ""
+
+monitoring:
+  enabled: false
+
+  otelCollector:
+    image:
+      repository: otel/opentelemetry-collector-contrib
+      tag: "0.120.0"
+      pullPolicy: IfNotPresent
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+
+  prometheus:
+    image:
+      repository: prom/prometheus
+      tag: v3.2.1
+      pullPolicy: IfNotPresent
+    retention: 7d
+    storage:
+      size: 10Gi
+      storageClassName: ""
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 500m
+        memory: 1Gi
+
+  tempo:
+    image:
+      repository: grafana/tempo
+      tag: "2.7.1"
+      pullPolicy: IfNotPresent
+    retention: 168h
+    storage:
+      size: 10Gi
+      storageClassName: ""
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 500m
+        memory: 1Gi
+
+  loki:
+    image:
+      repository: grafana/loki
+      tag: "3.4.2"
+      pullPolicy: IfNotPresent
+    retention: 168h
+    storage:
+      size: 10Gi
+      storageClassName: ""
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 500m
+        memory: 1Gi
+
+  grafana:
+    image:
+      repository: grafana/grafana
+      tag: "11.5.2"
+      pullPolicy: IfNotPresent
+    auth:
+      secretName: grafana-admin-credentials
+      secretKey: admin-password
+    ingress:
+      enabled: false
+      host: grafana.baudoku.apps.smartsolutionslab.tech
+      annotations: {}
+      tls: []
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
