@@ -70,8 +70,9 @@ public sealed class DependencyTests
             .ToList();
 
         baudokuRefs.Should().OnlyContain(
-            name => name == "BauDoku.BuildingBlocks.Domain",
-            "Service Domain should only reference BuildingBlocks.Domain");
+            name => name == "BauDoku.BuildingBlocks.Domain"
+                 || name == "BauDoku.BuildingBlocks.Guards",
+            "Service Domain should only reference BuildingBlocks.Domain and BuildingBlocks.Guards");
     }
 
     [Theory]
