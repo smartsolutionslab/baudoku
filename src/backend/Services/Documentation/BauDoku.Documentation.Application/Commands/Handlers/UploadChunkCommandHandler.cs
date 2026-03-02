@@ -12,7 +12,7 @@ public sealed class UploadChunkCommandHandler(IChunkedUploadStorage chunkedUploa
 
         var session = await chunkedUploadStorage.GetSessionAsync(sessionId, cancellationToken);
 
-        if (chunkIndex >= session.TotalChunks) throw new InvalidOperationException($"ChunkIndex {chunkIndex} ist ungültig. Erwartet: 0-{session.TotalChunks - 1}.");
+        if (chunkIndex.Value >= session.TotalChunks) throw new InvalidOperationException($"ChunkIndex {chunkIndex.Value} ist ungültig. Erwartet: 0-{session.TotalChunks - 1}.");
 
         await chunkedUploadStorage.StoreChunkAsync(sessionId, chunkIndex, data, cancellationToken);
     }

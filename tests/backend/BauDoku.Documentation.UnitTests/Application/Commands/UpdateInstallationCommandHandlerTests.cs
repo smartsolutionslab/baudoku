@@ -35,13 +35,13 @@ public sealed class UpdateInstallationCommandHandlerTests
 
         var command = new UpdateInstallationCommand(
             installation.Id,
-            Position: GpsPosition.Create(Latitude.From(52.520008), Longitude.From(13.404954), 34.0, HorizontalAccuracy.From(1.5), GpsSource.From("dgnss")),
+            Position: GpsPosition.Create(Latitude.From(52.520008), Longitude.From(13.404954), Altitude.From(34.0), HorizontalAccuracy.From(1.5), GpsSource.From("dgnss")),
             Description: null,
             CableType: null,
             CrossSection: null,
             CableColor: null,
             ConductorCount: null,
-            DepthMm: null,
+            Depth: null,
             Manufacturer: null, ModelName: null, SerialNumber: null);
 
         await handler.Handle(command, CancellationToken.None);
@@ -63,7 +63,7 @@ public sealed class UpdateInstallationCommandHandlerTests
             Position: null,
             Description: Description.From("Neue Beschreibung"),
             CableType: null, CrossSection: null, CableColor: null,
-            ConductorCount: null, DepthMm: null,
+            ConductorCount: null, Depth: null,
             Manufacturer: null, ModelName: null, SerialNumber: null);
 
         await handler.Handle(command, CancellationToken.None);
@@ -87,8 +87,8 @@ public sealed class UpdateInstallationCommandHandlerTests
             CableType: CableType.From("NYM-J"),
             CrossSection: CrossSection.From(2.5m),
             CableColor: CableColor.From("grau"),
-            ConductorCount: 3,
-            DepthMm: null,
+            ConductorCount: ConductorCount.From(3),
+            Depth: null,
             Manufacturer: null, ModelName: null, SerialNumber: null);
 
         await handler.Handle(command, CancellationToken.None);
@@ -112,7 +112,7 @@ public sealed class UpdateInstallationCommandHandlerTests
             Description: null,
             CableType: null, CrossSection: null, CableColor: null,
             ConductorCount: null,
-            DepthMm: 600,
+            Depth: Depth.From(600),
             Manufacturer: null, ModelName: null, SerialNumber: null);
 
         await handler.Handle(command, CancellationToken.None);
@@ -133,7 +133,7 @@ public sealed class UpdateInstallationCommandHandlerTests
             Position: null,
             Description: null,
             CableType: null, CrossSection: null, CableColor: null,
-            ConductorCount: null, DepthMm: null,
+            ConductorCount: null, Depth: null,
             Manufacturer: null, ModelName: null, SerialNumber: null);
 
         var act = () => handler.Handle(command, CancellationToken.None);
@@ -153,7 +153,7 @@ public sealed class UpdateInstallationCommandHandlerTests
             Position: null,
             Description: null,
             CableType: null, CrossSection: null, CableColor: null,
-            ConductorCount: null, DepthMm: null,
+            ConductorCount: null, Depth: null,
             Manufacturer: null, ModelName: null, SerialNumber: null);
 
         await handler.Handle(command, CancellationToken.None);

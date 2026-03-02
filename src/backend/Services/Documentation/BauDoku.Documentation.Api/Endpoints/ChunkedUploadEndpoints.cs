@@ -32,7 +32,7 @@ public static class ChunkedUploadEndpoints
             IDispatcher dispatcher,
             CancellationToken ct) =>
         {
-            var command = new UploadChunkCommand(UploadSessionIdentifier.From(sessionId), index, httpRequest.Body);
+            var command = new UploadChunkCommand(UploadSessionIdentifier.From(sessionId), ChunkIndex.From(index), httpRequest.Body);
             await dispatcher.Send(command, ct);
             return Results.NoContent();
         })

@@ -8,7 +8,7 @@ public sealed record InitChunkedUploadCommand(
     FileName FileName,
     ContentType ContentType,
     FileSize TotalSize,
-    int TotalChunks,
+    ChunkCount TotalChunks,
     PhotoType PhotoType,
     Caption? Caption,
     Description? Description,

@@ -18,9 +18,9 @@ public sealed class InstallationPersistenceTests(PostgreSqlFixture fixture)
             projectId,
             zoneId,
             InstallationType.CableTray,
-            GpsPosition.Create(Latitude.From(48.1351), Longitude.From(11.5820), 520.0, HorizontalAccuracy.From(3.5), GpsSource.From("internal_gps")),
+            GpsPosition.Create(Latitude.From(48.1351), Longitude.From(11.5820), Altitude.From(520.0), HorizontalAccuracy.From(3.5), GpsSource.From("internal_gps")),
             Description.From("Test installation"),
-            CableSpec.Create(CableType.From("NYM-J 5x2.5"), CrossSection.From(25), CableColor.From("grey"), 5),
+            CableSpec.Create(CableType.From("NYM-J 5x2.5"), CrossSection.From(25), CableColor.From("grey"), ConductorCount.From(5)),
             Depth.From(600),
             Manufacturer.From("Hager"),
             ModelName.From("VZ312N"),
@@ -41,14 +41,14 @@ public sealed class InstallationPersistenceTests(PostgreSqlFixture fixture)
         loaded.Status.Should().Be(InstallationStatus.InProgress);
         loaded.Position.Latitude.Value.Should().Be(48.1351);
         loaded.Position.Longitude.Value.Should().Be(11.5820);
-        loaded.Position.Altitude.Should().Be(520.0);
+        loaded.Position.Altitude!.Value.Should().Be(520.0);
         loaded.Position.HorizontalAccuracy.Value.Should().Be(3.5);
         loaded.Position.Source.Value.Should().Be("internal_gps");
         loaded.Description!.Value.Should().Be("Test installation");
         loaded.CableSpec!.CableType.Value.Should().Be("NYM-J 5x2.5");
         loaded.CableSpec.CrossSection!.Value.Should().Be(25);
         loaded.CableSpec.Color!.Value.Should().Be("grey");
-        loaded.CableSpec.ConductorCount.Should().Be(5);
+        loaded.CableSpec.ConductorCount!.Value.Should().Be(5);
         loaded.Depth!.ValueInMillimeters.Should().Be(600);
         loaded.Manufacturer!.Value.Should().Be("Hager");
         loaded.ModelName!.Value.Should().Be("VZ312N");
@@ -95,8 +95,8 @@ public sealed class InstallationPersistenceTests(PostgreSqlFixture fixture)
             null,
             InstallationType.CablePull,
             GpsPosition.Create(
-                Latitude.From(48.1351), Longitude.From(11.5820), 520.0, HorizontalAccuracy.From(0.03), GpsSource.From("rtk"),
-                CorrectionService.From("sapos_heps"), RtkFixStatus.From("fix"), 14, 0.8, 1.2));
+                Latitude.From(48.1351), Longitude.From(11.5820), Altitude.From(520.0), HorizontalAccuracy.From(0.03), GpsSource.From("rtk"),
+                CorrectionService.From("sapos_heps"), RtkFixStatus.From("fix"), SatelliteCount.From(14), Hdop.From(0.8), CorrectionAge.From(1.2)));
 
         await using var session = fixture.Store.LightweightSession();
 
@@ -109,8 +109,8 @@ public sealed class InstallationPersistenceTests(PostgreSqlFixture fixture)
         loaded.Should().NotBeNull();
         loaded!.Position.CorrectionService!.Value.Should().Be("sapos_heps");
         loaded.Position.RtkFixStatus!.Value.Should().Be("fix");
-        loaded.Position.SatelliteCount.Should().Be(14);
-        loaded.Position.Hdop.Should().Be(0.8);
-        loaded.Position.CorrectionAge.Should().Be(1.2);
+        loaded.Position.SatelliteCount!.Value.Should().Be(14);
+        loaded.Position.Hdop!.Value.Should().Be(0.8);
+        loaded.Position.CorrectionAge!.Value.Should().Be(1.2);
     }
 }

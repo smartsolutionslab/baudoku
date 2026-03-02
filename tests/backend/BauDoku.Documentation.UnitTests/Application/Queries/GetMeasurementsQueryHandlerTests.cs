@@ -31,7 +31,7 @@ public sealed class GetMeasurementsQueryHandlerTests
         installation.RecordMeasurement(
             MeasurementIdentifier.New(),
             MeasurementType.InsulationResistance,
-            MeasurementValue.Create(500.0, "MΩ", 1.0, null),
+            MeasurementValue.Create(500.0, MeasurementUnit.From("MΩ"), 1.0, null),
             Notes.From("Notiz"));
 
         installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())

@@ -16,13 +16,13 @@ public sealed class InstallationMeasurementPersistenceTests(PostgreSqlFixture fi
             ProjectIdentifier.New(),
             null,
             InstallationType.CableTray,
-            GpsPosition.Create(Latitude.From(48.1351), Longitude.From(11.5820), 520.0, HorizontalAccuracy.From(3.5), GpsSource.From("internal_gps")));
+            GpsPosition.Create(Latitude.From(48.1351), Longitude.From(11.5820), Altitude.From(520.0), HorizontalAccuracy.From(3.5), GpsSource.From("internal_gps")));
 
         var measurementId = MeasurementIdentifier.New();
         installation.RecordMeasurement(
             measurementId,
             MeasurementType.Voltage,
-            MeasurementValue.Create(230.0, "V", 220.0, 240.0),
+            MeasurementValue.Create(230.0, MeasurementUnit.From("V"), 220.0, 240.0),
             Notes.From("Spannungsmessung Phase L1"));
 
         await using var session = fixture.Store.LightweightSession();
@@ -61,7 +61,7 @@ public sealed class InstallationMeasurementPersistenceTests(PostgreSqlFixture fi
         installation.RecordMeasurement(
             MeasurementIdentifier.New(),
             MeasurementType.Continuity,
-            MeasurementValue.Create(0.3, "Ohm"));
+            MeasurementValue.Create(0.3, MeasurementUnit.From("Ohm")));
 
         await using var session = fixture.Store.LightweightSession();
 
@@ -92,7 +92,7 @@ public sealed class InstallationMeasurementPersistenceTests(PostgreSqlFixture fi
         installation.RecordMeasurement(
             MeasurementIdentifier.New(),
             MeasurementType.InsulationResistance,
-            MeasurementValue.Create(0.5, "MOhm", 1.0, 100.0));
+            MeasurementValue.Create(0.5, MeasurementUnit.From("MOhm"), 1.0, 100.0));
 
         await using var session = fixture.Store.LightweightSession();
 
@@ -116,9 +116,9 @@ public sealed class InstallationMeasurementPersistenceTests(PostgreSqlFixture fi
             InstallationType.Switchgear,
             GpsPosition.Create(Latitude.From(48.0), Longitude.From(11.0), null, HorizontalAccuracy.From(5.0), GpsSource.From("internal_gps")));
 
-        installation.RecordMeasurement(MeasurementIdentifier.New(), MeasurementType.Voltage, MeasurementValue.Create(230.0, "V", 220.0, 240.0));
-        installation.RecordMeasurement(MeasurementIdentifier.New(), MeasurementType.Continuity, MeasurementValue.Create(0.3, "Ohm"));
-        installation.RecordMeasurement(MeasurementIdentifier.New(), MeasurementType.RcdTripCurrent, MeasurementValue.Create(28.0, "mA", 15.0, 30.0));
+        installation.RecordMeasurement(MeasurementIdentifier.New(), MeasurementType.Voltage, MeasurementValue.Create(230.0, MeasurementUnit.From("V"), 220.0, 240.0));
+        installation.RecordMeasurement(MeasurementIdentifier.New(), MeasurementType.Continuity, MeasurementValue.Create(0.3, MeasurementUnit.From("Ohm")));
+        installation.RecordMeasurement(MeasurementIdentifier.New(), MeasurementType.RcdTripCurrent, MeasurementValue.Create(28.0, MeasurementUnit.From("mA"), 15.0, 30.0));
 
         await using var session = fixture.Store.LightweightSession();
 

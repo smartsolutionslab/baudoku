@@ -17,8 +17,8 @@ public sealed record MeasurementValue : IValueObject
         MaxThreshold = maxThreshold;
     }
 
-    public static MeasurementValue Create(double value, string unit, double? minThreshold = null, double? maxThreshold = null)
+    public static MeasurementValue Create(double value, MeasurementUnit unit, double? minThreshold = null, double? maxThreshold = null)
     {
-        return new MeasurementValue(value, MeasurementUnit.From(unit), minThreshold, maxThreshold);
+        return new MeasurementValue(value, unit, minThreshold, maxThreshold);
     }
 }

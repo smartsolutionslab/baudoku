@@ -17,7 +17,7 @@ public static class InstallationMappingExtensions
             installation.CableSpec?.CableType.Value,
             installation.CableSpec?.CrossSection?.Value,
             installation.CableSpec?.Color?.Value,
-            installation.CableSpec?.ConductorCount,
+            installation.CableSpec?.ConductorCount?.Value,
             installation.Depth?.ValueInMillimeters,
             installation.Manufacturer?.Value,
             installation.ModelName?.Value,

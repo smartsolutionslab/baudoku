@@ -6,26 +6,26 @@ public sealed record GpsPosition : IValueObject
 {
     public Latitude Latitude { get; }
     public Longitude Longitude { get; }
-    public double? Altitude { get; }
+    public Altitude? Altitude { get; }
     public HorizontalAccuracy HorizontalAccuracy { get; }
     public GpsSource Source { get; }
     public CorrectionService? CorrectionService { get; }
     public RtkFixStatus? RtkFixStatus { get; }
-    public int? SatelliteCount { get; }
-    public double? Hdop { get; }
-    public double? CorrectionAge { get; }
+    public SatelliteCount? SatelliteCount { get; }
+    public Hdop? Hdop { get; }
+    public CorrectionAge? CorrectionAge { get; }
 
     private GpsPosition(
         Latitude latitude,
         Longitude longitude,
-        double? altitude,
+        Altitude? altitude,
         HorizontalAccuracy horizontalAccuracy,
         GpsSource source,
         CorrectionService? correctionService,
         RtkFixStatus? rtkFixStatus,
-        int? satelliteCount,
-        double? hdop,
-        double? correctionAge)
+        SatelliteCount? satelliteCount,
+        Hdop? hdop,
+        CorrectionAge? correctionAge)
     {
         Latitude = latitude;
         Longitude = longitude;
@@ -42,14 +42,14 @@ public sealed record GpsPosition : IValueObject
     public static GpsPosition Create(
         Latitude latitude,
         Longitude longitude,
-        double? altitude,
+        Altitude? altitude,
         HorizontalAccuracy horizontalAccuracy,
         GpsSource source,
         CorrectionService? correctionService = null,
         RtkFixStatus? rtkFixStatus = null,
-        int? satelliteCount = null,
-        double? hdop = null,
-        double? correctionAge = null)
+        SatelliteCount? satelliteCount = null,
+        Hdop? hdop = null,
+        CorrectionAge? correctionAge = null)
     {
         return new GpsPosition(
             latitude, longitude, altitude, horizontalAccuracy, source,
@@ -75,13 +75,13 @@ public sealed record GpsPosition : IValueObject
         };
 
         var bonus = 0;
-        if (Hdop.HasValue && Hdop.Value < GoodHdopThreshold) bonus++;
-        if (SatelliteCount.HasValue && SatelliteCount.Value >= GoodSatelliteCount) bonus++;
+        if (Hdop is not null && Hdop.Value < GoodHdopThreshold) bonus++;
+        if (SatelliteCount is not null && SatelliteCount.Value >= GoodSatelliteCount) bonus++;
         if (CorrectionService is not null) bonus++;
 
         var penalty = 0;
-        if (Hdop.HasValue && Hdop.Value > PoorHdopThreshold) penalty++;
-        if (SatelliteCount.HasValue && SatelliteCount.Value < PoorSatelliteCount) penalty++;
+        if (Hdop is not null && Hdop.Value > PoorHdopThreshold) penalty++;
+        if (SatelliteCount is not null && SatelliteCount.Value < PoorSatelliteCount) penalty++;
 
         var adjustment = Math.Clamp(bonus - penalty, -1, 1);
         var finalGrade = Math.Clamp(baseGrade - adjustment, 0, 3);

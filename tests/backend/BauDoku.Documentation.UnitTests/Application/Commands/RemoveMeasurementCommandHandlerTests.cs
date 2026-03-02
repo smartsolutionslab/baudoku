@@ -31,7 +31,7 @@ public sealed class RemoveMeasurementCommandHandlerTests
         installation.RecordMeasurement(
             measurementId,
             MeasurementType.InsulationResistance,
-            MeasurementValue.Create(500.0, "MΩ"));
+            MeasurementValue.Create(500.0, MeasurementUnit.From("MΩ")));
 
         return installation;
     }

@@ -1,5 +1,4 @@
 using BauDoku.BuildingBlocks.Domain;
-using BauDoku.BuildingBlocks.Domain.Guards;
 
 namespace BauDoku.Documentation.Domain;
 
@@ -8,9 +7,9 @@ public sealed record CableSpec : IValueObject
     public CableType CableType { get; }
     public CrossSection? CrossSection { get; }
     public CableColor? Color { get; }
-    public int? ConductorCount { get; }
+    public ConductorCount? ConductorCount { get; }
 
-    private CableSpec(CableType cableType, CrossSection? crossSection, CableColor? color, int? conductorCount)
+    private CableSpec(CableType cableType, CrossSection? crossSection, CableColor? color, ConductorCount? conductorCount)
     {
         CableType = cableType;
         CrossSection = crossSection;
@@ -18,9 +17,8 @@ public sealed record CableSpec : IValueObject
         ConductorCount = conductorCount;
     }
 
-    public static CableSpec Create(CableType cableType, CrossSection? crossSection = null, CableColor? color = null, int? conductorCount = null)
+    public static CableSpec Create(CableType cableType, CrossSection? crossSection = null, CableColor? color = null, ConductorCount? conductorCount = null)
     {
-        Ensure.That(conductorCount).IsPositive("Leiteranzahl muss größer als 0 sein.");
         return new CableSpec(cableType, crossSection, color, conductorCount);
     }
 }

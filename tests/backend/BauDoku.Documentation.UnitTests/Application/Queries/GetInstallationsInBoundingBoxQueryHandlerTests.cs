@@ -32,13 +32,13 @@ public sealed class GetInstallationsInBoundingBoxQueryHandlerTests
         var expected = new PagedResult<InstallationListItemDto>(items, 1, PageNumber.Default, PageSize.Default);
 
         readRepository.SearchInBoundingBoxAsync(
-                new BoundingBox(47.0, 10.0, 49.0, 12.0),
+                new BoundingBox(Latitude.From(47.0), Longitude.From(10.0), Latitude.From(49.0), Longitude.From(12.0)),
                 null,
                 new PaginationParams(PageNumber.Default, PageSize.Default),
                 Arg.Any<CancellationToken>())
             .Returns(expected);
 
-        var query = new GetInstallationsInBoundingBoxQuery(new BoundingBox(47.0, 10.0, 49.0, 12.0));
+        var query = new GetInstallationsInBoundingBoxQuery(new BoundingBox(Latitude.From(47.0), Longitude.From(10.0), Latitude.From(49.0), Longitude.From(12.0)));
         var result = await handler.Handle(query, CancellationToken.None);
 
         result.Should().BeSameAs(expected);
@@ -52,18 +52,18 @@ public sealed class GetInstallationsInBoundingBoxQueryHandlerTests
         var expected = new PagedResult<InstallationListItemDto>([], 0, PageNumber.Default, PageSize.Default);
 
         readRepository.SearchInBoundingBoxAsync(
-                new BoundingBox(47.0, 10.0, 49.0, 12.0),
+                new BoundingBox(Latitude.From(47.0), Longitude.From(10.0), Latitude.From(49.0), Longitude.From(12.0)),
                 projectId,
                 new PaginationParams(PageNumber.Default, PageSize.Default),
                 Arg.Any<CancellationToken>())
             .Returns(expected);
 
-        var query = new GetInstallationsInBoundingBoxQuery(new BoundingBox(47.0, 10.0, 49.0, 12.0), projectId);
+        var query = new GetInstallationsInBoundingBoxQuery(new BoundingBox(Latitude.From(47.0), Longitude.From(10.0), Latitude.From(49.0), Longitude.From(12.0)), projectId);
         var result = await handler.Handle(query, CancellationToken.None);
 
         result.Should().BeSameAs(expected);
         await readRepository.Received(1).SearchInBoundingBoxAsync(
-            new BoundingBox(47.0, 10.0, 49.0, 12.0),
+            new BoundingBox(Latitude.From(47.0), Longitude.From(10.0), Latitude.From(49.0), Longitude.From(12.0)),
             projectId,
             new PaginationParams(PageNumber.Default, PageSize.Default),
             Arg.Any<CancellationToken>());
@@ -75,13 +75,13 @@ public sealed class GetInstallationsInBoundingBoxQueryHandlerTests
         var expected = new PagedResult<InstallationListItemDto>([], 0, PageNumber.From(2), PageSize.From(15));
 
         readRepository.SearchInBoundingBoxAsync(
-                new BoundingBox(47.0, 10.0, 49.0, 12.0),
+                new BoundingBox(Latitude.From(47.0), Longitude.From(10.0), Latitude.From(49.0), Longitude.From(12.0)),
                 null,
                 new PaginationParams(PageNumber.From(2), PageSize.From(15)),
                 Arg.Any<CancellationToken>())
             .Returns(expected);
 
-        var query = new GetInstallationsInBoundingBoxQuery(new BoundingBox(47.0, 10.0, 49.0, 12.0), Page: PageNumber.From(2), PageSize: PageSize.From(15));
+        var query = new GetInstallationsInBoundingBoxQuery(new BoundingBox(Latitude.From(47.0), Longitude.From(10.0), Latitude.From(49.0), Longitude.From(12.0)), Page: PageNumber.From(2), PageSize: PageSize.From(15));
         var result = await handler.Handle(query, CancellationToken.None);
 
         result.Page.Should().Be(2);
