@@ -69,7 +69,8 @@ public sealed class InstallationEndpointTests : IDisposable
         var createResponse = await client.PostAsJsonAsync("/api/documentation/installations", command);
         var created = await createResponse.Content.ReadFromJsonAsync<IdResponse>();
 
-        var response = await client.GetAsync($"/api/documentation/installations/{created!.Id}");
+        // Retry GET until async projection populates the read model
+        var response = await GetEventuallyAsync($"/api/documentation/installations/{created!.Id}");
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
@@ -130,6 +131,18 @@ public sealed class InstallationEndpointTests : IDisposable
     {
         client.Dispose();
         factory.Dispose();
+    }
+
+    private async Task<HttpResponseMessage> GetEventuallyAsync(string url, int maxAttempts = 30, int delayMs = 100)
+    {
+        HttpResponseMessage response = null!;
+        for (var i = 0; i < maxAttempts; i++)
+        {
+            response = await client.GetAsync(url);
+            if (response.IsSuccessStatusCode) return response;
+            await Task.Delay(delayMs);
+        }
+        return response;
     }
 
     private sealed record IdResponse(Guid Id);

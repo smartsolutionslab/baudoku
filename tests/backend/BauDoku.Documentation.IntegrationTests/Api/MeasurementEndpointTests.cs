@@ -62,7 +62,8 @@ public sealed class MeasurementEndpointTests : IDisposable
     {
         var installationId = await CreateInstallationAsync();
 
-        var response = await client.GetAsync(
+        // Retry GET until async projection populates the read model
+        var response = await GetEventuallyAsync(
             $"/api/documentation/installations/{installationId}/measurements");
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -95,6 +96,18 @@ public sealed class MeasurementEndpointTests : IDisposable
     {
         client.Dispose();
         factory.Dispose();
+    }
+
+    private async Task<HttpResponseMessage> GetEventuallyAsync(string url, int maxAttempts = 30, int delayMs = 100)
+    {
+        HttpResponseMessage response = null!;
+        for (var i = 0; i < maxAttempts; i++)
+        {
+            response = await client.GetAsync(url);
+            if (response.IsSuccessStatusCode) return response;
+            await Task.Delay(delayMs);
+        }
+        return response;
     }
 
     private sealed record IdResponse(Guid Id);
