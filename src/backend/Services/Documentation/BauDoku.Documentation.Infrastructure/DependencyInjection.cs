@@ -20,39 +20,35 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddDocumentationInfrastructure(this IServiceCollection services, string connectionString, IConfiguration configuration)
     {
-        services.AddMarten(sp =>
-            {
-                var options = new StoreOptions();
-                MartenConfiguration.Configure(options, connectionString);
-                var scopeFactory = sp.GetRequiredService<IServiceScopeFactory>();
-                options.Listeners.Add(new MartenEventPublisher(scopeFactory));
-                options.Projections.Add(new InstallationReadModelProjection(scopeFactory), ProjectionLifecycle.Async);
-                return options;
-            })
-            .AddAsyncDaemon(DaemonMode.Solo);
+        services.AddMarten(serviceProvider => {
+            var options = new StoreOptions();
+            MartenConfiguration.Configure(options, connectionString);
+            var scopeFactory = serviceProvider.GetRequiredService<IServiceScopeFactory>();
+            options.Listeners.Add(new MartenEventPublisher(scopeFactory));
+            options.Projections.Add(new InstallationReadModelProjection(scopeFactory), ProjectionLifecycle.Async);
+            return options;
+        }).AddAsyncDaemon(DaemonMode.Solo);
 
-        services.AddDbContext<ReadModelDbContext>(options => options.UseNpgsql(connectionString, npgsql =>
-        {
+        services.AddDbContext<ReadModelDbContext>(options => options.UseNpgsql(connectionString, npgsql => {
             npgsql.UseNetTopologySuite();
             npgsql.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
         }));
 
-        services.AddScoped<IInstallationRepository, InstallationRepository>();
-        services.AddScoped<IInstallationReadRepository, InstallationReadRepository>();
-        services.AddScoped<IPhotoReadRepository, PhotoReadRepository>();
+        services.AddScoped<IInstallationRepository, InstallationRepository>()
+                .AddScoped<IInstallationReadRepository, InstallationReadRepository>()
+                .AddScoped<IPhotoReadRepository, PhotoReadRepository>();
 
-        services.Configure<PhotoStorageOptions>(configuration.GetSection("PhotoStorage"));
+        services.Configure<PhotoStorageOptions>(configuration.GetSection(PhotoStorageOptions.SectionName));
 
-        services.AddSingleton<IPhotoStorage>(sp =>
-        {
+        services.AddSingleton<IPhotoStorage>(sp => {
             var options = sp.GetRequiredService<IOptions<PhotoStorageOptions>>();
-            return options.Value.Provider.Equals("Azure", StringComparison.OrdinalIgnoreCase)
+            return options.Value.IsAzure
                 ? new AzureBlobPhotoStorage(options)
                 : new LocalFilePhotoStorage(options);
         });
 
-        services.AddSingleton<IChunkedUploadStorage, LocalChunkedUploadStorage>();
-        services.AddHostedService<ChunkedUploadCleanupService>();
+        services.AddSingleton<IChunkedUploadStorage, LocalChunkedUploadStorage>()
+                .AddHostedService<ChunkedUploadCleanupService>();
 
         return services;
     }

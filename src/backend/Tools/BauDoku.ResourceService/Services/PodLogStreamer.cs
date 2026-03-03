@@ -1,26 +1,13 @@
 using k8s;
+using Microsoft.Extensions.Options;
 
 namespace BauDoku.ResourceService.Services;
 
-public sealed class PodLogStreamer
+public sealed class PodLogStreamer(IKubernetes kubernetes, IOptions<KubernetesOptions> options, ILogger<PodLogStreamer> logger)
 {
-    private readonly IKubernetes kubernetes;
-    private readonly ILogger<PodLogStreamer> logger;
-    private readonly string kubernetesNamespace;
-    private readonly int tailLines;
+    private readonly KubernetesOptions config = options.Value;
 
-    public PodLogStreamer(IKubernetes kubernetes, IConfiguration configuration, ILogger<PodLogStreamer> logger)
-    {
-        this.kubernetes = kubernetes;
-        this.logger = logger;
-        kubernetesNamespace = configuration["KUBERNETES_NAMESPACE"] ?? "default";
-        tailLines = configuration.GetValue<int>("PodLogs:TailLines", 1000);
-    }
-
-    public async IAsyncEnumerable<(string Line, bool IsStdErr)> StreamLogsAsync(
-        string podName,
-        bool follow,
-        [System.Runtime.CompilerServices.EnumeratorCancellation] CancellationToken cancellationToken)
+    public async IAsyncEnumerable<(string Line, bool IsStdErr)> StreamLogsAsync(string podName, bool follow, [System.Runtime.CompilerServices.EnumeratorCancellation] CancellationToken cancellationToken)
     {
         logger.LogInformation("Starting log stream for pod {Pod} (follow={Follow})", podName, follow);
 
@@ -29,9 +16,9 @@ public sealed class PodLogStreamer
         {
             stream = await kubernetes.CoreV1.ReadNamespacedPodLogAsync(
                 podName,
-                kubernetesNamespace,
+                config.Namespace,
                 follow: follow,
-                tailLines: tailLines,
+                tailLines: config.LogTailLines,
                 cancellationToken: cancellationToken);
         }
         catch (Exception ex)

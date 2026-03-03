@@ -7,13 +7,15 @@ namespace BauDoku.ApiGateway.Endpoints;
 
 public static class AuthEndpoints
 {
-    public static void MapAuthEndpoints(this IEndpointRouteBuilder app)
+    public static IEndpointRouteBuilder MapAuthEndpoints(this IEndpointRouteBuilder app)
     {
         app.MapPost("/api/auth/logout", Logout)
             .WithTags("Auth")
             .WithName("Logout")
             .WithSummary("Revoke refresh token via Keycloak")
             .AllowAnonymous();
+
+        return app;
     }
 
     private static async Task<Ok> Logout(
@@ -23,7 +25,7 @@ public static class AuthEndpoints
         ILogger<LogoutRequest> logger)
     {
         var keycloak = keycloakOptions.Value;
-        if (!keycloak.Authority.HasValue())
+        if (keycloak.Authority.HasNoValue())
         {
             logger.LogWarning("Keycloak authority not configured — logout skipped");
             return TypedResults.Ok();

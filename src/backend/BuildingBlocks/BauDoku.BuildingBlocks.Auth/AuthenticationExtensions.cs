@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -44,20 +45,19 @@ public static class AuthenticationExtensions
             {
                 OnTokenValidated = context =>
                 {
-                    var loggerFactory = context.HttpContext.RequestServices.GetRequiredService<ILoggerFactory>();
-                    var logger = loggerFactory.CreateLogger(AuthLogCategory);
-                    var principal = context.Principal;
-                    var userId = principal?.FindFirstValue(ClaimTypes.NameIdentifier);
-                    var roles = principal?.FindAll(ClaimTypes.Role).Select(c => c.Value).ToArray() ?? [];
+                    var logger = CreateLogger(context.HttpContext);
+                    var principal = context.Principal!;
+                    var userId = principal.GetUserId();
+                    var roles = principal.GetRoles();
                     var ipAddress = context.HttpContext.Connection.RemoteIpAddress;
                     logger.LogInformation("User authenticated: {UserId}, Roles: [{Roles}], IP: {IpAddress}", userId, string.Join(", ", roles), ipAddress);
                     return Task.CompletedTask;
                 },
                 OnAuthenticationFailed = context =>
                 {
-                    var loggerFactory = context.HttpContext.RequestServices.GetRequiredService<ILoggerFactory>();
-                    var logger = loggerFactory.CreateLogger(AuthLogCategory);
+                    var logger = CreateLogger(context.HttpContext);
                     logger.LogWarning(context.Exception, "Authentication failed");
+
                     return Task.CompletedTask;
                 },
             };
@@ -65,19 +65,26 @@ public static class AuthenticationExtensions
 
         services.AddAuthorization(options =>
         {
-            options.AddPolicy(AuthPolicies.RequireUser, policy => policy.RequireRole("user", "admin"));
-            options.AddPolicy(AuthPolicies.RequireAdmin, policy => policy.RequireRole("admin"));
+            options.AddPolicy(AuthPolicies.RequireUser, policy => policy.RequireRole(AuthRoles.User, AuthRoles.Admin));
+            options.AddPolicy(AuthPolicies.RequireAdmin, policy => policy.RequireRole(AuthRoles.Admin));
         });
 
         return services;
     }
 
+    private static ILogger CreateLogger(HttpContext httpContext)
+    {
+        var serviceProvider = httpContext.RequestServices;
+        var loggerFactory = serviceProvider.GetRequiredService<ILoggerFactory>();
+        var logger = loggerFactory.CreateLogger(AuthLogCategory);
+        return logger;
+    }
+
     private static KeycloakOptions GetKeycloakOptions(IServiceCollection services, IConfiguration configuration)
     {
-        var keycloakSection = configuration.GetSection("Authentication:Keycloak");
-        services.Configure<KeycloakOptions>(keycloakSection);
+        services.AddKeycloakOptions(configuration);
 
-        var keycloak = keycloakSection.Get<KeycloakOptions>() ?? new KeycloakOptions();
+        var keycloak = configuration.GetSection(KeycloakOptions.SectionName).Get<KeycloakOptions>() ?? new KeycloakOptions();
         return keycloak;
     }
 }

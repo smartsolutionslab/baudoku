@@ -16,7 +16,7 @@ public static class PhotoEndpoints
 {
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
 
-    public static void MapPhotoEndpoints(this IEndpointRouteBuilder app)
+    public static IEndpointRouteBuilder MapPhotoEndpoints(this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("/api/documentation")
             .WithTags("Photos")
@@ -44,6 +44,8 @@ public static class PhotoEndpoints
             .WithName("RemovePhoto")
             .WithSummary("Foto von einer Installation entfernen")
             .ProducesProblem(StatusCodes.Status404NotFound);
+
+        return app;
     }
 
     private static async Task<Created<CreatedResponse>> AddPhoto(

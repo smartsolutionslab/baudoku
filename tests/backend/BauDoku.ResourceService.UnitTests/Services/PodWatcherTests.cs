@@ -1,8 +1,8 @@
 using AwesomeAssertions;
 using BauDoku.ResourceService.Services;
 using k8s;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
 using NSubstitute;
 
 namespace BauDoku.ResourceService.UnitTests.Services;
@@ -11,13 +11,10 @@ public sealed class PodWatcherTests
 {
     private readonly IKubernetes kubernetes = Substitute.For<IKubernetes>();
 
-    private PodWatcher CreateWatcher(Dictionary<string, string?>? config = null)
+    private PodWatcher CreateWatcher(KubernetesOptions? kubernetesOptions = null)
     {
-        var configuration = new ConfigurationBuilder()
-            .AddInMemoryCollection(config ?? [])
-            .Build();
-
-        return new PodWatcher(kubernetes, configuration, NullLogger<PodWatcher>.Instance);
+        var options = Options.Create(kubernetesOptions ?? new KubernetesOptions());
+        return new PodWatcher(kubernetes, options, NullLogger<PodWatcher>.Instance);
     }
 
     [Fact]
@@ -91,38 +88,22 @@ public sealed class PodWatcherTests
     }
 
     [Fact]
-    public void Constructor_ReadsNamespaceFromConfig()
+    public void Constructor_WithCustomOptions_DoesNotThrow()
     {
-        var config = new Dictionary<string, string?> { ["KUBERNETES_NAMESPACE"] = "production" };
-        var watcher = CreateWatcher(config);
+        var watcher = CreateWatcher(new KubernetesOptions
+        {
+            Namespace = "production",
+            LabelSelector = "app=baudoku",
+            ReconnectDelaySeconds = 10
+        });
 
-        // Namespace is private — we verify indirectly that it doesn't throw
         watcher.Should().NotBeNull();
     }
 
     [Fact]
-    public void Constructor_DefaultsNamespaceToDefault()
+    public void Constructor_DefaultOptions_DoesNotThrow()
     {
         var watcher = CreateWatcher();
-
-        // Constructor should not throw when no KUBERNETES_NAMESPACE is set
-        watcher.Should().NotBeNull();
-    }
-
-    [Fact]
-    public void Constructor_ReadsLabelSelectorFromConfig()
-    {
-        var config = new Dictionary<string, string?> { ["KUBERNETES_LABEL_SELECTOR"] = "app=baudoku" };
-        var watcher = CreateWatcher(config);
-
-        watcher.Should().NotBeNull();
-    }
-
-    [Fact]
-    public void Constructor_ReadsReconnectDelayFromConfig()
-    {
-        var config = new Dictionary<string, string?> { ["PodWatcher:ReconnectDelaySeconds"] = "10" };
-        var watcher = CreateWatcher(config);
 
         watcher.Should().NotBeNull();
     }

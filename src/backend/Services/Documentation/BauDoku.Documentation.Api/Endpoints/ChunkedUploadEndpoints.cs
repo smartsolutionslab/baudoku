@@ -10,7 +10,7 @@ namespace BauDoku.Documentation.Api.Endpoints;
 
 public static class ChunkedUploadEndpoints
 {
-    public static void MapChunkedUploadEndpoints(this IEndpointRouteBuilder app)
+    public static IEndpointRouteBuilder MapChunkedUploadEndpoints(this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("/api/documentation/uploads")
             .WithTags("Chunked Upload")
@@ -33,6 +33,8 @@ public static class ChunkedUploadEndpoints
             .RequireAuthorization(AuthPolicies.RequireUser)
             .WithName("CompleteChunkedUpload")
             .WithSummary("Chunked-Upload abschliessen und Foto erstellen");
+
+        return app;
     }
 
     private static async Task<Ok<CreatedResponse>> InitChunkedUpload(InitChunkedUploadRequest request, IDispatcher dispatcher, CancellationToken cancellationToken)

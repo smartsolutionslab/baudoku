@@ -14,7 +14,7 @@ namespace BauDoku.Projects.Api.Endpoints;
 
 public static class ProjectEndpoints
 {
-    public static void MapProjectEndpoints(this IEndpointRouteBuilder app)
+    public static IEndpointRouteBuilder MapProjectEndpoints(this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("/api/projects")
             .WithTags("Projects")
@@ -52,53 +52,54 @@ public static class ProjectEndpoints
             .WithName("DeleteProject")
             .WithSummary("Projekt loeschen")
             .ProducesProblem(StatusCodes.Status404NotFound);
+
+        return app;
     }
 
-    private static async Task<Created<CreatedResponse>> CreateProject(
-        CreateProjectCommand command, IDispatcher dispatcher, CancellationToken cancellationToken)
+    private static async Task<Created<CreatedResponse>> CreateProject(CreateProjectCommand command, IDispatcher dispatcher, CancellationToken cancellationToken)
     {
         var projectId = await dispatcher.Send(command, cancellationToken);
         return TypedResults.Created($"/api/projects/{projectId.Value}", new CreatedResponse(projectId.Value));
     }
 
-    private static async Task<Ok<PagedResult<ProjectListItemDto>>> ListProjects(
-        string? search, int? page, int? pageSize, IDispatcher dispatcher, CancellationToken cancellationToken)
+    private static async Task<Ok<PagedResult<ProjectListItemDto>>> ListProjects(string? search, int? page, int? pageSize, IDispatcher dispatcher, CancellationToken cancellationToken)
     {
         var query = new ListProjectsQuery(
             SearchTerm.FromNullable(search),
             PageNumber.FromNullable(page),
             PageSize.FromNullable(pageSize));
+
         return TypedResults.Ok(await dispatcher.Query(query, cancellationToken));
     }
 
-    private static async Task<Ok<ProjectDto>> GetProject(
-        Guid id, IDispatcher dispatcher, CancellationToken cancellationToken)
+    private static async Task<Ok<ProjectDto>> GetProject(Guid id, IDispatcher dispatcher, CancellationToken cancellationToken)
     {
         var query = new GetProjectQuery(ProjectIdentifier.From(id));
+
         return TypedResults.Ok(await dispatcher.Query(query, cancellationToken));
     }
 
-    private static async Task<Ok<IReadOnlyList<ZoneDto>>> ListZones(
-        Guid id, IDispatcher dispatcher, CancellationToken cancellationToken)
+    private static async Task<Ok<IReadOnlyList<ZoneDto>>> ListZones(Guid id, IDispatcher dispatcher, CancellationToken cancellationToken)
     {
         var query = new GetProjectQuery(ProjectIdentifier.From(id));
         var result = await dispatcher.Query(query, cancellationToken);
+
         return TypedResults.Ok(result.Zones);
     }
 
-    private static async Task<NoContent> AddZone(
-        Guid id, AddZoneRequest request, IDispatcher dispatcher, CancellationToken cancellationToken)
+    private static async Task<NoContent> AddZone(Guid id, AddZoneRequest request, IDispatcher dispatcher, CancellationToken cancellationToken)
     {
         var command = request.ToCommand(id);
         await dispatcher.Send(command, cancellationToken);
+
         return TypedResults.NoContent();
     }
 
-    private static async Task<NoContent> DeleteProject(
-        Guid id, IDispatcher dispatcher, CancellationToken cancellationToken)
+    private static async Task<NoContent> DeleteProject(Guid id, IDispatcher dispatcher, CancellationToken cancellationToken)
     {
         var command = new DeleteProjectCommand(ProjectIdentifier.From(id));
         await dispatcher.Send(command, cancellationToken);
+
         return TypedResults.NoContent();
     }
 }

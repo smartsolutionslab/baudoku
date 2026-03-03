@@ -3,28 +3,17 @@ using System.Threading.Channels;
 using Aspire.DashboardService.Proto.V1;
 using k8s;
 using k8s.Models;
+using Microsoft.Extensions.Options;
 
 namespace BauDoku.ResourceService.Services;
 
-public sealed class PodWatcher : BackgroundService
+public sealed class PodWatcher(IKubernetes kubernetes, IOptions<KubernetesOptions> options, ILogger<PodWatcher> logger)
+    : BackgroundService
 {
-    private readonly IKubernetes kubernetes;
-    private readonly ILogger<PodWatcher> logger;
-    private readonly string kubernetesNamespace;
-    private readonly string? labelSelector;
-    private readonly TimeSpan reconnectDelay;
+    private readonly KubernetesOptions config = options.Value;
     private readonly ConcurrentDictionary<string, Resource> resources = new();
     private readonly List<Channel<WatchResourcesUpdate>> subscribers = [];
     private readonly Lock subscriberLock = new();
-
-    public PodWatcher(IKubernetes kubernetes, IConfiguration configuration, ILogger<PodWatcher> logger)
-    {
-        this.kubernetes = kubernetes;
-        this.logger = logger;
-        kubernetesNamespace = configuration["KUBERNETES_NAMESPACE"] ?? "default";
-        labelSelector = configuration["KUBERNETES_LABEL_SELECTOR"];
-        reconnectDelay = TimeSpan.FromSeconds(configuration.GetValue<int>("PodWatcher:ReconnectDelaySeconds", 5));
-    }
 
     public IReadOnlyDictionary<string, Resource> CurrentResources => resources;
 
@@ -55,7 +44,7 @@ public sealed class PodWatcher : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        logger.LogInformation("Starting pod watcher for namespace {Namespace}", kubernetesNamespace);
+        logger.LogInformation("Starting pod watcher for namespace {Namespace}", config.Namespace);
 
         while (!stoppingToken.IsCancellationRequested)
         {
@@ -69,7 +58,8 @@ public sealed class PodWatcher : BackgroundService
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Pod watch stream disconnected, reconnecting in {Delay}s", reconnectDelay.TotalSeconds);
+                var reconnectDelay = TimeSpan.FromSeconds(config.ReconnectDelaySeconds);
+                logger.LogError(ex, "Pod watch stream disconnected, reconnecting in {Delay}s", config.ReconnectDelaySeconds);
                 await Task.Delay(reconnectDelay, stoppingToken);
             }
         }
@@ -78,8 +68,8 @@ public sealed class PodWatcher : BackgroundService
     private async Task WatchPodsAsync(CancellationToken stoppingToken)
     {
         var podListResponse = kubernetes.CoreV1.ListNamespacedPodWithHttpMessagesAsync(
-            kubernetesNamespace,
-            labelSelector: labelSelector,
+            config.Namespace,
+            labelSelector: config.LabelSelector,
             watch: true,
             cancellationToken: stoppingToken);
 

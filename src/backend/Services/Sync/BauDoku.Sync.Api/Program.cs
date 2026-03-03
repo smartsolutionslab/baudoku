@@ -1,7 +1,7 @@
-using BauDoku.BuildingBlocks.Application;
 using BauDoku.BuildingBlocks.Auth;
 using BauDoku.ServiceDefaults;
 using BauDoku.Sync.Api.Endpoints;
+using BauDoku.Sync.Application;
 using BauDoku.Sync.Infrastructure;
 using BauDoku.Sync.Infrastructure.BackgroundServices;
 using Scalar.AspNetCore;
@@ -18,7 +18,7 @@ builder.AddServiceDefaults(health =>
 builder.AddBauDokuApiDefaults();
 
 builder.Services.Configure<SyncOptions>(builder.Configuration.GetSection("Sync"))
-                .AddApplication(BauDoku.Sync.Application.DependencyInjection.Assembly)
+                .AddSyncApplication()
                 .AddSyncInfrastructure(connectionString);
 
 var app = builder.Build();
@@ -29,12 +29,12 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
-app.UseAuthentication();
-app.UseAuthorization();
-app.UseAuthAuditLogging();
+app.UseAuthentication()
+    .UseAuthorization()
+    .UseAuthAuditLogging();
 
-app.MapDefaultEndpoints();
-app.MapSyncEndpoints();
+app.MapDefaultEndpoints()
+    .MapSyncEndpoints();
 
 app.Run();
 

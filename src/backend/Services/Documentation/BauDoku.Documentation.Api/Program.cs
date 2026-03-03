@@ -1,6 +1,6 @@
-using BauDoku.BuildingBlocks.Application;
 using BauDoku.BuildingBlocks.Auth;
 using BauDoku.Documentation.Api.Endpoints;
+using BauDoku.Documentation.Application;
 using BauDoku.Documentation.Infrastructure;
 using BauDoku.ServiceDefaults;
 using Scalar.AspNetCore;
@@ -17,7 +17,7 @@ builder.AddServiceDefaults(health =>
 
 builder.AddBauDokuApiDefaults();
 
-builder.Services.AddApplication(BauDoku.Documentation.Application.DependencyInjection.Assembly)
+builder.Services.AddDocumentationApplication()
                 .AddDocumentationInfrastructure(connectionString, builder.Configuration);
 
 var app = builder.Build();
@@ -32,11 +32,11 @@ app.UseAuthentication()
     .UseAuthorization()
     .UseAuthAuditLogging();
 
-app.MapDefaultEndpoints();
-app.MapInstallationEndpoints();
-app.MapPhotoEndpoints();
-app.MapMeasurementEndpoints();
-app.MapChunkedUploadEndpoints();
+app.MapDefaultEndpoints()
+    .MapInstallationEndpoints()
+    .MapPhotoEndpoints()
+    .MapMeasurementEndpoints()
+    .MapChunkedUploadEndpoints();
 
 app.Run();
 

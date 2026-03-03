@@ -2,8 +2,8 @@ using AwesomeAssertions;
 using BauDoku.ResourceService.Services;
 using k8s;
 using k8s.Autorest;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
 using NSubstitute;
 
 namespace BauDoku.ResourceService.UnitTests.Services;
@@ -18,13 +18,10 @@ public sealed class PodLogStreamerTests
         kubernetes.CoreV1.Returns(coreV1);
     }
 
-    private PodLogStreamer CreateStreamer(Dictionary<string, string?>? config = null)
+    private PodLogStreamer CreateStreamer(KubernetesOptions? kubernetesOptions = null)
     {
-        var configuration = new ConfigurationBuilder()
-            .AddInMemoryCollection(config ?? [])
-            .Build();
-
-        return new PodLogStreamer(kubernetes, configuration, NullLogger<PodLogStreamer>.Instance);
+        var options = Options.Create(kubernetesOptions ?? new KubernetesOptions());
+        return new PodLogStreamer(kubernetes, options, NullLogger<PodLogStreamer>.Instance);
     }
 
     private void SetupLogStream(byte[] content)
@@ -110,16 +107,15 @@ public sealed class PodLogStreamerTests
     }
 
     [Fact]
-    public void Constructor_ReadsConfigurableTailLines()
+    public void Constructor_WithCustomTailLines_DoesNotThrow()
     {
-        var config = new Dictionary<string, string?> { ["PodLogs:TailLines"] = "500" };
-        var streamer = CreateStreamer(config);
+        var streamer = CreateStreamer(new KubernetesOptions { LogTailLines = 500 });
 
         streamer.Should().NotBeNull();
     }
 
     [Fact]
-    public void Constructor_DefaultsTailLinesTo1000()
+    public void Constructor_DefaultOptions_DoesNotThrow()
     {
         var streamer = CreateStreamer();
 

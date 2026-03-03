@@ -12,13 +12,16 @@ public static class SystemEndpoints
         "http://sync-api/version"
     ];
 
-    public static void MapSystemEndpoints(this IEndpointRouteBuilder app)
+    public static IEndpointRouteBuilder MapSystemEndpoints(this IEndpointRouteBuilder app)
     {
         app.MapGet("/api/system/info", GetSystemInfo)
             .WithTags("System")
             .WithName("GetSystemInfo")
             .WithSummary("Aggregated version info for all services")
             .AllowAnonymous();
+
+        return app;
+
     }
 
     private static async Task<Ok<SystemInfoResponse>> GetSystemInfo(IHttpClientFactory httpClientFactory)
@@ -31,9 +34,7 @@ public static class SystemEndpoints
         var client = httpClientFactory.CreateClient();
         var services = await Task.WhenAll(ServiceUrls.Select(url => FetchVersionAsync(client, url)));
 
-        return TypedResults.Ok(new SystemInfoResponse(
-            new ServiceInfo(gatewayName, gatewayVersion, "ok"),
-            services));
+        return TypedResults.Ok(new SystemInfoResponse(new ServiceInfo(gatewayName, gatewayVersion, "ok"), services));
     }
 
     private static async Task<ServiceInfo> FetchVersionAsync(HttpClient client, string url)

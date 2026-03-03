@@ -14,7 +14,7 @@ namespace BauDoku.Documentation.Api.Endpoints;
 
 public static class InstallationEndpoints
 {
-    public static void MapInstallationEndpoints(this IEndpointRouteBuilder app)
+    public static IEndpointRouteBuilder MapInstallationEndpoints(this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("/api/documentation/installations")
             .WithTags("Installations")
@@ -62,6 +62,8 @@ public static class InstallationEndpoints
             .WithName("DeleteInstallation")
             .WithSummary("Installation loeschen")
             .ProducesProblem(StatusCodes.Status404NotFound);
+
+        return app;
     }
 
     private static async Task<Created<CreatedResponse>> DocumentInstallation(CreateInstallationRequest request, IDispatcher dispatcher, CancellationToken cancellationToken)

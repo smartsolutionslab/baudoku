@@ -12,7 +12,7 @@ namespace BauDoku.Documentation.Api.Endpoints;
 
 public static class MeasurementEndpoints
 {
-    public static void MapMeasurementEndpoints(this IEndpointRouteBuilder app)
+    public static IEndpointRouteBuilder MapMeasurementEndpoints(this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("/api/documentation")
             .WithTags("Measurements")
@@ -35,6 +35,8 @@ public static class MeasurementEndpoints
             .WithName("RemoveMeasurement")
             .WithSummary("Messung von einer Installation entfernen")
             .ProducesProblem(StatusCodes.Status404NotFound);
+
+        return app;
     }
 
     private static async Task<Created<CreatedResponse>> RecordMeasurement(Guid installationId, RecordMeasurementRequest request, IDispatcher dispatcher, CancellationToken cancellationToken)
