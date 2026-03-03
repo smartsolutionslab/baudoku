@@ -15,7 +15,7 @@ public sealed class PhotoReadRepository(ReadModelDbContext context) : IPhotoRead
             .Where(p => p.Id == id)
             .SelectPhotoDtos()
             .FirstOrDefaultAsync(cancellationToken)
-            ?? throw new KeyNotFoundException($"Foto mit ID '{id}' nicht gefunden.");
+            ?? throw new KeyNotFoundException($"Foto mit ID '{id}' wurde nicht gefunden.");
     }
 
     public async Task<IReadOnlyList<PhotoDto>> ListByInstallationIdAsync(InstallationIdentifier installationId, CancellationToken cancellationToken = default)

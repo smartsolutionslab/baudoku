@@ -15,6 +15,8 @@ using OpenTelemetry.Trace;
 using Serilog;
 using Serilog.Enrichers.Span;
 using Serilog.Events;
+using BauDoku.BuildingBlocks.Auth;
+using BauDoku.BuildingBlocks.Serialization;
 using Serilog.Sinks.OpenTelemetry;
 
 namespace BauDoku.ServiceDefaults;
@@ -23,22 +25,32 @@ public static class Extensions
 {
     public static IHostApplicationBuilder AddServiceDefaults(this IHostApplicationBuilder builder, Action<IHealthChecksBuilder>? configureHealthChecks = null)
     {
-        builder.ConfigureSerilog();
+        builder.ConfigureSerilog()
+               .ConfigureOpenTelemetry()
+               .AddDefaultHealthChecks(configureHealthChecks);
 
-        builder.ConfigureOpenTelemetry();
-
-        builder.AddDefaultHealthChecks(configureHealthChecks);
-
-        builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
-        builder.Services.AddProblemDetails();
-
-        builder.Services.AddServiceDiscovery();
+        builder.Services.AddExceptionHandler<GlobalExceptionHandler>()
+                        .AddProblemDetails()
+                        .AddServiceDiscovery();
 
         builder.Services.ConfigureHttpClientDefaults(http =>
         {
             http.AddStandardResilienceHandler();
             http.AddServiceDiscovery();
         });
+
+        return builder;
+    }
+
+    public static IHostApplicationBuilder AddBauDokuApiDefaults(this IHostApplicationBuilder builder)
+    {
+        builder.Services.ConfigureHttpJsonOptions(options =>
+            options.SerializerOptions.Converters.Add(new ValueObjectJsonConverterFactory()));
+
+        builder.Services.AddOpenApi(options =>
+            options.AddSchemaTransformer<ValueObjectSchemaTransformer>());
+
+        builder.Services.AddBauDokuAuthentication(builder.Configuration, builder.Environment);
 
         return builder;
     }
@@ -83,8 +95,7 @@ public static class Extensions
             ?.InformationalVersion ?? "dev";
         var serviceName = assembly?.GetName().Name ?? "unknown";
 
-        app.MapGet("/version", () => new { service = serviceName, version })
-            .ExcludeFromDescription();
+        app.MapGet("/version", () => new { service = serviceName, version }).ExcludeFromDescription();
 
         return app;
     }
@@ -212,8 +223,7 @@ public static class Extensions
         {
             status = report.Status.ToString(),
             totalDuration = report.TotalDuration.TotalMilliseconds,
-            entries = report.Entries.Select(e => new
-            {
+            entries = report.Entries.Select(e => new {
                 name = e.Key,
                 status = e.Value.Status.ToString(),
                 duration = e.Value.Duration.TotalMilliseconds,

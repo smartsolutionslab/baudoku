@@ -10,14 +10,14 @@ public sealed class InstallationRepository(IDocumentSession session) : IInstalla
     {
         var events = await session.Events.FetchStreamAsync(id.Value, token: cancellationToken);
 
-        if (events.Count == 0) throw new KeyNotFoundException($"Installation mit ID '{id.Value}' nicht gefunden.");
+        if (events.Count == 0) throw new KeyNotFoundException($"Installation mit ID '{id.Value}' wurde nicht gefunden.");
 
         var domainEvents = events.Select(e => e.Data).OfType<IDomainEvent>().ToList();
 
         var installation = new Installation();
         installation.LoadFromHistory(domainEvents, events[^1].Version);
 
-        if (installation.IsDeleted) throw new KeyNotFoundException($"Installation mit ID '{id.Value}' nicht gefunden.");
+        if (installation.IsDeleted) throw new KeyNotFoundException($"Installation mit ID '{id.Value}' wurde nicht gefunden.");
 
         return installation;
     }
