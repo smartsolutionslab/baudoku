@@ -56,7 +56,9 @@ public sealed class ProcessSyncBatchCommandHandlerTests
         entityVersionStore.GetCurrentPayloadAsync(Arg.Is<EntityReference>(r => r.EntityId.Value == entityId), Arg.Any<CancellationToken>())
             .Returns("""{"name":"Server"}""");
 
-        var command = new ProcessSyncBatchCommand(DeviceIdentifier.From("device-001"), [CreateDelta(entityId, 0)]);
+        var command = new ProcessSyncBatchCommand(
+            DeviceIdentifier.From("device-001"),
+            [CreateDelta(entityId, 0)]);
 
         var result = await handler.Handle(command);
 
@@ -121,7 +123,8 @@ public sealed class ProcessSyncBatchCommandHandlerTests
         entityVersionStore.GetCurrentVersionAsync(Arg.Is<EntityReference>(r => r.EntityId.Value == entityId2), Arg.Any<CancellationToken>())
             .Returns(SyncVersion.From(2));
 
-        var command = new ProcessSyncBatchCommand(DeviceIdentifier.From("device-001"),
+        var command = new ProcessSyncBatchCommand(
+            DeviceIdentifier.From("device-001"),
             [CreateDelta(entityId1, 0), CreateDelta(entityId2, 2)]);
 
         var result = await handler.Handle(command);

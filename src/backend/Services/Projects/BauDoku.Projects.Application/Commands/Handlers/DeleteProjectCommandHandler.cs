@@ -14,10 +14,8 @@ public sealed class DeleteProjectCommandHandler(IProjectRepository projects, IUn
         var projectId = command.ProjectId;
 
         var project = await projects.With(projectId, cancellationToken);
-
         project.Delete();
         projects.Remove(project);
-
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         ProjectsMetrics.ProjectsDeleted.Add(1);

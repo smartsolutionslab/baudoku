@@ -43,7 +43,7 @@ public sealed class ConflictPersistenceTests(PostgreSqlFixture fixture)
                 .FirstOrDefaultAsync(b => b.Id == batch.Id);
 
             loaded.Should().NotBeNull();
-            var conflict = loaded!.Conflicts.First(c => c.Id == conflictId);
+            var conflict = loaded.Conflicts.First(c => c.Id == conflictId);
             conflict.ClientPayload.Value.Should().Be("""{"client":"data"}""");
             conflict.ServerPayload.Value.Should().Be("""{"server":"data"}""");
             conflict.ClientVersion.Value.Should().Be(1);

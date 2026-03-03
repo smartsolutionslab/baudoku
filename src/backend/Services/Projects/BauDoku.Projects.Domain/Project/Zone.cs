@@ -10,7 +10,11 @@ public sealed class Zone : Entity<ZoneIdentifier>
 
     private Zone() { } // EF Core
 
-    internal static Zone Create(ZoneIdentifier id, ZoneName name, ZoneType type, ZoneIdentifier? parentZoneIdentifier = null)
+    internal static Zone Create(
+        ZoneIdentifier id,
+        ZoneName name,
+        ZoneType type,
+        ZoneIdentifier? parentZoneIdentifier = null)
     {
         return new Zone
         {
