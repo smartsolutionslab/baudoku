@@ -14,6 +14,7 @@ public sealed class Dispatcher(IServiceProvider serviceProvider, ILogger<Dispatc
     {
         var handlerType = typeof(ICommandHandler<,>).MakeGenericType(command.GetType(), typeof(TResult));
         dynamic handler = serviceProvider.GetRequiredService(handlerType);
+
         return await handler.Handle((dynamic)command, cancellationToken);
     }
 
@@ -21,6 +22,7 @@ public sealed class Dispatcher(IServiceProvider serviceProvider, ILogger<Dispatc
     {
         var handlerType = typeof(ICommandHandler<>).MakeGenericType(command.GetType());
         dynamic handler = serviceProvider.GetRequiredService(handlerType);
+
         await handler.Handle((dynamic)command, cancellationToken);
     }
 
@@ -28,6 +30,7 @@ public sealed class Dispatcher(IServiceProvider serviceProvider, ILogger<Dispatc
     {
         var handlerType = typeof(IQueryHandler<,>).MakeGenericType(query.GetType(), typeof(TResult));
         dynamic handler = serviceProvider.GetRequiredService(handlerType);
+
         return await handler.Handle((dynamic)query, cancellationToken);
     }
 

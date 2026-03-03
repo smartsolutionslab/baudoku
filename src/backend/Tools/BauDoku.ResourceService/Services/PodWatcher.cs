@@ -60,6 +60,7 @@ public sealed class PodWatcher(IKubernetes kubernetes, IOptions<KubernetesOption
             {
                 var reconnectDelay = TimeSpan.FromSeconds(config.ReconnectDelaySeconds);
                 logger.LogError(ex, "Pod watch stream disconnected, reconnecting in {Delay}s", config.ReconnectDelaySeconds);
+
                 await Task.Delay(reconnectDelay, stoppingToken);
             }
         }

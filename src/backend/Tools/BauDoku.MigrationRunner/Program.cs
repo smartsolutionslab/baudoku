@@ -9,7 +9,6 @@ using BauDoku.ServiceDefaults;
 using BauDoku.Sync.Infrastructure.Persistence;
 using Marten;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
@@ -23,13 +22,10 @@ var projectsCs = builder.Configuration.GetRequiredConnectionString(ConnectionStr
 var documentationCs = builder.Configuration.GetRequiredConnectionString(ConnectionStringNames.DocumentationDb);
 var syncCs = builder.Configuration.GetRequiredConnectionString(ConnectionStringNames.SyncDb);
 
-builder.Services.AddDbContext<ProjectsDbContext>((sp, options) => options.UseNpgsql(projectsCs));
-
-builder.Services.AddMarten(options => MartenConfiguration.Configure(options, documentationCs));
-
-builder.Services.AddDbContext<ReadModelDbContext>(options => options.UseNpgsql(documentationCs, o => o.UseNetTopologySuite()));
-
-builder.Services.AddDbContext<SyncDbContext>((sp, options) => options.UseNpgsql(syncCs));
+builder.Services.AddDbContext<ProjectsDbContext>((sp, options) => options.UseNpgsql(projectsCs))
+                .AddMarten(options => MartenConfiguration.Configure(options, documentationCs));
+builder.Services.AddDbContext<ReadModelDbContext>(options => options.UseNpgsql(documentationCs, o => o.UseNetTopologySuite()))
+                .AddDbContext<SyncDbContext>((sp, options) => options.UseNpgsql(syncCs));
 
 var host = builder.Build();
 
@@ -69,8 +65,7 @@ static async Task MigrateAsync<TContext>(IHost host, string contextName) where T
         return;
     }
 
-    Log.Information("{Context}: Applying {Count} pending migration(s): {Migrations}",
-        contextName, pendingList.Count, string.Join(", ", pendingList));
+    Log.Information("{Context}: Applying {Count} pending migration(s): {Migrations}", contextName, pendingList.Count, string.Join(", ", pendingList));
 
     await db.Database.MigrateAsync();
 
