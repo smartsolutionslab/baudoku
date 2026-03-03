@@ -12,6 +12,7 @@ import { ZONE_TYPE_LABELS, type Zone } from '@baudoku/projects';
 import { optionsFromLabels } from '@baudoku/core';
 import { FormField } from '../common/FormField';
 import { FormSelect } from '../common/FormSelect';
+import { Button } from '../common/Button';
 
 type InstallationFormProps = {
   zones: Zone[];
@@ -188,20 +189,12 @@ export function InstallationForm({
       </div>
 
       <div className='flex justify-end gap-3'>
-        <button
-          type='button'
-          onClick={onCancel}
-          className='rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50'
-        >
+        <Button type='button' variant='secondary' onClick={onCancel}>
           Abbrechen
-        </button>
-        <button
-          type='submit'
-          disabled={isSubmitting}
-          className='rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50'
-        >
+        </Button>
+        <Button type='submit' disabled={isSubmitting}>
           {isSubmitting ? 'Speichert...' : 'Installation erstellen'}
-        </button>
+        </Button>
       </div>
     </form>
   );

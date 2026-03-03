@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { MeasurementCard } from './MeasurementCard';
 import { MeasurementForm } from './MeasurementForm';
 import { PlusIcon } from '@/components/icons';
+import { Button } from '@/components/common/Button';
 import type { Measurement, MeasurementFormData } from '@baudoku/documentation';
 
 type MeasurementsTabProps = {
@@ -22,13 +23,10 @@ export function MeasurementsTab({
   return (
     <div className='space-y-4'>
       {!showForm ? (
-        <button
-          onClick={() => setShowForm(true)}
-          className='inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50'
-        >
+        <Button variant='secondary' onClick={() => setShowForm(true)} className='inline-flex items-center gap-2'>
           <PlusIcon />
           Messung hinzufügen
-        </button>
+        </Button>
       ) : (
         <MeasurementForm
           onSubmit={async (data: MeasurementFormData) => {

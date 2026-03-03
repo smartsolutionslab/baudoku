@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useGpsCapture } from '../../hooks/useGpsCapture';
+import { Button } from './Button';
 
 type GpsButtonProps = {
   onCapture: (position: { latitude: number; longitude: number; altitude: number | null; accuracy: number }) => void;
@@ -16,11 +17,12 @@ export function GpsButton({ onCapture }: GpsButtonProps) {
 
   return (
     <div>
-      <button
+      <Button
         type='button'
+        variant='secondary'
         onClick={capture}
         disabled={loading}
-        className='inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50'
+        className='inline-flex items-center gap-2'
       >
         {loading ? (
           <div className='h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-blue-600' />
@@ -31,7 +33,7 @@ export function GpsButton({ onCapture }: GpsButtonProps) {
           </svg>
         )}
         GPS erfassen
-      </button>
+      </Button>
       {error && <p className='mt-1 text-sm text-red-600'>{error}</p>}
     </div>
   );

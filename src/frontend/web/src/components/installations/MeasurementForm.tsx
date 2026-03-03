@@ -7,6 +7,8 @@ import {
 } from '@baudoku/documentation';
 import { FormField } from '../common/FormField';
 import { FormSelect } from '../common/FormSelect';
+import { Button } from '../common/Button';
+import { inputClassName } from '../common/formStyles';
 
 type MeasurementFormProps = {
   onSubmit: (data: MeasurementFormData) => void | Promise<void>;
@@ -61,11 +63,7 @@ export function MeasurementForm({
                 register('type').onChange(e);
                 handleTypeChange(e);
               }}
-              className={`mt-1 block w-full rounded-lg border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 ${
-                errors.type
-                  ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
-                  : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
-              }`}
+              className={inputClassName(!!errors.type)}
             >
               <option value=''>Messtyp auswählen</option>
               {typeOptions.map((opt) => (
@@ -126,20 +124,12 @@ export function MeasurementForm({
       </div>
 
       <div className='flex justify-end gap-3'>
-        <button
-          type='button'
-          onClick={onCancel}
-          className='rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50'
-        >
+        <Button type='button' variant='secondary' onClick={onCancel}>
           Abbrechen
-        </button>
-        <button
-          type='submit'
-          disabled={isSubmitting}
-          className='rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50'
-        >
+        </Button>
+        <Button type='submit' disabled={isSubmitting}>
           {isSubmitting ? 'Speichert...' : 'Messung speichern'}
-        </button>
+        </Button>
       </div>
     </form>
   );

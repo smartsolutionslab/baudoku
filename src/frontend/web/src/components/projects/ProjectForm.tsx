@@ -4,6 +4,7 @@ import { projectSchema, type ProjectFormData, PROJECT_STATUS_LABELS } from '@bau
 import { optionsFromLabels } from '@baudoku/core';
 import { FormField } from '../common/FormField';
 import { FormSelect } from '../common/FormSelect';
+import { Button } from '../common/Button';
 import { useNavigate } from '@tanstack/react-router';
 
 type ProjectFormProps = {
@@ -102,20 +103,16 @@ export function ProjectForm({
       </div>
 
       <div className='flex justify-end gap-3'>
-        <button
+        <Button
           type='button'
+          variant='secondary'
           onClick={() => navigate({ to: '/projects' })}
-          className='rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50'
         >
           Abbrechen
-        </button>
-        <button
-          type='submit'
-          disabled={isSubmitting}
-          className='rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50'
-        >
+        </Button>
+        <Button type='submit' disabled={isSubmitting}>
           {isSubmitting ? 'Speichert...' : 'Projekt erstellen'}
-        </button>
+        </Button>
       </div>
     </form>
   );
