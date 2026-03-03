@@ -4,7 +4,7 @@ public sealed record CreateInstallationRequest(
     Guid ProjectId,
     Guid? ZoneId,
     string Type,
-    GpsPositionRequest Position,
+    GpsPositionRequest? Position,
     string? Description,
     string? CableType,
     decimal? CrossSection,

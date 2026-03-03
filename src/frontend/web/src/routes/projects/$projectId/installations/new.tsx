@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from '@tanstack/react-router';
 import { useZones } from '@/hooks/useProjects';
 import { useCreateInstallation } from '@/hooks/useInstallations';
-import { InstallationForm } from '@/components/installations/InstallationForm';
+import { InstallationForm, type GpsFormData } from '@/components/installations/InstallationForm';
 import type { InstallationFormData } from '@baudoku/documentation';
 
 export function InstallationNewPage() {
@@ -11,9 +11,10 @@ export function InstallationNewPage() {
   const createInstallation = useCreateInstallation(projectId);
 
   const handleSubmit = async (
-    data: InstallationFormData & { zoneId: string }
+    data: InstallationFormData & { zoneId: string },
+    gps: GpsFormData | null,
   ) => {
-    await createInstallation.mutateAsync(data);
+    await createInstallation.mutateAsync({ ...data, gps });
     navigate({
       to: '/projects/$projectId/installations',
       params: { projectId },

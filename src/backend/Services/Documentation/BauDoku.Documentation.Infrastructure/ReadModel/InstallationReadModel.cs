@@ -7,17 +7,17 @@ public sealed class InstallationReadModel
     public Guid? ZoneId { get; set; }
     public string Type { get; set; } = default!;
     public string Status { get; set; } = default!;
-    public double Latitude { get; set; }
-    public double Longitude { get; set; }
+    public double? Latitude { get; set; }
+    public double? Longitude { get; set; }
     public double? Altitude { get; set; }
-    public double HorizontalAccuracy { get; set; }
-    public string GpsSource { get; set; } = default!;
+    public double? HorizontalAccuracy { get; set; }
+    public string? GpsSource { get; set; }
     public string? CorrectionService { get; set; }
     public string? RtkFixStatus { get; set; }
     public int? SatelliteCount { get; set; }
     public double? Hdop { get; set; }
     public double? CorrectionAge { get; set; }
-    public string QualityGrade { get; set; } = default!;
+    public string? QualityGrade { get; set; }
     public string? Description { get; set; }
     public string? CableType { get; set; }
     public decimal? CrossSection { get; set; }

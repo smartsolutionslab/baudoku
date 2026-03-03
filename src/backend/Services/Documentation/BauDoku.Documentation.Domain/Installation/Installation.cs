@@ -12,14 +12,14 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
     public ZoneIdentifier? ZoneId { get; private set; }
     public InstallationType Type { get; private set; } = default!;
     public InstallationStatus Status { get; private set; } = default!;
-    public GpsPosition Position { get; private set; } = default!;
+    public GpsPosition? Position { get; private set; }
     public Description? Description { get; private set; }
     public CableSpec? CableSpec { get; private set; }
     public Depth? Depth { get; private set; }
     public Manufacturer? Manufacturer { get; private set; }
     public ModelName? ModelName { get; private set; }
     public SerialNumber? SerialNumber { get; private set; }
-    public GpsQualityGrade QualityGrade { get; private set; } = default!;
+    public GpsQualityGrade? QualityGrade { get; private set; }
     public DateTime CreatedAt { get; private set; }
     public DateTime? CompletedAt { get; private set; }
     public bool IsDeleted { get; private set; }
@@ -33,7 +33,7 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
         ProjectIdentifier projectId,
         ZoneIdentifier? zoneId,
         InstallationType type,
-        GpsPosition position,
+        GpsPosition? position,
         Description? description = null,
         CableSpec? cableSpec = null,
         Depth? depth = null,
@@ -41,9 +41,10 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
         ModelName? modelName = null,
         SerialNumber? serialNumber = null)
     {
-        CheckRule(new InstallationMustHaveValidGpsPosition(position));
+        if (position is not null)
+            CheckRule(new InstallationMustHaveValidGpsPosition(position));
 
-        var qualityGrade = position.CalculateQualityGrade();
+        var qualityGrade = position?.CalculateQualityGrade();
         var now = DateTime.UtcNow;
 
         Installation installation = new();
@@ -54,16 +55,16 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
             zoneId,
             type,
             InstallationStatus.InProgress,
-            position.Latitude,
-            position.Longitude,
-            position.Altitude,
-            position.HorizontalAccuracy,
-            position.Source,
-            position.CorrectionService,
-            position.RtkFixStatus,
-            position.SatelliteCount,
-            position.Hdop,
-            position.CorrectionAge,
+            position?.Latitude,
+            position?.Longitude,
+            position?.Altitude,
+            position?.HorizontalAccuracy,
+            position?.Source,
+            position?.CorrectionService,
+            position?.RtkFixStatus,
+            position?.SatelliteCount,
+            position?.Hdop,
+            position?.CorrectionAge,
             qualityGrade,
             description,
             cableSpec?.CableType,
@@ -278,7 +279,7 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
         ZoneId = @event.ZoneId;
         Type = @event.Type;
         Status = @event.Status;
-        Position = ReconstructPosition(@event.Latitude, @event.Longitude, @event.Altitude, @event.HorizontalAccuracy, @event.GpsSource, @event.CorrectionService, @event.RtkFixStatus, @event.SatelliteCount, @event.Hdop, @event.CorrectionAge);
+        Position = ReconstructNullablePosition(@event.Latitude, @event.Longitude, @event.Altitude, @event.HorizontalAccuracy, @event.GpsSource, @event.CorrectionService, @event.RtkFixStatus, @event.SatelliteCount, @event.Hdop, @event.CorrectionAge)!;
         QualityGrade = @event.QualityGrade;
         Description = @event.Description;
         CableSpec = ReconstructCableSpec(@event.CableType, @event.CrossSection, @event.CableColor, @event.ConductorCount);

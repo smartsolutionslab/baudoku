@@ -22,7 +22,7 @@ public static class InstallationRequestMappingExtensions
         ProjectIdentifier.From(request.ProjectId),
             ZoneIdentifier.FromNullable(request.ZoneId),
             InstallationType.From(request.Type),
-            request.Position.ToDomain(),
+            request.Position?.ToDomain(),
             Description.FromNullable(request.Description),
             CableType.FromNullable(request.CableType),
             CrossSection.FromNullable(request.CrossSection),

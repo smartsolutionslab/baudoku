@@ -7,7 +7,7 @@ public sealed record DocumentInstallationCommand(
     ProjectIdentifier ProjectId,
     ZoneIdentifier? ZoneId,
     InstallationType Type,
-    GpsPosition Position,
+    GpsPosition? Position,
     Description? Description,
     CableType? CableType,
     CrossSection? CrossSection,

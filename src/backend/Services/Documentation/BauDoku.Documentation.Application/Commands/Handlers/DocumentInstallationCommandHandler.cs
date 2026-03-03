@@ -28,7 +28,8 @@ public sealed class DocumentInstallationCommandHandler(IInstallationRepository i
         await installations.SaveAsync(installation, cancellationToken);
 
         DocumentationMetrics.InstallationsDocumented.Add(1);
-        DocumentationMetrics.GpsHorizontalAccuracy.Record(command.Position.HorizontalAccuracy.Value);
+        if (command.Position is not null)
+            DocumentationMetrics.GpsHorizontalAccuracy.Record(command.Position.HorizontalAccuracy.Value);
 
         return installationId;
     }
