@@ -111,10 +111,21 @@ public sealed class FullWorkflowSmokeTest : IDisposable
         measurementResult!.Id.Should().NotBe(Guid.Empty);
 
         // Step 7: Verify the full installation with photo and measurement
-        var getInstallationResponse = await documentationClient.GetAsync(
-            $"/api/documentation/installations/{installationId}");
-        getInstallationResponse.StatusCode.Should().Be(HttpStatusCode.OK);
-        var installation = await getInstallationResponse.Content.ReadFromJsonAsync<InstallationDto>();
+        // Retry until async projection populates the read model with all events (installation + photo + measurement)
+        InstallationDto? installation = null;
+        for (var attempt = 0; attempt < 30; attempt++)
+        {
+            var getInstallationResponse = await documentationClient.GetAsync(
+                $"/api/documentation/installations/{installationId}");
+            if (getInstallationResponse.IsSuccessStatusCode)
+            {
+                installation = await getInstallationResponse.Content.ReadFromJsonAsync<InstallationDto>();
+                if (installation is { Photos.Count: >= 1, Measurements.Count: >= 1 })
+                    break;
+            }
+            await Task.Delay(100);
+        }
+
         installation.Should().NotBeNull();
         installation!.ProjectId.Should().Be(projectId);
         installation.Type.Should().Be("cable_tray");
