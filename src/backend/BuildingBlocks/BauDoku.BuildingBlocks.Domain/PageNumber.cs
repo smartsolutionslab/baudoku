@@ -16,5 +16,5 @@ public sealed record PageNumber : IValueObject
         return new PageNumber(value);
     }
 
-    public static PageNumber? FromNullable(int? value) => value.HasValue ? From(value.Value) : null;
+    public static PageNumber FromNullable(int? value) => value.HasValue ? From(value.Value) : Default;
 }

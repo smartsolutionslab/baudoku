@@ -8,6 +8,6 @@ namespace BauDoku.Documentation.Application.Queries;
 
 public sealed record GetInstallationsInRadiusQuery(
     SearchRadius Radius,
-    ProjectIdentifier? ProjectId = null,
-    PageNumber? Page = null,
-    PageSize? PageSize = null) : IQuery<PagedResult<NearbyInstallationDto>>;
+    PageNumber Page,
+    PageSize PageSize,
+    ProjectIdentifier? ProjectId = null) : IQuery<PagedResult<NearbyInstallationDto>>;

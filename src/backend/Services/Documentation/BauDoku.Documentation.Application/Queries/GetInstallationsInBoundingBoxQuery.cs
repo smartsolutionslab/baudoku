@@ -8,6 +8,6 @@ namespace BauDoku.Documentation.Application.Queries;
 
 public sealed record GetInstallationsInBoundingBoxQuery(
     BoundingBox Bounds,
-    ProjectIdentifier? ProjectId = null,
-    PageNumber? Page = null,
-    PageSize? PageSize = null) : IQuery<PagedResult<InstallationListItemDto>>;
+    PageNumber Page,
+    PageSize PageSize,
+    ProjectIdentifier? ProjectId = null) : IQuery<PagedResult<InstallationListItemDto>>;

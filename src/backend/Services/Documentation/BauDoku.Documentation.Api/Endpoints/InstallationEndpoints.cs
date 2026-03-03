@@ -84,13 +84,13 @@ public static class InstallationEndpoints
         CancellationToken cancellationToken)
     {
         var query = new ListInstallationsQuery(
+            PageNumber.FromNullable(page),
+            PageSize.FromNullable(pageSize),
             ProjectIdentifier.FromNullable(projectId),
             ZoneIdentifier.FromNullable(zoneId),
             InstallationType.FromNullable(type),
             InstallationStatus.FromNullable(status),
-            SearchTerm.FromNullable(search),
-            PageNumber.FromNullable(page),
-            PageSize.FromNullable(pageSize));
+            SearchTerm.FromNullable(search));
 
         return TypedResults.Ok(await dispatcher.Query(query, cancellationToken));
     }
@@ -110,9 +110,9 @@ public static class InstallationEndpoints
                 Latitude.From(latitude),
                 Longitude.From(longitude),
                 RadiusMeters.From(radiusMeters)),
-            ProjectIdentifier.FromNullable(projectId),
             PageNumber.FromNullable(page),
-            PageSize.FromNullable(pageSize));
+            PageSize.FromNullable(pageSize),
+            ProjectIdentifier.FromNullable(projectId));
 
         return TypedResults.Ok(await dispatcher.Query(query, cancellationToken));
     }
@@ -134,9 +134,9 @@ public static class InstallationEndpoints
                 Longitude.From(minLongitude),
                 Latitude.From(maxLatitude),
                 Longitude.From(maxLongitude)),
-            ProjectIdentifier.FromNullable(projectId),
             PageNumber.FromNullable(page),
-            PageSize.FromNullable(pageSize));
+            PageSize.FromNullable(pageSize),
+            ProjectIdentifier.FromNullable(projectId));
 
         return TypedResults.Ok(await dispatcher.Query(query, cancellationToken));
     }

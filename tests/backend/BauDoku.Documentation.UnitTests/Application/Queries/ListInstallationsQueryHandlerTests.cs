@@ -36,7 +36,7 @@ public sealed class ListInstallationsQueryHandlerTests
                 Arg.Any<CancellationToken>())
             .Returns(expected);
 
-        var result = await handler.Handle(new ListInstallationsQuery(projectId), CancellationToken.None);
+        var result = await handler.Handle(new ListInstallationsQuery(PageNumber.Default, PageSize.Default, projectId), CancellationToken.None);
 
         result.Should().BeSameAs(expected);
         result.Items.Should().ContainSingle();
@@ -61,11 +61,11 @@ public sealed class ListInstallationsQueryHandlerTests
             .Returns(expected);
 
         var query = new ListInstallationsQuery(
+            PageNumber.From(2), PageSize.From(10),
             projectId, zoneId,
             InstallationType.From("cable_tray"),
             InstallationStatus.From("in_progress"),
-            SearchTerm.From("test"),
-            PageNumber.From(2), PageSize.From(10));
+            SearchTerm.From("test"));
         var result = await handler.Handle(query, CancellationToken.None);
 
         result.Page.Should().Be(2);

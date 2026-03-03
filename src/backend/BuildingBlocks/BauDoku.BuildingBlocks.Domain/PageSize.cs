@@ -18,5 +18,5 @@ public sealed record PageSize : IValueObject
         return new PageSize(value);
     }
 
-    public static PageSize? FromNullable(int? value) => value.HasValue ? From(value.Value) : null;
+    public static PageSize FromNullable(int? value) => value.HasValue ? From(value.Value) : Default;
 }

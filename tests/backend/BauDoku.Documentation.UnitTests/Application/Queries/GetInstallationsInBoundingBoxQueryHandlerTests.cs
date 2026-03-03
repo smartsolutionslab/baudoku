@@ -37,7 +37,9 @@ public sealed class GetInstallationsInBoundingBoxQueryHandlerTests
                 Arg.Any<CancellationToken>())
             .Returns(expected);
 
-        var query = new GetInstallationsInBoundingBoxQuery(new BoundingBox(Latitude.From(47.0), Longitude.From(10.0), Latitude.From(49.0), Longitude.From(12.0)));
+        var query = new GetInstallationsInBoundingBoxQuery(
+            new BoundingBox(Latitude.From(47.0), Longitude.From(10.0), Latitude.From(49.0), Longitude.From(12.0)),
+            PageNumber.Default, PageSize.Default);
         var result = await handler.Handle(query, CancellationToken.None);
 
         result.Should().BeSameAs(expected);
@@ -57,7 +59,9 @@ public sealed class GetInstallationsInBoundingBoxQueryHandlerTests
                 Arg.Any<CancellationToken>())
             .Returns(expected);
 
-        var query = new GetInstallationsInBoundingBoxQuery(new BoundingBox(Latitude.From(47.0), Longitude.From(10.0), Latitude.From(49.0), Longitude.From(12.0)), projectId);
+        var query = new GetInstallationsInBoundingBoxQuery(
+            new BoundingBox(Latitude.From(47.0), Longitude.From(10.0), Latitude.From(49.0), Longitude.From(12.0)),
+            PageNumber.Default, PageSize.Default, projectId);
         var result = await handler.Handle(query, CancellationToken.None);
 
         result.Should().BeSameAs(expected);
@@ -80,7 +84,9 @@ public sealed class GetInstallationsInBoundingBoxQueryHandlerTests
                 Arg.Any<CancellationToken>())
             .Returns(expected);
 
-        var query = new GetInstallationsInBoundingBoxQuery(new BoundingBox(Latitude.From(47.0), Longitude.From(10.0), Latitude.From(49.0), Longitude.From(12.0)), Page: PageNumber.From(2), PageSize: PageSize.From(15));
+        var query = new GetInstallationsInBoundingBoxQuery(
+            new BoundingBox(Latitude.From(47.0), Longitude.From(10.0), Latitude.From(49.0), Longitude.From(12.0)),
+            PageNumber.From(2), PageSize.From(15));
         var result = await handler.Handle(query, CancellationToken.None);
 
         result.Page.Should().Be(2);

@@ -1,6 +1,5 @@
 using BauDoku.BuildingBlocks.Application.Pagination;
 using BauDoku.BuildingBlocks.Application.Queries;
-using BauDoku.BuildingBlocks.Domain;
 using BauDoku.Documentation.ReadModel;
 
 namespace BauDoku.Documentation.Application.Queries.Handlers;
@@ -10,9 +9,9 @@ public sealed class GetInstallationsInRadiusQueryHandler(IInstallationReadReposi
 {
     public async Task<PagedResult<NearbyInstallationDto>> Handle(GetInstallationsInRadiusQuery query, CancellationToken cancellationToken = default)
     {
-        var (radius, projectId, page, pageSize) = query;
+        var (radius, page, pageSize, projectId) = query;
 
-        var pagination = new PaginationParams(page ?? PageNumber.Default, pageSize ?? PageSize.Default);
+        var pagination = new PaginationParams(page, pageSize);
         return await installations.SearchInRadiusAsync(radius, projectId, pagination, cancellationToken);
     }
 }

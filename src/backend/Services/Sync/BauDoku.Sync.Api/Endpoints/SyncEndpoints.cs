@@ -49,7 +49,7 @@ public static class SyncEndpoints
     private static async Task<Ok<ChangeSetResult>> GetChangesSince(
         string deviceId, DateTime? since, int? limit, IDispatcher dispatcher, CancellationToken cancellationToken)
     {
-        var query = new GetChangesSinceQuery(DeviceIdentifier.From(deviceId), since, limit);
+        var query = new GetChangesSinceQuery(DeviceIdentifier.From(deviceId), SyncLimit.FromNullable(limit), since);
         return TypedResults.Ok(await dispatcher.Query(query, cancellationToken));
     }
 

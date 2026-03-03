@@ -1,6 +1,5 @@
 using BauDoku.BuildingBlocks.Application.Pagination;
 using BauDoku.BuildingBlocks.Application.Queries;
-using BauDoku.BuildingBlocks.Domain;
 using BauDoku.Documentation.ReadModel;
 
 namespace BauDoku.Documentation.Application.Queries.Handlers;
@@ -9,15 +8,10 @@ public sealed class ListInstallationsQueryHandler(IInstallationReadRepository in
 {
     public async Task<PagedResult<InstallationListItemDto>> Handle(ListInstallationsQuery query, CancellationToken cancellationToken = default)
     {
-        var (projectId, zoneId, type, status, search, page, pageSize) = query;
+        var (page, pageSize, projectId, zoneId, type, status, search) = query;
 
-        var filter = new InstallationListFilter(
-            projectId,
-            zoneId,
-            type,
-            status,
-            search);
-        var pagination = new PaginationParams(page ?? PageNumber.Default, pageSize ?? PageSize.Default);
+        var filter = new InstallationListFilter(projectId, zoneId, type, status, search);
+        var pagination = new PaginationParams(page, pageSize);
         return await installations.ListAsync(filter, pagination, cancellationToken);
     }
 }

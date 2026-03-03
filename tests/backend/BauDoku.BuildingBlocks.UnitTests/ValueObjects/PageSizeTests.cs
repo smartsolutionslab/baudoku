@@ -39,4 +39,20 @@ public sealed class PageSizeTests
     {
         PageSize.Max.Should().Be(100);
     }
+
+    [Fact]
+    public void FromNullable_WithValue_ShouldCreatePageSize()
+    {
+        var size = PageSize.FromNullable(10);
+
+        size.Value.Should().Be(10);
+    }
+
+    [Fact]
+    public void FromNullable_WithNull_ShouldReturnDefault()
+    {
+        var size = PageSize.FromNullable(null);
+
+        size.Should().Be(PageSize.Default);
+    }
 }

@@ -5,5 +5,5 @@ namespace BauDoku.Sync.Application.Queries;
 
 public sealed record GetChangesSinceQuery(
     DeviceIdentifier DeviceId,
-    DateTime? Since,
-    int? Limit) : IQuery<ChangeSetResult>;
+    SyncLimit Limit,
+    DateTime? Since = null) : IQuery<ChangeSetResult>;

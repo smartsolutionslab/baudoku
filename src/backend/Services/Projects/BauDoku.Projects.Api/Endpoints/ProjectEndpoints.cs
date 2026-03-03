@@ -66,8 +66,8 @@ public static class ProjectEndpoints
     {
         var query = new ListProjectsQuery(
             SearchTerm.FromNullable(search),
-            PageNumber.FromNullable(page) ?? PageNumber.Default,
-            PageSize.FromNullable(pageSize) ?? PageSize.Default);
+            PageNumber.FromNullable(page),
+            PageSize.FromNullable(pageSize));
         return TypedResults.Ok(await dispatcher.Query(query, cancellationToken));
     }
 

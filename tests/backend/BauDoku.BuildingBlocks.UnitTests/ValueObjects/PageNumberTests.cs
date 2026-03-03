@@ -37,4 +37,20 @@ public sealed class PageNumberTests
     {
         PageNumber.Default.Value.Should().Be(1);
     }
+
+    [Fact]
+    public void FromNullable_WithValue_ShouldCreatePageNumber()
+    {
+        var page = PageNumber.FromNullable(5);
+
+        page.Value.Should().Be(5);
+    }
+
+    [Fact]
+    public void FromNullable_WithNull_ShouldReturnDefault()
+    {
+        var page = PageNumber.FromNullable(null);
+
+        page.Should().Be(PageNumber.Default);
+    }
 }
