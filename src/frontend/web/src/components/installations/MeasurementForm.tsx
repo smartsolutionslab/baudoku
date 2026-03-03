@@ -1,5 +1,5 @@
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { typedZodResolver } from '@/hooks/useZodForm';
 import {
   measurementSchema,
   type MeasurementFormData,
@@ -33,8 +33,7 @@ export function MeasurementForm({
     watch,
     formState: { errors },
   } = useForm<MeasurementFormData>({
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    resolver: zodResolver(measurementSchema) as any,
+    resolver: typedZodResolver(measurementSchema),
   });
 
   const selectedType = watch('type');

@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { zoneSchema, type ZoneFormData, ZONE_TYPE_LABELS, type Zone } from '@baudoku/projects';
+import { typedZodResolver } from '@/hooks/useZodForm';
 import { optionsFromLabels } from '@baudoku/core';
 import { FormField } from '../common/FormField';
 import { FormSelect } from '../common/FormSelect';
@@ -28,8 +28,7 @@ export function ZoneForm({
     handleSubmit,
     formState: { errors },
   } = useForm<ZoneFormData>({
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    resolver: zodResolver(zoneSchema) as any,
+    resolver: typedZodResolver(zoneSchema),
     defaultValues: {
       type: 'room',
       sortOrder: 0,

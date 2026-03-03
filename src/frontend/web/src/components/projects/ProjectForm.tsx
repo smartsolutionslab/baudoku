@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { projectSchema, type ProjectFormData, PROJECT_STATUS_LABELS } from '@baudoku/projects';
+import { typedZodResolver } from '@/hooks/useZodForm';
 import { optionsFromLabels } from '@baudoku/core';
 import { FormField } from '../common/FormField';
 import { FormSelect } from '../common/FormSelect';
@@ -26,8 +26,7 @@ export function ProjectForm({
     handleSubmit,
     formState: { errors },
   } = useForm<ProjectFormData>({
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    resolver: zodResolver(projectSchema) as any,
+    resolver: typedZodResolver(projectSchema),
     defaultValues: {
       status: 'active',
       ...defaultValues,

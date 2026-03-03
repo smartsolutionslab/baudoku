@@ -1,5 +1,5 @@
 import { useAuth } from '../../auth/AuthProvider';
-import { LogoutIcon } from './icons';
+import { LogoutIcon } from '../icons';
 
 export function UserSection() {
   const { user, logout, isAuthenticated } = useAuth();

@@ -7,7 +7,7 @@ type GpsButtonProps = {
 };
 
 export function GpsButton({ onCapture }: GpsButtonProps) {
-  const { position, loading, error, capture } = useGpsCapture();
+  const { position, capturing, error, capturePosition } = useGpsCapture();
 
   useEffect(() => {
     if (position) {
@@ -20,11 +20,11 @@ export function GpsButton({ onCapture }: GpsButtonProps) {
       <Button
         type='button'
         variant='secondary'
-        onClick={capture}
-        disabled={loading}
+        onClick={capturePosition}
+        disabled={capturing}
         className='inline-flex items-center gap-2'
       >
-        {loading ? (
+        {capturing ? (
           <div className='h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-blue-600' />
         ) : (
           <svg className='h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor' strokeWidth={1.5}>

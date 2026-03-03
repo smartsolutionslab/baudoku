@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { typedZodResolver } from '@/hooks/useZodForm';
 import {
   installationSchema,
   type InstallationFormData,
@@ -48,8 +48,7 @@ export function InstallationForm({
     watch,
     formState: { errors },
   } = useForm<InstallationWithZoneFormData>({
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    resolver: zodResolver(installationWithZoneSchema) as any,
+    resolver: typedZodResolver(installationWithZoneSchema),
     defaultValues: {
       status: 'planned',
       zoneId: '',
