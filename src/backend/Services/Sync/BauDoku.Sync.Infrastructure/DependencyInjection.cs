@@ -1,4 +1,5 @@
 using BauDoku.BuildingBlocks.Application.Persistence;
+using BauDoku.BuildingBlocks.Persistence;
 using BauDoku.Sync.Application.Contracts;
 using BauDoku.Sync.ReadModel;
 using BauDoku.Sync.Domain;
@@ -22,7 +23,7 @@ public static class DependencyInjection
             options.UseNpgsql(connectionString, npgsql =>
                 npgsql.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)));
 
-        services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<SyncDbContext>());
+        services.AddScoped<IUnitOfWork, UnitOfWork<SyncDbContext>>();
         services.AddScoped<ISyncBatchRepository, SyncBatchRepository>();
         services.AddScoped<ISyncBatchReadRepository, SyncBatchReadRepository>();
         services.AddScoped<IEntityVersionStore, EntityVersionStore>();

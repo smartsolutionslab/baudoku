@@ -1,4 +1,3 @@
-using BauDoku.BuildingBlocks.Application.Dispatcher;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
@@ -12,6 +11,6 @@ public sealed class ProjectsDbContextFactory : IDesignTimeDbContextFactory<Proje
             .UseNpgsql("Host=localhost;Database=baudoku_projects;Username=postgres;Password=postgres")
             .Options;
 
-        return new ProjectsDbContext(options, new NullDispatcher());
+        return new ProjectsDbContext(options);
     }
 }

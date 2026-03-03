@@ -1,12 +1,11 @@
-using BauDoku.BuildingBlocks.Application.Dispatcher;
 using BauDoku.BuildingBlocks.Persistence;
 using BauDoku.Projects.Domain;
 using Microsoft.EntityFrameworkCore;
 
 namespace BauDoku.Projects.Infrastructure.Persistence;
 
-public sealed class ProjectsDbContext(DbContextOptions<ProjectsDbContext> options, IDispatcher dispatcher)
-    : BaseDbContext(options, dispatcher)
+public sealed class ProjectsDbContext(DbContextOptions<ProjectsDbContext> options)
+    : BaseDbContext(options)
 {
     public DbSet<Project> Projects => Set<Project>();
     public DbSet<Zone> Zones => Set<Zone>();

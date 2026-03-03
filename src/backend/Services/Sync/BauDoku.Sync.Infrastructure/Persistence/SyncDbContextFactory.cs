@@ -1,4 +1,3 @@
-using BauDoku.BuildingBlocks.Application.Dispatcher;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
@@ -12,6 +11,6 @@ public sealed class SyncDbContextFactory : IDesignTimeDbContextFactory<SyncDbCon
             .UseNpgsql("Host=localhost;Database=baudoku_sync;Username=postgres;Password=postgres")
             .Options;
 
-        return new SyncDbContext(options, new NullDispatcher());
+        return new SyncDbContext(options);
     }
 }

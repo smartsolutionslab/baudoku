@@ -1,4 +1,5 @@
 using BauDoku.BuildingBlocks.Application.Persistence;
+using BauDoku.BuildingBlocks.Persistence;
 using BauDoku.Projects.Application.Contracts;
 using BauDoku.Projects.ReadModel;
 using BauDoku.Projects.Domain;
@@ -20,7 +21,7 @@ public static class DependencyInjection
         services.AddDbContext<ProjectsReadDbContext>(options =>
             options.UseNpgsql(connectionString));
 
-        services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<ProjectsDbContext>());
+        services.AddScoped<IUnitOfWork, UnitOfWork<ProjectsDbContext>>();
         services.AddScoped<IProjectRepository, ProjectRepository>();
         services.AddScoped<IProjectReadRepository, ProjectReadRepository>();
         services.AddScoped<IProjectCountProvider, ProjectCountProvider>();

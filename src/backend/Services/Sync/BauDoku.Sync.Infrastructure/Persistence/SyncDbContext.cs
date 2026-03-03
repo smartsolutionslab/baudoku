@@ -1,12 +1,11 @@
-using BauDoku.BuildingBlocks.Application.Dispatcher;
 using BauDoku.BuildingBlocks.Persistence;
 using BauDoku.Sync.Domain;
 using Microsoft.EntityFrameworkCore;
 
 namespace BauDoku.Sync.Infrastructure.Persistence;
 
-public sealed class SyncDbContext(DbContextOptions<SyncDbContext> options, IDispatcher dispatcher)
-    : BaseDbContext(options, dispatcher)
+public sealed class SyncDbContext(DbContextOptions<SyncDbContext> options)
+    : BaseDbContext(options)
 {
     public DbSet<SyncBatch> SyncBatches => Set<SyncBatch>();
     public DbSet<SyncDelta> SyncDeltas => Set<SyncDelta>();
