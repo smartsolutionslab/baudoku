@@ -10,15 +10,15 @@ public sealed class AddPhotoCommandHandler(IInstallationRepository installations
 {
     public async Task<PhotoIdentifier> Handle(AddPhotoCommand command, CancellationToken cancellationToken = default)
     {
-        var installation = await installations.GetByIdAsync(command.InstallationId, cancellationToken);
+        var (installationId, fileName, contentType, fileSize, photoType, caption, description, position, stream, takenAt) = command;
 
-        var blobUrl = await photoStorage.UploadAsync(command.Stream, command.FileName, command.ContentType, cancellationToken);
+        var installation = await installations.GetByIdAsync(installationId, cancellationToken);
+
+        var blobUrl = await photoStorage.UploadAsync(stream, fileName, contentType, cancellationToken);
 
         var photoId = PhotoIdentifier.New();
 
-        installation.AddPhoto(
-            photoId, command.FileName, blobUrl, command.ContentType, command.FileSize,
-            command.PhotoType, command.Caption, command.Description, command.Position, command.TakenAt);
+        installation.AddPhoto(photoId, fileName, blobUrl, contentType, fileSize, photoType, caption, description, position, takenAt);
 
         try
         {
@@ -31,7 +31,7 @@ public sealed class AddPhotoCommandHandler(IInstallationRepository installations
         }
 
         DocumentationMetrics.PhotosAdded.Add(1);
-        DocumentationMetrics.PhotoFileSize.Record(command.FileSize.Value);
+        DocumentationMetrics.PhotoFileSize.Record(fileSize.Value);
 
         return photoId;
     }

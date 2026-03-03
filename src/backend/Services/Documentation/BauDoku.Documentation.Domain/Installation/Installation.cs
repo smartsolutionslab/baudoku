@@ -412,9 +412,5 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
     }
 
     private static CableSpec? ReconstructCableSpec(CableType? cableType, CrossSection? crossSection, CableColor? cableColor, ConductorCount? conductorCount)
-    {
-        return cableType is not null
-            ? CableSpec.Create(cableType, crossSection, cableColor, conductorCount)
-            : null;
-    }
+        => CableSpec.FromNullable(cableType, crossSection, cableColor, conductorCount);
 }

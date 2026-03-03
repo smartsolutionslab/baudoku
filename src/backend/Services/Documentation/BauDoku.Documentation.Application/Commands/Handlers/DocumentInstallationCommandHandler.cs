@@ -8,20 +8,22 @@ public sealed class DocumentInstallationCommandHandler(IInstallationRepository i
 {
     public async Task<InstallationIdentifier> Handle(DocumentInstallationCommand command, CancellationToken cancellationToken = default)
     {
+        var (projectId, zoneId, installationType, position, description, cableType, crossSection, cableColor, conductorCount, depth, manufacturer, modelName, serialNumber) = command;
+
         var installationId = InstallationIdentifier.New();
 
         var installation = Installation.Create(
             installationId,
-            command.ProjectId,
-            command.ZoneId,
-            command.Type,
-            command.Position,
-            command.Description,
-            command.CableType is not null ? CableSpec.Create(command.CableType, command.CrossSection, command.CableColor, command.ConductorCount) : null,
-            command.Depth,
-            command.Manufacturer,
-            command.ModelName,
-            command.SerialNumber);
+            projectId,
+            zoneId,
+            installationType,
+            position,
+            description,
+            CableSpec.FromNullable(cableType, crossSection, cableColor, conductorCount),
+            depth,
+            manufacturer,
+            modelName,
+            serialNumber);
 
         await installations.SaveAsync(installation, cancellationToken);
 

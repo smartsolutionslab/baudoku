@@ -21,4 +21,7 @@ public sealed record CableSpec : IValueObject
     {
         return new CableSpec(cableType, crossSection, color, conductorCount);
     }
+
+    public static CableSpec? FromNullable(CableType? cableType, CrossSection? crossSection = null, CableColor? color = null, ConductorCount? conductorCount = null)
+        => cableType is not null ? new CableSpec(cableType, crossSection, color, conductorCount) : null;
 }
