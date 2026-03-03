@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useNavigate } from '@tanstack/react-router';
-import { useAuth, userManager } from '../auth/AuthProvider';
+import { useAuth, userManager } from '../auth';
 
 export function LoginPage() {
   const navigate = useNavigate();

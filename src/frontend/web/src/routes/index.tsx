@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import { Link } from '@tanstack/react-router';
-import { useProjects } from '@/hooks/useProjects';
+import { useProjects } from '@/hooks';
 import { PlusIcon } from '@/components/icons';
-import { StatusBadge } from '@/components/common/StatusBadge';
+import { StatusBadge } from '@/components/common';
 
 export function DashboardPage() {
   const { data } = useProjects();

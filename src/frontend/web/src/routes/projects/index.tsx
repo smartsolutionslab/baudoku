@@ -1,11 +1,7 @@
 import { useState, useDeferredValue, useMemo } from 'react';
 import { Link } from '@tanstack/react-router';
-import { useProjects, useDeleteProject } from '@/hooks/useProjects';
-import { StatusBadge } from '@/components/common/StatusBadge';
-import { SearchBar } from '@/components/common/SearchBar';
-import { FilterChips } from '@/components/common/FilterChips';
-import { EmptyState } from '@/components/common/EmptyState';
-import { ConfirmDialog } from '@/components/common/ConfirmDialog';
+import { useProjects, useDeleteProject } from '@/hooks';
+import { StatusBadge, SearchBar, FilterChips, EmptyState, ConfirmDialog } from '@/components/common';
 import { PlusIcon, TrashIcon } from '@/components/icons';
 import { PROJECT_STATUS_LABELS } from '@baudoku/projects';
 import { optionsFromLabels } from '@baudoku/core';

@@ -1,14 +1,8 @@
 import { Link, useParams } from '@tanstack/react-router';
 import { useState } from 'react';
-import {
-  useProject,
-  useZones,
-  useDeleteZone,
-  useUpdateProject,
-} from '@/hooks/useProjects';
-import { ZoneTree } from '@/components/projects/ZoneTree';
-import { StatusBadge } from '@/components/common/StatusBadge';
-import { ConfirmDialog } from '@/components/common/ConfirmDialog';
+import { useProject, useZones, useDeleteZone, useUpdateProject } from '@/hooks';
+import { ZoneTree } from '@/components/projects';
+import { StatusBadge, ConfirmDialog } from '@/components/common';
 import { PlusIcon } from '@/components/icons';
 
 export function ProjectDetailPage() {

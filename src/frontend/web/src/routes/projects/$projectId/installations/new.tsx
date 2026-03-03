@@ -1,7 +1,6 @@
 import { useParams, useNavigate } from '@tanstack/react-router';
-import { useZones } from '@/hooks/useProjects';
-import { useCreateInstallation } from '@/hooks/useInstallations';
-import { InstallationForm, type GpsFormData } from '@/components/installations/InstallationForm';
+import { useZones, useCreateInstallation } from '@/hooks';
+import { InstallationForm, type GpsFormData } from '@/components/installations';
 import type { InstallationFormData } from '@baudoku/documentation';
 
 export function InstallationNewPage() {

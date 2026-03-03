@@ -1,6 +1,6 @@
 import { useNavigate } from '@tanstack/react-router';
-import { useCreateProject } from '@/hooks/useProjects';
-import { ProjectForm } from '@/components/projects/ProjectForm';
+import { useCreateProject } from '@/hooks';
+import { ProjectForm } from '@/components/projects';
 import type { ProjectFormData } from '@baudoku/projects';
 
 export function ProjectNewPage() {

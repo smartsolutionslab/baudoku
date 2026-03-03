@@ -1,18 +1,12 @@
 import { useState } from 'react';
 import { Link, useParams } from '@tanstack/react-router';
 import {
-  useInstallation,
-  usePhotos,
-  useMeasurements,
-  useUploadPhoto,
-  useDeletePhoto,
-  useCreateMeasurement,
-  useDeleteMeasurement,
-} from '@/hooks/useInstallations';
-import { StatusBadge } from '@/components/common/StatusBadge';
-import { InfoTab } from '@/components/installations/InfoTab';
-import { PhotosTab } from '@/components/installations/PhotosTab';
-import { MeasurementsTab } from '@/components/installations/MeasurementsTab';
+  useInstallation, usePhotos, useMeasurements,
+  useUploadPhoto, useDeletePhoto,
+  useCreateMeasurement, useDeleteMeasurement,
+} from '@/hooks';
+import { StatusBadge } from '@/components/common';
+import { InfoTab, PhotosTab, MeasurementsTab } from '@/components/installations';
 
 type Tab = 'info' | 'photos' | 'measurements';
 

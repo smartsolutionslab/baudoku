@@ -1,8 +1,7 @@
 import { Outlet, Link, useLocation } from '@tanstack/react-router';
 import { useState } from 'react';
 import { LayoutIcon, FolderIcon, MenuIcon } from '../components/icons';
-import { VersionInfo } from '../components/layout/VersionInfo';
-import { UserSection } from '../components/layout/UserSection';
+import { VersionInfo, UserSection } from '../components/layout';
 
 const navItems = [
   { to: '/', label: 'Dashboard', icon: LayoutIcon },
