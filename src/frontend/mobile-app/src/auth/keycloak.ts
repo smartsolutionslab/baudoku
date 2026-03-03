@@ -1,7 +1,6 @@
 import * as AuthSession from 'expo-auth-session';
 import { KEYCLOAK_URL, KEYCLOAK_REALM, KEYCLOAK_CLIENT_ID } from '../config/environment';
-import { parseJwtPayload } from '@baudoku/core';
-import type { AuthUser } from '../store';
+import { parseUserFromToken } from '@baudoku/core';
 
 const realmUrl = `${KEYCLOAK_URL}/realms/${KEYCLOAK_REALM}`;
 
@@ -79,20 +78,7 @@ export async function refreshAccessToken(refreshToken: string): Promise<AuthToke
   };
 }
 
-export function parseUserFromToken(idToken: string): AuthUser {
-  const payload = parseJwtPayload(idToken);
-
-  if (typeof payload.exp === 'number' && payload.exp * 1000 < Date.now()) {
-    throw new Error('Token ist abgelaufen');
-  }
-
-  return {
-    id: (payload.sub as string) ?? '',
-    email: (payload.email as string) ?? '',
-    name: (payload.name as string) ?? [payload.preferred_username].filter(Boolean).join(' ') ?? '',
-    roles: (payload.realm_access as { roles?: string[] })?.roles ?? [],
-  };
-}
+export { parseUserFromToken } from '@baudoku/core';
 
 export async function logoutFromKeycloak(idToken: string): Promise<void> {
   if (!discovery.endSessionEndpoint) return;

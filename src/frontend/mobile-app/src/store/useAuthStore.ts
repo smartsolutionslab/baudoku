@@ -1,11 +1,7 @@
 import { create } from 'zustand';
+import type { AuthUser } from '@baudoku/core';
 
-export type AuthUser = {
-  id: string;
-  email: string;
-  name: string;
-  roles: string[];
-};
+export type { AuthUser } from '@baudoku/core';
 
 type AuthState = {
   isAuthenticated: boolean;

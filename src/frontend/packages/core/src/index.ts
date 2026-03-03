@@ -1,4 +1,5 @@
 export { setBaseUrl, getBaseUrl, setAuthToken, onUnauthorized } from './auth';
+export type { AuthUser } from './auth';
 export { formatDate, formatDateTime } from './format';
 export {
   ApiError,
@@ -9,5 +10,5 @@ export {
   apiUpload,
   apiRawUpload,
 } from './http';
-export { parseJwtPayload, isTokenExpired } from './jwt';
+export { parseUserFromToken, parseJwtPayload, isTokenExpired } from './jwt';
 export type { PagedResult, PhotoUploadResult } from './types';
