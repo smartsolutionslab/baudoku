@@ -38,10 +38,15 @@ export function VersionInfo() {
 
   useEffect(() => {
     if (!expanded || systemInfo) return;
-    fetch('/api/system/info')
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => setSystemInfo(data))
-      .catch(() => {});
+    (async () => {
+      try {
+        const res = await fetch('/api/system/info');
+        const data = res.ok ? await res.json() : null;
+        setSystemInfo(data);
+      } catch {
+        // ignore fetch errors
+      }
+    })();
   }, [expanded, systemInfo]);
 
   return (

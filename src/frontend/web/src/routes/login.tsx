@@ -12,10 +12,15 @@ export function LoginPage() {
     if (window.location.search.includes('code=')) {
       if (callbackProcessed.current) return;
       callbackProcessed.current = true;
-      userManager
-        .signinRedirectCallback()
-        .then(() => navigate({ to: '/' }))
-        .catch(() => navigate({ to: '/' }));
+      (async () => {
+        try {
+          await userManager.signinRedirectCallback();
+        } catch {
+          // ignore callback errors
+        } finally {
+          navigate({ to: '/' });
+        }
+      })();
       return;
     }
 

@@ -28,15 +28,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     // Check for existing session
-    userManager
-      .getUser()
-      .then((existingUser) => {
+    (async () => {
+      try {
+        const existingUser = await userManager.getUser();
         if (existingUser && !existingUser.expired) {
           setUser(existingUser);
           setAuthToken(existingUser.access_token);
         }
-      })
-      .finally(() => setIsLoading(false));
+      } finally {
+        setIsLoading(false);
+      }
+    })();
 
     // Handle token updates
     const onUserLoaded = (loadedUser: User) => {
