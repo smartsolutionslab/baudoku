@@ -1,61 +1,43 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as installationRepo from '../db/repositories/installationRepo';
 import type { NewInstallation } from '../db/repositories/types';
 import type { ProjectId, ZoneId, InstallationId } from '../types/branded';
+import { useListQuery, useSyncMutation } from './useQueryFactory';
 
 export function useInstallationsByZone(zoneId: ZoneId) {
-  return useQuery({
-    queryKey: ['installations', 'zone', zoneId],
-    queryFn: () => installationRepo.getByZoneId(zoneId),
-    enabled: !!zoneId,
-  });
+  return useListQuery(['installations', 'zone', zoneId], () => installationRepo.getByZoneId(zoneId), !!zoneId);
 }
 
 export function useInstallationsByProject(projectId: ProjectId) {
-  return useQuery({
-    queryKey: ['installations', 'project', projectId],
-    queryFn: () => installationRepo.getByProjectId(projectId),
-    enabled: !!projectId,
-  });
+  return useListQuery(['installations', 'project', projectId], () => installationRepo.getByProjectId(projectId), !!projectId);
 }
 
 export function useCreateInstallation() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (data: Omit<NewInstallation, 'id' | 'createdAt' | 'updatedAt' | 'version'>) => installationRepo.create(data),
-    meta: { errorMessage: 'Installation konnte nicht erstellt werden' },
-    onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['installations', 'zone', variables.zoneId] });
-      queryClient.invalidateQueries({ queryKey: ['installations', 'project', variables.projectId] });
-      queryClient.invalidateQueries({ queryKey: ['syncStatus'] });
-    },
+  return useSyncMutation<Omit<NewInstallation, 'id' | 'createdAt' | 'updatedAt' | 'version'>>({
+    mutationFn: (data) => installationRepo.create(data),
+    errorMessage: 'Installation konnte nicht erstellt werden',
+    invalidateKeys: [['installations']],
+    onSuccessKeys: (variables) => [
+      ['installations', 'zone', variables.zoneId],
+      ['installations', 'project', variables.projectId],
+    ],
   });
 }
 
 export function useUpdateInstallation() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: ({ id, data }: {
-      id: InstallationId;
-      data: Partial<Omit<NewInstallation, 'id' | 'createdAt' | 'updatedAt' | 'version' | 'projectId' | 'zoneId'>>;
-    }) => installationRepo.update(id, data),
-    meta: { errorMessage: 'Installation konnte nicht aktualisiert werden' },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['installations'] });
-      queryClient.invalidateQueries({ queryKey: ['installation'] });
-      queryClient.invalidateQueries({ queryKey: ['syncStatus'] });
-    },
+  return useSyncMutation<{
+    id: InstallationId;
+    data: Partial<Omit<NewInstallation, 'id' | 'createdAt' | 'updatedAt' | 'version' | 'projectId' | 'zoneId'>>;
+  }>({
+    mutationFn: ({ id, data }) => installationRepo.update(id, data),
+    errorMessage: 'Installation konnte nicht aktualisiert werden',
+    invalidateKeys: [['installations'], ['installation']],
   });
 }
 
 export function useDeleteInstallation() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (id: InstallationId) => installationRepo.remove(id),
-    meta: { errorMessage: 'Installation konnte nicht gelöscht werden' },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['installations'] });
-      queryClient.invalidateQueries({ queryKey: ['syncStatus'] });
-    },
+  return useSyncMutation<InstallationId>({
+    mutationFn: (id) => installationRepo.remove(id),
+    errorMessage: 'Installation konnte nicht gelöscht werden',
+    invalidateKeys: [['installations']],
   });
 }
