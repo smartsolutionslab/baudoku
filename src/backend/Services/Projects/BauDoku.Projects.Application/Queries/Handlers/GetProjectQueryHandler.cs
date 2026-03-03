@@ -1,4 +1,5 @@
 using BauDoku.BuildingBlocks.Application.Queries;
+using BauDoku.BuildingBlocks.Domain;
 using BauDoku.Projects.Application.Mapping;
 using BauDoku.Projects.ReadModel;
 using BauDoku.Projects.Domain;
@@ -11,7 +12,7 @@ public sealed class GetProjectQueryHandler(IProjectRepository projects) : IQuery
     {
         var projectId = query.ProjectId;
 
-        var project = await projects.GetByIdAsync(projectId, cancellationToken);
+        var project = await projects.With(projectId, cancellationToken);
 
         return project.ToDto();
     }

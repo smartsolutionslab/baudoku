@@ -1,5 +1,6 @@
 using BauDoku.BuildingBlocks.Application.Commands;
 using BauDoku.BuildingBlocks.Application.Persistence;
+using BauDoku.BuildingBlocks.Domain;
 using BauDoku.Projects.Application.Diagnostics;
 using BauDoku.Projects.Domain;
 
@@ -12,7 +13,7 @@ public sealed class AddZoneCommandHandler(IProjectRepository projects, IUnitOfWo
     {
         var (projectId, name, type, parentZoneId) = command;
 
-        var project = await projects.GetByIdAsync(projectId, cancellationToken);
+        var project = await projects.With(projectId, cancellationToken);
 
         var zoneId = ZoneIdentifier.New();
         project.AddZone(zoneId, name, type, parentZoneId);

@@ -1,4 +1,5 @@
 using BauDoku.BuildingBlocks.Application.Commands;
+using BauDoku.BuildingBlocks.Domain;
 using BauDoku.Documentation.Application.Diagnostics;
 using BauDoku.Documentation.Domain;
 
@@ -10,10 +11,8 @@ public sealed class DeleteInstallationCommandHandler(IInstallationRepository ins
     {
         var installationId = command.InstallationId;
 
-        var installation = await installations.GetByIdAsync(installationId, cancellationToken);
-
+        var installation = await installations.With(installationId, cancellationToken);
         installation.Delete();
-
         await installations.SaveAsync(installation, cancellationToken);
 
         DocumentationMetrics.InstallationsDeleted.Add(1);

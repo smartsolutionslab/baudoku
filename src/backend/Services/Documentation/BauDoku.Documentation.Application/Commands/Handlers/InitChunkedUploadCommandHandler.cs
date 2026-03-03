@@ -1,4 +1,5 @@
 using BauDoku.BuildingBlocks.Application.Commands;
+using BauDoku.BuildingBlocks.Domain;
 using BauDoku.Documentation.Application.Contracts;
 using BauDoku.Documentation.ReadModel;
 using BauDoku.Documentation.Domain;
@@ -12,7 +13,7 @@ public sealed class InitChunkedUploadCommandHandler(IInstallationRepository inst
     {
         var (installationId, fileName, contentType, totalSize, totalChunks, photoType, caption, description, position) = command;
 
-        _ = await installations.GetByIdAsync(installationId, cancellationToken);
+        _ = await installations.With(installationId, cancellationToken);
 
         var sessionIdentifier = UploadSessionIdentifier.New();
         var session = new ChunkedUploadSession(

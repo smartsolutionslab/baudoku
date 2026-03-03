@@ -1,4 +1,5 @@
 using BauDoku.BuildingBlocks.Application.Commands;
+using BauDoku.BuildingBlocks.Domain;
 using BauDoku.Documentation.Application.Contracts;
 using BauDoku.Documentation.Application.Diagnostics;
 using BauDoku.Documentation.Domain;
@@ -12,10 +13,8 @@ public sealed class AddPhotoCommandHandler(IInstallationRepository installations
     {
         var (installationId, fileName, contentType, fileSize, photoType, caption, description, position, stream, takenAt) = command;
 
-        var installation = await installations.GetByIdAsync(installationId, cancellationToken);
-
+        var installation = await installations.With(installationId, cancellationToken);
         var blobUrl = await photoStorage.UploadAsync(stream, fileName, contentType, cancellationToken);
-
         var photoId = PhotoIdentifier.New();
 
         installation.AddPhoto(photoId, fileName, blobUrl, contentType, fileSize, photoType, caption, description, position, takenAt);

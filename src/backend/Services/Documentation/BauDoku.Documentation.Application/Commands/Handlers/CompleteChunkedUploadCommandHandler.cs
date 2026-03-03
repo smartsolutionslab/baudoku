@@ -1,4 +1,5 @@
 using BauDoku.BuildingBlocks.Application.Commands;
+using BauDoku.BuildingBlocks.Domain;
 using BauDoku.Documentation.Application.Contracts;
 using BauDoku.Documentation.Application.Diagnostics;
 using BauDoku.Documentation.ReadModel;
@@ -25,7 +26,7 @@ public sealed class CompleteChunkedUploadCommandHandler(IChunkedUploadStorage ch
         var blobUrl = await photoStorage.UploadAsync(assembledStream, fileNameVo, contentTypeVo, cancellationToken);
 
         var installationId = InstallationIdentifier.From(session.InstallationId);
-        var installation = await installations.GetByIdAsync(installationId, cancellationToken);
+        var installation = await installations.With(installationId, cancellationToken);
 
         var photoId = PhotoIdentifier.New();
         var photoType = PhotoType.From(session.PhotoType);

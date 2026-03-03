@@ -1,4 +1,5 @@
 using BauDoku.BuildingBlocks.Application.Commands;
+using BauDoku.BuildingBlocks.Domain;
 using BauDoku.Documentation.Application.Diagnostics;
 using BauDoku.Documentation.Domain;
 
@@ -10,14 +11,11 @@ public sealed class RecordMeasurementCommandHandler(IInstallationRepository inst
     {
         var (installationId, type, value, unit, minThreshold, maxThreshold, notes) = command;
 
-        var installation = await installations.GetByIdAsync(installationId, cancellationToken);
-
+        var installation = await installations.With(installationId, cancellationToken);
         var measurementId = MeasurementIdentifier.New();
         var measurementValue = MeasurementValue.Create(value, unit, minThreshold, maxThreshold);
         var notesVo = notes;
-
         installation.RecordMeasurement(measurementId, type, measurementValue, notesVo);
-
         await installations.SaveAsync(installation, cancellationToken);
 
         DocumentationMetrics.MeasurementsRecorded.Add(1);

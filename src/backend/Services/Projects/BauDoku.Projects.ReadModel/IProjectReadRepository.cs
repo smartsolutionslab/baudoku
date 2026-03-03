@@ -3,7 +3,6 @@ using BauDoku.BuildingBlocks.Domain;
 
 namespace BauDoku.Projects.ReadModel;
 
-public interface IProjectReadRepository
+public interface IProjectReadRepository : IPagedReadRepository<ProjectListItemDto, SearchTerm?>
 {
-    Task<PagedResult<ProjectListItemDto>> ListAsync(SearchTerm? search, PaginationParams pagination, CancellationToken cancellationToken = default);
 }

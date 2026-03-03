@@ -1,4 +1,5 @@
 using BauDoku.BuildingBlocks.Application.Commands;
+using BauDoku.BuildingBlocks.Domain;
 using BauDoku.Documentation.Application.Contracts;
 using BauDoku.Documentation.Application.Diagnostics;
 using BauDoku.Documentation.Domain;
@@ -12,15 +13,10 @@ public sealed class RemovePhotoCommandHandler(IInstallationRepository installati
     {
         var (installationId, photoId) = command;
 
-        var installation = await installations.GetByIdAsync(installationId, cancellationToken);
-
-        var photo = installation.Photos.FirstOrDefault(p => p.Id == photoId)
-            ?? throw new KeyNotFoundException($"Foto mit ID {photoId.Value} nicht gefunden.");
-
+        var installation = await installations.With(installationId, cancellationToken);
+        var photo = installation.Photos.FirstOrDefault(p => p.Id == photoId) ?? throw new KeyNotFoundException($"Foto mit ID {photoId.Value} nicht gefunden.");
         installation.RemovePhoto(photoId);
-
         await installations.SaveAsync(installation, cancellationToken);
-
         await photoStorage.DeleteAsync(photo.BlobUrl, cancellationToken);
 
         DocumentationMetrics.PhotosRemoved.Add(1);

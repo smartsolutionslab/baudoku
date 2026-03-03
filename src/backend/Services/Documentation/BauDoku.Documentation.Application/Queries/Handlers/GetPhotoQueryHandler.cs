@@ -1,4 +1,5 @@
 using BauDoku.BuildingBlocks.Application.Queries;
+using BauDoku.BuildingBlocks.Domain;
 using BauDoku.Documentation.ReadModel;
 
 namespace BauDoku.Documentation.Application.Queries.Handlers;
@@ -9,6 +10,6 @@ public sealed class GetPhotoQueryHandler(IPhotoReadRepository photos) : IQueryHa
     {
         var photoId = query.PhotoId;
 
-        return await photos.GetByIdAsync(photoId, cancellationToken);
+        return await photos.With(photoId, cancellationToken);
     }
 }

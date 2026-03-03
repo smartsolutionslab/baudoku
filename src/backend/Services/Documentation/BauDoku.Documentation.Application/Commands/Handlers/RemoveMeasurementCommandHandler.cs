@@ -1,4 +1,5 @@
 using BauDoku.BuildingBlocks.Application.Commands;
+using BauDoku.BuildingBlocks.Domain;
 using BauDoku.Documentation.Application.Diagnostics;
 using BauDoku.Documentation.Domain;
 
@@ -10,10 +11,8 @@ public sealed class RemoveMeasurementCommandHandler(IInstallationRepository inst
     {
         var (installationId, measurementId) = command;
 
-        var installation = await installations.GetByIdAsync(installationId, cancellationToken);
-
+        var installation = await installations.With(installationId, cancellationToken);
         installation.RemoveMeasurement(measurementId);
-
         await installations.SaveAsync(installation, cancellationToken);
 
         DocumentationMetrics.MeasurementsRemoved.Add(1);

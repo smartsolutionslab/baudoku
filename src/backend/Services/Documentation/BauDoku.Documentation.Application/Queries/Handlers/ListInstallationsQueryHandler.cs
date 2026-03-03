@@ -12,6 +12,6 @@ public sealed class ListInstallationsQueryHandler(IInstallationReadRepository in
 
         var filter = new InstallationListFilter(projectId, zoneId, type, status, search);
         var pagination = new PaginationParams(page, pageSize);
-        return await installations.ListAsync(filter, pagination, cancellationToken);
+        return await installations.With(filter, pagination, cancellationToken);
     }
 }
