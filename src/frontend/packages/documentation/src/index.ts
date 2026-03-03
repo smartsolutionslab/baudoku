@@ -28,4 +28,15 @@ export {
   MEASUREMENT_UNITS,
 } from './constants';
 export type { MeasurementTypePreset } from './constants';
+export {
+  calculateGpsQuality,
+  GPS_QUALITY_LABELS,
+  GPS_CORRECTION_SERVICE_LABELS,
+  RTK_FIX_STATUS_LABELS,
+} from './gps-quality';
+export type {
+  GpsQualityGrade,
+  GpsQualityInput,
+  GpsQualityResult,
+} from './gps-quality';
 export { uploadPhoto } from './api';
