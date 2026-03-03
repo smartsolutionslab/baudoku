@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet } from 'react-native';
-import { PROJECT_STATUS_LABELS } from '@baudoku/projects';
-import { ZONE_TYPE_LABELS } from '@baudoku/projects';
-import { INSTALLATION_STATUS_LABELS } from '@baudoku/documentation';
+import { PROJECT_STATUS_LABELS, ZONE_TYPE_LABELS } from '@baudoku/projects';
+import { INSTALLATION_STATUS_LABELS, MEASUREMENT_RESULT_LABELS } from '@baudoku/documentation';
+import { SYNC_STATUS_LABELS } from '@baudoku/sync';
 import { Colors, Spacing, Radius } from '../../styles/tokens';
 
 const statusColors: Record<string, string> = {
@@ -32,11 +32,8 @@ const statusLabels: Record<string, string> = {
   ...PROJECT_STATUS_LABELS,
   ...INSTALLATION_STATUS_LABELS,
   ...ZONE_TYPE_LABELS,
-  passed: 'Bestanden',
-  failed: 'Fehlgeschlagen',
-  warning: 'Warnung',
-  pending: 'Ausstehend',
-  syncing: 'Wird synchronisiert',
+  ...MEASUREMENT_RESULT_LABELS,
+  ...SYNC_STATUS_LABELS,
   section: 'Abschnitt',
 };
 

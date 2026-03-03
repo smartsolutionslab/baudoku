@@ -118,6 +118,14 @@ export const GPS_SOURCE_LABELS: Record<
 
 export const PHASES = ['L1', 'L2', 'L3', 'N', 'PE'] as const;
 
+// ─── Measurement Results ────────────────────────────────────────
+
+export const MEASUREMENT_RESULT_LABELS: Record<string, string> = {
+  passed: 'Bestanden',
+  failed: 'Nicht bestanden',
+  warning: 'Warnung',
+};
+
 // ─── Measurement Units ──────────────────────────────────────────
 
 export const MEASUREMENT_UNITS = ['Ω', 'MΩ', 'V', 'ms', '%', 'A'] as const;

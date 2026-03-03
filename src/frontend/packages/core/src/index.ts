@@ -1,4 +1,5 @@
 export { setBaseUrl, getBaseUrl, setAuthToken, onUnauthorized } from './auth';
+export { formatDate, formatDateTime } from './format';
 export {
   ApiError,
   apiGet,

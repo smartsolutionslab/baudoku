@@ -24,6 +24,7 @@ export {
   PHOTO_TYPE_LABELS,
   GPS_SOURCES,
   GPS_SOURCE_LABELS,
+  MEASUREMENT_RESULT_LABELS,
   MEASUREMENT_UNITS,
 } from './constants';
 export type { MeasurementTypePreset } from './constants';
