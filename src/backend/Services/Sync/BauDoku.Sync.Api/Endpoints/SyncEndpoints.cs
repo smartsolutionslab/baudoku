@@ -2,7 +2,7 @@ using BauDoku.BuildingBlocks.Application.Dispatcher;
 using BauDoku.BuildingBlocks.Auth;
 using BauDoku.Sync.Api.Mapping;
 using BauDoku.Sync.Application.Commands;
-using BauDoku.Sync.Application.Queries.Dtos;
+using BauDoku.Sync.Application.ReadModel;
 using BauDoku.Sync.Application.Queries;
 using BauDoku.Sync.Domain;
 

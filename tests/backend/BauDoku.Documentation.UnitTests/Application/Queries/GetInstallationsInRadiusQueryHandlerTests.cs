@@ -1,8 +1,7 @@
 using AwesomeAssertions;
 using BauDoku.BuildingBlocks.Application.Pagination;
 using BauDoku.BuildingBlocks.Domain;
-using BauDoku.Documentation.Application.Contracts;
-using BauDoku.Documentation.Application.Queries.Dtos;
+using BauDoku.Documentation.Application.ReadModel;
 using BauDoku.Documentation.Application.Queries;
 using BauDoku.Documentation.Application.Queries.Handlers;
 using BauDoku.Documentation.Domain;

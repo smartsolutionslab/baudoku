@@ -1,7 +1,6 @@
 using BauDoku.BuildingBlocks.Application.Queries;
-using BauDoku.Sync.Application.Contracts;
 using BauDoku.Sync.Application.Queries;
-using BauDoku.Sync.Application.Queries.Dtos;
+using BauDoku.Sync.Application.ReadModel;
 
 namespace BauDoku.Sync.Application.Queries.Handlers;
 

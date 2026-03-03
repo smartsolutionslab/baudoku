@@ -4,9 +4,8 @@ using BauDoku.BuildingBlocks.Application.Responses;
 using BauDoku.BuildingBlocks.Auth;
 using BauDoku.Documentation.Api.Mapping;
 using BauDoku.Documentation.Application.Commands;
-using BauDoku.Documentation.Application.Contracts;
 using BauDoku.Documentation.Application.Queries;
-using BauDoku.Documentation.Application.Queries.Dtos;
+using BauDoku.Documentation.Application.ReadModel;
 using BauDoku.Documentation.Domain;
 using Microsoft.AspNetCore.Mvc;
 

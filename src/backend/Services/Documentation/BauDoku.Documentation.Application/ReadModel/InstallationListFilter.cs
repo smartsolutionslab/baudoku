@@ -1,7 +1,7 @@
 using BauDoku.BuildingBlocks.Domain;
 using BauDoku.Documentation.Domain;
 
-namespace BauDoku.Documentation.Application.Contracts;
+namespace BauDoku.Documentation.Application.ReadModel;
 
 public sealed record InstallationListFilter(
     ProjectIdentifier? ProjectId = null,

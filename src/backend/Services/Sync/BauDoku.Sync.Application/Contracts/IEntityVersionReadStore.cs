@@ -1,4 +1,4 @@
-using BauDoku.Sync.Application.Queries.Dtos;
+using BauDoku.Sync.Application.ReadModel;
 using BauDoku.Sync.Domain;
 
 namespace BauDoku.Sync.Application.Contracts;

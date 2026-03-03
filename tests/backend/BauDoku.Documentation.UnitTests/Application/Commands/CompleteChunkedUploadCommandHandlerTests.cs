@@ -2,7 +2,7 @@ using AwesomeAssertions;
 using BauDoku.Documentation.Application.Commands;
 using BauDoku.Documentation.Application.Commands.Handlers;
 using BauDoku.Documentation.Application.Contracts;
-using BauDoku.Documentation.Application.Queries.Dtos;
+using BauDoku.Documentation.Application.ReadModel;
 using BauDoku.Documentation.Domain;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;

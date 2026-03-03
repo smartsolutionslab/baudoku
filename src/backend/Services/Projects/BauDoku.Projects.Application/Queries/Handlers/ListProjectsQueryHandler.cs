@@ -1,7 +1,6 @@
 using BauDoku.BuildingBlocks.Application.Pagination;
 using BauDoku.BuildingBlocks.Application.Queries;
-using BauDoku.Projects.Application.Contracts;
-using BauDoku.Projects.Application.Queries.Dtos;
+using BauDoku.Projects.Application.ReadModel;
 
 namespace BauDoku.Projects.Application.Queries.Handlers;
 

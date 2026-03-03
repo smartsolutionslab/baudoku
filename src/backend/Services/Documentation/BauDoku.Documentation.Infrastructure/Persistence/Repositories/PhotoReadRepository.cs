@@ -1,5 +1,4 @@
-using BauDoku.Documentation.Application.Contracts;
-using BauDoku.Documentation.Application.Queries.Dtos;
+using BauDoku.Documentation.Application.ReadModel;
 using BauDoku.Documentation.Domain;
 using BauDoku.Documentation.Infrastructure.ReadModel;
 using Microsoft.EntityFrameworkCore;

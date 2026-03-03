@@ -1,7 +1,6 @@
 using BauDoku.BuildingBlocks.Application.Pagination;
 using BauDoku.BuildingBlocks.Domain;
-using BauDoku.Documentation.Application.Contracts;
-using BauDoku.Documentation.Application.Queries.Dtos;
+using BauDoku.Documentation.Application.ReadModel;
 using BauDoku.BuildingBlocks.Persistence.Pagination;
 using BauDoku.Documentation.Domain;
 using BauDoku.Documentation.Infrastructure.ReadModel;
@@ -41,8 +40,7 @@ public sealed class InstallationReadRepository(ReadModelDbContext context) : IIn
             .AsNoTracking()
             .AnyAsync(i => i.Id == installationId.Value && !i.IsDeleted, cancellationToken);
 
-        if (!exists)
-            throw new KeyNotFoundException($"Installation mit ID '{installationId.Value}' wurde nicht gefunden.");
+        if (!exists) throw new KeyNotFoundException($"Installation mit ID '{installationId.Value}' wurde nicht gefunden.");
 
         return await context.Measurements
             .AsNoTracking()

@@ -1,7 +1,7 @@
 using BauDoku.BuildingBlocks.Application.Pagination;
 using BauDoku.BuildingBlocks.Application.Queries;
 using BauDoku.BuildingBlocks.Domain;
-using BauDoku.Projects.Application.Queries.Dtos;
+using BauDoku.Projects.Application.ReadModel;
 
 namespace BauDoku.Projects.Application.Queries;
 

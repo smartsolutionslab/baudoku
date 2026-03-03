@@ -1,4 +1,4 @@
-namespace BauDoku.Projects.Application.Queries.Dtos;
+namespace BauDoku.Projects.Application.ReadModel;
 
 public sealed record ProjectDto(
     Guid Id,

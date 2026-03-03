@@ -1,9 +1,9 @@
-namespace BauDoku.Sync.Application.Queries.Dtos;
+namespace BauDoku.Sync.Application.ReadModel;
 
-public sealed record SyncDeltaDto(
+public sealed record ServerDeltaDto(
     string EntityType,
     Guid EntityId,
     string Operation,
-    long BaseVersion,
+    long Version,
     string Payload,
     DateTime Timestamp);

@@ -1,8 +1,7 @@
 using BauDoku.BuildingBlocks.Application.Pagination;
 using BauDoku.BuildingBlocks.Domain;
-using BauDoku.Projects.Application.Queries.Dtos;
 
-namespace BauDoku.Projects.Application.Contracts;
+namespace BauDoku.Projects.Application.ReadModel;
 
 public interface IProjectReadRepository
 {

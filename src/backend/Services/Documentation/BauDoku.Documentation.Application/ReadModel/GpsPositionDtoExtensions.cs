@@ -1,6 +1,6 @@
 using BauDoku.Documentation.Domain;
 
-namespace BauDoku.Documentation.Application.Queries.Dtos;
+namespace BauDoku.Documentation.Application.ReadModel;
 
 public static class GpsPositionDtoExtensions
 {

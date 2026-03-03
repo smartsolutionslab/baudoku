@@ -1,7 +1,6 @@
-using BauDoku.Documentation.Application.Queries.Dtos;
 using BauDoku.Documentation.Domain;
 
-namespace BauDoku.Documentation.Application.Contracts;
+namespace BauDoku.Documentation.Application.ReadModel;
 
 public interface IPhotoReadRepository
 {

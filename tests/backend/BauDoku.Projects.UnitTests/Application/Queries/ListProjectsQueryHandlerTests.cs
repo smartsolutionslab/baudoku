@@ -2,7 +2,7 @@ using AwesomeAssertions;
 using BauDoku.BuildingBlocks.Application.Pagination;
 using BauDoku.BuildingBlocks.Domain;
 using BauDoku.Projects.Application.Contracts;
-using BauDoku.Projects.Application.Queries.Dtos;
+using BauDoku.Projects.Application.ReadModel;
 using BauDoku.Projects.Application.Queries;
 using BauDoku.Projects.Application.Queries.Handlers;
 using NSubstitute;

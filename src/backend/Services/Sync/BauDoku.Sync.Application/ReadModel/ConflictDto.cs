@@ -1,4 +1,4 @@
-namespace BauDoku.Sync.Application.Queries.Dtos;
+namespace BauDoku.Sync.Application.ReadModel;
 
 public sealed record ConflictDto(
     Guid Id,

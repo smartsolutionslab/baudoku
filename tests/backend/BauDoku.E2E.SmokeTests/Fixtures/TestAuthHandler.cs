@@ -15,12 +15,12 @@ public sealed class TestAuthHandler(IOptionsMonitor<AuthenticationSchemeOptions>
 
     protected override Task<AuthenticateResult> HandleAuthenticateAsync()
     {
-        var claims = new List<Claim>
-        {
+        List<Claim> claims =
+        [
             new(ClaimTypes.NameIdentifier, "test-user-id"),
             new(ClaimTypes.Name, "Test User"),
             new(ClaimTypes.Email, "test@example.com")
-        };
+        ];
         claims.AddRange(Roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
         var identity = new ClaimsIdentity(claims, SchemeName);

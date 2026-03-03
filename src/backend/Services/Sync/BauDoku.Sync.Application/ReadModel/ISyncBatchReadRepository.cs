@@ -1,7 +1,6 @@
-using BauDoku.Sync.Application.Queries.Dtos;
 using BauDoku.Sync.Domain;
 
-namespace BauDoku.Sync.Application.Contracts;
+namespace BauDoku.Sync.Application.ReadModel;
 
 public interface ISyncBatchReadRepository
 {

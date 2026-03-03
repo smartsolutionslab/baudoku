@@ -3,7 +3,7 @@ using BauDoku.BuildingBlocks.Application.Persistence;
 using BauDoku.Sync.Application.Contracts;
 using BauDoku.Sync.Application.Diagnostics;
 using BauDoku.Sync.Application.Mapping;
-using BauDoku.Sync.Application.Queries.Dtos;
+using BauDoku.Sync.Application.ReadModel;
 using BauDoku.Sync.Domain;
 
 namespace BauDoku.Sync.Application.Commands.Handlers;

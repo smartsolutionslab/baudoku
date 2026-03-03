@@ -20,12 +20,12 @@ public sealed class TestAuthHandler(IOptionsMonitor<AuthenticationSchemeOptions>
         if (!IsAuthenticated)
             return Task.FromResult(AuthenticateResult.NoResult());
 
-        var claims = new List<Claim>
-        {
+        List<Claim> claims =
+        [
             new(ClaimTypes.NameIdentifier, "test-user-id"),
             new(ClaimTypes.Name, "Test User"),
-            new(ClaimTypes.Email, "test@example.com"),
-        };
+            new(ClaimTypes.Email, "test@example.com")
+        ];
 
         foreach (var role in Roles)
         {
