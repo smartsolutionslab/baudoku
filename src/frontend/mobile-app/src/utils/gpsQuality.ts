@@ -1,6 +1,5 @@
 import {
   calculateGpsQuality as _calculateGpsQuality,
-  GPS_SOURCE_LABELS,
   GPS_CORRECTION_SERVICE_LABELS,
   RTK_FIX_STATUS_LABELS,
 } from '@baudoku/documentation';
@@ -13,8 +12,12 @@ export {
   RTK_FIX_STATUS_LABELS,
 } from '@baudoku/documentation';
 
-// Re-export label maps under old names for backward compat
-export const gpsSourceLabels = GPS_SOURCE_LABELS as Record<string, string>;
+// Mobile uses full-length labels (shared package has abbreviated "Ext." forms)
+export const gpsSourceLabels: Record<string, string> = {
+  internal_gps: 'Internes GPS',
+  external_dgnss: 'Externes DGNSS',
+  external_rtk: 'Externes RTK',
+};
 export const corrServiceLabels = GPS_CORRECTION_SERVICE_LABELS;
 export const rtkLabels = RTK_FIX_STATUS_LABELS;
 
