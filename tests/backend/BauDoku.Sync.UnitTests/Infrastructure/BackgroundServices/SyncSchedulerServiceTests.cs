@@ -66,9 +66,7 @@ public sealed class SyncSchedulerServiceTests
 
         var saveChangesCalled = new TaskCompletionSource<bool>();
         syncBatches.GetPendingBatchesAsync(Arg.Any<int>(), Arg.Any<CancellationToken>())
-            .Returns(
-                new List<SyncBatch> { batch },
-                new List<SyncBatch>());
+            .Returns([batch],[]);
         unitOfWork.When(u => u.SaveChangesAsync(Arg.Any<CancellationToken>()))
             .Do(_ => saveChangesCalled.TrySetResult(true));
 
