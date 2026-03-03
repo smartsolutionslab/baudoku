@@ -12,7 +12,7 @@ public sealed class InstallationRepository(IDocumentSession session) : IInstalla
 
         if (events.Count == 0) throw new KeyNotFoundException($"Installation mit ID '{id.Value}' wurde nicht gefunden.");
 
-        var domainEvents = events.Select(e => e.Data).OfType<IDomainEvent>().ToList();
+        var domainEvents = events.Select(@event => @event.Data).OfType<IDomainEvent>().ToList();
 
         var installation = new Installation();
         installation.LoadFromHistory(domainEvents, events[^1].Version);

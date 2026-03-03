@@ -8,7 +8,7 @@ namespace BauDoku.Documentation.Infrastructure.Persistence;
 
 public sealed class MartenEventPublisher(IServiceScopeFactory scopeFactory) : DocumentSessionListenerBase
 {
-    public override async Task AfterCommitAsync(IDocumentSession session, IChangeSet commit, CancellationToken token)
+    public override async Task AfterCommitAsync(IDocumentSession session, IChangeSet commit, CancellationToken cancellationToken)
     {
         var events = commit.GetEvents().ToList();
         if (events.Count == 0) return;
@@ -20,7 +20,7 @@ public sealed class MartenEventPublisher(IServiceScopeFactory scopeFactory) : Do
         {
             if (@event.Data is IDomainEvent domainEvent)
             {
-                await dispatcher.Publish(domainEvent, token);
+                await dispatcher.Publish(domainEvent, cancellationToken);
             }
         }
     }

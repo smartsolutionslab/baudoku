@@ -39,13 +39,13 @@ public sealed class SyncSchedulerService(
         logger.LogInformation("SyncScheduler beendet");
     }
 
-    private async Task ProcessPendingBatchesAsync(CancellationToken ct)
+    private async Task ProcessPendingBatchesAsync(CancellationToken cancellationToken)
     {
         await using var scope = scopeFactory.CreateAsyncScope();
         var syncBatches = scope.ServiceProvider.GetRequiredService<ISyncBatchRepository>();
         var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
 
-        var pendingBatches = await syncBatches.GetPendingBatchesAsync(limit: syncOptions.Value.PendingBatchLimit, ct);
+        var pendingBatches = await syncBatches.GetPendingBatchesAsync(limit: syncOptions.Value.PendingBatchLimit, cancellationToken);
 
         if (pendingBatches.Count == 0)
             return;
@@ -69,6 +69,6 @@ public sealed class SyncSchedulerService(
             }
         }
 
-        await unitOfWork.SaveChangesAsync(ct);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
     }
 }

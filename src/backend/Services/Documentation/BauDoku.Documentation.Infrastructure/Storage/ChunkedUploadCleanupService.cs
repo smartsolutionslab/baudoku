@@ -24,7 +24,7 @@ public sealed class ChunkedUploadCleanupService(IOptions<PhotoStorageOptions> op
         }
     }
 
-    private async Task CleanupExpiredSessionsAsync(CancellationToken ct)
+    private async Task CleanupExpiredSessionsAsync(CancellationToken cancellationToken)
     {
         var sessionDirs = storage.GetSubdirectories();
         var cleaned = 0;
@@ -43,7 +43,7 @@ public sealed class ChunkedUploadCleanupService(IOptions<PhotoStorageOptions> op
 
             try
             {
-                var session = await storage.ReadJsonAsync<ChunkedUploadSession>(metadataPath, ct);
+                var session = await storage.ReadJsonAsync<ChunkedUploadSession>(metadataPath, cancellationToken);
                 if (session is null || DateTime.UtcNow - session.CreatedAt > maxAge)
                 {
                     TryDeleteDirectory(sessionName);

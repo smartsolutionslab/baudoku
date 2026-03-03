@@ -7,8 +7,8 @@ namespace BauDoku.Projects.Infrastructure.Services;
 
 public sealed class ProjectCountProvider(ProjectsDbContext dbContext) : IProjectCountProvider
 {
-    public async Task<int> GetActiveCountAsync(CancellationToken ct = default)
+    public async Task<int> GetActiveCountAsync(CancellationToken cancellationToken = default)
     {
-        return await dbContext.Projects.Where(p => p.Status == ProjectStatus.Active).CountAsync(ct);
+        return await dbContext.Projects.Where(p => p.Status == ProjectStatus.Active).CountAsync(cancellationToken);
     }
 }

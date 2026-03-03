@@ -1,7 +1,3 @@
-using BauDoku.BuildingBlocks.Application.Commands;
-using BauDoku.BuildingBlocks.Application.Dispatcher;
-using BauDoku.BuildingBlocks.Application.Queries;
-using BauDoku.BuildingBlocks.Domain;
 using BauDoku.Documentation.Infrastructure.Persistence;
 using BauDoku.Documentation.Infrastructure.ReadModel;
 using BauDoku.Projects.Infrastructure.Persistence;
@@ -15,8 +11,6 @@ using Serilog;
 
 var builder = Host.CreateApplicationBuilder(args);
 builder.AddServiceDefaults();
-
-builder.Services.AddSingleton<IDispatcher, NoOpDispatcher>();
 
 var projectsCs = builder.Configuration.GetRequiredConnectionString(ConnectionStringNames.ProjectsDb);
 var documentationCs = builder.Configuration.GetRequiredConnectionString(ConnectionStringNames.DocumentationDb);
@@ -80,19 +74,4 @@ static async Task MigrateMartenAsync(IHost host)
     Log.Information("Documentation EventStore: Applying Marten schema changes...");
     await store.Storage.ApplyAllConfiguredChangesToDatabaseAsync();
     Log.Information("Documentation EventStore: Schema changes applied successfully");
-}
-
-sealed class NoOpDispatcher : IDispatcher
-{
-    public Task<TResult> Send<TResult>(ICommand<TResult> command, CancellationToken cancellationToken = default)
-        => throw new NotSupportedException("Dispatcher is not available in migration runner.");
-
-    public Task Send(ICommand command, CancellationToken cancellationToken = default)
-        => Task.CompletedTask;
-
-    public Task<TResult> Query<TResult>(IQuery<TResult> query, CancellationToken cancellationToken = default)
-        => throw new NotSupportedException("Dispatcher is not available in migration runner.");
-
-    public Task Publish(IDomainEvent domainEvent, CancellationToken cancellationToken = default)
-        => Task.CompletedTask;
 }

@@ -67,23 +67,23 @@ public sealed class LocalStorageDirectory
     public async Task WriteAllTextAsync(string relativePath, string content, CancellationToken cancellationToken = default)
         => await File.WriteAllTextAsync(Resolve(relativePath), content, cancellationToken);
 
-    public async Task<T?> ReadJsonAsync<T>(string relativePath, CancellationToken ct = default)
+    public async Task<T?> ReadJsonAsync<T>(string relativePath, CancellationToken cancellationToken = default)
     {
-        var json = await ReadAllTextAsync(relativePath, ct);
+        var json = await ReadAllTextAsync(relativePath, cancellationToken);
         return JsonSerializer.Deserialize<T>(json);
     }
 
-    public async Task WriteJsonAsync<T>(string relativePath, T value, CancellationToken ct = default)
+    public async Task WriteJsonAsync<T>(string relativePath, T value, CancellationToken cancellationToken = default)
     {
         var json = JsonSerializer.Serialize(value);
-        await WriteAllTextAsync(relativePath, json, ct);
+        await WriteAllTextAsync(relativePath, json, cancellationToken);
     }
 
-    public async Task WriteStreamAsync(string relativePath, Stream data, CancellationToken ct = default)
+    public async Task WriteStreamAsync(string relativePath, Stream data, CancellationToken cancellationToken = default)
     {
         var fullPath = Resolve(relativePath);
         await using var fileStream = new FileStream(fullPath, FileMode.Create, FileAccess.Write);
-        await data.CopyToAsync(fileStream, ct);
+        await data.CopyToAsync(fileStream, cancellationToken);
     }
 
     public FileStream OpenRead(string relativePath) => new(Resolve(relativePath), FileMode.Open, FileAccess.Read);

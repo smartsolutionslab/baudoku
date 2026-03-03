@@ -28,7 +28,7 @@ public sealed class InstallationReadModelProjection(IServiceScopeFactory scopeFa
         [typeof(InstallationDeleted)] = Dispatch<InstallationDeleted>(ApplyDeleted),
     }.ToFrozenDictionary();
 
-    private static EventHandler Dispatch<TEvent>(Func<ReadModelDbContext, TEvent, Task> handler) => (db, e) => handler(db, (TEvent)e);
+    private static EventHandler Dispatch<TEvent>(Func<ReadModelDbContext, TEvent, Task> handler) => (db, @event) => handler(db, (TEvent)@event);
 
     public void Apply(IDocumentOperations operations, IReadOnlyList<StreamAction> streams) => throw new NotSupportedException("Use async projection only.");
 
@@ -139,23 +139,23 @@ public sealed class InstallationReadModelProjection(IServiceScopeFactory scopeFa
         await UpdateInstallation(dbContext, @event.InstallationId.Value, i => i.PhotoCount--);
     }
 
-    private static async Task ApplyMeasurementRecorded(ReadModelDbContext dbContext, MeasurementRecorded e)
+    private static async Task ApplyMeasurementRecorded(ReadModelDbContext dbContext, MeasurementRecorded @event)
     {
         dbContext.Measurements.Add(new MeasurementReadModel
         {
-            Id = e.MeasurementId.Value,
-            InstallationId = e.InstallationId.Value,
-            Type = e.Type.Value,
-            Value = e.Value,
-            Unit = e.Unit.Value,
-            MinThreshold = e.MinThreshold,
-            MaxThreshold = e.MaxThreshold,
-            Result = e.Result.Value,
-            Notes = e.Notes?.Value,
-            MeasuredAt = e.MeasuredAt
+            Id = @event.MeasurementId.Value,
+            InstallationId = @event.InstallationId.Value,
+            Type = @event.Type.Value,
+            Value = @event.Value,
+            Unit = @event.Unit.Value,
+            MinThreshold = @event.MinThreshold,
+            MaxThreshold = @event.MaxThreshold,
+            Result = @event.Result.Value,
+            Notes = @event.Notes?.Value,
+            MeasuredAt = @event.MeasuredAt
         });
 
-        await UpdateInstallation(dbContext, e.InstallationId.Value, i => i.MeasurementCount++);
+        await UpdateInstallation(dbContext, @event.InstallationId.Value, i => i.MeasurementCount++);
     }
 
     private static async Task ApplyMeasurementRemoved(ReadModelDbContext dbContext, MeasurementRemoved @event)
