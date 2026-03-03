@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiGet, apiPost, apiPut, apiDelete } from '@baudoku/core';
+import { apiGet, apiPost } from '@baudoku/core';
 import type { PagedResult } from '@baudoku/core';
 import type {
   Installation,
@@ -9,6 +9,7 @@ import type {
   MeasurementFormData,
 } from '@baudoku/documentation';
 import { uploadPhoto } from '@baudoku/documentation';
+import { useApiQuery, useApiPost, useApiPut, useApiDelete, useApiMutation } from './useApiFactory';
 
 // ─── Installations ──────────────────────────────────────────────
 
@@ -26,80 +27,28 @@ export function useInstallations(projectId: string) {
 }
 
 export function useInstallation(installationId: string) {
-  return useQuery({
-    queryKey: ['installations', installationId],
-    queryFn: () =>
-      apiGet<Installation>(
-        `/api/documentation/installations/${installationId}`
-      ),
-    enabled: !!installationId,
-  });
+  return useApiQuery<Installation>(['installations', installationId], `/api/documentation/installations/${installationId}`, !!installationId);
 }
 
 export function useCreateInstallation(projectId: string) {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (data: InstallationFormData & { zoneId: string }) =>
-      apiPost<Installation>(
-        `/api/documentation/installations`,
-        { ...data, projectId }
-      ),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['projects', projectId, 'installations'],
-      });
-    },
+  return useApiMutation<InstallationFormData & { zoneId: string }, Installation>({
+    mutationFn: (data) => apiPost<Installation>('/api/documentation/installations', { ...data, projectId }),
+    invalidateKeys: [['projects', projectId, 'installations']],
   });
 }
 
-export function useUpdateInstallation(
-  installationId: string,
-  projectId: string
-) {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (data: InstallationFormData) =>
-      apiPut<Installation>(
-        `/api/documentation/installations/${installationId}`,
-        data
-      ),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['installations', installationId],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ['projects', projectId, 'installations'],
-      });
-    },
-  });
+export function useUpdateInstallation(installationId: string, projectId: string) {
+  return useApiPut<Installation, InstallationFormData>(`/api/documentation/installations/${installationId}`, [['installations', installationId], ['projects', projectId, 'installations']]);
 }
 
 export function useDeleteInstallation(projectId: string) {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (installationId: string) =>
-      apiDelete(
-        `/api/documentation/installations/${installationId}`
-      ),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['projects', projectId, 'installations'],
-      });
-    },
-  });
+  return useApiDelete((id) => `/api/documentation/installations/${id}`, [['projects', projectId, 'installations']]);
 }
 
 // ─── Photos ─────────────────────────────────────────────────────
 
 export function usePhotos(installationId: string) {
-  return useQuery({
-    queryKey: ['installations', installationId, 'photos'],
-    queryFn: () =>
-      apiGet<Photo[]>(
-        `/api/documentation/installations/${installationId}/photos`
-      ),
-    enabled: !!installationId,
-  });
+  return useApiQuery<Photo[]>(['installations', installationId, 'photos'], `/api/documentation/installations/${installationId}/photos`, !!installationId);
 }
 
 export function useUploadPhoto(installationId: string) {
@@ -116,60 +65,19 @@ export function useUploadPhoto(installationId: string) {
 }
 
 export function useDeletePhoto(installationId: string) {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (photoId: string) =>
-      apiDelete(
-        `/api/documentation/installations/${installationId}/photos/${photoId}`
-      ),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['installations', installationId, 'photos'],
-      });
-    },
-  });
+  return useApiDelete((photoId) => `/api/documentation/installations/${installationId}/photos/${photoId}`, [['installations', installationId, 'photos']]);
 }
 
 // ─── Measurements ───────────────────────────────────────────────
 
 export function useMeasurements(installationId: string) {
-  return useQuery({
-    queryKey: ['installations', installationId, 'measurements'],
-    queryFn: () =>
-      apiGet<Measurement[]>(
-        `/api/documentation/installations/${installationId}/measurements`
-      ),
-    enabled: !!installationId,
-  });
+  return useApiQuery<Measurement[]>(['installations', installationId, 'measurements'], `/api/documentation/installations/${installationId}/measurements`, !!installationId);
 }
 
 export function useCreateMeasurement(installationId: string) {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (data: MeasurementFormData) =>
-      apiPost<Measurement>(
-        `/api/documentation/installations/${installationId}/measurements`,
-        data
-      ),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['installations', installationId, 'measurements'],
-      });
-    },
-  });
+  return useApiPost<Measurement, MeasurementFormData>(`/api/documentation/installations/${installationId}/measurements`, [['installations', installationId, 'measurements']]);
 }
 
 export function useDeleteMeasurement(installationId: string) {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (measurementId: string) =>
-      apiDelete(
-        `/api/documentation/installations/${installationId}/measurements/${measurementId}`
-      ),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['installations', installationId, 'measurements'],
-      });
-    },
-  });
+  return useApiDelete((measurementId) => `/api/documentation/installations/${installationId}/measurements/${measurementId}`, [['installations', installationId, 'measurements']]);
 }

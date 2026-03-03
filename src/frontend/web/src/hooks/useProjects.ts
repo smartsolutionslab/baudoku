@@ -1,12 +1,8 @@
-import {
-  useInfiniteQuery,
-  useQuery,
-  useMutation,
-  useQueryClient,
-} from '@tanstack/react-query';
-import { apiGet, apiPost, apiPut, apiDelete } from '@baudoku/core';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import { apiGet } from '@baudoku/core';
 import type { PagedResult } from '@baudoku/core';
 import type { Project, Zone, ProjectFormData, ZoneFormData } from '@baudoku/projects';
+import { useApiQuery, useApiPost, useApiPut, useApiDelete } from './useApiFactory';
 
 // ─── Projects ───────────────────────────────────────────────────
 
@@ -30,78 +26,31 @@ export function useProjects(search?: string) {
 }
 
 export function useProject(projectId: string) {
-  return useQuery({
-    queryKey: ['projects', projectId],
-    queryFn: () => apiGet<Project>(`/api/projects/${projectId}`),
-    enabled: !!projectId,
-  });
+  return useApiQuery<Project>(['projects', projectId], `/api/projects/${projectId}`, !!projectId);
 }
 
 export function useCreateProject() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (data: ProjectFormData) =>
-      apiPost<Project>('/api/projects', data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['projects'] });
-    },
-  });
+  return useApiPost<Project, ProjectFormData>('/api/projects', [['projects']]);
 }
 
 export function useUpdateProject(projectId: string) {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (data: ProjectFormData) =>
-      apiPut<Project>(`/api/projects/${projectId}`, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['projects'] });
-    },
-  });
+  return useApiPut<Project, ProjectFormData>(`/api/projects/${projectId}`, [['projects']]);
 }
 
 export function useDeleteProject() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (projectId: string) =>
-      apiDelete(`/api/projects/${projectId}`),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['projects'] });
-    },
-  });
+  return useApiDelete((id) => `/api/projects/${id}`, [['projects']]);
 }
 
 // ─── Zones ──────────────────────────────────────────────────────
 
 export function useZones(projectId: string) {
-  return useQuery({
-    queryKey: ['projects', projectId, 'zones'],
-    queryFn: () => apiGet<Zone[]>(`/api/projects/${projectId}/zones`),
-    enabled: !!projectId,
-  });
+  return useApiQuery<Zone[]>(['projects', projectId, 'zones'], `/api/projects/${projectId}/zones`, !!projectId);
 }
 
 export function useCreateZone(projectId: string) {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (data: ZoneFormData) =>
-      apiPost<Zone>(`/api/projects/${projectId}/zones`, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['projects', projectId, 'zones'],
-      });
-    },
-  });
+  return useApiPost<Zone, ZoneFormData>(`/api/projects/${projectId}/zones`, [['projects', projectId, 'zones']]);
 }
 
 export function useDeleteZone(projectId: string) {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (zoneId: string) =>
-      apiDelete(`/api/projects/${projectId}/zones/${zoneId}`),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['projects', projectId, 'zones'],
-      });
-    },
-  });
+  return useApiDelete((zoneId) => `/api/projects/${projectId}/zones/${zoneId}`, [['projects', projectId, 'zones']]);
 }
