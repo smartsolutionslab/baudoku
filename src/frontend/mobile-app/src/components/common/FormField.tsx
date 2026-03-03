@@ -5,20 +5,24 @@ type FormFieldProps = TextInputProps & {
   label: string;
   error?: string;
   required?: boolean;
+  suffix?: string;
 };
 
-export function FormField({ label, error, required, style, ...props }: FormFieldProps) {
+export function FormField({ label, error, required, suffix, style, ...props }: FormFieldProps) {
   return (
     <View style={styles.container}>
       <Text style={styles.label}>
         {label}
         {required && <Text style={styles.required}> *</Text>}
       </Text>
-      <TextInput
-        style={[styles.input, error && styles.inputError, style]}
-        placeholderTextColor={Colors.textTertiary}
-        {...props}
-      />
+      <View style={styles.inputWrapper}>
+        <TextInput
+          style={[styles.input, suffix && styles.inputWithSuffix, error && styles.inputError, style]}
+          placeholderTextColor={Colors.textTertiary}
+          {...props}
+        />
+        {suffix && <Text style={styles.suffix}>{suffix}</Text>}
+      </View>
       {error ? <Text style={styles.error}>{error}</Text> : null}
     </View>
   );
@@ -37,6 +41,10 @@ const styles = StyleSheet.create({
   required: {
     color: Colors.danger,
   },
+  inputWrapper: {
+    position: 'relative' as const,
+    justifyContent: 'center' as const,
+  },
   input: {
     backgroundColor: Colors.card,
     borderRadius: Radius.md,
@@ -47,8 +55,17 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.separator,
   },
+  inputWithSuffix: {
+    paddingRight: Spacing.md + 40,
+  },
   inputError: {
     borderColor: Colors.danger,
+  },
+  suffix: {
+    position: 'absolute' as const,
+    right: Spacing.md,
+    fontSize: FontSize.body,
+    color: Colors.textTertiary,
   },
   error: {
     fontSize: FontSize.footnote,

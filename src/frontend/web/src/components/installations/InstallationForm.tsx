@@ -124,18 +124,20 @@ export function InstallationForm({
             placeholder='z.B. NYM-J'
           />
           <FormField
-            label='Querschnitt (mm²)'
+            label='Querschnitt'
             error={errors.crossSectionMm2}
             register={register('crossSectionMm2')}
             type='number'
             step='0.1'
+            suffix='mm²'
           />
           <FormField
-            label='Länge (m)'
+            label='Länge'
             error={errors.lengthM}
             register={register('lengthM')}
             type='number'
             step='0.1'
+            suffix='m'
           />
           <FormField
             label='Stromkreis-ID'
@@ -148,16 +150,18 @@ export function InstallationForm({
             register={register('fuseType')}
           />
           <FormField
-            label='Nennstrom (A)'
+            label='Nennstrom'
             error={errors.fuseRatingA}
             register={register('fuseRatingA')}
             type='number'
+            suffix='A'
           />
           <FormField
-            label='Spannung (V)'
+            label='Spannung'
             error={errors.voltageV}
             register={register('voltageV')}
             type='number'
+            suffix='V'
           />
           <FormSelect
             label='Phase'
@@ -167,10 +171,11 @@ export function InstallationForm({
             placeholder='—'
           />
           <FormField
-            label='Tiefe (mm)'
+            label='Tiefe'
             error={errors.depthMm}
             register={register('depthMm')}
             type='number'
+            suffix='mm'
           />
         </div>
       </div>

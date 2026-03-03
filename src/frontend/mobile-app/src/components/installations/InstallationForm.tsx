@@ -84,18 +84,20 @@ export function InstallationForm({ onSubmit, submitting, initialValues, initialG
           placeholder='z.B. NYY-J 5x16'
         />
         <FormField
-          label='Querschnitt (mm\u00B2)'
+          label='Querschnitt'
           value={str('crossSectionMm2')}
           onChangeText={(v) => set('crossSectionMm2', v)}
           keyboardType='decimal-pad'
           placeholder='16'
+          suffix='mm²'
         />
         <FormField
-          label='L\u00E4nge (m)'
+          label='Länge'
           value={str('lengthM')}
           onChangeText={(v) => set('lengthM', v)}
           keyboardType='decimal-pad'
           placeholder='25'
+          suffix='m'
         />
       </CollapsibleSection>
 
@@ -113,18 +115,20 @@ export function InstallationForm({ onSubmit, submitting, initialValues, initialG
           placeholder='B16'
         />
         <FormField
-          label='Nennstrom (A)'
+          label='Nennstrom'
           value={str('fuseRatingA')}
           onChangeText={(v) => set('fuseRatingA', v)}
           keyboardType='decimal-pad'
           placeholder='16'
+          suffix='A'
         />
         <FormField
-          label='Spannung (V)'
+          label='Spannung'
           value={str('voltageV')}
           onChangeText={(v) => set('voltageV', v)}
           keyboardType='numeric'
           placeholder='230'
+          suffix='V'
         />
         <FormPicker
           label='Phase'
@@ -137,11 +141,12 @@ export function InstallationForm({ onSubmit, submitting, initialValues, initialG
 
       <Text style={styles.sectionTitle}>Weitere Angaben</Text>
       <FormField
-        label='Verlegetiefe (mm)'
+        label='Verlegetiefe'
         value={str('depthMm')}
         onChangeText={(v) => set('depthMm', v)}
         keyboardType='numeric'
         placeholder='600'
+        suffix='mm'
       />
       <FormField
         label='Notizen'
