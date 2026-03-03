@@ -1,7 +1,7 @@
-import { useCallback } from "react";
-import { useSyncContext } from "../providers/SyncProvider";
-import { useSyncStore, useToastStore } from "../store";
-import type { SyncResult } from "../sync/SyncManager";
+import { useCallback } from 'react';
+import { useSyncContext } from '../providers/SyncProvider';
+import { useSyncStore, useToastStore } from '../store';
+import type { SyncResult } from '../sync/SyncManager';
 
 export function useSyncManager() {
   const { syncManager, syncScheduler } = useSyncContext();
@@ -26,15 +26,15 @@ export function useSyncManager() {
       const total = result.pushed + result.pulled;
       if (total > 0) {
         useToastStore.getState().show(
-          `${total} Änderung${total !== 1 ? "en" : ""} synchronisiert`,
-          "success",
+          `${total} Änderung${total !== 1 ? 'en' : ''} synchronisiert`,
+          'success',
         );
       }
       return result;
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Unbekannter Fehler";
+      const message = error instanceof Error ? error.message : 'Unbekannter Fehler';
       setSyncError(message);
-      useToastStore.getState().show(`Sync fehlgeschlagen: ${message}`, "error");
+      useToastStore.getState().show(`Sync fehlgeschlagen: ${message}`, 'error');
       return null;
     }
   }, [syncManager, startSync, setSyncResult, setSyncError, loadSyncStatus, loadPendingEntries]);
@@ -43,28 +43,30 @@ export function useSyncManager() {
     startSync();
     try {
       const result = await syncManager.push();
+      setSyncResult({ pushed: result.appliedCount, pulled: 0, conflicts: result.conflictCount, errors: result.errors });
       void loadSyncStatus();
       void loadPendingEntries();
       return result;
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Unbekannter Fehler";
+      const message = error instanceof Error ? error.message : 'Unbekannter Fehler';
       setSyncError(message);
       return null;
     }
-  }, [syncManager, startSync, setSyncError, loadSyncStatus, loadPendingEntries]);
+  }, [syncManager, startSync, setSyncResult, setSyncError, loadSyncStatus, loadPendingEntries]);
 
   const pull = useCallback(async () => {
     startSync();
     try {
       const result = await syncManager.pull();
+      setSyncResult({ pushed: 0, pulled: result.pulled, conflicts: 0, errors: result.errors });
       void loadSyncStatus();
       return result;
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Unbekannter Fehler";
+      const message = error instanceof Error ? error.message : 'Unbekannter Fehler';
       setSyncError(message);
       return null;
     }
-  }, [syncManager, startSync, setSyncError, loadSyncStatus]);
+  }, [syncManager, startSync, setSyncResult, setSyncError, loadSyncStatus]);
 
   const triggerNow = useCallback(() => {
     void syncScheduler?.triggerNow();

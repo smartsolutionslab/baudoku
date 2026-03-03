@@ -1,10 +1,10 @@
-import { useState, useCallback } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Alert, ScrollView } from "react-native";
-import { FormField } from "../common";
-import { Button, Headline } from "../core";
-import { MEASUREMENT_TYPES, type MeasurementTypePreset } from "../../constants";
-import { measurementSchema, type MeasurementFormData } from "../../validation/schemas";
-import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
+import { useState, useCallback } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Alert, ScrollView } from 'react-native';
+import { FormField } from '../common';
+import { Button, Headline } from '../core';
+import { MEASUREMENT_TYPES, type MeasurementTypePreset } from '../../constants';
+import { measurementSchema, type MeasurementFormData } from '../../validation/schemas';
+import { Colors, Spacing, FontSize, Radius } from '../../styles/tokens';
 
 type MeasurementFormProps = {
   onSubmit: (data: MeasurementFormData) => Promise<void>;
@@ -14,7 +14,7 @@ type MeasurementFormProps = {
 
 export function MeasurementForm({ onSubmit, onCancel, submitting }: MeasurementFormProps) {
   const [form, setForm] = useState<Record<string, string>>({
-    measuredBy: "local-user",
+    measuredBy: 'local-user',
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -33,8 +33,8 @@ export function MeasurementForm({ onSubmit, onCancel, submitting }: MeasurementF
       ...prev,
       type: preset.type,
       unit: preset.unit,
-      minThreshold: preset.minThreshold != null ? String(preset.minThreshold) : "",
-      maxThreshold: preset.maxThreshold != null ? String(preset.maxThreshold) : "",
+      minThreshold: preset.minThreshold != null ? String(preset.minThreshold) : '',
+      maxThreshold: preset.maxThreshold != null ? String(preset.maxThreshold) : '',
     }));
     setShowSuggestions(false);
     setErrors({});
@@ -42,14 +42,14 @@ export function MeasurementForm({ onSubmit, onCancel, submitting }: MeasurementF
 
   const filteredSuggestions = form.type
     ? MEASUREMENT_TYPES.filter((mt) =>
-        mt.type.toLowerCase().includes((form.type ?? "").toLowerCase())
+        mt.type.toLowerCase().includes((form.type ?? '').toLowerCase())
       )
     : MEASUREMENT_TYPES;
 
   const handleSubmit = useCallback(async () => {
     const cleaned: Record<string, unknown> = {};
     for (const [k, v] of Object.entries(form)) {
-      if (v.trim() === "") continue;
+      if (v.trim() === '') continue;
       cleaned[k] = v;
     }
 
@@ -68,7 +68,7 @@ export function MeasurementForm({ onSubmit, onCancel, submitting }: MeasurementF
     try {
       await onSubmit(result.data);
     } catch {
-      Alert.alert("Fehler", "Messung konnte nicht gespeichert werden.");
+      Alert.alert('Fehler', 'Messung konnte nicht gespeichert werden.');
     }
   }, [form, onSubmit]);
 
@@ -78,16 +78,16 @@ export function MeasurementForm({ onSubmit, onCancel, submitting }: MeasurementF
 
       <View>
         <FormField
-          label="Messtyp"
+          label='Messtyp'
           required
-          value={form.type ?? ""}
+          value={form.type ?? ''}
           onChangeText={(v) => {
-            set("type", v);
+            set('type', v);
             setShowSuggestions(true);
           }}
           onFocus={() => setShowSuggestions(true)}
           error={errors.type}
-          placeholder="z.B. Isolationswiderstand"
+          placeholder='z.B. Isolationswiderstand'
         />
         {showSuggestions && filteredSuggestions.length > 0 && (
           <ScrollView horizontal style={styles.suggestions} showsHorizontalScrollIndicator={false}>
@@ -103,23 +103,23 @@ export function MeasurementForm({ onSubmit, onCancel, submitting }: MeasurementF
       <View style={styles.row}>
         <View style={styles.flex2}>
           <FormField
-            label="Messwert"
+            label='Messwert'
             required
-            value={form.value ?? ""}
-            onChangeText={(v) => set("value", v)}
+            value={form.value ?? ''}
+            onChangeText={(v) => set('value', v)}
             error={errors.value}
-            keyboardType="decimal-pad"
-            placeholder="0.00"
+            keyboardType='decimal-pad'
+            placeholder='0.00'
           />
         </View>
         <View style={styles.flex1}>
           <FormField
-            label="Einheit"
+            label='Einheit'
             required
-            value={form.unit ?? ""}
-            onChangeText={(v) => set("unit", v)}
+            value={form.unit ?? ''}
+            onChangeText={(v) => set('unit', v)}
             error={errors.unit}
-            placeholder="Ω"
+            placeholder='Ω'
           />
         </View>
       </View>
@@ -127,48 +127,48 @@ export function MeasurementForm({ onSubmit, onCancel, submitting }: MeasurementF
       <View style={styles.row}>
         <View style={styles.flex1}>
           <FormField
-            label="Min-Schwelle"
-            value={form.minThreshold ?? ""}
-            onChangeText={(v) => set("minThreshold", v)}
-            keyboardType="decimal-pad"
-            placeholder="—"
+            label='Min-Schwelle'
+            value={form.minThreshold ?? ''}
+            onChangeText={(v) => set('minThreshold', v)}
+            keyboardType='decimal-pad'
+            placeholder='—'
           />
         </View>
         <View style={styles.flex1}>
           <FormField
-            label="Max-Schwelle"
-            value={form.maxThreshold ?? ""}
-            onChangeText={(v) => set("maxThreshold", v)}
-            keyboardType="decimal-pad"
-            placeholder="—"
+            label='Max-Schwelle'
+            value={form.maxThreshold ?? ''}
+            onChangeText={(v) => set('maxThreshold', v)}
+            keyboardType='decimal-pad'
+            placeholder='—'
           />
         </View>
       </View>
 
       <FormField
-        label="Notizen"
-        value={form.notes ?? ""}
-        onChangeText={(v) => set("notes", v)}
-        placeholder="Optionale Anmerkungen"
+        label='Notizen'
+        value={form.notes ?? ''}
+        onChangeText={(v) => set('notes', v)}
+        placeholder='Optionale Anmerkungen'
       />
       <FormField
-        label="Prüfer"
+        label='Prüfer'
         required
-        value={form.measuredBy ?? ""}
-        onChangeText={(v) => set("measuredBy", v)}
+        value={form.measuredBy ?? ''}
+        onChangeText={(v) => set('measuredBy', v)}
         error={errors.measuredBy}
-        placeholder="Name"
+        placeholder='Name'
       />
 
       <View style={styles.actions}>
         <Button
-          title="Abbrechen"
-          variant="secondary"
+          title='Abbrechen'
+          variant='secondary'
           onPress={onCancel}
           style={styles.actionButton}
         />
         <Button
-          title="Speichern"
+          title='Speichern'
           onPress={() => void handleSubmit()}
           loading={submitting}
           style={styles.actionButton}
@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
     color: Colors.primary,
   },
   row: {
-    flexDirection: "row",
+    flexDirection: 'row',
     gap: Spacing.sm,
   },
   flex1: {
@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
     flex: 2,
   },
   actions: {
-    flexDirection: "row",
+    flexDirection: 'row',
     gap: Spacing.sm,
     marginTop: Spacing.md,
   },

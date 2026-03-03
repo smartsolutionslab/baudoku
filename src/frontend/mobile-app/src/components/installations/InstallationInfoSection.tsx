@@ -1,8 +1,8 @@
-import { View, Text, StyleSheet } from "react-native";
-import { StatusBadge } from "@/components/common";
-import { InstallationDetails } from "./InstallationDetails";
-import { Colors, Spacing, FontSize, Radius } from "@/styles/tokens";
-import type { Installation } from "@/db/repositories/types";
+import { View, Text, StyleSheet } from 'react-native';
+import { StatusBadge } from '@/components/common';
+import { InstallationDetails } from './InstallationDetails';
+import { Colors, Spacing, FontSize, Radius } from '@/styles/tokens';
+import type { Installation } from '@/db/repositories/types';
 
 type InstallationInfoSectionProps = {
   installation: Installation;
@@ -11,7 +11,7 @@ type InstallationInfoSectionProps = {
 export function InstallationInfoSection({ installation }: InstallationInfoSectionProps) {
   const subtitle = [installation.manufacturer, installation.model]
     .filter(Boolean)
-    .join(" — ");
+    .join(' — ');
 
   return (
     <>
@@ -48,14 +48,14 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
   },
   headerRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: Spacing.xs,
   },
   type: {
     fontSize: FontSize.title,
-    fontWeight: "700",
+    fontWeight: '700',
     color: Colors.textPrimary,
     flex: 1,
     marginRight: Spacing.sm,

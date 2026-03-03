@@ -1,4 +1,4 @@
-export interface Project {
+export type Project = {
   id: string;
   name: string;
   street: string | null;
@@ -13,11 +13,11 @@ export interface Project {
   createdAt: string;
   updatedAt: string;
   version: number;
-}
+};
 
-export type ProjectStatus = "active" | "completed" | "archived";
+export type ProjectStatus = 'active' | 'completed' | 'archived';
 
-export interface Zone {
+export type Zone = {
   id: string;
   projectId: string;
   parentZoneId: string | null;
@@ -26,6 +26,6 @@ export interface Zone {
   qrCode: string | null;
   sortOrder: number | null;
   version: number;
-}
+};
 
-export type ZoneType = "building" | "floor" | "room" | "trench";
+export type ZoneType = 'building' | 'floor' | 'room' | 'trench';

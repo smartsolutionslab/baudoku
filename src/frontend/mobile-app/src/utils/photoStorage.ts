@@ -1,7 +1,7 @@
-import { Paths, Directory, File } from "expo-file-system";
-import { generateId } from "./uuid";
+import { Paths, Directory, File } from 'expo-file-system';
+import { generateId } from './uuid';
 
-const PHOTO_DIR = new Directory(Paths.document, "photos");
+const PHOTO_DIR = new Directory(Paths.document, 'photos');
 
 export function ensurePhotoDir(): void {
   if (!PHOTO_DIR.exists) {

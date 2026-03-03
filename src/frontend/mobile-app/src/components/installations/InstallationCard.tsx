@@ -1,8 +1,8 @@
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import type { Installation } from "../../db/repositories/types";
-import { StatusBadge } from "../common";
-import { calculateGpsQuality, formatDate } from "../../utils";
-import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import type { Installation } from '../../db/repositories/types';
+import { StatusBadge } from '../common';
+import { calculateGpsQuality, formatDate } from '../../utils';
+import { Colors, Spacing, FontSize, Radius } from '../../styles/tokens';
 
 type InstallationCardProps = {
   installation: Installation;
@@ -12,7 +12,7 @@ type InstallationCardProps = {
 export function InstallationCard({ installation, onPress }: InstallationCardProps) {
   const subtitle = [installation.manufacturer, installation.model]
     .filter(Boolean)
-    .join(" — ");
+    .join(' — ');
 
   const gpsQuality = installation.gpsAccuracy != null
       ? calculateGpsQuality({
@@ -54,14 +54,14 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
   },
   header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 2,
   },
   type: {
     fontSize: FontSize.callout,
-    fontWeight: "600",
+    fontWeight: '600',
     color: Colors.textPrimary,
     flex: 1,
     marginRight: Spacing.sm,
@@ -70,14 +70,14 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 5,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     marginRight: Spacing.xs,
   },
   gpsBadgeText: {
     color: Colors.white,
     fontSize: 10,
-    fontWeight: "700",
+    fontWeight: '700',
   },
   subtitle: {
     fontSize: FontSize.caption,

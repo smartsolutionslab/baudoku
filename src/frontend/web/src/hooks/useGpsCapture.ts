@@ -1,19 +1,19 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback } from 'react';
 
-interface GpsPosition {
+type GpsPosition = {
   latitude: number;
   longitude: number;
   altitude: number | null;
   accuracy: number;
-}
+};
 
-interface UseGpsCaptureResult {
+type UseGpsCaptureResult = {
   position: GpsPosition | null;
   loading: boolean;
   error: string | null;
   capture: () => void;
   clear: () => void;
-}
+};
 
 export function useGpsCapture(): UseGpsCaptureResult {
   const [position, setPosition] = useState<GpsPosition | null>(null);
@@ -22,7 +22,7 @@ export function useGpsCapture(): UseGpsCaptureResult {
 
   const capture = useCallback(() => {
     if (!navigator.geolocation) {
-      setError("GPS wird von diesem Browser nicht unterstützt.");
+      setError('GPS wird von diesem Browser nicht unterstützt.');
       return;
     }
 
@@ -41,11 +41,11 @@ export function useGpsCapture(): UseGpsCaptureResult {
       },
       (err) => {
         const messages: Record<number, string> = {
-          1: "GPS-Zugriff verweigert. Bitte erlauben Sie den Standortzugriff.",
-          2: "GPS-Position konnte nicht ermittelt werden.",
-          3: "GPS-Anfrage hat zu lange gedauert.",
+          1: 'GPS-Zugriff verweigert. Bitte erlauben Sie den Standortzugriff.',
+          2: 'GPS-Position konnte nicht ermittelt werden.',
+          3: 'GPS-Anfrage hat zu lange gedauert.',
         };
-        setError(messages[err.code] ?? "Unbekannter GPS-Fehler.");
+        setError(messages[err.code] ?? 'Unbekannter GPS-Fehler.');
         setLoading(false);
       },
       { enableHighAccuracy: true, timeout: 15_000, maximumAge: 0 }

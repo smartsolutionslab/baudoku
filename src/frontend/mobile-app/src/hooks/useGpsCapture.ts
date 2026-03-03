@@ -1,11 +1,11 @@
-import { useState, useCallback } from "react";
-import { Platform } from "react-native";
-import * as Location from "expo-location";
-import { useSettingsStore } from "../store";
+import { useState, useCallback } from 'react';
+import { Platform } from 'react-native';
+import * as Location from 'expo-location';
+import { useSettingsStore } from '../store';
 
-export type GpsSource = "internal_gps" | "external_dgnss" | "external_rtk";
-export type GpsCorrService = "none" | "sapos_eps" | "sapos_heps" | "sapos_gpps";
-export type GpsRtkStatus = "no_fix" | "autonomous" | "dgps" | "rtk_float" | "rtk_fixed";
+export type GpsSource = 'internal_gps' | 'external_dgnss' | 'external_rtk';
+export type GpsCorrService = 'none' | 'sapos_eps' | 'sapos_heps' | 'sapos_gpps';
+export type GpsRtkStatus = 'no_fix' | 'autonomous' | 'dgps' | 'rtk_float' | 'rtk_fixed';
 
 export type CapturedGpsPosition = {
   latitude: number;
@@ -44,8 +44,8 @@ export function useGpsCapture(): UseGpsCaptureReturn {
 
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        setError("Standort-Berechtigung wurde verweigert.");
+      if (status !== 'granted') {
+        setError('Standort-Berechtigung wurde verweigert.');
         setCapturing(false);
         return null;
       }
@@ -55,11 +55,11 @@ export function useGpsCapture(): UseGpsCaptureReturn {
       });
 
       const isMocked =
-        Platform.OS === "android" &&
+        Platform.OS === 'android' &&
         (location as unknown as { mocked?: boolean }).mocked === true;
 
       if (isMocked && !allowMockLocation) {
-        setError("Externes GPS ist in den Einstellungen deaktiviert.");
+        setError('Externes GPS ist in den Einstellungen deaktiviert.');
         setCapturing(false);
         return null;
       }
@@ -69,9 +69,9 @@ export function useGpsCapture(): UseGpsCaptureReturn {
         longitude: location.coords.longitude,
         altitude: location.coords.altitude,
         horizontalAccuracy: location.coords.accuracy ?? 0,
-        gpsSource: isMocked ? "external_dgnss" : "internal_gps",
-        correctionService: isMocked ? "sapos_eps" : "none",
-        rtkFixStatus: isMocked ? "dgps" : "autonomous",
+        gpsSource: isMocked ? 'external_dgnss' : 'internal_gps',
+        correctionService: isMocked ? 'sapos_eps' : 'none',
+        rtkFixStatus: isMocked ? 'dgps' : 'autonomous',
         satelliteCount: null,
         hdop: null,
         correctionAge: null,
@@ -83,7 +83,7 @@ export function useGpsCapture(): UseGpsCaptureReturn {
       return gps;
     } catch (e) {
       const msg =
-        e instanceof Error ? e.message : "GPS-Position konnte nicht erfasst werden.";
+        e instanceof Error ? e.message : 'GPS-Position konnte nicht erfasst werden.';
       setError(msg);
       setCapturing(false);
       return null;

@@ -1,6 +1,6 @@
-import type { ProjectId, ZoneId } from "../types/branded";
+import type { ProjectId, ZoneId } from '../types/branded';
 
-const QR_PREFIX = "baudoku://zone/";
+const QR_PREFIX = 'baudoku://zone/';
 
 export function encodeZoneQr(projectId: ProjectId, zoneId: ZoneId): string {
   return `${QR_PREFIX}${projectId}/${zoneId}`;
@@ -15,7 +15,7 @@ export function decodeZoneQr(data: string): DecodedZoneQr | null {
   if (!data.startsWith(QR_PREFIX)) return null;
 
   const rest = data.slice(QR_PREFIX.length);
-  const parts = rest.split("/");
+  const parts = rest.split('/');
   if (parts.length !== 2) return null;
 
   const [projectId, zoneId] = parts;

@@ -1,5 +1,5 @@
-import { View, Text, TextInput, StyleSheet, type TextInputProps } from "react-native";
-import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
+import { View, Text, TextInput, StyleSheet, type TextInputProps } from 'react-native';
+import { Colors, Spacing, FontSize, Radius } from '../../styles/tokens';
 
 type FormFieldProps = TextInputProps & {
   label: string;
@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: FontSize.caption,
-    fontWeight: "600",
+    fontWeight: '600',
     color: Colors.textSecondary,
     marginBottom: Spacing.xs,
   },

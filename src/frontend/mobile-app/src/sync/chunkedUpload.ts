@@ -1,5 +1,5 @@
-import { File } from "expo-file-system";
-import { initChunkedUpload, uploadChunk, completeChunkedUpload } from "./syncApi";
+import { File } from 'expo-file-system';
+import { initChunkedUpload, uploadChunk, completeChunkedUpload } from './syncApi';
 
 export const CHUNK_SIZE_BYTES = 1_048_576; // 1 MB
 

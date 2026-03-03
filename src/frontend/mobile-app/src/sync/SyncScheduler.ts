@@ -1,5 +1,5 @@
-import { SyncManager } from "./SyncManager";
-import type { SyncResult } from "./SyncManager";
+import { SyncManager } from './SyncManager';
+import type { SyncResult } from './SyncManager';
 
 const DEFAULT_INTERVAL_MS = 60_000;
 

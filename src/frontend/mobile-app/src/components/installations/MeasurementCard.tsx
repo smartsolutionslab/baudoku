@@ -1,9 +1,9 @@
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { FontAwesome } from "@expo/vector-icons";
-import type { Measurement } from "../../db/repositories/types";
-import { StatusBadge } from "../common";
-import { Card, Body, Caption } from "../core";
-import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { FontAwesome } from '@expo/vector-icons';
+import type { Measurement } from '../../db/repositories/types';
+import { StatusBadge } from '../common';
+import { Card, Body, Caption } from '../core';
+import { Colors, Spacing, FontSize, Radius } from '../../styles/tokens';
 
 type MeasurementCardProps = {
   measurement: Measurement;
@@ -19,7 +19,7 @@ export function MeasurementCard({ measurement, onDelete }: MeasurementCardProps)
           m.maxThreshold != null ? `Max: ${m.maxThreshold}` : null,
         ]
           .filter(Boolean)
-          .join(" / ")
+          .join(' / ')
       : null;
 
   return (
@@ -30,7 +30,7 @@ export function MeasurementCard({ measurement, onDelete }: MeasurementCardProps)
           {m.result && <StatusBadge status={m.result} />}
           {onDelete && (
             <TouchableOpacity style={styles.deleteButton} onPress={() => onDelete(m)}>
-              <FontAwesome name="trash-o" size={16} color={Colors.danger} />
+              <FontAwesome name='trash-o' size={16} color={Colors.danger} />
             </TouchableOpacity>
           )}
         </View>
@@ -51,18 +51,18 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
   },
   header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 2,
   },
   headerRight: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: Spacing.sm,
   },
   type: {
-    fontWeight: "600",
+    fontWeight: '600',
     flex: 1,
     marginRight: Spacing.sm,
   },
@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
   },
   value: {
     fontSize: FontSize.headline,
-    fontWeight: "700",
+    fontWeight: '700',
     color: Colors.textPrimary,
     marginVertical: Spacing.xs,
   },

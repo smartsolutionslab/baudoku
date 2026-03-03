@@ -1,7 +1,7 @@
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import type { ZoneNode } from "../../hooks";
-import { StatusBadge } from "../common";
-import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import type { ZoneNode } from '../../hooks';
+import { StatusBadge } from '../common';
+import { Colors, Spacing, FontSize, Radius } from '../../styles/tokens';
 
 type ZoneCardProps = {
   node: ZoneNode;
@@ -18,7 +18,7 @@ export function ZoneCard({ node, expanded, onPress, onToggle }: ZoneCardProps) {
       <View style={styles.row}>
         {hasChildren ? (
           <TouchableOpacity onPress={onToggle} style={styles.toggle}>
-            <Text style={styles.chevron}>{expanded ? "∨" : "›"}</Text>
+            <Text style={styles.chevron}>{expanded ? '∨' : '›'}</Text>
           </TouchableOpacity>
         ) : (
           <View style={styles.togglePlaceholder} />
@@ -31,8 +31,8 @@ export function ZoneCard({ node, expanded, onPress, onToggle }: ZoneCardProps) {
             <StatusBadge status={node.zone.type} />
             {hasChildren && (
               <Text style={styles.count}>
-                {node.children.length}{" "}
-                {node.children.length === 1 ? "Kind" : "Kinder"}
+                {node.children.length}{' '}
+                {node.children.length === 1 ? 'Kind' : 'Kinder'}
               </Text>
             )}
           </View>
@@ -51,14 +51,14 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
   },
   row: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   toggle: {
     width: 28,
     height: 28,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   togglePlaceholder: {
     width: 28,
@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
   chevron: {
     fontSize: 18,
     color: Colors.textTertiary,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   info: {
     flex: 1,
@@ -74,13 +74,13 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: FontSize.body,
-    fontWeight: "600",
+    fontWeight: '600',
     color: Colors.textPrimary,
     marginBottom: 2,
   },
   meta: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: Spacing.sm,
   },
   count: {

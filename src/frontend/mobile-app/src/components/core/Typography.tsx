@@ -1,6 +1,6 @@
-import React from "react";
-import { Text, StyleSheet, type TextStyle } from "react-native";
-import { Colors, FontSize } from "../../styles/tokens";
+import React from 'react';
+import { Text, StyleSheet, type TextStyle } from 'react-native';
+import { Colors, FontSize } from '../../styles/tokens';
 
 type TypographyProps = {
   children: React.ReactNode;
@@ -43,22 +43,22 @@ export function Caption({ children, style, numberOfLines }: TypographyProps) {
 const styles = StyleSheet.create({
   title: {
     fontSize: FontSize.title,
-    fontWeight: "700",
+    fontWeight: '700',
     color: Colors.textPrimary,
   },
   headline: {
     fontSize: FontSize.headline,
-    fontWeight: "600",
+    fontWeight: '600',
     color: Colors.textPrimary,
   },
   body: {
     fontSize: FontSize.body,
-    fontWeight: "400",
+    fontWeight: '400',
     color: Colors.textPrimary,
   },
   caption: {
     fontSize: FontSize.caption,
-    fontWeight: "400",
+    fontWeight: '400',
     color: Colors.textTertiary,
   },
 });

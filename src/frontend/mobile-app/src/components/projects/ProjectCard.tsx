@@ -1,7 +1,7 @@
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import type { Project } from "../../db/repositories/types";
-import { StatusBadge } from "../common";
-import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import type { Project } from '../../db/repositories/types';
+import { StatusBadge } from '../common';
+import { Colors, Spacing, FontSize, Radius } from '../../styles/tokens';
 
 type ProjectCardProps = {
   project: Project;
@@ -11,7 +11,7 @@ type ProjectCardProps = {
 export function ProjectCard({ project, onPress }: ProjectCardProps) {
   const address = [project.street, project.zipCode, project.city]
     .filter(Boolean)
-    .join(", ");
+    .join(', ');
 
   return (
     <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.7}>
@@ -46,14 +46,14 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
   },
   header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: Spacing.xs,
   },
   name: {
     fontSize: FontSize.callout,
-    fontWeight: "600",
+    fontWeight: '600',
     color: Colors.textPrimary,
     flex: 1,
   },
@@ -68,8 +68,8 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
   },
   footer: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: Spacing.sm,
   },
   client: {

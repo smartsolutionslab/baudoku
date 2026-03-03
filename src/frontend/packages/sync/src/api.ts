@@ -1,16 +1,16 @@
-import { apiGet, apiPost } from "@baudoku/core";
+import { apiGet, apiPost } from '@baudoku/core';
 import type {
   SyncDeltaDto,
   ProcessSyncBatchResult,
   ChangeSetResult,
   ConflictDto,
-} from "./types";
+} from './types';
 
 export async function pushBatch(
   deviceId: string,
   deltas: SyncDeltaDto[]
 ): Promise<ProcessSyncBatchResult> {
-  return apiPost<ProcessSyncBatchResult>("/api/sync/batch", {
+  return apiPost<ProcessSyncBatchResult>('/api/sync/batch', {
     deviceId,
     deltas,
   });
@@ -22,8 +22,8 @@ export async function pullChanges(
   limit?: number
 ): Promise<ChangeSetResult> {
   const params = new URLSearchParams({ deviceId });
-  if (since) params.set("since", since);
-  if (limit) params.set("limit", limit.toString());
+  if (since) params.set('since', since);
+  if (limit) params.set('limit', limit.toString());
 
   return apiGet<ChangeSetResult>(`/api/sync/changes?${params}`);
 }
@@ -33,11 +33,11 @@ export async function getConflicts(
   status?: string
 ): Promise<ConflictDto[]> {
   const params = new URLSearchParams();
-  if (deviceId) params.set("deviceId", deviceId);
-  if (status) params.set("status", status);
+  if (deviceId) params.set('deviceId', deviceId);
+  if (status) params.set('status', status);
 
   const qs = params.toString();
-  return apiGet<ConflictDto[]>(`/api/sync/conflicts${qs ? `?${qs}` : ""}`);
+  return apiGet<ConflictDto[]>(`/api/sync/conflicts${qs ? `?${qs}` : ''}`);
 }
 
 export async function resolveConflict(

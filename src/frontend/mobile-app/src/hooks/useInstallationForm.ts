@@ -1,8 +1,8 @@
-import { useState, useCallback } from "react";
-import { Alert } from "react-native";
-import { installationSchema, type InstallationFormData } from "../validation/schemas";
-import { useFormValidation } from "./useFormValidation";
-import type { GpsPosition } from "./useGpsCapture";
+import { useState, useCallback } from 'react';
+import { Alert } from 'react-native';
+import { installationSchema, type InstallationFormData } from '../validation/schemas';
+import { useFormValidation } from './useFormValidation';
+import type { GpsPosition } from './useGpsCapture';
 
 export type UseInstallationFormOptions = {
   initialValues?: Partial<InstallationFormData>;
@@ -23,7 +23,7 @@ export type UseInstallationFormReturn = {
 
 export function useInstallationForm({ initialValues, onSubmit }: UseInstallationFormOptions): UseInstallationFormReturn {
   const [form, setForm] = useState<Record<string, unknown>>({
-    status: "in_progress",
+    status: 'in_progress',
     ...initialValues,
   });
   const { errors, setErrors, validate } = useFormValidation(installationSchema);
@@ -43,7 +43,7 @@ export function useInstallationForm({ initialValues, onSubmit }: UseInstallation
 
   const str = (key: string) => {
     const val = form[key];
-    if (val == null) return "";
+    if (val == null) return '';
     return String(val);
   };
 
@@ -52,7 +52,7 @@ export function useInstallationForm({ initialValues, onSubmit }: UseInstallation
       // Strip empty strings before validation
       const cleaned: Record<string, unknown> = {};
       for (const [k, v] of Object.entries(form)) {
-        if (typeof v === "string" && v.trim() === "") continue;
+        if (typeof v === 'string' && v.trim() === '') continue;
         cleaned[k] = v;
       }
 
@@ -61,7 +61,7 @@ export function useInstallationForm({ initialValues, onSubmit }: UseInstallation
       try {
         await onSubmit(data, currentGps);
       } catch {
-        Alert.alert("Fehler", "Installation konnte nicht gespeichert werden.");
+        Alert.alert('Fehler', 'Installation konnte nicht gespeichert werden.');
       }
     },
     [form, onSubmit, validate]

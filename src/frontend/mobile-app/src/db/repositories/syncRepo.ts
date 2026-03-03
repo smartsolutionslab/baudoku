@@ -1,10 +1,10 @@
-import { eq, and, sql } from "drizzle-orm";
-import { db } from "../client";
-import { syncOutbox, syncMeta } from "../schema";
-import { generateId, getDeviceId } from "../../utils";
-import type { SyncOutboxEntry } from "./types";
+import { eq, and, sql, inArray } from 'drizzle-orm';
+import { db } from '../client';
+import { syncOutbox, syncMeta } from '../schema';
+import { generateId, getDeviceId } from '../../utils';
+import type { SyncOutboxEntry } from './types';
 
-export async function createOutboxEntry(entityType: string, entityId: string, operation: "create" | "update" | "delete", payload: unknown): Promise<void> {
+export async function createOutboxEntry(entityType: string, entityId: string, operation: 'create' | 'update' | 'delete', payload: unknown): Promise<void> {
   const deviceId = await getDeviceId();
   await db.insert(syncOutbox).values({
     id: generateId(),
@@ -15,17 +15,17 @@ export async function createOutboxEntry(entityType: string, entityId: string, op
     timestamp: new Date(),
     deviceId,
     retryCount: 0,
-    status: "pending",
+    status: 'pending',
   });
 }
 
 export async function getPendingEntries(): Promise<SyncOutboxEntry[]> {
-  return db.select().from(syncOutbox).where(and(eq(syncOutbox.status, "pending")))
+  return db.select().from(syncOutbox).where(and(eq(syncOutbox.status, 'pending')))
     .all() as unknown as SyncOutboxEntry[];
 }
 
 export async function getFailedEntries(): Promise<SyncOutboxEntry[]> {
-  return db.select().from(syncOutbox).where(eq(syncOutbox.status, "failed")).all() as unknown as SyncOutboxEntry[];
+  return db.select().from(syncOutbox).where(eq(syncOutbox.status, 'failed')).all() as unknown as SyncOutboxEntry[];
 }
 
 export async function getUnsyncedCount(): Promise<number> {
@@ -34,29 +34,26 @@ export async function getUnsyncedCount(): Promise<number> {
 }
 
 export async function markAsSyncing(ids: string[]): Promise<void> {
-  for (const id of ids) {
-    await db.update(syncOutbox).set({ status: "syncing" }).where(eq(syncOutbox.id, id));
-  }
+  if (ids.length === 0) return;
+  await db.update(syncOutbox).set({ status: 'syncing' }).where(inArray(syncOutbox.id, ids));
 }
 
 export async function markAsSynced(ids: string[]): Promise<void> {
-  for (const id of ids) {
-    await db.update(syncOutbox).set({ status: "synced" }).where(eq(syncOutbox.id, id));
-  }
+  if (ids.length === 0) return;
+  await db.update(syncOutbox).set({ status: 'synced' }).where(inArray(syncOutbox.id, ids));
 }
 
 export async function markAsFailed(ids: string[]): Promise<void> {
-  for (const id of ids) {
-    await db.update(syncOutbox).set({status: "failed", retryCount: sql`${syncOutbox.retryCount} + 1`}).where(eq(syncOutbox.id, id));
-    }
+  if (ids.length === 0) return;
+  await db.update(syncOutbox).set({ status: 'failed', retryCount: sql`${syncOutbox.retryCount} + 1` }).where(inArray(syncOutbox.id, ids));
 }
 
 export async function getLastSyncTimestamp(): Promise<string | null> {
-  const row = await db.select().from(syncMeta).where(eq(syncMeta.key, "lastSyncTimestamp")).get();
+  const row = await db.select().from(syncMeta).where(eq(syncMeta.key, 'lastSyncTimestamp')).get();
   return row?.value ?? null;
 }
 
 export async function setLastSyncTimestamp(timestamp: string): Promise<void> {
-  await db.insert(syncMeta).values({ key: "lastSyncTimestamp", value: timestamp })
+  await db.insert(syncMeta).values({ key: 'lastSyncTimestamp', value: timestamp })
     .onConflictDoUpdate({ target: syncMeta.key, set: { value: timestamp }});
 }

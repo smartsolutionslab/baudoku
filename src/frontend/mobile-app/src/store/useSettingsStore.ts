@@ -1,7 +1,7 @@
-import { create } from "zustand";
-import * as SecureStore from "expo-secure-store";
+import { create } from 'zustand';
+import * as SecureStore from 'expo-secure-store';
 
-const MOCK_LOCATION_KEY = "baudoku_settings_mockLocation";
+const MOCK_LOCATION_KEY = 'baudoku_settings_mockLocation';
 
 type SettingsState = {
   allowMockLocation: boolean;

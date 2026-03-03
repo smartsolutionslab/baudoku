@@ -1,6 +1,6 @@
-import { create } from "zustand";
+import { create } from 'zustand';
 
-export type ToastType = "success" | "error" | "warning" | "info";
+export type ToastType = 'success' | 'error' | 'warning' | 'info';
 
 export type ToastItem = {
   id: string;
@@ -18,7 +18,7 @@ type ToastState = {
 export const useToastStore = create<ToastState>((set) => ({
   toasts: [],
 
-  show: (message, type = "info", duration = 4000) =>
+  show: (message, type = 'info', duration = 4000) =>
     set((state) => ({
       toasts: [
         ...state.toasts,

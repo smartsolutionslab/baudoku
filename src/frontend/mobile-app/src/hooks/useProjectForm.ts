@@ -1,7 +1,7 @@
-import { useState, useCallback } from "react";
-import { Alert } from "react-native";
-import { projectSchema, type ProjectFormData } from "../validation/schemas";
-import { useFormValidation } from "./useFormValidation";
+import { useState, useCallback } from 'react';
+import { Alert } from 'react-native';
+import { projectSchema, type ProjectFormData } from '../validation/schemas';
+import { useFormValidation } from './useFormValidation';
 
 export type UseProjectFormOptions = {
   initialValues?: Partial<ProjectFormData>;
@@ -17,7 +17,7 @@ export type UseProjectFormReturn = {
 
 export function useProjectForm({ initialValues, onSubmit }: UseProjectFormOptions): UseProjectFormReturn {
   const [form, setForm] = useState<Partial<ProjectFormData>>({
-    status: "active",
+    status: 'active',
     ...initialValues,
   });
   const { errors, setErrors, validate } = useFormValidation(projectSchema);
@@ -40,7 +40,7 @@ export function useProjectForm({ initialValues, onSubmit }: UseProjectFormOption
     try {
       await onSubmit(data);
     } catch {
-      Alert.alert("Fehler", "Projekt konnte nicht gespeichert werden.");
+      Alert.alert('Fehler', 'Projekt konnte nicht gespeichert werden.');
     }
   }, [form, onSubmit, validate]);
 

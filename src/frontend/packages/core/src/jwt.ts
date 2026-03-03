@@ -1,8 +1,8 @@
 export function parseJwtPayload(token: string): Record<string, unknown> {
-  const parts = token.split(".");
-  if (parts.length !== 3) throw new Error("Invalid JWT format");
+  const parts = token.split('.');
+  if (parts.length !== 3) throw new Error('Invalid JWT format');
   const payload = parts[1]!;
-  const decoded = atob(payload.replace(/-/g, "+").replace(/_/g, "/"));
+  const decoded = atob(payload.replace(/-/g, '+').replace(/_/g, '/'));
   return JSON.parse(decoded);
 }
 

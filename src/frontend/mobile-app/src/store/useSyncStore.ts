@@ -1,8 +1,8 @@
-import { create } from "zustand";
-import * as syncRepo from "../db/repositories/syncRepo";
-import type { SyncOutboxEntry } from "../db/repositories/types";
-import type { SyncResult } from "../sync/SyncManager";
-import type { ConflictDto } from "../sync/syncApi";
+import { create } from 'zustand';
+import * as syncRepo from '../db/repositories/syncRepo';
+import type { SyncOutboxEntry } from '../db/repositories/types';
+import type { SyncResult } from '../sync/SyncManager';
+import type { ConflictDto } from '../sync/syncApi';
 
 type SyncState = {
   unsyncedCount: number;
@@ -60,7 +60,7 @@ export const useSyncStore = create<SyncState>((set) => ({
     set({
       isSyncing: false,
       lastSyncResult: result,
-      syncError: result.errors.length > 0 ? result.errors.join("; ") : null,
+      syncError: result.errors.length > 0 ? result.errors.join('; ') : null,
     }),
 
   setSyncError: (error) => set({ isSyncing: false, syncError: error }),

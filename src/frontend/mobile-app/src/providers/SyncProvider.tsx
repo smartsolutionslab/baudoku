@@ -1,10 +1,10 @@
-import React, { useEffect, useRef, createContext, useContext } from "react";
-import { SyncManager } from "../sync/SyncManager";
-import { SyncScheduler } from "../sync/SyncScheduler";
-import { setOnReconnect } from "../sync/ConnectivityMonitor";
-import { useSyncStore } from "../store";
-import { UploadProgressBar } from "../components/sync";
-import * as photoRepo from "../db/repositories/photoRepo";
+import React, { useEffect, useRef, createContext, useContext } from 'react';
+import { SyncManager } from '../sync/SyncManager';
+import { SyncScheduler } from '../sync/SyncScheduler';
+import { setOnReconnect } from '../sync/ConnectivityMonitor';
+import { useSyncStore } from '../store';
+import { UploadProgressBar } from '../components/sync';
+import * as photoRepo from '../db/repositories/photoRepo';
 
 type SyncContextValue = {
   syncManager: SyncManager;
@@ -16,7 +16,7 @@ const SyncContext = createContext<SyncContextValue | null>(null);
 export function useSyncContext(): SyncContextValue {
   const ctx = useContext(SyncContext);
   if (!ctx) {
-    throw new Error("useSyncContext must be used within SyncProvider");
+    throw new Error('useSyncContext must be used within SyncProvider');
   }
   return ctx;
 }

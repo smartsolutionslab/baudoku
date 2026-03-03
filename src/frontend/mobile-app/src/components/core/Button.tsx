@@ -5,10 +5,10 @@ import {
   StyleSheet,
   type ViewStyle,
   type TextStyle,
-} from "react-native";
-import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
+} from 'react-native';
+import { Colors, Spacing, FontSize, Radius } from '../../styles/tokens';
 
-type ButtonVariant = "primary" | "secondary" | "danger";
+type ButtonVariant = 'primary' | 'secondary' | 'danger';
 
 type ButtonProps = {
   title: string;
@@ -35,7 +35,7 @@ const variantStyles: Record<ButtonVariant, { container: ViewStyle; text: TextSty
   },
 };
 
-export function Button({ title, onPress, variant = "primary", disabled = false, loading = false, style, testID }: ButtonProps) {
+export function Button({ title, onPress, variant = 'primary', disabled = false, loading = false, style, testID }: ButtonProps) {
   const v = variantStyles[variant];
   const isDisabled = disabled || loading;
 
@@ -53,7 +53,7 @@ export function Button({ title, onPress, variant = "primary", disabled = false, 
       testID={testID}
     >
       {loading ? (
-        <ActivityIndicator size="small" color={variant === "secondary" ? Colors.textTertiary : Colors.white}/>
+        <ActivityIndicator size='small' color={variant === 'secondary' ? Colors.textTertiary : Colors.white}/>
       ) : (
         <Text style={[styles.text, v.text]}>{title}</Text>
       )}
@@ -65,8 +65,8 @@ const styles = StyleSheet.create({
   container: {
     paddingVertical: 14,
     borderRadius: Radius.md,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     minHeight: 48,
   },
   disabled: {
@@ -74,6 +74,6 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: FontSize.callout,
-    fontWeight: "600",
+    fontWeight: '600',
   },
 });

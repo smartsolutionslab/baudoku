@@ -1,35 +1,35 @@
-import { useState, useCallback } from "react";
-import { View, Text, TextInput, StyleSheet } from "react-native";
-import { BottomSheet } from "@/components/common";
-import { Button } from "@/components/core";
+import { useState, useCallback } from 'react';
+import { View, Text, TextInput, StyleSheet } from 'react-native';
+import { BottomSheet } from '@/components/common';
+import { Button } from '@/components/core';
 import {
   PhotoGallery,
   PhotoSourceSheet,
   PhotoTypeSheet,
   type PhotoType,
   PhotoViewer,
-} from "@/components/installations";
-import { usePhotoCapture, type CapturedPhoto, useConfirmDelete } from "@/hooks";
-import { deletePhotoFile } from "@/utils";
-import { Colors, Spacing, FontSize, Radius } from "@/styles/tokens";
-import type { Photo } from "@/db/repositories/types";
-import type { InstallationId, PhotoId } from "@/types/branded";
+} from '@/components/installations';
+import { usePhotoCapture, type CapturedPhoto, useConfirmDelete } from '@/hooks';
+import { deletePhotoFile } from '@/utils';
+import { Colors, Spacing, FontSize, Radius } from '@/styles/tokens';
+import type { Photo } from '@/db/repositories/types';
+import type { InstallationId, PhotoId } from '@/types/branded';
 
 function uploadStatusColor(status: string): string {
   switch (status) {
-    case "uploaded": return Colors.success;
-    case "uploading": return Colors.primary;
-    case "failed": return Colors.danger;
+    case 'uploaded': return Colors.success;
+    case 'uploading': return Colors.primary;
+    case 'failed': return Colors.danger;
     default: return Colors.textTertiary;
   }
 }
 
 function uploadStatusLabel(status: string): string {
   switch (status) {
-    case "uploaded": return "hochgeladen";
-    case "uploading": return "lädt hoch";
-    case "failed": return "fehlgeschlagen";
-    default: return "ausstehend";
+    case 'uploaded': return 'hochgeladen';
+    case 'uploading': return 'lädt hoch';
+    case 'failed': return 'fehlgeschlagen';
+    default: return 'ausstehend';
   }
 }
 
@@ -46,7 +46,7 @@ type InstallationPhotoSectionProps = {
     exifDateTime: string | null;
     exifCameraModel: string | null;
     takenAt: Date;
-    uploadStatus: "pending";
+    uploadStatus: 'pending';
   }) => Promise<unknown>;
   onDeletePhoto: (id: PhotoId) => Promise<unknown>;
   onSaveAnnotation: (photoId: PhotoId, annotation: string) => void;
@@ -70,7 +70,7 @@ export function InstallationPhotoSection({
   const [showCaptionModal, setShowCaptionModal] = useState(false);
   const [pendingPhoto, setPendingPhoto] = useState<CapturedPhoto | null>(null);
   const [pendingPhotoType, setPendingPhotoType] = useState<PhotoType | null>(null);
-  const [captionText, setCaptionText] = useState("");
+  const [captionText, setCaptionText] = useState('');
   const [viewerPhoto, setViewerPhoto] = useState<Photo | null>(null);
   const [showViewer, setShowViewer] = useState(false);
 
@@ -95,7 +95,7 @@ export function InstallationPhotoSection({
   const handlePhotoTypeSelect = useCallback((type: PhotoType) => {
     setShowTypeSheet(false);
     setPendingPhotoType(type);
-    setCaptionText("");
+    setCaptionText('');
     setShowCaptionModal(true);
   }, []);
 
@@ -113,22 +113,22 @@ export function InstallationPhotoSection({
         exifDateTime: pendingPhoto.exif?.dateTime ?? null,
         exifCameraModel: pendingPhoto.exif?.cameraModel ?? null,
         takenAt: new Date(),
-        uploadStatus: "pending",
+        uploadStatus: 'pending',
       });
     } catch {
       // Global MutationCache.onError shows toast
     }
     setPendingPhoto(null);
     setPendingPhotoType(null);
-    setCaptionText("");
+    setCaptionText('');
   }, [pendingPhoto, pendingPhotoType, captionText, installationId, onAddPhoto]);
 
   const handleDeletePhoto = useCallback(
     (photo: Photo) => {
       setShowViewer(false);
       confirmDelete({
-        title: "Foto löschen",
-        message: "Dieses Foto wirklich löschen?",
+        title: 'Foto löschen',
+        message: 'Dieses Foto wirklich löschen?',
         onConfirm: async () => {
           try {
             await onDeletePhoto(photo.id);
@@ -192,19 +192,19 @@ export function InstallationPhotoSection({
           setPendingPhoto(null);
           setPendingPhotoType(null);
         }}
-        title="Beschriftung (optional)"
+        title='Beschriftung (optional)'
       >
         <TextInput
           style={styles.captionInput}
           value={captionText}
           onChangeText={setCaptionText}
-          placeholder="z.B. Kabeltrasse Nordseite"
+          placeholder='z.B. Kabeltrasse Nordseite'
           placeholderTextColor={Colors.textTertiary}
           maxLength={200}
           autoFocus
         />
         <Button
-          title={captionText.trim() ? "Hinzufügen" : "Überspringen"}
+          title={captionText.trim() ? 'Hinzufügen' : 'Überspringen'}
           onPress={handleCaptionConfirm}
         />
       </BottomSheet>
@@ -232,12 +232,12 @@ const styles = StyleSheet.create({
   },
   cardTitle: {
     fontSize: FontSize.headline,
-    fontWeight: "600",
+    fontWeight: '600',
     marginBottom: Spacing.md,
   },
   uploadSummary: {
-    flexDirection: "row",
-    flexWrap: "wrap",
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: Spacing.xs,
     marginTop: Spacing.sm,
   },
@@ -249,7 +249,7 @@ const styles = StyleSheet.create({
   uploadBadgeText: {
     color: Colors.white,
     fontSize: FontSize.footnote,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   captionInput: {
     borderWidth: 1,

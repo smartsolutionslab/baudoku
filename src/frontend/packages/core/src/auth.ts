@@ -1,11 +1,11 @@
-let baseUrl = "";
+let baseUrl = '';
 let authToken: string | null = null;
 
 type UnauthorizedListener = () => void;
 const unauthorizedListeners: UnauthorizedListener[] = [];
 
 export function setBaseUrl(url: string): void {
-  baseUrl = url.replace(/\/$/, "");
+  baseUrl = url.replace(/\/$/, '');
 }
 
 export function getBaseUrl(): string {

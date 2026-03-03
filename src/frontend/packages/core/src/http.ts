@@ -1,4 +1,4 @@
-import { getBaseUrl, getAuthToken, _handleUnauthorized } from "./auth";
+import { getBaseUrl, getAuthToken, _handleUnauthorized } from './auth';
 
 export class ApiError extends Error {
   constructor(
@@ -7,27 +7,27 @@ export class ApiError extends Error {
     public readonly body: unknown
   ) {
     super(`API Error ${status}: ${statusText}`);
-    this.name = "ApiError";
+    this.name = 'ApiError';
   }
 }
 
 function getHeaders(contentType?: string): Record<string, string> {
   const headers: Record<string, string> = {};
-  if (contentType) headers["Content-Type"] = contentType;
+  if (contentType) headers['Content-Type'] = contentType;
   const token = getAuthToken();
-  if (token) headers["Authorization"] = `Bearer ${token}`;
+  if (token) headers['Authorization'] = `Bearer ${token}`;
   return headers;
 }
 
 export async function apiGet<T>(path: string): Promise<T> {
   const response = await fetch(`${getBaseUrl()}${path}`, {
-    method: "GET",
-    headers: getHeaders("application/json"),
+    method: 'GET',
+    headers: getHeaders('application/json'),
   });
 
   if (!response.ok) {
     if (response.status === 401) _handleUnauthorized();
-    const body = await response.text().catch(() => "");
+    const body = await response.text().catch(() => '');
     throw new ApiError(response.status, response.statusText, body);
   }
 
@@ -36,14 +36,14 @@ export async function apiGet<T>(path: string): Promise<T> {
 
 export async function apiPost<T>(path: string, body: unknown): Promise<T> {
   const response = await fetch(`${getBaseUrl()}${path}`, {
-    method: "POST",
-    headers: getHeaders("application/json"),
+    method: 'POST',
+    headers: getHeaders('application/json'),
     body: JSON.stringify(body),
   });
 
   if (!response.ok) {
     if (response.status === 401) _handleUnauthorized();
-    const responseBody = await response.text().catch(() => "");
+    const responseBody = await response.text().catch(() => '');
     throw new ApiError(response.status, response.statusText, responseBody);
   }
 
@@ -56,14 +56,14 @@ export async function apiPost<T>(path: string, body: unknown): Promise<T> {
 
 export async function apiPut<T>(path: string, body: unknown): Promise<T> {
   const response = await fetch(`${getBaseUrl()}${path}`, {
-    method: "PUT",
-    headers: getHeaders("application/json"),
+    method: 'PUT',
+    headers: getHeaders('application/json'),
     body: JSON.stringify(body),
   });
 
   if (!response.ok) {
     if (response.status === 401) _handleUnauthorized();
-    const responseBody = await response.text().catch(() => "");
+    const responseBody = await response.text().catch(() => '');
     throw new ApiError(response.status, response.statusText, responseBody);
   }
 
@@ -76,13 +76,13 @@ export async function apiPut<T>(path: string, body: unknown): Promise<T> {
 
 export async function apiDelete(path: string): Promise<void> {
   const response = await fetch(`${getBaseUrl()}${path}`, {
-    method: "DELETE",
-    headers: getHeaders("application/json"),
+    method: 'DELETE',
+    headers: getHeaders('application/json'),
   });
 
   if (!response.ok) {
     if (response.status === 401) _handleUnauthorized();
-    const responseBody = await response.text().catch(() => "");
+    const responseBody = await response.text().catch(() => '');
     throw new ApiError(response.status, response.statusText, responseBody);
   }
 }
@@ -92,14 +92,14 @@ export async function apiUpload<T>(
   formData: FormData
 ): Promise<T> {
   const response = await fetch(`${getBaseUrl()}${path}`, {
-    method: "POST",
+    method: 'POST',
     headers: getHeaders(),
     body: formData,
   });
 
   if (!response.ok) {
     if (response.status === 401) _handleUnauthorized();
-    const responseBody = await response.text().catch(() => "");
+    const responseBody = await response.text().catch(() => '');
     throw new ApiError(response.status, response.statusText, responseBody);
   }
 
@@ -119,17 +119,17 @@ export async function apiRawUpload(
     ...extraHeaders,
   };
   const token = getAuthToken();
-  if (token) headers["Authorization"] = `Bearer ${token}`;
+  if (token) headers['Authorization'] = `Bearer ${token}`;
 
   const response = await fetch(`${getBaseUrl()}${path}`, {
-    method: "POST",
+    method: 'POST',
     headers,
     body,
   });
 
   if (!response.ok) {
     if (response.status === 401) _handleUnauthorized();
-    const responseBody = await response.text().catch(() => "");
+    const responseBody = await response.text().catch(() => '');
     throw new ApiError(response.status, response.statusText, responseBody);
   }
 

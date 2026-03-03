@@ -1,5 +1,5 @@
-import { View, Text, StyleSheet, ScrollView } from "react-native";
-import { Colors, Spacing, FontSize } from "../../styles/tokens";
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { Colors, Spacing, FontSize } from '../../styles/tokens';
 
 type DiffRow = {
   field: string;
@@ -22,8 +22,8 @@ function parsePayload(json: string): Record<string, unknown> {
 }
 
 function formatValue(value: unknown): string {
-  if (value === null || value === undefined) return "-";
-  if (typeof value === "object") return JSON.stringify(value);
+  if (value === null || value === undefined) return '-';
+  if (typeof value === 'object') return JSON.stringify(value);
   return String(value);
 }
 
@@ -97,17 +97,17 @@ const styles = StyleSheet.create({
     minWidth: 500,
   },
   headerRow: {
-    flexDirection: "row",
+    flexDirection: 'row',
     backgroundColor: Colors.separator,
     borderBottomWidth: 1,
     borderBottomColor: Colors.disabled,
   },
   headerText: {
-    fontWeight: "700",
+    fontWeight: '700',
     fontSize: FontSize.caption,
   },
   row: {
-    flexDirection: "row",
+    flexDirection: 'row',
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: Colors.separator,
   },
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
   },
   fieldCell: {
     width: 140,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   valueCell: {
     width: 180,

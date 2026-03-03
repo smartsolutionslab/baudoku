@@ -1,5 +1,8 @@
-import { View, Text, StyleSheet } from "react-native";
-import { Colors, Spacing, Radius } from "../../styles/tokens";
+import { View, Text, StyleSheet } from 'react-native';
+import { PROJECT_STATUS_LABELS } from '@baudoku/projects';
+import { ZONE_TYPE_LABELS } from '@baudoku/projects';
+import { INSTALLATION_STATUS_LABELS } from '@baudoku/documentation';
+import { Colors, Spacing, Radius } from '../../styles/tokens';
 
 const statusColors: Record<string, string> = {
   // Project
@@ -25,23 +28,16 @@ const statusColors: Record<string, string> = {
   section: Colors.textTertiary,
 };
 
-export const statusLabels: Record<string, string> = {
-  active: "Aktiv",
-  completed: "Abgeschlossen",
-  archived: "Archiviert",
-  planned: "Geplant",
-  in_progress: "In Arbeit",
-  inspected: "Geprüft",
-  passed: "Bestanden",
-  failed: "Fehlgeschlagen",
-  warning: "Warnung",
-  pending: "Ausstehend",
-  syncing: "Wird synchronisiert",
-  building: "Gebäude",
-  floor: "Stockwerk",
-  room: "Raum",
-  trench: "Graben",
-  section: "Abschnitt",
+const statusLabels: Record<string, string> = {
+  ...PROJECT_STATUS_LABELS,
+  ...INSTALLATION_STATUS_LABELS,
+  ...ZONE_TYPE_LABELS,
+  passed: 'Bestanden',
+  failed: 'Fehlgeschlagen',
+  warning: 'Warnung',
+  pending: 'Ausstehend',
+  syncing: 'Wird synchronisiert',
+  section: 'Abschnitt',
 };
 
 type StatusBadgeProps = {
@@ -65,12 +61,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.sm,
     paddingVertical: 2,
     borderRadius: Radius.md,
-    alignSelf: "flex-start",
+    alignSelf: 'flex-start',
   },
   text: {
     color: Colors.white,
     fontSize: 11,
-    fontWeight: "600",
-    textTransform: "uppercase",
+    fontWeight: '600',
+    textTransform: 'uppercase',
   },
 });

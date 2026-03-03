@@ -1,13 +1,13 @@
-import { useState } from "react";
+import { useState } from 'react';
 import {
   View,
   Text,
   TouchableOpacity,
   FlatList,
   StyleSheet,
-} from "react-native";
-import { BottomSheet } from "./BottomSheet";
-import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
+} from 'react-native';
+import { BottomSheet } from './BottomSheet';
+import { Colors, Spacing, FontSize, Radius } from '../../styles/tokens';
 
 type PickerOption = {
   label: string;
@@ -31,7 +31,7 @@ export function FormPicker({
   onValueChange,
   error,
   required,
-  placeholder = "Auswählen...",
+  placeholder = 'Auswählen...',
 }: FormPickerProps) {
   const [visible, setVisible] = useState(false);
   const selected = options.find((o) => o.value === value);
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: FontSize.caption,
-    fontWeight: "600",
+    fontWeight: '600',
     color: Colors.textSecondary,
     marginBottom: Spacing.xs,
   },
@@ -97,9 +97,9 @@ const styles = StyleSheet.create({
     borderRadius: Radius.md,
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.md,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     borderWidth: 1,
     borderColor: Colors.separator,
   },
@@ -136,6 +136,6 @@ const styles = StyleSheet.create({
   },
   optionTextActive: {
     color: Colors.primary,
-    fontWeight: "600",
+    fontWeight: '600',
   },
 });

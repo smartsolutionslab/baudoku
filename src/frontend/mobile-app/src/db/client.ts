@@ -1,15 +1,15 @@
-import { openDatabaseSync, type SQLiteDatabase } from "expo-sqlite";
-import { drizzle, type ExpoSQLiteDatabase } from "drizzle-orm/expo-sqlite";
-import * as schema from "./schema";
+import { openDatabaseSync, type SQLiteDatabase } from 'expo-sqlite';
+import { drizzle, type ExpoSQLiteDatabase } from 'drizzle-orm/expo-sqlite';
+import * as schema from './schema';
 
 let expoDb: SQLiteDatabase | null = null;
 let drizzleDb: ExpoSQLiteDatabase<typeof schema> | null = null;
 
 function getExpoDb(): SQLiteDatabase {
   if (!expoDb) {
-    expoDb = openDatabaseSync("baudoku.db", { enableChangeListener: true });
-    expoDb.execSync("PRAGMA journal_mode = WAL;");
-    expoDb.execSync("PRAGMA foreign_keys = ON;");
+    expoDb = openDatabaseSync('baudoku.db', { enableChangeListener: true });
+    expoDb.execSync('PRAGMA journal_mode = WAL;');
+    expoDb.execSync('PRAGMA foreign_keys = ON;');
   }
   return expoDb;
 }

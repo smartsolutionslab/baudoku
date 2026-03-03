@@ -1,6 +1,6 @@
-import { View, TextInput, TouchableOpacity, StyleSheet } from "react-native";
-import { FontAwesome } from "@expo/vector-icons";
-import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
+import { View, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { FontAwesome } from '@expo/vector-icons';
+import { Colors, Spacing, FontSize, Radius } from '../../styles/tokens';
 
 type SearchBarProps = {
   value: string;
@@ -9,10 +9,10 @@ type SearchBarProps = {
   autoFocus?: boolean;
 };
 
-export function SearchBar({ value, onChangeText, placeholder = "Suchen...", autoFocus = true}: SearchBarProps) {
+export function SearchBar({ value, onChangeText, placeholder = 'Suchen...', autoFocus = true}: SearchBarProps) {
   return (
     <View style={styles.container}>
-      <FontAwesome name="search" size={16} color={Colors.textTertiary} style={styles.icon}/>
+      <FontAwesome name='search' size={16} color={Colors.textTertiary} style={styles.icon}/>
       <TextInput
         style={styles.input}
         value={value}
@@ -21,11 +21,11 @@ export function SearchBar({ value, onChangeText, placeholder = "Suchen...", auto
         placeholderTextColor={Colors.textTertiary}
         autoFocus={autoFocus}
         autoCorrect={false}
-        clearButtonMode="while-editing"
+        clearButtonMode='while-editing'
       />
       {value.length > 0 && (
-        <TouchableOpacity onPress={() => onChangeText("")} style={styles.clear}>
-          <FontAwesome name="times-circle" size={18} color={Colors.textTertiary} />
+        <TouchableOpacity onPress={() => onChangeText('')} style={styles.clear}>
+          <FontAwesome name='times-circle' size={18} color={Colors.textTertiary} />
         </TouchableOpacity>
       )}
     </View>
@@ -34,8 +34,8 @@ export function SearchBar({ value, onChangeText, placeholder = "Suchen...", auto
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: Colors.card,
     borderRadius: Radius.md,
     paddingHorizontal: Spacing.md,

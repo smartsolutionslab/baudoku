@@ -1,19 +1,14 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import * as syncApi from "../sync/syncApi";
-import { useSyncStore } from "../store";
-import { getDeviceId } from "../utils";
-import type { ConflictDto } from "../sync/syncApi";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import * as syncApi from '../sync/syncApi';
+import { getDeviceId } from '../utils';
+import type { ConflictDto } from '../sync/syncApi';
 
 export function useConflicts(status?: string) {
-  const { setConflicts } = useSyncStore();
-
   return useQuery({
-    queryKey: ["conflicts", status],
+    queryKey: ['conflicts', status],
     queryFn: async (): Promise<ConflictDto[]> => {
       const deviceId = await getDeviceId();
-      const conflicts = await syncApi.getConflicts(deviceId, status);
-      setConflicts(conflicts);
-      return conflicts;
+      return syncApi.getConflicts(deviceId, status);
     },
   });
 }
@@ -33,10 +28,10 @@ export function useResolveConflict() {
     }) => {
       await syncApi.resolveConflict(conflictId, strategy, mergedPayload);
     },
-    meta: { errorMessage: "Konflikt konnte nicht aufgelöst werden" },
+    meta: { errorMessage: 'Konflikt konnte nicht aufgelöst werden' },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["conflicts"] });
-      queryClient.invalidateQueries({ queryKey: ["syncStatus"] });
+      queryClient.invalidateQueries({ queryKey: ['conflicts'] });
+      queryClient.invalidateQueries({ queryKey: ['syncStatus'] });
     },
   });
 }

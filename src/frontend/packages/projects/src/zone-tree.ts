@@ -1,10 +1,10 @@
-import type { Zone } from "./types";
+import type { Zone } from './types';
 
-export interface ZoneNode {
+export type ZoneNode = {
   zone: Zone;
   children: ZoneNode[];
   level: number;
-}
+};
 
 export function buildZoneTree(zones: Zone[]): ZoneNode[] {
   const byParent = new Map<string | null, Zone[]>();

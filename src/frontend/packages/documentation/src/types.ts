@@ -11,7 +11,7 @@ export type GpsPosition = {
   correctionAge: number | null;
 };
 
-export interface Installation {
+export type Installation = {
   id: string;
   projectId: string;
   zoneId: string;
@@ -47,32 +47,32 @@ export interface Installation {
   createdAt: string;
   updatedAt: string;
   version: number;
-}
+};
 
 export type InstallationStatus =
-  | "planned"
-  | "in_progress"
-  | "completed"
-  | "inspected";
+  | 'planned'
+  | 'in_progress'
+  | 'completed'
+  | 'inspected';
 
-export type GpsSource = "internal_gps" | "external_dgnss" | "external_rtk";
+export type GpsSource = 'internal_gps' | 'external_dgnss' | 'external_rtk';
 
 export type GpsCorrectionService =
-  | "none"
-  | "sapos_eps"
-  | "sapos_heps"
-  | "sapos_gpps";
+  | 'none'
+  | 'sapos_eps'
+  | 'sapos_heps'
+  | 'sapos_gpps';
 
 export type RtkFixStatus =
-  | "no_fix"
-  | "autonomous"
-  | "dgps"
-  | "rtk_float"
-  | "rtk_fixed";
+  | 'no_fix'
+  | 'autonomous'
+  | 'dgps'
+  | 'rtk_float'
+  | 'rtk_fixed';
 
-export type Phase = "L1" | "L2" | "L3" | "N" | "PE";
+export type Phase = 'L1' | 'L2' | 'L3' | 'N' | 'PE';
 
-export interface Photo {
+export type Photo = {
   id: string;
   installationId: string;
   localPath: string;
@@ -89,13 +89,13 @@ export interface Photo {
   takenAt: string;
   uploadStatus: UploadStatus;
   version: number;
-}
+};
 
-export type PhotoType = "before" | "after" | "detail" | "overview";
+export type PhotoType = 'before' | 'after' | 'detail' | 'overview';
 
-export type UploadStatus = "pending" | "uploading" | "uploaded" | "failed";
+export type UploadStatus = 'pending' | 'uploading' | 'uploaded' | 'failed';
 
-export interface Measurement {
+export type Measurement = {
   id: string;
   installationId: string;
   type: string;
@@ -108,6 +108,6 @@ export interface Measurement {
   measuredAt: string;
   measuredBy: string;
   version: number;
-}
+};
 
-export type MeasurementResult = "passed" | "failed" | "warning";
+export type MeasurementResult = 'passed' | 'failed' | 'warning';

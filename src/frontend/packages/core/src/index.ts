@@ -1,4 +1,4 @@
-export { setBaseUrl, getBaseUrl, setAuthToken, onUnauthorized } from "./auth";
+export { setBaseUrl, getBaseUrl, setAuthToken, onUnauthorized } from './auth';
 export {
   ApiError,
   apiGet,
@@ -7,6 +7,6 @@ export {
   apiDelete,
   apiUpload,
   apiRawUpload,
-} from "./http";
-export { parseJwtPayload, isTokenExpired } from "./jwt";
-export type { PagedResult, PhotoUploadResult } from "./types";
+} from './http';
+export { parseJwtPayload, isTokenExpired } from './jwt';
+export type { PagedResult, PhotoUploadResult } from './types';

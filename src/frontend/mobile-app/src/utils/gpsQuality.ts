@@ -1,6 +1,6 @@
-import { Colors } from "../styles/tokens";
+import { Colors } from '../styles/tokens';
 
-export type GpsQualityGrade = "A" | "B" | "C" | "D";
+export type GpsQualityGrade = 'A' | 'B' | 'C' | 'D';
 
 export type GpsQualityResult = {
   grade: GpsQualityGrade;
@@ -17,10 +17,10 @@ type GpsQualityInput = {
 };
 
 const gradeLabels: Record<GpsQualityGrade, string> = {
-  A: "Ausgezeichnet",
-  B: "Gut",
-  C: "Akzeptabel",
-  D: "Ungenau",
+  A: 'Ausgezeichnet',
+  B: 'Gut',
+  C: 'Akzeptabel',
+  D: 'Ungenau',
 };
 
 const gradeColors: Record<GpsQualityGrade, string> = {
@@ -37,7 +37,7 @@ const gradeBgColors: Record<GpsQualityGrade, string> = {
   D: Colors.gpsBgD,
 };
 
-const grades: GpsQualityGrade[] = ["A", "B", "C", "D"];
+const grades: GpsQualityGrade[] = ['A', 'B', 'C', 'D'];
 
 /**
  * Port of backend `GpsPosition.CalculateQualityGrade()`.
@@ -70,7 +70,7 @@ export function calculateGpsQuality(input: GpsQualityInput): GpsQualityResult {
   let bonus = 0;
   if (hdop != null && hdop < 2.0) bonus++;
   if (satelliteCount != null && satelliteCount >= 8) bonus++;
-  if (correctionService != null && correctionService !== "none") bonus++;
+  if (correctionService != null && correctionService !== 'none') bonus++;
 
   // Stage 3: penalty
   let penalty = 0;
@@ -91,22 +91,22 @@ export function calculateGpsQuality(input: GpsQualityInput): GpsQualityResult {
 }
 
 export const gpsSourceLabels: Record<string, string> = {
-  internal_gps: "Internes GPS",
-  external_dgnss: "Externes DGNSS",
-  external_rtk: "Externes RTK",
+  internal_gps: 'Internes GPS',
+  external_dgnss: 'Externes DGNSS',
+  external_rtk: 'Externes RTK',
 };
 
 export const corrServiceLabels: Record<string, string> = {
-  none: "Keine",
-  sapos_eps: "SAPOS-EPS",
-  sapos_heps: "SAPOS-HEPS",
-  sapos_gpps: "SAPOS-GPPS",
+  none: 'Keine',
+  sapos_eps: 'SAPOS-EPS',
+  sapos_heps: 'SAPOS-HEPS',
+  sapos_gpps: 'SAPOS-GPPS',
 };
 
 export const rtkLabels: Record<string, string> = {
-  no_fix: "Kein Fix",
-  autonomous: "Autonom",
-  dgps: "DGPS",
-  rtk_float: "RTK Float",
-  rtk_fixed: "RTK Fixed",
+  no_fix: 'Kein Fix',
+  autonomous: 'Autonom',
+  dgps: 'DGPS',
+  rtk_float: 'RTK Float',
+  rtk_fixed: 'RTK Fixed',
 };

@@ -1,5 +1,5 @@
-import { applyUpsert, applyDelete } from "../db/repositories/directWriteRepo";
-import type { ServerDeltaDto } from "./syncApi";
+import { applyUpsert, applyDelete } from '../db/repositories/directWriteRepo';
+import type { ServerDeltaDto } from './syncApi';
 
 /**
  * Applies a server delta to the local SQLite database.
@@ -8,7 +8,7 @@ import type { ServerDeltaDto } from "./syncApi";
 export async function applyServerDelta(delta: ServerDeltaDto): Promise<void> {
   const { entityType, entityId, operation, payload } = delta;
 
-  if (operation === "delete") {
+  if (operation === 'delete') {
     await applyDelete(entityType, entityId);
     return;
   }

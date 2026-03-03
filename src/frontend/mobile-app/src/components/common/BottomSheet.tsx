@@ -1,6 +1,6 @@
-import React from "react";
-import { View, Text, Modal, Pressable, StyleSheet } from "react-native";
-import { Colors, Spacing, FontSize } from "../../styles/tokens";
+import React from 'react';
+import { View, Text, Modal, Pressable, StyleSheet } from 'react-native';
+import { Colors, Spacing, FontSize } from '../../styles/tokens';
 
 type BottomSheetProps = {
   visible: boolean;
@@ -11,7 +11,7 @@ type BottomSheetProps = {
 
 export function BottomSheet({ visible, onClose, title, children}: BottomSheetProps) {
   return (
-    <Modal visible={visible}  transparent animationType="slide" onRequestClose={onClose}>
+    <Modal visible={visible}  transparent animationType='slide' onRequestClose={onClose}>
       <Pressable style={styles.overlay} onPress={onClose}>
         <Pressable style={styles.sheet} onPress={(e) => e.stopPropagation()}>
           <View style={styles.handle} />
@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
   overlay: {
     flex: 1,
     backgroundColor: Colors.overlay,
-    justifyContent: "flex-end",
+    justifyContent: 'flex-end',
   },
   sheet: {
     backgroundColor: Colors.card,
@@ -41,13 +41,13 @@ const styles = StyleSheet.create({
     height: 4,
     borderRadius: 2,
     backgroundColor: Colors.separator,
-    alignSelf: "center",
+    alignSelf: 'center',
     marginTop: Spacing.sm,
     marginBottom: Spacing.lg,
   },
   title: {
     fontSize: FontSize.headline,
-    fontWeight: "600",
+    fontWeight: '600',
     color: Colors.textPrimary,
     marginBottom: Spacing.lg,
   },

@@ -1,7 +1,7 @@
-import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView } from "react-native";
-import { Colors, Spacing, FontSize, Radius, FontFamily } from "../../styles/tokens";
-import { ConflictDiffView } from "./ConflictDiffView";
-import type { ConflictDto } from "../../sync/syncApi";
+import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView } from 'react-native';
+import { Colors, Spacing, FontSize, Radius, FontFamily } from '../../styles/tokens';
+import { ConflictDiffView } from './ConflictDiffView';
+import type { ConflictDto } from '../../sync/syncApi';
 
 type ConflictDetailProps = {
   conflict: ConflictDto;
@@ -16,13 +16,13 @@ export function ConflictDetail({
 }: ConflictDetailProps) {
   const handleClientWins = () => {
     Alert.alert(
-      "Eigene Version verwenden",
-      "Soll Ihre lokale Version die Server-Version ersetzen?",
+      'Eigene Version verwenden',
+      'Soll Ihre lokale Version die Server-Version ersetzen?',
       [
-        { text: "Abbrechen", style: "cancel" },
+        { text: 'Abbrechen', style: 'cancel' },
         {
-          text: "Ja, meine Version",
-          onPress: () => onResolve("client_wins"),
+          text: 'Ja, meine Version',
+          onPress: () => onResolve('client_wins'),
         },
       ]
     );
@@ -30,13 +30,13 @@ export function ConflictDetail({
 
   const handleServerWins = () => {
     Alert.alert(
-      "Server-Version verwenden",
-      "Soll die Server-Version Ihre lokale Version ersetzen?",
+      'Server-Version verwenden',
+      'Soll die Server-Version Ihre lokale Version ersetzen?',
       [
-        { text: "Abbrechen", style: "cancel" },
+        { text: 'Abbrechen', style: 'cancel' },
         {
-          text: "Ja, Server-Version",
-          onPress: () => onResolve("server_wins"),
+          text: 'Ja, Server-Version',
+          onPress: () => onResolve('server_wins'),
         },
       ]
     );
@@ -92,8 +92,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
   },
   header: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     padding: Spacing.lg,
     backgroundColor: Colors.white,
     gap: Spacing.sm,
@@ -107,8 +107,8 @@ const styles = StyleSheet.create({
   badgeText: {
     color: Colors.white,
     fontSize: FontSize.footnote,
-    fontWeight: "600",
-    textTransform: "capitalize",
+    fontWeight: '600',
+    textTransform: 'capitalize',
   },
   entityId: {
     flex: 1,
@@ -129,12 +129,12 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: FontSize.headline,
-    fontWeight: "600",
+    fontWeight: '600',
     margin: Spacing.lg,
     marginBottom: Spacing.sm,
   },
   actions: {
-    flexDirection: "row",
+    flexDirection: 'row',
     padding: Spacing.lg,
     gap: Spacing.md,
   },
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 14,
     borderRadius: Radius.md,
-    alignItems: "center",
+    alignItems: 'center',
   },
   clientButton: {
     backgroundColor: Colors.primary,
@@ -153,6 +153,6 @@ const styles = StyleSheet.create({
   buttonText: {
     color: Colors.white,
     fontSize: FontSize.callout,
-    fontWeight: "600",
+    fontWeight: '600',
   },
 });

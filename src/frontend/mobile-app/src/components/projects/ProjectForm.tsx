@@ -1,15 +1,14 @@
-import { Text, ScrollView, StyleSheet } from "react-native";
-import { FormField, FormPicker } from "../common";
-import { Button } from "../core";
-import { useProjectForm } from "../../hooks";
-import type { ProjectFormData } from "../../validation/schemas";
-import { Colors, Spacing, FontSize } from "../../styles/tokens";
+import { Text, ScrollView, StyleSheet } from 'react-native';
+import { FormField, FormPicker } from '../common';
+import { Button } from '../core';
+import { useProjectForm } from '../../hooks';
+import { PROJECT_STATUS_LABELS } from '@baudoku/projects';
+import type { ProjectFormData } from '../../validation/schemas';
+import { Colors, Spacing, FontSize } from '../../styles/tokens';
 
-const statusOptions = [
-  { label: "Aktiv", value: "active" },
-  { label: "Abgeschlossen", value: "completed" },
-  { label: "Archiviert", value: "archived" },
-];
+const statusOptions = Object.entries(PROJECT_STATUS_LABELS).map(
+  ([value, label]) => ({ value, label })
+);
 
 type ProjectFormProps = {
   onSubmit: (data: ProjectFormData) => Promise<void>;
@@ -25,73 +24,73 @@ export function ProjectForm({ onSubmit, submitting, initialValues, submitLabel }
     <ScrollView
       style={styles.scroll}
       contentContainerStyle={styles.content}
-      keyboardShouldPersistTaps="handled"
+      keyboardShouldPersistTaps='handled'
     >
       <Text style={styles.sectionTitle}>Projekt</Text>
       <FormField
-        label="Name"
+        label='Name'
         required
-        value={form.name ?? ""}
-        onChangeText={(v) => set("name", v)}
+        value={form.name ?? ''}
+        onChangeText={(v) => set('name', v)}
         error={errors.name}
-        placeholder="Projektname"
-        testID="project-name-input"
+        placeholder='Projektname'
+        testID='project-name-input'
       />
       <FormPicker
-        label="Status"
+        label='Status'
         required
         options={statusOptions}
         value={form.status}
-        onValueChange={(v) => set("status", v as ProjectFormData["status"])}
+        onValueChange={(v) => set('status', v as ProjectFormData['status'])}
         error={errors.status}
       />
 
       <Text style={styles.sectionTitle}>Adresse</Text>
       <FormField
-        label="Straße"
-        value={form.street ?? ""}
-        onChangeText={(v) => set("street", v)}
+        label='Straße'
+        value={form.street ?? ''}
+        onChangeText={(v) => set('street', v)}
         error={errors.street}
-        placeholder="Musterstraße 1"
+        placeholder='Musterstraße 1'
       />
       <FormField
-        label="PLZ"
-        value={form.zipCode ?? ""}
-        onChangeText={(v) => set("zipCode", v)}
+        label='PLZ'
+        value={form.zipCode ?? ''}
+        onChangeText={(v) => set('zipCode', v)}
         error={errors.zipCode}
-        placeholder="12345"
-        keyboardType="numeric"
+        placeholder='12345'
+        keyboardType='numeric'
       />
       <FormField
-        label="Stadt"
-        value={form.city ?? ""}
-        onChangeText={(v) => set("city", v)}
+        label='Stadt'
+        value={form.city ?? ''}
+        onChangeText={(v) => set('city', v)}
         error={errors.city}
-        placeholder="Berlin"
+        placeholder='Berlin'
       />
 
       <Text style={styles.sectionTitle}>Auftraggeber</Text>
       <FormField
-        label="Name"
-        value={form.clientName ?? ""}
-        onChangeText={(v) => set("clientName", v)}
+        label='Name'
+        value={form.clientName ?? ''}
+        onChangeText={(v) => set('clientName', v)}
         error={errors.clientName}
-        placeholder="Firma / Person"
+        placeholder='Firma / Person'
       />
       <FormField
-        label="Kontakt"
-        value={form.clientContact ?? ""}
-        onChangeText={(v) => set("clientContact", v)}
+        label='Kontakt'
+        value={form.clientContact ?? ''}
+        onChangeText={(v) => set('clientContact', v)}
         error={errors.clientContact}
-        placeholder="Tel. oder E-Mail"
+        placeholder='Tel. oder E-Mail'
       />
 
       <Button
-        title={submitLabel ?? "Speichern"}
+        title={submitLabel ?? 'Speichern'}
         onPress={() => void handleSubmit()}
         loading={submitting}
         style={styles.button}
-        testID="submit-button"
+        testID='submit-button'
       />
     </ScrollView>
   );
@@ -108,7 +107,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: FontSize.headline,
-    fontWeight: "600",
+    fontWeight: '600',
     color: Colors.textPrimary,
     marginTop: Spacing.lg,
     marginBottom: Spacing.md,

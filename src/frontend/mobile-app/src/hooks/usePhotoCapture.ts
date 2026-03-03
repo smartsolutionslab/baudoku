@@ -1,6 +1,6 @@
-import * as ImagePicker from "expo-image-picker";
-import { useCallback } from "react";
-import { savePhoto } from "../utils";
+import * as ImagePicker from 'expo-image-picker';
+import { useCallback } from 'react';
+import { savePhoto } from '../utils';
 
 export type ExifData = {
   gpsLatitude?: number;
@@ -26,16 +26,16 @@ function extractExif(exif: Record<string, unknown> | null | undefined): ExifData
 
   const data: ExifData = {};
 
-  if (typeof exif.GPSLatitude === "number") data.gpsLatitude = exif.GPSLatitude;
-  if (typeof exif.GPSLongitude === "number")
+  if (typeof exif.GPSLatitude === 'number') data.gpsLatitude = exif.GPSLatitude;
+  if (typeof exif.GPSLongitude === 'number')
     data.gpsLongitude = exif.GPSLongitude;
 
-  if (typeof exif.DateTimeOriginal === "string")
+  if (typeof exif.DateTimeOriginal === 'string')
     data.dateTime = exif.DateTimeOriginal;
-  else if (typeof exif.DateTime === "string") data.dateTime = exif.DateTime;
+  else if (typeof exif.DateTime === 'string') data.dateTime = exif.DateTime;
 
   const model = exif.Model ?? exif.model;
-  if (typeof model === "string") data.cameraModel = model;
+  if (typeof model === 'string') data.cameraModel = model;
 
   if (!data.gpsLatitude && !data.gpsLongitude && !data.dateTime && !data.cameraModel)
     return undefined;

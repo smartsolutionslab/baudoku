@@ -1,14 +1,12 @@
-import React, { useEffect, useRef, useCallback } from "react";
-import { useAuthStore } from "../store";
-import { loadTokens, saveTokens, refreshAccessToken, parseUserFromToken, performLogout } from "../auth";
-import { setAuthToken, setBaseUrl, onUnauthorized } from "@baudoku/core";
-import { API_BASE_URL } from "../config/environment";
+import React, { useEffect, useRef, useCallback } from 'react';
+import { useAuthStore } from '../store';
+import { loadTokens, saveTokens, refreshAccessToken, parseUserFromToken, performLogout } from '../auth';
+import { setAuthToken, setBaseUrl, onUnauthorized, parseJwtPayload } from '@baudoku/core';
+import { API_BASE_URL } from '../config/environment';
 
 function getTokenExpiresIn(token: string): number {
   try {
-    const parts = token.split(".");
-    if (parts.length !== 3) return 0;
-    const payload = JSON.parse(atob(parts[1]));
+    const payload = parseJwtPayload(token);
     const exp = payload.exp as number;
     if (!exp) return 0;
     return exp * 1000 - Date.now();
@@ -75,7 +73,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const expiresIn = getTokenExpiresIn(accessToken);
 
       if (expiresIn > 30_000) {
-        setTokens(accessToken, refreshToken, idToken ?? "");
+        setTokens(accessToken, refreshToken, idToken ?? '');
         setAuthToken(accessToken);
         try {
           const tokenToParse = idToken || accessToken;
@@ -84,12 +82,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         } catch {
           // Token parsing failed — user info will be missing
         }
-        scheduleRefresh(accessToken, refreshToken, idToken ?? "");
+        scheduleRefresh(accessToken, refreshToken, idToken ?? '');
       } else {
         try {
           const tokens = await refreshAccessToken(refreshToken);
           if (!mounted) return;
-          const newIdToken = tokens.idToken || idToken || "";
+          const newIdToken = tokens.idToken || idToken || '';
           await saveTokens(tokens.accessToken, tokens.refreshToken, newIdToken);
           setTokens(tokens.accessToken, tokens.refreshToken, newIdToken);
           setAuthToken(tokens.accessToken);

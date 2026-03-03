@@ -1,9 +1,9 @@
-import { useQuery } from "@tanstack/react-query";
-import * as projectRepo from "../db/repositories/projectRepo";
-import * as installationRepo from "../db/repositories/installationRepo";
-import * as photoRepo from "../db/repositories/photoRepo";
-import * as measurementRepo from "../db/repositories/measurementRepo";
-import * as syncRepo from "../db/repositories/syncRepo";
+import { useQuery } from '@tanstack/react-query';
+import * as projectRepo from '../db/repositories/projectRepo';
+import * as installationRepo from '../db/repositories/installationRepo';
+import * as photoRepo from '../db/repositories/photoRepo';
+import * as measurementRepo from '../db/repositories/measurementRepo';
+import * as syncRepo from '../db/repositories/syncRepo';
 
 export type DashboardStats = {
   projectCount: number;
@@ -16,7 +16,7 @@ export type DashboardStats = {
 
 export function useDashboardStats() {
   return useQuery({
-    queryKey: ["dashboardStats"],
+    queryKey: ['dashboardStats'],
     queryFn: async (): Promise<DashboardStats> => {
       const [
         projects,
