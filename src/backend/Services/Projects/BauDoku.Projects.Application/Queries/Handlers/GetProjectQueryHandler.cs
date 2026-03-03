@@ -11,7 +11,7 @@ public sealed class GetProjectQueryHandler(IProjectRepository projects) : IQuery
     {
         var projectId = query.ProjectId;
 
-        var project = await projects.GetByIdReadOnlyAsync(projectId, cancellationToken);
+        var project = await projects.GetByIdAsync(projectId, cancellationToken);
 
         return project.ToDto();
     }

@@ -32,7 +32,7 @@ public sealed class GetProjectQueryHandlerTests
                 EmailAddress.From("max@example.com"),
                 PhoneNumber.From("+49 30 12345")));
 
-        projects.GetByIdReadOnlyAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>()).Returns(project);
+        projects.GetByIdAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>()).Returns(project);
 
         var result = await handler.Handle(new GetProjectQuery(project.Id));
 
@@ -47,7 +47,7 @@ public sealed class GetProjectQueryHandlerTests
     [Fact]
     public async Task Handle_WhenProjectNotFound_ShouldThrow()
     {
-        projects.GetByIdReadOnlyAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>())
+        projects.GetByIdAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>())
             .Throws(new KeyNotFoundException());
 
         var act = () => handler.Handle(new GetProjectQuery(ProjectIdentifier.New()));
@@ -71,7 +71,7 @@ public sealed class GetProjectQueryHandlerTests
             ZoneIdentifier.New(),
             ZoneName.From("Erdgeschoss"), ZoneType.Floor);
 
-        projects.GetByIdReadOnlyAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>())
+        projects.GetByIdAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>())
             .Returns(project);
 
         var result = await handler.Handle(new GetProjectQuery(project.Id));

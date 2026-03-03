@@ -13,15 +13,6 @@ public sealed class ProjectRepository(ProjectsDbContext context) : IProjectRepos
             ?? throw new KeyNotFoundException($"Projekt mit ID '{id.Value}' wurde nicht gefunden.");
     }
 
-    public async Task<Project> GetByIdReadOnlyAsync(ProjectIdentifier id, CancellationToken cancellationToken = default)
-    {
-        return await context.Projects
-            .AsNoTracking()
-            .Include(p => p.Zones)
-            .FirstOrDefaultAsync(p => p.Id == id, cancellationToken)
-            ?? throw new KeyNotFoundException($"Projekt mit ID '{id.Value}' wurde nicht gefunden.");
-    }
-
     public async Task<bool> ExistsByNameAsync(ProjectName name, CancellationToken ct = default)
     {
         return await context.Projects.AnyAsync(p => p.Name == name, ct);

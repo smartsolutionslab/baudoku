@@ -6,6 +6,10 @@ namespace BauDoku.Documentation.Application.Contracts;
 
 public interface IInstallationReadRepository
 {
+    Task<InstallationDto> GetByIdAsync(InstallationIdentifier id, CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<MeasurementDto>> GetMeasurementsAsync(InstallationIdentifier installationId, CancellationToken cancellationToken = default);
+
     Task<PagedResult<InstallationListItemDto>> ListAsync(
         InstallationListFilter filter,
         PaginationParams pagination,
