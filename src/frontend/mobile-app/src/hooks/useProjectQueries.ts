@@ -12,24 +12,24 @@ export function useProject(id: ProjectId) {
 }
 
 export function useCreateProject() {
-  return useSyncMutation<Omit<NewProject, 'id' | 'createdAt' | 'updatedAt' | 'version'>>({
-    mutationFn: (data) => projectRepo.create(data),
+  return useSyncMutation({
+    mutationFn: (data: Omit<NewProject, 'id' | 'createdAt' | 'updatedAt' | 'version'>) => projectRepo.create(data),
     errorMessage: 'Projekt konnte nicht erstellt werden',
     invalidateKeys: [['projects']],
   });
 }
 
 export function useUpdateProject() {
-  return useSyncMutation<{ id: ProjectId; data: Partial<Omit<NewProject, 'id' | 'createdAt' | 'updatedAt' | 'version' | 'createdBy'>> }>({
-    mutationFn: ({ id, data }) => projectRepo.update(id, data),
+  return useSyncMutation({
+    mutationFn: ({ id, data }: { id: ProjectId; data: Partial<Omit<NewProject, 'id' | 'createdAt' | 'updatedAt' | 'version' | 'createdBy'>> }) => projectRepo.update(id, data),
     errorMessage: 'Projekt konnte nicht aktualisiert werden',
     invalidateKeys: [['projects']],
   });
 }
 
 export function useDeleteProject() {
-  return useSyncMutation<ProjectId>({
-    mutationFn: (id) => projectRepo.remove(id),
+  return useSyncMutation({
+    mutationFn: (id: ProjectId) => projectRepo.remove(id),
     errorMessage: 'Projekt konnte nicht gelöscht werden',
     invalidateKeys: [['projects']],
   });

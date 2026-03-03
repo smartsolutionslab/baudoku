@@ -28,7 +28,7 @@ const statusColors: Record<string, string> = {
   section: Colors.textTertiary,
 };
 
-const statusLabels: Record<string, string> = {
+export const statusLabels: Record<string, string> = {
   ...PROJECT_STATUS_LABELS,
   ...INSTALLATION_STATUS_LABELS,
   ...ZONE_TYPE_LABELS,

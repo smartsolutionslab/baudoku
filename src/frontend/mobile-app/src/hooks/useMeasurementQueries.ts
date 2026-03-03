@@ -8,8 +8,8 @@ export function useMeasurementsByInstallation(installationId: InstallationId) {
 }
 
 export function useAddMeasurement() {
-  return useSyncMutation<Omit<NewMeasurement, 'id' | 'version' | 'result'>>({
-    mutationFn: (data) => measurementRepo.create(data),
+  return useSyncMutation({
+    mutationFn: (data: Omit<NewMeasurement, 'id' | 'version' | 'result'>) => measurementRepo.create(data),
     errorMessage: 'Messung konnte nicht hinzugefügt werden',
     invalidateKeys: [['measurements']],
     onSuccessKeys: (variables) => [['measurements', variables.installationId]],
@@ -17,8 +17,8 @@ export function useAddMeasurement() {
 }
 
 export function useDeleteMeasurement() {
-  return useSyncMutation<MeasurementId>({
-    mutationFn: (id) => measurementRepo.remove(id),
+  return useSyncMutation({
+    mutationFn: (id: MeasurementId) => measurementRepo.remove(id),
     errorMessage: 'Messung konnte nicht gelöscht werden',
     invalidateKeys: [['measurements']],
   });

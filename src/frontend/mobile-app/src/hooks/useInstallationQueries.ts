@@ -12,8 +12,8 @@ export function useInstallationsByProject(projectId: ProjectId) {
 }
 
 export function useCreateInstallation() {
-  return useSyncMutation<Omit<NewInstallation, 'id' | 'createdAt' | 'updatedAt' | 'version'>>({
-    mutationFn: (data) => installationRepo.create(data),
+  return useSyncMutation({
+    mutationFn: (data: Omit<NewInstallation, 'id' | 'createdAt' | 'updatedAt' | 'version'>) => installationRepo.create(data),
     errorMessage: 'Installation konnte nicht erstellt werden',
     invalidateKeys: [['installations']],
     onSuccessKeys: (variables) => [
@@ -24,19 +24,19 @@ export function useCreateInstallation() {
 }
 
 export function useUpdateInstallation() {
-  return useSyncMutation<{
-    id: InstallationId;
-    data: Partial<Omit<NewInstallation, 'id' | 'createdAt' | 'updatedAt' | 'version' | 'projectId' | 'zoneId'>>;
-  }>({
-    mutationFn: ({ id, data }) => installationRepo.update(id, data),
+  return useSyncMutation({
+    mutationFn: ({ id, data }: {
+      id: InstallationId;
+      data: Partial<Omit<NewInstallation, 'id' | 'createdAt' | 'updatedAt' | 'version' | 'projectId' | 'zoneId'>>;
+    }) => installationRepo.update(id, data),
     errorMessage: 'Installation konnte nicht aktualisiert werden',
     invalidateKeys: [['installations'], ['installation']],
   });
 }
 
 export function useDeleteInstallation() {
-  return useSyncMutation<InstallationId>({
-    mutationFn: (id) => installationRepo.remove(id),
+  return useSyncMutation({
+    mutationFn: (id: InstallationId) => installationRepo.remove(id),
     errorMessage: 'Installation konnte nicht gelöscht werden',
     invalidateKeys: [['installations']],
   });

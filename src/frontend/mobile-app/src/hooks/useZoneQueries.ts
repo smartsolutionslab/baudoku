@@ -8,8 +8,8 @@ export function useZonesByProject(projectId: ProjectId) {
 }
 
 export function useCreateZone() {
-  return useSyncMutation<Omit<NewZone, 'id' | 'version'>>({
-    mutationFn: (data) => zoneRepo.create(data),
+  return useSyncMutation({
+    mutationFn: (data: Omit<NewZone, 'id' | 'version'>) => zoneRepo.create(data),
     errorMessage: 'Zone konnte nicht erstellt werden',
     invalidateKeys: [['zones']],
     onSuccessKeys: (variables) => [['zones', variables.projectId]],
@@ -17,16 +17,16 @@ export function useCreateZone() {
 }
 
 export function useUpdateZone() {
-  return useSyncMutation<{ id: ZoneId; data: Partial<Omit<NewZone, 'id' | 'version' | 'projectId'>> }>({
-    mutationFn: ({ id, data }) => zoneRepo.update(id, data),
+  return useSyncMutation({
+    mutationFn: ({ id, data }: { id: ZoneId; data: Partial<Omit<NewZone, 'id' | 'version' | 'projectId'>> }) => zoneRepo.update(id, data),
     errorMessage: 'Zone konnte nicht aktualisiert werden',
     invalidateKeys: [['zones']],
   });
 }
 
 export function useDeleteZone() {
-  return useSyncMutation<ZoneId>({
-    mutationFn: (id) => zoneRepo.remove(id),
+  return useSyncMutation({
+    mutationFn: (id: ZoneId) => zoneRepo.remove(id),
     errorMessage: 'Zone konnte nicht gelöscht werden',
     invalidateKeys: [['zones']],
   });

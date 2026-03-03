@@ -8,7 +8,7 @@ export function useListQuery<TData>(
   return useQuery({ queryKey, queryFn, enabled });
 }
 
-export function useSyncMutation<TVariables, TData = void>(opts: {
+export function useSyncMutation<TVariables, TData = unknown>(opts: {
   mutationFn: (variables: TVariables) => Promise<TData>;
   errorMessage: string;
   invalidateKeys: readonly (readonly unknown[])[];

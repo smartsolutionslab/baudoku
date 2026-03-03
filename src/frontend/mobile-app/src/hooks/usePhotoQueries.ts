@@ -8,8 +8,8 @@ export function usePhotosByInstallation(installationId: InstallationId) {
 }
 
 export function useAddPhoto() {
-  return useSyncMutation<Omit<NewPhoto, 'id' | 'version'>>({
-    mutationFn: (data) => photoRepo.create(data),
+  return useSyncMutation({
+    mutationFn: (data: Omit<NewPhoto, 'id' | 'version'>) => photoRepo.create(data),
     errorMessage: 'Foto konnte nicht hinzugefügt werden',
     invalidateKeys: [['photos']],
     onSuccessKeys: (variables) => [['photos', variables.installationId]],
@@ -17,16 +17,16 @@ export function useAddPhoto() {
 }
 
 export function useDeletePhoto() {
-  return useSyncMutation<PhotoId>({
-    mutationFn: (id) => photoRepo.remove(id),
+  return useSyncMutation({
+    mutationFn: (id: PhotoId) => photoRepo.remove(id),
     errorMessage: 'Foto konnte nicht gelöscht werden',
     invalidateKeys: [['photos']],
   });
 }
 
 export function useUpdatePhotoAnnotation() {
-  return useSyncMutation<{ id: PhotoId; annotation: string }>({
-    mutationFn: ({ id, annotation }) => photoRepo.updateAnnotation(id, annotation),
+  return useSyncMutation({
+    mutationFn: ({ id, annotation }: { id: PhotoId; annotation: string }) => photoRepo.updateAnnotation(id, annotation),
     errorMessage: 'Foto-Anmerkung konnte nicht aktualisiert werden',
     invalidateKeys: [['photos']],
   });
