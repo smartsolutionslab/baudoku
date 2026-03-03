@@ -22,7 +22,7 @@ namespace SmartSolutionsLab.BauDoku.Sync.Infrastructure.Persistence.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("BauDoku.Sync.Domain.Aggregates.SyncBatch", b =>
+            modelBuilder.Entity("SmartSolutionsLab.BauDoku.Sync.Domain.Aggregates.SyncBatch", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid")
@@ -53,7 +53,7 @@ namespace SmartSolutionsLab.BauDoku.Sync.Infrastructure.Persistence.Migrations
                     b.ToTable("sync_batches", (string)null);
                 });
 
-            modelBuilder.Entity("BauDoku.Sync.Domain.Entities.ConflictRecord", b =>
+            modelBuilder.Entity("SmartSolutionsLab.BauDoku.Sync.Domain.Entities.ConflictRecord", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid")
@@ -105,7 +105,7 @@ namespace SmartSolutionsLab.BauDoku.Sync.Infrastructure.Persistence.Migrations
                     b.ToTable("sync_conflicts", (string)null);
                 });
 
-            modelBuilder.Entity("BauDoku.Sync.Domain.Entities.SyncDelta", b =>
+            modelBuilder.Entity("SmartSolutionsLab.BauDoku.Sync.Domain.Entities.SyncDelta", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid")
@@ -144,7 +144,7 @@ namespace SmartSolutionsLab.BauDoku.Sync.Infrastructure.Persistence.Migrations
                     b.ToTable("sync_deltas", (string)null);
                 });
 
-            modelBuilder.Entity("BauDoku.Sync.Infrastructure.Persistence.EntityVersionEntry", b =>
+            modelBuilder.Entity("SmartSolutionsLab.BauDoku.Sync.Infrastructure.Persistence.EntityVersionEntry", b =>
                 {
                     b.Property<string>("EntityType")
                         .HasMaxLength(30)
@@ -188,15 +188,15 @@ namespace SmartSolutionsLab.BauDoku.Sync.Infrastructure.Persistence.Migrations
                     b.ToTable("entity_versions", (string)null);
                 });
 
-            modelBuilder.Entity("BauDoku.Sync.Domain.Entities.ConflictRecord", b =>
+            modelBuilder.Entity("SmartSolutionsLab.BauDoku.Sync.Domain.Entities.ConflictRecord", b =>
                 {
-                    b.HasOne("BauDoku.Sync.Domain.Aggregates.SyncBatch", null)
+                    b.HasOne("SmartSolutionsLab.BauDoku.Sync.Domain.Aggregates.SyncBatch", null)
                         .WithMany("Conflicts")
                         .HasForeignKey("sync_batch_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsOne("BauDoku.Sync.Domain.ValueObjects.EntityReference", "EntityRef", b1 =>
+                    b.OwnsOne("SmartSolutionsLab.BauDoku.Sync.Domain.ValueObjects.EntityReference", "EntityRef", b1 =>
                         {
                             b1.Property<Guid>("ConflictRecordId")
                                 .HasColumnType("uuid");
@@ -223,15 +223,15 @@ namespace SmartSolutionsLab.BauDoku.Sync.Infrastructure.Persistence.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("BauDoku.Sync.Domain.Entities.SyncDelta", b =>
+            modelBuilder.Entity("SmartSolutionsLab.BauDoku.Sync.Domain.Entities.SyncDelta", b =>
                 {
-                    b.HasOne("BauDoku.Sync.Domain.Aggregates.SyncBatch", null)
+                    b.HasOne("SmartSolutionsLab.BauDoku.Sync.Domain.Aggregates.SyncBatch", null)
                         .WithMany("Deltas")
                         .HasForeignKey("sync_batch_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsOne("BauDoku.Sync.Domain.ValueObjects.EntityReference", "EntityRef", b1 =>
+                    b.OwnsOne("SmartSolutionsLab.BauDoku.Sync.Domain.ValueObjects.EntityReference", "EntityRef", b1 =>
                         {
                             b1.Property<Guid>("SyncDeltaId")
                                 .HasColumnType("uuid");
@@ -258,7 +258,7 @@ namespace SmartSolutionsLab.BauDoku.Sync.Infrastructure.Persistence.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("BauDoku.Sync.Domain.Aggregates.SyncBatch", b =>
+            modelBuilder.Entity("SmartSolutionsLab.BauDoku.Sync.Domain.Aggregates.SyncBatch", b =>
                 {
                     b.Navigation("Conflicts");
 

@@ -27,7 +27,7 @@ namespace SmartSolutionsLab.BauDoku.Documentation.Infrastructure.ReadModel.Migra
             NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "postgis");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("BauDoku.Documentation.Infrastructure.ReadModel.InstallationReadModel", b =>
+            modelBuilder.Entity("SmartSolutionsLab.BauDoku.Documentation.Infrastructure.ReadModel.InstallationReadModel", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
@@ -136,7 +136,7 @@ namespace SmartSolutionsLab.BauDoku.Documentation.Infrastructure.ReadModel.Migra
                     b.ToTable("installations", "documentation_read");
                 });
 
-            modelBuilder.Entity("BauDoku.Documentation.Infrastructure.ReadModel.MeasurementReadModel", b =>
+            modelBuilder.Entity("SmartSolutionsLab.BauDoku.Documentation.Infrastructure.ReadModel.MeasurementReadModel", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
@@ -178,7 +178,7 @@ namespace SmartSolutionsLab.BauDoku.Documentation.Infrastructure.ReadModel.Migra
                     b.ToTable("measurements", "documentation_read");
                 });
 
-            modelBuilder.Entity("BauDoku.Documentation.Infrastructure.ReadModel.PhotoReadModel", b =>
+            modelBuilder.Entity("SmartSolutionsLab.BauDoku.Documentation.Infrastructure.ReadModel.PhotoReadModel", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
@@ -251,9 +251,9 @@ namespace SmartSolutionsLab.BauDoku.Documentation.Infrastructure.ReadModel.Migra
                     b.ToTable("photos", "documentation_read");
                 });
 
-            modelBuilder.Entity("BauDoku.Documentation.Infrastructure.ReadModel.MeasurementReadModel", b =>
+            modelBuilder.Entity("SmartSolutionsLab.BauDoku.Documentation.Infrastructure.ReadModel.MeasurementReadModel", b =>
                 {
-                    b.HasOne("BauDoku.Documentation.Infrastructure.ReadModel.InstallationReadModel", "Installation")
+                    b.HasOne("SmartSolutionsLab.BauDoku.Documentation.Infrastructure.ReadModel.InstallationReadModel", "Installation")
                         .WithMany("Measurements")
                         .HasForeignKey("InstallationId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -262,9 +262,9 @@ namespace SmartSolutionsLab.BauDoku.Documentation.Infrastructure.ReadModel.Migra
                     b.Navigation("Installation");
                 });
 
-            modelBuilder.Entity("BauDoku.Documentation.Infrastructure.ReadModel.PhotoReadModel", b =>
+            modelBuilder.Entity("SmartSolutionsLab.BauDoku.Documentation.Infrastructure.ReadModel.PhotoReadModel", b =>
                 {
-                    b.HasOne("BauDoku.Documentation.Infrastructure.ReadModel.InstallationReadModel", "Installation")
+                    b.HasOne("SmartSolutionsLab.BauDoku.Documentation.Infrastructure.ReadModel.InstallationReadModel", "Installation")
                         .WithMany("Photos")
                         .HasForeignKey("InstallationId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -273,7 +273,7 @@ namespace SmartSolutionsLab.BauDoku.Documentation.Infrastructure.ReadModel.Migra
                     b.Navigation("Installation");
                 });
 
-            modelBuilder.Entity("BauDoku.Documentation.Infrastructure.ReadModel.InstallationReadModel", b =>
+            modelBuilder.Entity("SmartSolutionsLab.BauDoku.Documentation.Infrastructure.ReadModel.InstallationReadModel", b =>
                 {
                     b.Navigation("Measurements");
 

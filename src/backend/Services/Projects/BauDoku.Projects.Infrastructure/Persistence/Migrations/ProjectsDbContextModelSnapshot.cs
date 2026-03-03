@@ -22,7 +22,7 @@ namespace SmartSolutionsLab.BauDoku.Projects.Infrastructure.Persistence.Migratio
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("BauDoku.Projects.Domain.Aggregates.Project", b =>
+            modelBuilder.Entity("SmartSolutionsLab.BauDoku.Projects.Domain.Aggregates.Project", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid")
@@ -55,7 +55,7 @@ namespace SmartSolutionsLab.BauDoku.Projects.Infrastructure.Persistence.Migratio
                     b.ToTable("projects", (string)null);
                 });
 
-            modelBuilder.Entity("BauDoku.Projects.Domain.Entities.Zone", b =>
+            modelBuilder.Entity("SmartSolutionsLab.BauDoku.Projects.Domain.Entities.Zone", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid")
@@ -89,9 +89,9 @@ namespace SmartSolutionsLab.BauDoku.Projects.Infrastructure.Persistence.Migratio
                     b.ToTable("zones", (string)null);
                 });
 
-            modelBuilder.Entity("BauDoku.Projects.Domain.Aggregates.Project", b =>
+            modelBuilder.Entity("SmartSolutionsLab.BauDoku.Projects.Domain.Aggregates.Project", b =>
                 {
-                    b.OwnsOne("BauDoku.Projects.Domain.ValueObjects.Address", "Address", b1 =>
+                    b.OwnsOne("SmartSolutionsLab.BauDoku.Projects.Domain.ValueObjects.Address", "Address", b1 =>
                         {
                             b1.Property<Guid>("ProjectId")
                                 .HasColumnType("uuid");
@@ -122,7 +122,7 @@ namespace SmartSolutionsLab.BauDoku.Projects.Infrastructure.Persistence.Migratio
                                 .HasForeignKey("ProjectId");
                         });
 
-                    b.OwnsOne("BauDoku.Projects.Domain.ValueObjects.ClientInfo", "Client", b1 =>
+                    b.OwnsOne("SmartSolutionsLab.BauDoku.Projects.Domain.ValueObjects.ClientInfo", "Client", b1 =>
                         {
                             b1.Property<Guid>("ProjectId")
                                 .HasColumnType("uuid");
@@ -158,16 +158,16 @@ namespace SmartSolutionsLab.BauDoku.Projects.Infrastructure.Persistence.Migratio
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("BauDoku.Projects.Domain.Entities.Zone", b =>
+            modelBuilder.Entity("SmartSolutionsLab.BauDoku.Projects.Domain.Entities.Zone", b =>
                 {
-                    b.HasOne("BauDoku.Projects.Domain.Aggregates.Project", null)
+                    b.HasOne("SmartSolutionsLab.BauDoku.Projects.Domain.Aggregates.Project", null)
                         .WithMany("Zones")
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("BauDoku.Projects.Domain.Aggregates.Project", b =>
+            modelBuilder.Entity("SmartSolutionsLab.BauDoku.Projects.Domain.Aggregates.Project", b =>
                 {
                     b.Navigation("Zones");
                 });
