@@ -1,4 +1,4 @@
-using BauDoku.Sync.Application.ReadModel;
+using BauDoku.Sync.ReadModel;
 
 namespace BauDoku.Sync.Application.Queries;
 

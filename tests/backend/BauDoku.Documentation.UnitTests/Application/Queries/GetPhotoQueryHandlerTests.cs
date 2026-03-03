@@ -1,5 +1,5 @@
 using AwesomeAssertions;
-using BauDoku.Documentation.Application.ReadModel;
+using BauDoku.Documentation.ReadModel;
 using BauDoku.Documentation.Application.Queries;
 using BauDoku.Documentation.Application.Queries.Handlers;
 using BauDoku.Documentation.Domain;

@@ -1,4 +1,4 @@
-using BauDoku.Documentation.Application.ReadModel;
+using BauDoku.Documentation.ReadModel;
 
 namespace BauDoku.Documentation.Infrastructure.ReadModel;
 

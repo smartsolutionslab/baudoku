@@ -21,18 +21,21 @@
     <Project Path="Services/Documentation/BauDoku.Documentation.Application/BauDoku.Documentation.Application.csproj" />
     <Project Path="Services/Documentation/BauDoku.Documentation.Domain/BauDoku.Documentation.Domain.csproj" />
     <Project Path="Services/Documentation/BauDoku.Documentation.Infrastructure/BauDoku.Documentation.Infrastructure.csproj" />
+    <Project Path="Services/Documentation/BauDoku.Documentation.ReadModel/BauDoku.Documentation.ReadModel.csproj" />
   </Folder>
   <Folder Name="/Services/Projects/">
     <Project Path="Services/Projects/BauDoku.Projects.Api/BauDoku.Projects.Api.csproj" />
     <Project Path="Services/Projects/BauDoku.Projects.Application/BauDoku.Projects.Application.csproj" />
     <Project Path="Services/Projects/BauDoku.Projects.Domain/BauDoku.Projects.Domain.csproj" />
     <Project Path="Services/Projects/BauDoku.Projects.Infrastructure/BauDoku.Projects.Infrastructure.csproj" />
+    <Project Path="Services/Projects/BauDoku.Projects.ReadModel/BauDoku.Projects.ReadModel.csproj" />
   </Folder>
   <Folder Name="/Services/Sync/">
     <Project Path="Services/Sync/BauDoku.Sync.Api/BauDoku.Sync.Api.csproj" />
     <Project Path="Services/Sync/BauDoku.Sync.Application/BauDoku.Sync.Application.csproj" />
     <Project Path="Services/Sync/BauDoku.Sync.Domain/BauDoku.Sync.Domain.csproj" />
     <Project Path="Services/Sync/BauDoku.Sync.Infrastructure/BauDoku.Sync.Infrastructure.csproj" />
+    <Project Path="Services/Sync/BauDoku.Sync.ReadModel/BauDoku.Sync.ReadModel.csproj" />
   </Folder>
   <Folder Name="/Tools/">
     <Project Path="Tools/BauDoku.MigrationRunner/BauDoku.MigrationRunner.csproj" />

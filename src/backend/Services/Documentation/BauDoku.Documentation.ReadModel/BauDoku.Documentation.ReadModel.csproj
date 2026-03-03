@@ -1,8 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\BauDoku.Projects.Domain\BauDoku.Projects.Domain.csproj" />
-    <ProjectReference Include="..\BauDoku.Projects.ReadModel\BauDoku.Projects.ReadModel.csproj" />
+    <ProjectReference Include="..\BauDoku.Documentation.Domain\BauDoku.Documentation.Domain.csproj" />
     <ProjectReference Include="..\..\..\BuildingBlocks\BauDoku.BuildingBlocks.Application\BauDoku.BuildingBlocks.Application.csproj" />
   </ItemGroup>
 

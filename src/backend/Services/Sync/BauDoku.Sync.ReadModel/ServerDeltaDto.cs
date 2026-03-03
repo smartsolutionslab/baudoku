@@ -1,4 +1,4 @@
-namespace BauDoku.Sync.Application.ReadModel;
+namespace BauDoku.Sync.ReadModel;
 
 public sealed record ServerDeltaDto(
     string EntityType,

@@ -1,6 +1,6 @@
 using BauDoku.Documentation.Domain;
 
-namespace BauDoku.Documentation.Application.ReadModel;
+namespace BauDoku.Documentation.ReadModel;
 
 public sealed record BoundingBox(
     Latitude MinLatitude,

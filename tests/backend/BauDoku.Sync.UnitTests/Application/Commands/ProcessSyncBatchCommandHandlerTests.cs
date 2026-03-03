@@ -3,7 +3,7 @@ using BauDoku.BuildingBlocks.Application.Persistence;
 using BauDoku.Sync.Application.Commands;
 using BauDoku.Sync.Application.Commands.Handlers;
 using BauDoku.Sync.Application.Contracts;
-using BauDoku.Sync.Application.ReadModel;
+using BauDoku.Sync.ReadModel;
 using BauDoku.Sync.Domain;
 using NSubstitute;
 

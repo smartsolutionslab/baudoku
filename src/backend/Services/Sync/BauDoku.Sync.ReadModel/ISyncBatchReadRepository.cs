@@ -1,6 +1,6 @@
 using BauDoku.Sync.Domain;
 
-namespace BauDoku.Sync.Application.ReadModel;
+namespace BauDoku.Sync.ReadModel;
 
 public interface ISyncBatchReadRepository
 {

@@ -1,6 +1,6 @@
 using AwesomeAssertions;
 using BauDoku.Sync.Application.Contracts;
-using BauDoku.Sync.Application.ReadModel;
+using BauDoku.Sync.ReadModel;
 using BauDoku.Sync.Application.Queries;
 using BauDoku.Sync.Application.Queries.Handlers;
 using BauDoku.Sync.Domain;

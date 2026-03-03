@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
 using BauDoku.Sync.Application.Contracts;
-using BauDoku.Sync.Application.ReadModel;
+using BauDoku.Sync.ReadModel;
 using BauDoku.Sync.Domain;
 using Microsoft.EntityFrameworkCore;
 

@@ -1,6 +1,6 @@
 using BauDoku.BuildingBlocks.Application.Queries;
 using BauDoku.Projects.Application.Mapping;
-using BauDoku.Projects.Application.ReadModel;
+using BauDoku.Projects.ReadModel;
 using BauDoku.Projects.Domain;
 
 namespace BauDoku.Projects.Application.Queries.Handlers;

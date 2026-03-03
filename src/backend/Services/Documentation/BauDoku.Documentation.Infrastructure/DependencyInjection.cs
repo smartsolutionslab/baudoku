@@ -1,5 +1,5 @@
 using BauDoku.Documentation.Application.Contracts;
-using BauDoku.Documentation.Application.ReadModel;
+using BauDoku.Documentation.ReadModel;
 using BauDoku.Documentation.Domain;
 using BauDoku.Documentation.Infrastructure.Persistence;
 using BauDoku.Documentation.Infrastructure.Persistence.Repositories;

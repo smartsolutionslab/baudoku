@@ -1,7 +1,7 @@
 using BauDoku.BuildingBlocks.Application.Commands;
 using BauDoku.Documentation.Application.Contracts;
 using BauDoku.Documentation.Application.Diagnostics;
-using BauDoku.Documentation.Application.ReadModel;
+using BauDoku.Documentation.ReadModel;
 using BauDoku.Documentation.Domain;
 
 namespace BauDoku.Documentation.Application.Commands.Handlers;

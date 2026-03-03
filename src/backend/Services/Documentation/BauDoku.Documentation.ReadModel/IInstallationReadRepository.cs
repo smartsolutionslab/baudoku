@@ -1,7 +1,7 @@
 using BauDoku.BuildingBlocks.Application.Pagination;
 using BauDoku.Documentation.Domain;
 
-namespace BauDoku.Documentation.Application.ReadModel;
+namespace BauDoku.Documentation.ReadModel;
 
 public interface IInstallationReadRepository
 {

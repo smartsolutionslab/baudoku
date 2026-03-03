@@ -1,4 +1,4 @@
-namespace BauDoku.Documentation.Application.ReadModel;
+namespace BauDoku.Documentation.ReadModel;
 
 public sealed record PhotoDto(
     Guid Id,

@@ -1,5 +1,5 @@
 using BauDoku.BuildingBlocks.Application.Queries;
-using BauDoku.Sync.Application.ReadModel;
+using BauDoku.Sync.ReadModel;
 using BauDoku.Sync.Domain;
 
 namespace BauDoku.Sync.Application.Queries;

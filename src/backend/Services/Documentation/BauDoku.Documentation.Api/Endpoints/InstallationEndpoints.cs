@@ -7,7 +7,7 @@ using BauDoku.Documentation.Api.Mapping;
 using BauDoku.Documentation.Application.Commands;
 using BauDoku.Documentation.Domain;
 using BauDoku.Documentation.Application.Queries;
-using BauDoku.Documentation.Application.ReadModel;
+using BauDoku.Documentation.ReadModel;
 
 namespace BauDoku.Documentation.Api.Endpoints;
 

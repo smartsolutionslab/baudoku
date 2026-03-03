@@ -6,7 +6,7 @@ using BauDoku.BuildingBlocks.Auth;
 using BauDoku.Projects.Api.Mapping;
 using BauDoku.Projects.Application.Commands;
 using BauDoku.Projects.Application.Queries;
-using BauDoku.Projects.Application.ReadModel;
+using BauDoku.Projects.ReadModel;
 using BauDoku.Projects.Domain;
 
 namespace BauDoku.Projects.Api.Endpoints;

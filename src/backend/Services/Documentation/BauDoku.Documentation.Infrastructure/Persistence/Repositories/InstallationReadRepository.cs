@@ -1,6 +1,6 @@
 using BauDoku.BuildingBlocks.Application.Pagination;
 using BauDoku.BuildingBlocks.Domain;
-using BauDoku.Documentation.Application.ReadModel;
+using BauDoku.Documentation.ReadModel;
 using BauDoku.BuildingBlocks.Persistence.Pagination;
 using BauDoku.Documentation.Domain;
 using BauDoku.Documentation.Infrastructure.ReadModel;

@@ -1,5 +1,5 @@
 using BauDoku.BuildingBlocks.Application.Queries;
-using BauDoku.Documentation.Application.ReadModel;
+using BauDoku.Documentation.ReadModel;
 
 namespace BauDoku.Documentation.Application.Queries.Handlers;
 

@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
 using BauDoku.BuildingBlocks.Application.Pagination;
-using BauDoku.Projects.Application.ReadModel;
+using BauDoku.Projects.ReadModel;
 using BauDoku.BuildingBlocks.Domain;
 using BauDoku.BuildingBlocks.Persistence.Pagination;
 using BauDoku.Projects.Domain;

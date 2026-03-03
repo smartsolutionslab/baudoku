@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BauDoku.Sync.Domain\BauDoku.Sync.Domain.csproj" />
+    <ProjectReference Include="..\BauDoku.Sync.ReadModel\BauDoku.Sync.ReadModel.csproj" />
     <ProjectReference Include="..\..\..\BuildingBlocks\BauDoku.BuildingBlocks.Application\BauDoku.BuildingBlocks.Application.csproj" />
   </ItemGroup>
 
