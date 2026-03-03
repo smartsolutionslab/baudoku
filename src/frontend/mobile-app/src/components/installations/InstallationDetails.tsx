@@ -61,7 +61,7 @@ export function InstallationDetails({ installation }: InstallationDetailsProps) 
         <>
           <Text style={styles.subTitle}>Kabel</Text>
           <Row label='Typ' value={i.cableType} />
-          <Row label='Querschnitt'value={i.crossSectionMm2 != null ? `${i.crossSectionMm2} mm²` : null} />
+          <Row label='Querschnitt' value={i.crossSectionMm2 != null ? `${i.crossSectionMm2} mm²` : null} />
           <Row label='Länge' value={i.lengthM != null ? `${i.lengthM} m` : null} />
         </>
       )}
@@ -72,7 +72,7 @@ export function InstallationDetails({ installation }: InstallationDetailsProps) 
           <Row label='Stromkreis' value={i.circuitId} />
           <Row label='Sicherung' value={i.fuseType} />
           <Row label='Nennstrom' value={i.fuseRatingA != null ? `${i.fuseRatingA} A` : null} />
-          <Row label='Spannung'  value={i.voltageV != null ? `${i.voltageV} V` : null} />
+          <Row label='Spannung' value={i.voltageV != null ? `${i.voltageV} V` : null} />
           <Row label='Phase' value={i.phase} />
         </>
       )}

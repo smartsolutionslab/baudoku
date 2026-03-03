@@ -5,13 +5,9 @@ import { useZoneForm } from '../../hooks';
 import type { ZoneFormData } from '../../validation/schemas';
 import { Colors, Spacing } from '../../styles/tokens';
 import type { Zone } from '../../db/repositories/types';
+import { ZONE_TYPE_LABELS } from '@baudoku/projects';
 
-const typeOptions = [
-  { label: 'Gebäude', value: 'building' },
-  { label: 'Stockwerk', value: 'floor' },
-  { label: 'Raum', value: 'room' },
-  { label: 'Graben', value: 'trench' },
-];
+const typeOptions = Object.entries(ZONE_TYPE_LABELS).map(([value, label]) => ({ label, value }));
 
 type ZoneFormProps = {
   zones?: Zone[];

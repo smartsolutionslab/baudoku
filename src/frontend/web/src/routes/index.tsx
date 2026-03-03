@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { Link } from '@tanstack/react-router';
 import { useProjects } from '@/hooks/useProjects';
 import { PlusIcon } from '@/components/icons';
+import { StatusBadge } from '@/components/common/StatusBadge';
 
 export function DashboardPage() {
   const { data } = useProjects();
@@ -113,23 +114,3 @@ function DashboardCard({
   );
 }
 
-function StatusBadge({ status, className = '' }: { status: string; className?: string }) {
-  const styles: Record<string, string> = {
-    active: 'bg-green-100 text-green-700',
-    completed: 'bg-blue-100 text-blue-700',
-    archived: 'bg-gray-100 text-gray-600',
-  };
-  const labels: Record<string, string> = {
-    active: 'Aktiv',
-    completed: 'Abgeschlossen',
-    archived: 'Archiviert',
-  };
-
-  return (
-    <span
-      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${styles[status] ?? styles.active} ${className}`}
-    >
-      {labels[status] ?? status}
-    </span>
-  );
-}
