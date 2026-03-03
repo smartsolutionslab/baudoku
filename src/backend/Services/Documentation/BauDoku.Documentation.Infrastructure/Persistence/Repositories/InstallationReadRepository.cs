@@ -12,20 +12,17 @@ public sealed class InstallationReadRepository(ReadModelDbContext context) : IIn
 {
     public async Task<InstallationDto> GetByIdAsync(InstallationIdentifier id, CancellationToken cancellationToken = default)
     {
-        var installation = await context.Installations
-            .AsNoTracking()
-            .FirstOrDefaultAsync(i => i.Id == id.Value && !i.IsDeleted, cancellationToken)
-            ?? throw new KeyNotFoundException($"Installation mit ID '{id.Value}' wurde nicht gefunden.");
+        var installation = (await context.Installations
+            .FirstOrDefaultAsync(i => i.Id == id.Value && !i.IsDeleted, cancellationToken))
+            .OrNotFound("Installation", id.Value);
 
         var photos = await context.Photos
-            .AsNoTracking()
             .Where(p => p.InstallationId == id.Value)
             .OrderByDescending(p => p.TakenAt)
             .SelectPhotoDtos()
             .ToListAsync(cancellationToken);
 
         var measurements = await context.Measurements
-            .AsNoTracking()
             .Where(m => m.InstallationId == id.Value)
             .OrderByDescending(m => m.MeasuredAt)
             .SelectMeasurementDtos()
@@ -37,13 +34,11 @@ public sealed class InstallationReadRepository(ReadModelDbContext context) : IIn
     public async Task<IReadOnlyList<MeasurementDto>> GetMeasurementsAsync(InstallationIdentifier installationId, CancellationToken cancellationToken = default)
     {
         var exists = await context.Installations
-            .AsNoTracking()
             .AnyAsync(i => i.Id == installationId.Value && !i.IsDeleted, cancellationToken);
 
         if (!exists) throw new KeyNotFoundException($"Installation mit ID '{installationId.Value}' wurde nicht gefunden.");
 
         return await context.Measurements
-            .AsNoTracking()
             .Where(m => m.InstallationId == installationId.Value)
             .OrderByDescending(m => m.MeasuredAt)
             .SelectMeasurementDtos()
@@ -54,7 +49,7 @@ public sealed class InstallationReadRepository(ReadModelDbContext context) : IIn
     {
         var (projectId, zoneId, type, status, search) = filter;
 
-        var query = context.Installations.AsNoTracking().Where(i => !i.IsDeleted);
+        var query = context.Installations.Where(i => !i.IsDeleted);
 
         if (projectId is not null)
             query = query.Where(i => i.ProjectId == projectId.Value);
@@ -141,7 +136,7 @@ public sealed class InstallationReadRepository(ReadModelDbContext context) : IIn
                     ST_SetSRID(ST_MakePoint(longitude, latitude), 4326),
                     ST_MakeEnvelope({minLongitude}, {minLatitude}, {maxLongitude}, {maxLatitude}, 4326))
                 """)
-            .AsNoTracking();
+;
 
         if (projectId is not null)
             query = query.Where(i => i.ProjectId == projectId.Value);

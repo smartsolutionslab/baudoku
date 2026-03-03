@@ -1,3 +1,4 @@
+using BauDoku.BuildingBlocks.Domain;
 using BauDoku.Sync.Domain;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,20 +8,20 @@ public sealed class SyncBatchRepository(SyncDbContext context) : ISyncBatchRepos
 {
     public async Task<SyncBatch> GetByIdAsync(SyncBatchIdentifier id, CancellationToken cancellationToken = default)
     {
-        return await context.SyncBatches
+        return (await context.SyncBatches
             .Include(b => b.Deltas)
             .Include(b => b.Conflicts)
-            .FirstOrDefaultAsync(b => b.Id == id, cancellationToken)
-            ?? throw new KeyNotFoundException($"SyncBatch mit ID '{id.Value}' wurde nicht gefunden.");
+            .FirstOrDefaultAsync(b => b.Id == id, cancellationToken))
+            .OrNotFound("SyncBatch", id.Value);
     }
 
     public async Task<SyncBatch> GetByConflictIdAsync(ConflictRecordIdentifier conflictId, CancellationToken cancellationToken = default)
     {
-        return await context.SyncBatches
+        return (await context.SyncBatches
             .Include(b => b.Deltas)
             .Include(b => b.Conflicts)
-            .FirstOrDefaultAsync(b => b.Conflicts.Any(c => c.Id == conflictId), cancellationToken)
-            ?? throw new KeyNotFoundException($"SyncBatch für Konflikt '{conflictId.Value}' wurde nicht gefunden.");
+            .FirstOrDefaultAsync(b => b.Conflicts.Any(c => c.Id == conflictId), cancellationToken))
+            .OrNotFound("SyncBatch", conflictId.Value);
     }
 
     public async Task<List<SyncBatch>> GetPendingBatchesAsync(int limit, CancellationToken cancellationToken = default)

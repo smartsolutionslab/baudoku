@@ -4,6 +4,11 @@ namespace BauDoku.Documentation.Infrastructure.ReadModel;
 
 public sealed class ReadModelDbContext(DbContextOptions<ReadModelDbContext> options) : DbContext(options)
 {
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+    }
+
     public DbSet<InstallationReadModel> Installations => Set<InstallationReadModel>();
     public DbSet<PhotoReadModel> Photos => Set<PhotoReadModel>();
     public DbSet<MeasurementReadModel> Measurements => Set<MeasurementReadModel>();

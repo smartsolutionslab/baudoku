@@ -1,3 +1,4 @@
+using BauDoku.BuildingBlocks.Domain;
 using BauDoku.Documentation.ReadModel;
 using BauDoku.Documentation.Domain;
 using BauDoku.Documentation.Infrastructure.ReadModel;
@@ -10,18 +11,16 @@ public sealed class PhotoReadRepository(ReadModelDbContext context) : IPhotoRead
     public async Task<PhotoDto> GetByIdAsync(PhotoIdentifier photoId, CancellationToken cancellationToken = default)
     {
         var id = photoId.Value;
-        return await context.Photos
-            .AsNoTracking()
+        return (await context.Photos
             .Where(p => p.Id == id)
             .SelectPhotoDtos()
-            .FirstOrDefaultAsync(cancellationToken)
-            ?? throw new KeyNotFoundException($"Foto mit ID '{id}' wurde nicht gefunden.");
+            .FirstOrDefaultAsync(cancellationToken))
+            .OrNotFound("Foto", id);
     }
 
     public async Task<IReadOnlyList<PhotoDto>> ListByInstallationIdAsync(InstallationIdentifier installationId, CancellationToken cancellationToken = default)
     {
         return await context.Photos
-            .AsNoTracking()
             .Where(p => p.InstallationId == installationId.Value)
             .OrderByDescending(p => p.TakenAt)
             .SelectPhotoDtos()

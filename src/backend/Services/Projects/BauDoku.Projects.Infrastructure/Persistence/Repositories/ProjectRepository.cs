@@ -1,3 +1,4 @@
+using BauDoku.BuildingBlocks.Domain;
 using BauDoku.Projects.Domain;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,10 +8,10 @@ public sealed class ProjectRepository(ProjectsDbContext context) : IProjectRepos
 {
     public async Task<Project> GetByIdAsync(ProjectIdentifier id, CancellationToken cancellationToken = default)
     {
-        return await context.Projects
+        return (await context.Projects
             .Include(p => p.Zones)
-            .FirstOrDefaultAsync(p => p.Id == id, cancellationToken)
-            ?? throw new KeyNotFoundException($"Projekt mit ID '{id.Value}' wurde nicht gefunden.");
+            .FirstOrDefaultAsync(p => p.Id == id, cancellationToken))
+            .OrNotFound("Projekt", id.Value);
     }
 
     public async Task<bool> ExistsByNameAsync(ProjectName name, CancellationToken ct = default)

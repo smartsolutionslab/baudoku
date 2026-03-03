@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using BauDoku.BuildingBlocks.Application.Pagination;
 using BauDoku.Projects.ReadModel;
+using BauDoku.Projects.Application.Mapping;
 using BauDoku.BuildingBlocks.Domain;
 using BauDoku.BuildingBlocks.Persistence.Pagination;
 using BauDoku.Projects.Domain;
@@ -10,6 +11,17 @@ namespace BauDoku.Projects.Infrastructure.Persistence.Repositories;
 
 public sealed class ProjectReadRepository(ProjectsDbContext context) : IProjectReadRepository
 {
+    public async Task<ProjectDto> GetByIdAsync(ProjectIdentifier id, CancellationToken cancellationToken = default)
+    {
+        var project = (await context.Projects
+            .AsNoTracking()
+            .Include(p => p.Zones)
+            .FirstOrDefaultAsync(p => p.Id == id, cancellationToken))
+            .OrNotFound("Projekt", id.Value);
+
+        return project.ToDto();
+    }
+
     private static readonly Expression<Func<Project, ProjectListItemDto>> toProjectListItem = p => new ProjectListItemDto(
         p.Id.Value,
         p.Name.Value,

@@ -1,7 +1,9 @@
 using AwesomeAssertions;
+using BauDoku.Projects.Application.Mapping;
 using BauDoku.Projects.Application.Queries;
 using BauDoku.Projects.Application.Queries.Handlers;
 using BauDoku.Projects.Domain;
+using BauDoku.Projects.ReadModel;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 
@@ -9,12 +11,12 @@ namespace BauDoku.Projects.UnitTests.Application.Queries;
 
 public sealed class GetProjectQueryHandlerTests
 {
-    private readonly IProjectRepository projects;
+    private readonly IProjectReadRepository projects;
     private readonly GetProjectQueryHandler handler;
 
     public GetProjectQueryHandlerTests()
     {
-        projects = Substitute.For<IProjectRepository>();
+        projects = Substitute.For<IProjectReadRepository>();
         handler = new GetProjectQueryHandler(projects);
     }
 
@@ -32,7 +34,8 @@ public sealed class GetProjectQueryHandlerTests
                 EmailAddress.From("max@example.com"),
                 PhoneNumber.From("+49 30 12345")));
 
-        projects.GetByIdAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>()).Returns(project);
+        var dto = project.ToDto();
+        projects.GetByIdAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>()).Returns(dto);
 
         var result = await handler.Handle(new GetProjectQuery(project.Id));
 
@@ -71,8 +74,9 @@ public sealed class GetProjectQueryHandlerTests
             ZoneIdentifier.New(),
             ZoneName.From("Erdgeschoss"), ZoneType.Floor);
 
+        var dto = project.ToDto();
         projects.GetByIdAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>())
-            .Returns(project);
+            .Returns(dto);
 
         var result = await handler.Handle(new GetProjectQuery(project.Id));
 

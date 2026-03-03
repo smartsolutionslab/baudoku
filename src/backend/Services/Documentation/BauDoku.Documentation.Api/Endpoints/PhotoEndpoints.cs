@@ -54,10 +54,10 @@ public static class PhotoEndpoints
         CancellationToken cancellationToken)
     {
         var request = GetRequestFromFormData(metadata);
-
         await using var stream = file.OpenReadStream();
         var command = request.ToCommand(installationId, file, stream);
         var photoId = await dispatcher.Send(command, cancellationToken);
+
         return TypedResults.Created($"/api/documentation/photos/{photoId.Value}", new CreatedResponse(photoId.Value));
     }
 
