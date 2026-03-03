@@ -117,10 +117,10 @@ public sealed class EntityVersionStorePersistenceTests(PostgreSqlFixture fixture
             await context.SaveChangesAsync();
         }
 
-        await using (var context = fixture.CreateContext())
+        await using (var readContext = fixture.CreateReadContext())
         {
-            var store = new EntityVersionStore(context);
-            var changes = await store.GetChangedSinceAsync(DateTime.UtcNow.AddMinutes(-5), null, 100);
+            var readStore = new EntityVersionReadStore(readContext);
+            var changes = await readStore.GetChangedSinceAsync(DateTime.UtcNow.AddMinutes(-5), null, 100);
 
             changes.Should().Contain(c => c.EntityId == entityId);
         }

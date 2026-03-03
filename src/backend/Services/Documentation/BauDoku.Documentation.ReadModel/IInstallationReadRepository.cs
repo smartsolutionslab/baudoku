@@ -1,10 +1,9 @@
 using BauDoku.BuildingBlocks.Application.Pagination;
-using BauDoku.BuildingBlocks.Domain;
 using BauDoku.Documentation.Domain;
 
 namespace BauDoku.Documentation.ReadModel;
 
-public interface IInstallationReadRepository : IReadRepository<InstallationDto, InstallationIdentifier>, IPagedReadRepository<InstallationListItemDto, InstallationListFilter>
+public interface IInstallationReadRepository : IReadRepository<InstallationDto, InstallationIdentifier, InstallationListItemDto, InstallationListFilter>
 {
     Task<IReadOnlyList<MeasurementDto>> GetMeasurementsAsync(InstallationIdentifier installationId, CancellationToken cancellationToken = default);
 

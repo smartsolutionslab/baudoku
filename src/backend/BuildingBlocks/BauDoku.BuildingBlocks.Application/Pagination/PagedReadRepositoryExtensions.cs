@@ -1,11 +1,14 @@
+using BauDoku.BuildingBlocks.Domain;
+
 namespace BauDoku.BuildingBlocks.Application.Pagination;
 
 public static class PagedReadRepositoryExtensions
 {
-    public static Task<PagedResult<TDto>> With<TDto, TFilter>(
-        this IPagedReadRepository<TDto, TFilter> repository,
+    public static Task<PagedResult<TListDto>> With<TDto, TId, TListDto, TFilter>(
+        this IReadRepository<TDto, TId, TListDto, TFilter> repository,
         TFilter filter,
         PaginationParams pagination,
         CancellationToken cancellationToken = default)
+        where TId : IValueObject
         => repository.ListAsync(filter, pagination, cancellationToken);
 }

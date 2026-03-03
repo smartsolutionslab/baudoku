@@ -4,6 +4,6 @@ using BauDoku.Projects.Domain;
 
 namespace BauDoku.Projects.ReadModel;
 
-public interface IProjectReadRepository : IReadRepository<ProjectDto, ProjectIdentifier>, IPagedReadRepository<ProjectListItemDto, SearchTerm?>
+public interface IProjectReadRepository : IReadRepository<ProjectDto, ProjectIdentifier, ProjectListItemDto, SearchTerm?>
 {
 }

@@ -9,12 +9,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BauDoku.Projects.Infrastructure.Persistence.Repositories;
 
-public sealed class ProjectReadRepository(ProjectsDbContext context) : IProjectReadRepository
+public sealed class ProjectReadRepository(ProjectsReadDbContext context) : IProjectReadRepository
 {
     public async Task<ProjectDto> GetByIdAsync(ProjectIdentifier id, CancellationToken cancellationToken = default)
     {
         var project = (await context.Projects
-            .AsNoTracking()
             .Include(p => p.Zones)
             .FirstOrDefaultAsync(p => p.Id == id, cancellationToken))
             .OrNotFound("Projekt", id.Value);
@@ -33,7 +32,7 @@ public sealed class ProjectReadRepository(ProjectsDbContext context) : IProjectR
 
     public async Task<PagedResult<ProjectListItemDto>> ListAsync(SearchTerm? search, PaginationParams pagination, CancellationToken cancellationToken = default)
     {
-        var query = context.Projects.AsNoTracking();
+        var query = context.Projects.AsQueryable();
 
         if (search is not null)
         {

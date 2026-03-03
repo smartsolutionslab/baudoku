@@ -29,6 +29,15 @@ public sealed class PostgreSqlFixture : IAsyncLifetime
         return new SyncDbContext(options, dispatcher);
     }
 
+    public SyncReadDbContext CreateReadContext()
+    {
+        var options = new DbContextOptionsBuilder<SyncReadDbContext>()
+            .UseNpgsql(ConnectionString)
+            .Options;
+
+        return new SyncReadDbContext(options);
+    }
+
     public async Task DisposeAsync()
     {
         await container.DisposeAsync().AsTask();

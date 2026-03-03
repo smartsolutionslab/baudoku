@@ -18,13 +18,15 @@ public static class DependencyInjection
             options.UseNpgsql(connectionString, npgsql =>
                 npgsql.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)));
 
+        services.AddDbContext<SyncReadDbContext>(options =>
+            options.UseNpgsql(connectionString, npgsql =>
+                npgsql.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)));
+
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<SyncDbContext>());
         services.AddScoped<ISyncBatchRepository, SyncBatchRepository>();
         services.AddScoped<ISyncBatchReadRepository, SyncBatchReadRepository>();
-
-        services.AddScoped<EntityVersionStore>();
-        services.AddScoped<IEntityVersionStore>(sp => sp.GetRequiredService<EntityVersionStore>());
-        services.AddScoped<IEntityVersionReadStore>(sp => sp.GetRequiredService<EntityVersionStore>());
+        services.AddScoped<IEntityVersionStore, EntityVersionStore>();
+        services.AddScoped<IEntityVersionReadStore, EntityVersionReadStore>();
 
         services.AddHostedService<SyncSchedulerService>();
 

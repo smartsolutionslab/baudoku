@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BauDoku.Sync.Infrastructure.Persistence.Repositories;
 
-public sealed class SyncBatchReadRepository(SyncDbContext context) : ISyncBatchReadRepository
+public sealed class SyncBatchReadRepository(SyncReadDbContext context) : ISyncBatchReadRepository
 {
     private static readonly Expression<Func<ConflictRecord, ConflictDto>> toConflictDto = c => new ConflictDto(
         c.Id.Value,
@@ -23,7 +23,7 @@ public sealed class SyncBatchReadRepository(SyncDbContext context) : ISyncBatchR
         ConflictStatus? status,
         CancellationToken cancellationToken = default)
     {
-        var query = context.SyncBatches.AsNoTracking().AsQueryable();
+        var query = context.SyncBatches.AsQueryable();
 
         if (deviceId is not null)
             query = query.Where(b => b.DeviceId == deviceId);

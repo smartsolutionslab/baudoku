@@ -17,6 +17,9 @@ public static class DependencyInjection
         services.AddDbContext<ProjectsDbContext>(options =>
             options.UseNpgsql(connectionString));
 
+        services.AddDbContext<ProjectsReadDbContext>(options =>
+            options.UseNpgsql(connectionString));
+
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<ProjectsDbContext>());
         services.AddScoped<IProjectRepository, ProjectRepository>();
         services.AddScoped<IProjectReadRepository, ProjectReadRepository>();
