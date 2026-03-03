@@ -1,6 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { zoneSchema, type ZoneFormData, ZONE_TYPE_LABELS, type Zone } from '@baudoku/projects';
+import { optionsFromLabels } from '@baudoku/core';
 import { FormField } from '../common/FormField';
 import { FormSelect } from '../common/FormSelect';
 
@@ -12,10 +13,7 @@ type ZoneFormProps = {
   isSubmitting?: boolean;
 };
 
-const typeOptions = Object.entries(ZONE_TYPE_LABELS).map(([value, label]) => ({
-  value,
-  label,
-}));
+const typeOptions = optionsFromLabels(ZONE_TYPE_LABELS);
 
 export function ZoneForm({
   zones,

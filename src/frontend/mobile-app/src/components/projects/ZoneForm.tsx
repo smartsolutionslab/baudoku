@@ -6,8 +6,9 @@ import type { ZoneFormData } from '../../validation/schemas';
 import { Colors, Spacing } from '../../styles/tokens';
 import type { Zone } from '../../db/repositories/types';
 import { ZONE_TYPE_LABELS } from '@baudoku/projects';
+import { optionsFromLabels } from '@baudoku/core';
 
-const typeOptions = Object.entries(ZONE_TYPE_LABELS).map(([value, label]) => ({ label, value }));
+const typeOptions = optionsFromLabels(ZONE_TYPE_LABELS);
 
 type ZoneFormProps = {
   zones?: Zone[];

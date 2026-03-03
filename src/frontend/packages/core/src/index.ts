@@ -11,4 +11,5 @@ export {
   apiRawUpload,
 } from './http';
 export { parseUserFromToken, parseJwtPayload, isTokenExpired } from './jwt';
+export { optionsFromLabels } from './options';
 export type { PagedResult, PhotoUploadResult } from './types';

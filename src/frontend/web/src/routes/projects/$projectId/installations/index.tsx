@@ -12,10 +12,9 @@ import { EmptyState } from '@/components/common/EmptyState';
 import { ConfirmDialog } from '@/components/common/ConfirmDialog';
 import { PlusIcon, TrashIcon } from '@/components/icons';
 import { INSTALLATION_STATUS_LABELS } from '@baudoku/documentation';
+import { optionsFromLabels } from '@baudoku/core';
 
-const statusOptions = Object.entries(INSTALLATION_STATUS_LABELS).map(
-  ([value, label]) => ({ value, label })
-);
+const statusOptions = optionsFromLabels(INSTALLATION_STATUS_LABELS);
 
 export function InstallationListPage() {
   const { projectId } = useParams({ strict: false }) as { projectId: string };

@@ -1,8 +1,7 @@
 import { INSTALLATION_STATUS_LABELS } from '@baudoku/documentation';
+import { optionsFromLabels } from '@baudoku/core';
 
-export const INSTALLATION_STATUS_OPTIONS = Object.entries(
-  INSTALLATION_STATUS_LABELS
-).map(([value, label]) => ({ value, label }));
+export const INSTALLATION_STATUS_OPTIONS = optionsFromLabels(INSTALLATION_STATUS_LABELS);
 
 export const INSTALLATION_TYPE_OPTIONS = [
   { value: 'cable_tray', label: 'Kabeltrasse' },

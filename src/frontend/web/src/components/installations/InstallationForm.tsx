@@ -9,6 +9,7 @@ import {
   PHASES,
 } from '@baudoku/documentation';
 import { ZONE_TYPE_LABELS, type Zone } from '@baudoku/projects';
+import { optionsFromLabels } from '@baudoku/core';
 import { FormField } from '../common/FormField';
 import { FormSelect } from '../common/FormSelect';
 
@@ -20,9 +21,7 @@ type InstallationFormProps = {
   isSubmitting?: boolean;
 };
 
-const statusOptions = Object.entries(INSTALLATION_STATUS_LABELS).map(
-  ([value, label]) => ({ value, label })
-);
+const statusOptions = optionsFromLabels(INSTALLATION_STATUS_LABELS);
 
 const typeOptions = INSTALLATION_TYPES.map((t) => ({ value: t, label: t }));
 

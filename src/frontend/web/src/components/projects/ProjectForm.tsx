@@ -1,6 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { projectSchema, type ProjectFormData, PROJECT_STATUS_LABELS } from '@baudoku/projects';
+import { optionsFromLabels } from '@baudoku/core';
 import { FormField } from '../common/FormField';
 import { FormSelect } from '../common/FormSelect';
 import { useNavigate } from '@tanstack/react-router';
@@ -11,9 +12,7 @@ type ProjectFormProps = {
   isSubmitting?: boolean;
 };
 
-const statusOptions = Object.entries(PROJECT_STATUS_LABELS).map(
-  ([value, label]) => ({ value, label })
-);
+const statusOptions = optionsFromLabels(PROJECT_STATUS_LABELS);
 
 export function ProjectForm({
   defaultValues,

@@ -3,12 +3,11 @@ import { FormField, FormPicker } from '../common';
 import { Button } from '../core';
 import { useProjectForm } from '../../hooks';
 import { PROJECT_STATUS_LABELS } from '@baudoku/projects';
+import { optionsFromLabels } from '@baudoku/core';
 import type { ProjectFormData } from '../../validation/schemas';
 import { Colors, Spacing, FontSize } from '../../styles/tokens';
 
-const statusOptions = Object.entries(PROJECT_STATUS_LABELS).map(
-  ([value, label]) => ({ value, label })
-);
+const statusOptions = optionsFromLabels(PROJECT_STATUS_LABELS);
 
 type ProjectFormProps = {
   onSubmit: (data: ProjectFormData) => Promise<void>;
