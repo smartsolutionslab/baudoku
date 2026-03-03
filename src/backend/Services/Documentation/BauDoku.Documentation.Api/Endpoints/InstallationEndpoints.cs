@@ -39,7 +39,7 @@ public static class InstallationEndpoints
             int? page,
             int? pageSize,
             IDispatcher dispatcher,
-            CancellationToken ct) =>
+            CancellationToken cancellationToken) =>
         {
             var query = new ListInstallationsQuery(
                 ProjectIdentifier.FromNullable(projectId),
@@ -49,7 +49,7 @@ public static class InstallationEndpoints
                 SearchTerm.FromNullable(search),
                 PageNumber.FromNullable(page),
                 PageSize.FromNullable(pageSize));
-            var result = await dispatcher.Query(query, ct);
+            var result = await dispatcher.Query(query, cancellationToken);
             return Results.Ok(result);
         })
         .RequireAuthorization()
@@ -65,14 +65,14 @@ public static class InstallationEndpoints
             int? page,
             int? pageSize,
             IDispatcher dispatcher,
-            CancellationToken ct) =>
+            CancellationToken cancellationToken) =>
         {
             var query = new GetInstallationsInRadiusQuery(
                 new SearchRadius(Latitude.From(latitude), Longitude.From(longitude), RadiusMeters.From(radiusMeters)),
                 ProjectIdentifier.FromNullable(projectId),
                 PageNumber.FromNullable(page),
                 PageSize.FromNullable(pageSize));
-            return Results.Ok(await dispatcher.Query(query, ct));
+            return Results.Ok(await dispatcher.Query(query, cancellationToken));
         })
         .RequireAuthorization()
         .WithName("GetInstallationsNearby")
@@ -88,14 +88,14 @@ public static class InstallationEndpoints
             int? page,
             int? pageSize,
             IDispatcher dispatcher,
-            CancellationToken ct) =>
+            CancellationToken cancellationToken) =>
         {
             var query = new GetInstallationsInBoundingBoxQuery(
                 new BoundingBox(Latitude.From(minLatitude), Longitude.From(minLongitude), Latitude.From(maxLatitude), Longitude.From(maxLongitude)),
                 ProjectIdentifier.FromNullable(projectId),
                 PageNumber.FromNullable(page),
                 PageSize.FromNullable(pageSize));
-            return Results.Ok(await dispatcher.Query(query, ct));
+            return Results.Ok(await dispatcher.Query(query, cancellationToken));
         })
         .RequireAuthorization()
         .WithName("GetInstallationsInArea")

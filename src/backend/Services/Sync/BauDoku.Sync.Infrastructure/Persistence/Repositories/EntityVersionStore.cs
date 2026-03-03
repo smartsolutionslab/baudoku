@@ -22,7 +22,7 @@ public sealed class EntityVersionStore(SyncDbContext context) : IEntityVersionSt
     {
         var (entityType, entityId) = entityRef;
         var entry = await context.EntityVersionEntries
-            .FirstOrDefaultAsync(e => e.EntityType == entityType.Value && e.EntityId == entityId, cancellationToken);
+            .FirstOrDefaultAsync(e => e.EntityType == entityType.Value && e.EntityId == entityId.Value, cancellationToken);
 
         return entry is not null ? SyncVersion.From(entry.Version) : SyncVersion.Initial;
     }
@@ -33,7 +33,7 @@ public sealed class EntityVersionStore(SyncDbContext context) : IEntityVersionSt
     {
         var (entityType, entityId) = entityRef;
         var entry = await context.EntityVersionEntries
-            .FirstOrDefaultAsync(e => e.EntityType == entityType.Value && e.EntityId == entityId, cancellationToken);
+            .FirstOrDefaultAsync(e => e.EntityType == entityType.Value && e.EntityId == entityId.Value, cancellationToken);
 
         return entry?.Payload ?? "{}";
     }
@@ -47,7 +47,7 @@ public sealed class EntityVersionStore(SyncDbContext context) : IEntityVersionSt
     {
         var (entityType, entityId) = entityRef;
         var entry = await context.EntityVersionEntries
-            .FirstOrDefaultAsync(e => e.EntityType == entityType.Value && e.EntityId == entityId, cancellationToken);
+            .FirstOrDefaultAsync(e => e.EntityType == entityType.Value && e.EntityId == entityId.Value, cancellationToken);
 
         if (entry is not null)
         {
@@ -61,7 +61,7 @@ public sealed class EntityVersionStore(SyncDbContext context) : IEntityVersionSt
             entry = new EntityVersionEntry
             {
                 EntityType = entityType.Value,
-                EntityId = entityId,
+                EntityId = entityId.Value,
                 Version = version.Value,
                 Payload = payload,
                 LastModified = DateTime.UtcNow,

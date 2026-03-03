@@ -12,7 +12,7 @@ public sealed class EntityVersionStorePersistenceTests(PostgreSqlFixture fixture
     public async Task SetAndGetVersion_ShouldPersistAndRetrieve()
     {
         var entityId = Guid.NewGuid();
-        var entityRef = EntityReference.Create(EntityType.Project, entityId);
+        var entityRef = EntityReference.Create(EntityType.Project, EntityIdentifier.From(entityId));
 
         await using (var context = fixture.CreateContext())
         {
@@ -33,7 +33,7 @@ public sealed class EntityVersionStorePersistenceTests(PostgreSqlFixture fixture
     public async Task SetVersion_WhenEntryExists_ShouldUpdate()
     {
         var entityId = Guid.NewGuid();
-        var entityRef = EntityReference.Create(EntityType.Project, entityId);
+        var entityRef = EntityReference.Create(EntityType.Project, EntityIdentifier.From(entityId));
 
         await using (var context = fixture.CreateContext())
         {
@@ -66,7 +66,7 @@ public sealed class EntityVersionStorePersistenceTests(PostgreSqlFixture fixture
         await using var context = fixture.CreateContext();
         var store = new EntityVersionStore(context);
 
-        var version = await store.GetCurrentVersionAsync(EntityReference.Create(EntityType.Project, Guid.NewGuid()));
+        var version = await store.GetCurrentVersionAsync(EntityReference.Create(EntityType.Project, EntityIdentifier.New()));
 
         version.Should().Be(SyncVersion.Initial);
         version.Value.Should().Be(0);
@@ -78,7 +78,7 @@ public sealed class EntityVersionStorePersistenceTests(PostgreSqlFixture fixture
         await using var context = fixture.CreateContext();
         var store = new EntityVersionStore(context);
 
-        var payload = await store.GetCurrentPayloadAsync(EntityReference.Create(EntityType.Project, Guid.NewGuid()));
+        var payload = await store.GetCurrentPayloadAsync(EntityReference.Create(EntityType.Project, EntityIdentifier.New()));
 
         payload.Should().Be("{}");
     }
@@ -87,7 +87,7 @@ public sealed class EntityVersionStorePersistenceTests(PostgreSqlFixture fixture
     public async Task GetCurrentPayload_WhenExists_ShouldReturnPayload()
     {
         var entityId = Guid.NewGuid();
-        var entityRef = EntityReference.Create(EntityType.Installation, entityId);
+        var entityRef = EntityReference.Create(EntityType.Installation, EntityIdentifier.From(entityId));
 
         await using (var context = fixture.CreateContext())
         {
@@ -108,7 +108,7 @@ public sealed class EntityVersionStorePersistenceTests(PostgreSqlFixture fixture
     public async Task GetChangedSince_ShouldReturnRecentChanges()
     {
         var entityId = Guid.NewGuid();
-        var entityRef = EntityReference.Create(EntityType.Project, entityId);
+        var entityRef = EntityReference.Create(EntityType.Project, EntityIdentifier.From(entityId));
 
         await using (var context = fixture.CreateContext())
         {

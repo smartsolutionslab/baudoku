@@ -47,10 +47,10 @@ public static class SyncEndpoints
         .WithSummary("Sync-Konflikte auflisten")
         .Produces<List<ConflictDto>>(StatusCodes.Status200OK);
 
-        group.MapPost("/conflicts/{id:guid}/resolve", async (Guid id, ResolveConflictRequest request, IDispatcher dispatcher, CancellationToken ct) =>
+        group.MapPost("/conflicts/{id:guid}/resolve", async (Guid id, ResolveConflictRequest request, IDispatcher dispatcher, CancellationToken cancellationToken) =>
         {
             var command = request.ToCommand(id);
-            await dispatcher.Send(command, ct);
+            await dispatcher.Send(command, cancellationToken);
             return Results.NoContent();
         })
         .RequireAuthorization(AuthPolicies.RequireAdmin)

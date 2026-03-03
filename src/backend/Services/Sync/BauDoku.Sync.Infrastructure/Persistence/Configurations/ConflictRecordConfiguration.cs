@@ -26,7 +26,8 @@ public sealed class ConflictRecordConfiguration : IEntityTypeConfiguration<Confl
 
             entityRef.Property(e => e.EntityId)
                 .HasColumnName("entity_id")
-                .IsRequired();
+                .IsRequired()
+                .HasConversion(id => id.Value, value => EntityIdentifier.From(value));
         });
 
         builder.Navigation(c => c.EntityRef).IsRequired();

@@ -11,8 +11,7 @@ public sealed class ValueObjectSchemaTransformer : IOpenApiSchemaTransformer
     {
         var type = context.JsonTypeInfo.Type;
 
-        if (!typeof(IValueObject).IsAssignableFrom(type) || type.IsAbstract || type.IsInterface)
-            return Task.CompletedTask;
+        if (!typeof(IValueObject).IsAssignableFrom(type) || type.IsAbstract || type.IsInterface) return Task.CompletedTask;
 
         var valueProperty = type.GetProperty("Value", BindingFlags.Public | BindingFlags.Instance);
         if (valueProperty is null) return Task.CompletedTask;

@@ -11,7 +11,7 @@ public sealed class SyncBatchReadRepository(SyncDbContext context) : ISyncBatchR
     private static readonly Expression<Func<ConflictRecord, ConflictDto>> toConflictDto = c => new ConflictDto(
         c.Id.Value,
         c.EntityRef.EntityType.Value,
-        c.EntityRef.EntityId,
+        c.EntityRef.EntityId.Value,
         c.ClientPayload.Value,
         c.ServerPayload.Value,
         c.ClientVersion.Value,

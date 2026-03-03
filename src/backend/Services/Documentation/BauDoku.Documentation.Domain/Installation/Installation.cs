@@ -312,7 +312,9 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
     {
         var photo = photos.FirstOrDefault(p => p.Id == e.PhotoId);
         if (photo is not null)
+        {
             photos.Remove(photo);
+        }
     }
 
     public void Apply(MeasurementRecorded e)
@@ -332,12 +334,24 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
     {
         var measurement = measurements.FirstOrDefault(m => m.Id == e.MeasurementId);
         if (measurement is not null)
+        {
             measurements.Remove(measurement);
+        }
     }
 
     public void Apply(InstallationPositionUpdated e)
     {
-        Position = ReconstructPosition(e.Latitude, e.Longitude, e.Altitude, e.HorizontalAccuracy, e.GpsSource, e.CorrectionService, e.RtkFixStatus, e.SatelliteCount, e.Hdop, e.CorrectionAge);
+        Position = ReconstructPosition(
+            e.Latitude,
+            e.Longitude,
+            e.Altitude,
+            e.HorizontalAccuracy,
+            e.GpsSource,
+            e.CorrectionService,
+            e.RtkFixStatus,
+            e.SatelliteCount,
+            e.Hdop,
+            e.CorrectionAge);
         QualityGrade = e.QualityGrade;
     }
 

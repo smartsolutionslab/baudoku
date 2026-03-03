@@ -6,8 +6,7 @@ namespace BauDoku.Documentation.Api.Mapping;
 
 public static class InstallationRequestMappingExtensions
 {
-    public static GpsPosition ToDomain(this GpsPositionRequest request) =>
-        GpsPosition.Create(
+    public static GpsPosition ToDomain(this GpsPositionRequest request) => GpsPosition.Create(
             Latitude.From(request.Latitude),
             Longitude.From(request.Longitude),
             Altitude.FromNullable(request.Altitude),
@@ -19,8 +18,8 @@ public static class InstallationRequestMappingExtensions
             Hdop.FromNullable(request.Hdop),
             CorrectionAge.FromNullable(request.CorrectionAge));
 
-    public static DocumentInstallationCommand ToCommand(this CreateInstallationRequest request) =>
-        new(ProjectIdentifier.From(request.ProjectId),
+    public static DocumentInstallationCommand ToCommand(this CreateInstallationRequest request) => new(
+        ProjectIdentifier.From(request.ProjectId),
             ZoneIdentifier.FromNullable(request.ZoneId),
             InstallationType.From(request.Type),
             request.Position.ToDomain(),
@@ -34,8 +33,8 @@ public static class InstallationRequestMappingExtensions
             ModelName.FromNullable(request.ModelName),
             SerialNumber.FromNullable(request.SerialNumber));
 
-    public static AddPhotoCommand ToCommand(this AddPhotoRequest request, Guid installationId, IFormFile file, Stream stream) =>
-        new(InstallationIdentifier.From(installationId),
+    public static AddPhotoCommand ToCommand(this AddPhotoRequest request, Guid installationId, IFormFile file, Stream stream) => new(
+        InstallationIdentifier.From(installationId),
             FileName.From(file.FileName),
             ContentType.From(file.ContentType),
             FileSize.From(file.Length),
@@ -59,8 +58,8 @@ public static class InstallationRequestMappingExtensions
             ModelName.FromNullable(request.ModelName),
             SerialNumber.FromNullable(request.SerialNumber));
 
-    public static InitChunkedUploadCommand ToCommand(this InitChunkedUploadRequest request) =>
-        new(InstallationIdentifier.From(request.InstallationId),
+    public static InitChunkedUploadCommand ToCommand(this InitChunkedUploadRequest request) => new(
+        InstallationIdentifier.From(request.InstallationId),
             FileName.From(request.FileName),
             ContentType.From(request.ContentType),
             FileSize.From(request.TotalSize),
@@ -70,8 +69,8 @@ public static class InstallationRequestMappingExtensions
             Description.FromNullable(request.Description),
             request.Position?.ToDomain());
 
-    public static RecordMeasurementCommand ToCommand(this RecordMeasurementRequest request, Guid installationId) =>
-        new(InstallationIdentifier.From(installationId),
+    public static RecordMeasurementCommand ToCommand(this RecordMeasurementRequest request, Guid installationId) => new(
+        InstallationIdentifier.From(installationId),
             MeasurementType.From(request.Type),
             request.Value,
             MeasurementUnit.From(request.Unit),

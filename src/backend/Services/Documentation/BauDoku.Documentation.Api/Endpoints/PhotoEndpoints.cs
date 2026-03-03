@@ -25,14 +25,13 @@ public static class PhotoEndpoints
             IFormFile file,
             [FromForm] string? metadata,
             IDispatcher dispatcher,
-            CancellationToken ct) =>
-        {
+            CancellationToken cancellationToken) => {
             var request = metadata is not null
                 ? JsonSerializer.Deserialize<AddPhotoRequest>(metadata, JsonOptions) ?? new AddPhotoRequest(null, null, null, null, null)
                 : new AddPhotoRequest(null, null, null, null, null);
             await using var stream = file.OpenReadStream();
             var command = request.ToCommand(installationId, file, stream);
-            var photoId = await dispatcher.Send(command, ct);
+            var photoId = await dispatcher.Send(command, cancellationToken);
             return Results.Created($"/api/documentation/photos/{photoId.Value}", new CreatedResponse(photoId.Value));
         })
         .RequireAuthorization(AuthPolicies.RequireUser)
@@ -42,9 +41,9 @@ public static class PhotoEndpoints
         .Produces<CreatedResponse>(StatusCodes.Status201Created)
         .ProducesValidationProblem();
 
-        group.MapGet("/installations/{installationId:guid}/photos", async (Guid installationId, IPhotoReadRepository photos, CancellationToken ct) =>
+        group.MapGet("/installations/{installationId:guid}/photos", async (Guid installationId, IPhotoReadRepository photos, CancellationToken cancellationToken) =>
         {
-            var photoList = await photos.ListByInstallationIdAsync(InstallationIdentifier.From(installationId), ct);
+            var photoList = await photos.ListByInstallationIdAsync(InstallationIdentifier.From(installationId), cancellationToken);
             return Results.Ok(photoList);
         })
         .RequireAuthorization()
@@ -52,10 +51,10 @@ public static class PhotoEndpoints
         .WithSummary("Fotos einer Installation auflisten")
         .Produces<IReadOnlyList<PhotoDto>>(StatusCodes.Status200OK);
 
-        group.MapGet("/photos/{photoId:guid}", async (Guid photoId, IDispatcher dispatcher, CancellationToken ct) =>
+        group.MapGet("/photos/{photoId:guid}", async (Guid photoId, IDispatcher dispatcher, CancellationToken cancellationToken) =>
         {
             var query = new GetPhotoQuery(PhotoIdentifier.From(photoId));
-            var result = await dispatcher.Query(query, ct);
+            var result = await dispatcher.Query(query, cancellationToken);
             return Results.Ok(result);
         })
         .RequireAuthorization()
@@ -64,14 +63,10 @@ public static class PhotoEndpoints
         .Produces<PhotoDto>(StatusCodes.Status200OK)
         .Produces(StatusCodes.Status404NotFound);
 
-        group.MapDelete("/installations/{installationId:guid}/photos/{photoId:guid}", async (
-            Guid photoId,
-            Guid installationId,
-            IDispatcher dispatcher,
-            CancellationToken ct) =>
+        group.MapDelete("/installations/{installationId:guid}/photos/{photoId:guid}", async (Guid photoId, Guid installationId, IDispatcher dispatcher, CancellationToken cancellationToken) =>
         {
             var command = new RemovePhotoCommand(InstallationIdentifier.From(installationId), PhotoIdentifier.From(photoId));
-            await dispatcher.Send(command, ct);
+            await dispatcher.Send(command, cancellationToken);
             return Results.NoContent();
         })
         .RequireAuthorization(AuthPolicies.RequireAdmin)

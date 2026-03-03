@@ -26,7 +26,7 @@ public sealed class ProcessSyncBatchCommandHandler(ISyncBatchRepository syncBatc
             SyncMetrics.DeltaPayloadSize.Record(payloadJson.Length);
 
             var entityType = EntityType.From(entityTypeName);
-            var entityRef = EntityReference.Create(entityType, entityId);
+            var entityRef = EntityReference.Create(entityType, EntityIdentifier.From(entityId));
             var operation = DeltaOperation.From(operationName);
             var clientBaseVersion = SyncVersion.From(baseVersion);
             var payload = DeltaPayload.From(payloadJson);

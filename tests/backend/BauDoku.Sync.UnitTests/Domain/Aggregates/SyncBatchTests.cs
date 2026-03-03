@@ -39,7 +39,7 @@ public sealed class SyncBatchTests
     public void AddDelta_ShouldAddDeltaToBatch()
     {
         var batch = CreateValidBatch();
-        var entityRef = EntityReference.Create(EntityType.Project, Guid.NewGuid());
+        var entityRef = EntityReference.Create(EntityType.Project, EntityIdentifier.New());
 
         batch.AddDelta(
             SyncDeltaIdentifier.New(),
@@ -57,7 +57,7 @@ public sealed class SyncBatchTests
     public void AddConflict_ShouldAddConflictToBatch()
     {
         var batch = CreateValidBatch();
-        var entityRef = EntityReference.Create(EntityType.Installation, Guid.NewGuid());
+        var entityRef = EntityReference.Create(EntityType.Installation, EntityIdentifier.New());
 
         var conflict = batch.AddConflict(
             ConflictRecordIdentifier.New(),
@@ -79,7 +79,7 @@ public sealed class SyncBatchTests
 
         batch.AddConflict(
             ConflictRecordIdentifier.New(),
-            EntityReference.Create(EntityType.Project, Guid.NewGuid()),
+            EntityReference.Create(EntityType.Project, EntityIdentifier.New()),
             DeltaPayload.From("""{"a":1}"""),
             DeltaPayload.From("""{"a":2}"""),
             SyncVersion.From(1),
@@ -151,7 +151,7 @@ public sealed class SyncBatchTests
         var conflictId = ConflictRecordIdentifier.New();
         batch.AddConflict(
             conflictId,
-            EntityReference.Create(EntityType.Project, Guid.NewGuid()),
+            EntityReference.Create(EntityType.Project, EntityIdentifier.New()),
             DeltaPayload.From("""{"c":1}"""),
             DeltaPayload.From("""{"s":2}"""),
             SyncVersion.From(1),
@@ -185,7 +185,7 @@ public sealed class SyncBatchTests
 
         var act = () => batch.AddDelta(
             SyncDeltaIdentifier.New(),
-            EntityReference.Create(EntityType.Project, Guid.NewGuid()),
+            EntityReference.Create(EntityType.Project, EntityIdentifier.New()),
             DeltaOperation.Create,
             SyncVersion.Initial,
             SyncVersion.From(1),

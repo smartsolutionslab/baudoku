@@ -49,20 +49,19 @@ public static class Extensions
 
         app.UseSerilogRequestLogging(options =>
         {
-            options.EnrichDiagnosticContext = static (diagnosticContext, httpContext) =>
-            {
+            options.EnrichDiagnosticContext = static (diagnosticContext, httpContext) => {
                 var remoteIpAddress = httpContext.Connection.RemoteIpAddress;
                 var userAgent = httpContext.Request.Headers.UserAgent;
                 diagnosticContext.Set("ClientIP", remoteIpAddress?.ToString() ?? "-");
                 diagnosticContext.Set("UserAgent", userAgent.ToString());
             };
-            options.GetLevel = static (httpContext, _, _) =>
-            {
+            options.GetLevel = static (httpContext, _, _) => {
                 var request = httpContext.Request;
+                var path =  request.Path;
 
-                return request.Path.StartsWithSegments("/health")
-                    || request.Path.StartsWithSegments("/alive")
-                    || request.Path.StartsWithSegments("/version")
+                return path.StartsWithSegments("/health")
+                    || path.StartsWithSegments("/alive")
+                    || path.StartsWithSegments("/version")
                     ? LogEventLevel.Verbose
                     : LogEventLevel.Information;
             };
@@ -134,15 +133,13 @@ public static class Extensions
     private static IHostApplicationBuilder ConfigureOpenTelemetry(this IHostApplicationBuilder builder)
     {
         builder.Services.AddOpenTelemetry()
-            .WithMetrics(metrics =>
-            {
+            .WithMetrics(metrics => {
                 metrics.AddAspNetCoreInstrumentation()
                     .AddHttpClientInstrumentation()
                     .AddRuntimeInstrumentation()
                     .AddMeter("BauDoku.Projects", "BauDoku.Documentation", "BauDoku.Sync");
             })
-            .WithTracing(tracing =>
-            {
+            .WithTracing(tracing => {
                 if (builder.Environment.IsDevelopment())
                 {
                     tracing.SetSampler<AlwaysOnSampler>();

@@ -31,7 +31,7 @@ public sealed class ResolveConflictCommandHandlerTests
         var batch = SyncBatch.Create(batchId, deviceId, DateTime.UtcNow);
 
         var conflictId = ConflictRecordIdentifier.New();
-        var entityRef = EntityReference.Create(EntityType.Project, Guid.NewGuid());
+        var entityRef = EntityReference.Create(EntityType.Project, EntityIdentifier.New());
         batch.AddConflict(
             conflictId,
             entityRef,
