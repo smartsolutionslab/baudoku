@@ -1,8 +1,8 @@
-using BauDoku.BuildingBlocks.Auth;
-using BauDoku.Documentation.Api.Endpoints;
-using BauDoku.Documentation.Application;
-using BauDoku.Documentation.Infrastructure;
-using BauDoku.ServiceDefaults;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Auth;
+using SmartSolutionsLab.BauDoku.Documentation.Api.Endpoints;
+using SmartSolutionsLab.BauDoku.Documentation.Application;
+using SmartSolutionsLab.BauDoku.Documentation.Infrastructure;
+using SmartSolutionsLab.BauDoku.ServiceDefaults;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);

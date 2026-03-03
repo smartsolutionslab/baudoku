@@ -1,7 +1,7 @@
 using System.Reflection;
 using Microsoft.AspNetCore.Http.HttpResults;
 
-namespace BauDoku.ApiGateway.Endpoints;
+namespace SmartSolutionsLab.BauDoku.ApiGateway.Endpoints;
 
 public static class SystemEndpoints
 {

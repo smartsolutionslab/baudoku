@@ -1,6 +1,6 @@
-using BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
 
-namespace BauDoku.Documentation.Domain;
+namespace SmartSolutionsLab.BauDoku.Documentation.Domain;
 
 public sealed record Altitude : IValueObject
 {

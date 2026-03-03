@@ -5,7 +5,7 @@ using k8s;
 using k8s.Models;
 using Microsoft.Extensions.Options;
 
-namespace BauDoku.ResourceService.Services;
+namespace SmartSolutionsLab.BauDoku.ResourceService.Services;
 
 public sealed class PodWatcher(IKubernetes kubernetes, IOptions<KubernetesOptions> options, ILogger<PodWatcher> logger)
     : BackgroundService

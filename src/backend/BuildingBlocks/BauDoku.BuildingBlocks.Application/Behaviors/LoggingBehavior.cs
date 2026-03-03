@@ -1,8 +1,8 @@
 using System.Diagnostics;
-using BauDoku.BuildingBlocks.Application.Commands;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Commands;
 using Microsoft.Extensions.Logging;
 
-namespace BauDoku.BuildingBlocks.Application.Behaviors;
+namespace SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Behaviors;
 
 public sealed class LoggingBehavior<TCommand, TResult>(ICommandHandler<TCommand, TResult> inner, ILogger<LoggingBehavior<TCommand, TResult>> logger)
     : ICommandHandler<TCommand, TResult>

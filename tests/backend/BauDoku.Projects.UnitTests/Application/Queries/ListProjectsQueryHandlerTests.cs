@@ -1,13 +1,13 @@
 using AwesomeAssertions;
-using BauDoku.BuildingBlocks.Application.Pagination;
-using BauDoku.BuildingBlocks.Domain;
-using BauDoku.Projects.Application.Contracts;
-using BauDoku.Projects.ReadModel;
-using BauDoku.Projects.Application.Queries;
-using BauDoku.Projects.Application.Queries.Handlers;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Pagination;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.Projects.Application.Contracts;
+using SmartSolutionsLab.BauDoku.Projects.ReadModel;
+using SmartSolutionsLab.BauDoku.Projects.Application.Queries;
+using SmartSolutionsLab.BauDoku.Projects.Application.Queries.Handlers;
 using NSubstitute;
 
-namespace BauDoku.Projects.UnitTests.Application.Queries;
+namespace SmartSolutionsLab.BauDoku.Projects.UnitTests.Application.Queries;
 
 public sealed class ListProjectsQueryHandlerTests
 {

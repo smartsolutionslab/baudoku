@@ -1,12 +1,12 @@
 extern alias SyncApi;
 
-using BauDoku.E2E.SmokeTests.Fixtures;
+using SmartSolutionsLab.BauDoku.E2E.SmokeTests.Fixtures;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace BauDoku.E2E.SmokeTests.Api;
+namespace SmartSolutionsLab.BauDoku.E2E.SmokeTests.Api;
 
 public sealed class SyncApiFactory(E2EFixture fixture) : WebApplicationFactory<SyncApi::Program>
 {

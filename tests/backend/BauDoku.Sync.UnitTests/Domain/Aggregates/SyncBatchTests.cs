@@ -1,9 +1,9 @@
 using AwesomeAssertions;
-using BauDoku.BuildingBlocks.Domain;
-using BauDoku.Sync.Domain;
-using BauDoku.Sync.UnitTests.Builders;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.Sync.Domain;
+using SmartSolutionsLab.BauDoku.Sync.UnitTests.Builders;
 
-namespace BauDoku.Sync.UnitTests.Domain.Aggregates;
+namespace SmartSolutionsLab.BauDoku.Sync.UnitTests.Domain.Aggregates;
 
 public sealed class SyncBatchTests
 {

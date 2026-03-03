@@ -1,8 +1,8 @@
-using BauDoku.BuildingBlocks.Application.Queries;
-using BauDoku.BuildingBlocks.Domain;
-using BauDoku.Projects.ReadModel;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Queries;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.Projects.ReadModel;
 
-namespace BauDoku.Projects.Application.Queries.Handlers;
+namespace SmartSolutionsLab.BauDoku.Projects.Application.Queries.Handlers;
 
 public sealed class GetProjectQueryHandler(IProjectReadRepository projects) : IQueryHandler<GetProjectQuery, ProjectDto>
 {

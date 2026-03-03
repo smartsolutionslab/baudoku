@@ -1,7 +1,7 @@
 using AwesomeAssertions;
-using BauDoku.Projects.Domain;
+using SmartSolutionsLab.BauDoku.Projects.Domain;
 
-namespace BauDoku.Projects.UnitTests.Domain.ValueObjects;
+namespace SmartSolutionsLab.BauDoku.Projects.UnitTests.Domain.ValueObjects;
 
 public sealed class ProjectNameTests
 {

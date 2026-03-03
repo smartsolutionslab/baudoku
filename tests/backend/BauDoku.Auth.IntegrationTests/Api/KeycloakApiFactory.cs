@@ -1,8 +1,8 @@
-using BauDoku.Auth.IntegrationTests.Fixtures;
+using SmartSolutionsLab.BauDoku.Auth.IntegrationTests.Fixtures;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 
-namespace BauDoku.Auth.IntegrationTests.Api;
+namespace SmartSolutionsLab.BauDoku.Auth.IntegrationTests.Api;
 
 public sealed class KeycloakApiFactory(KeycloakFixture fixture) : WebApplicationFactory<Program>
 {

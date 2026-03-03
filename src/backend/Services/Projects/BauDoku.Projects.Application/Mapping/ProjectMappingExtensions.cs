@@ -1,7 +1,7 @@
-using BauDoku.Projects.ReadModel;
-using BauDoku.Projects.Domain;
+using SmartSolutionsLab.BauDoku.Projects.ReadModel;
+using SmartSolutionsLab.BauDoku.Projects.Domain;
 
-namespace BauDoku.Projects.Application.Mapping;
+namespace SmartSolutionsLab.BauDoku.Projects.Application.Mapping;
 
 public static class ProjectMappingExtensions
 {

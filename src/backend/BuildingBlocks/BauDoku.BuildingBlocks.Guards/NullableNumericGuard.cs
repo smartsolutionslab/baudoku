@@ -1,6 +1,6 @@
 using System.Numerics;
 
-namespace BauDoku.BuildingBlocks.Guards;
+namespace SmartSolutionsLab.BauDoku.BuildingBlocks.Guards;
 
 public readonly ref struct NullableNumericGuard<T> where T : struct, INumber<T>
 {

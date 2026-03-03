@@ -1,6 +1,6 @@
-using BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
 
-namespace BauDoku.BuildingBlocks.Application.Pagination;
+namespace SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Pagination;
 
 public interface IReadRepository<TDto, in TId, TListDto, in TFilter> : IReadRepository<TDto, TId> where TId : IValueObject
 {

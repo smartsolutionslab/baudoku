@@ -1,8 +1,8 @@
-using BauDoku.BuildingBlocks.Domain;
-using BauDoku.Projects.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.Projects.Domain;
 using Microsoft.EntityFrameworkCore;
 
-namespace BauDoku.Projects.Infrastructure.Persistence.Repositories;
+namespace SmartSolutionsLab.BauDoku.Projects.Infrastructure.Persistence.Repositories;
 
 public sealed class ProjectRepository(ProjectsDbContext context) : IProjectRepository
 {

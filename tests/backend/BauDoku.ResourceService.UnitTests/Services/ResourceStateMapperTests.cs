@@ -1,8 +1,8 @@
 using AwesomeAssertions;
-using BauDoku.ResourceService.Services;
+using SmartSolutionsLab.BauDoku.ResourceService.Services;
 using k8s.Models;
 
-namespace BauDoku.ResourceService.UnitTests.Services;
+namespace SmartSolutionsLab.BauDoku.ResourceService.UnitTests.Services;
 
 public sealed class ResourceStateMapperTests
 {

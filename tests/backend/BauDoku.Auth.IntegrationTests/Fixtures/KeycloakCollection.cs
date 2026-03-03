@@ -1,4 +1,4 @@
-namespace BauDoku.Auth.IntegrationTests.Fixtures;
+namespace SmartSolutionsLab.BauDoku.Auth.IntegrationTests.Fixtures;
 
 [CollectionDefinition(Name)]
 public sealed class KeycloakCollection : ICollectionFixture<KeycloakFixture>

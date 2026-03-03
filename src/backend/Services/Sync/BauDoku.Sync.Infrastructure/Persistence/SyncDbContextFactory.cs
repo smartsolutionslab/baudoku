@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
-namespace BauDoku.Sync.Infrastructure.Persistence;
+namespace SmartSolutionsLab.BauDoku.Sync.Infrastructure.Persistence;
 
 public sealed class SyncDbContextFactory : IDesignTimeDbContextFactory<SyncDbContext>
 {

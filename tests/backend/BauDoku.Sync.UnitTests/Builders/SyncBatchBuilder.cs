@@ -1,6 +1,6 @@
-using BauDoku.Sync.Domain;
+using SmartSolutionsLab.BauDoku.Sync.Domain;
 
-namespace BauDoku.Sync.UnitTests.Builders;
+namespace SmartSolutionsLab.BauDoku.Sync.UnitTests.Builders;
 
 internal sealed class SyncBatchBuilder
 {

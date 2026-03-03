@@ -1,8 +1,8 @@
-using BauDoku.BuildingBlocks.Application.Pagination;
-using BauDoku.BuildingBlocks.Application.Queries;
-using BauDoku.Documentation.ReadModel;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Pagination;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Queries;
+using SmartSolutionsLab.BauDoku.Documentation.ReadModel;
 
-namespace BauDoku.Documentation.Application.Queries.Handlers;
+namespace SmartSolutionsLab.BauDoku.Documentation.Application.Queries.Handlers;
 
 public sealed class GetInstallationsInBoundingBoxQueryHandler(IInstallationReadRepository installations)
     : IQueryHandler<GetInstallationsInBoundingBoxQuery, PagedResult<InstallationListItemDto>>

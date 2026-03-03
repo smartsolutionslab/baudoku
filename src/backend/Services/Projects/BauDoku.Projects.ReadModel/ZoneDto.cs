@@ -1,3 +1,3 @@
-namespace BauDoku.Projects.ReadModel;
+namespace SmartSolutionsLab.BauDoku.Projects.ReadModel;
 
 public sealed record ZoneDto(Guid Id, string Name, string Type, Guid? ParentZoneId);

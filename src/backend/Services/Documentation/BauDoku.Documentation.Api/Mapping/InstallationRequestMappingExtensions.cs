@@ -1,8 +1,8 @@
-using BauDoku.Documentation.Application.Commands;
-using BauDoku.Documentation.Api.Endpoints;
-using BauDoku.Documentation.Domain;
+using SmartSolutionsLab.BauDoku.Documentation.Application.Commands;
+using SmartSolutionsLab.BauDoku.Documentation.Api.Endpoints;
+using SmartSolutionsLab.BauDoku.Documentation.Domain;
 
-namespace BauDoku.Documentation.Api.Mapping;
+namespace SmartSolutionsLab.BauDoku.Documentation.Api.Mapping;
 
 public static class InstallationRequestMappingExtensions
 {

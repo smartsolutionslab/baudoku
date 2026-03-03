@@ -1,12 +1,12 @@
 using System.Net.Http.Json;
 using System.Text.Json;
-using BauDoku.Projects.Infrastructure.Persistence;
+using SmartSolutionsLab.BauDoku.Projects.Infrastructure.Persistence;
 using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Containers;
 using Microsoft.EntityFrameworkCore;
 using Testcontainers.PostgreSql;
 
-namespace BauDoku.Auth.IntegrationTests.Fixtures;
+namespace SmartSolutionsLab.BauDoku.Auth.IntegrationTests.Fixtures;
 
 public sealed class KeycloakFixture : IAsyncLifetime
 {

@@ -1,4 +1,4 @@
-namespace BauDoku.E2E.SmokeTests.Fixtures;
+namespace SmartSolutionsLab.BauDoku.E2E.SmokeTests.Fixtures;
 
 [CollectionDefinition(Name)]
 public sealed class E2ECollection : ICollectionFixture<E2EFixture>

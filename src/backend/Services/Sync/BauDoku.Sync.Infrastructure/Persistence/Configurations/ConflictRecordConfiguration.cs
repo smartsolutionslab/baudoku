@@ -1,8 +1,8 @@
-using BauDoku.Sync.Domain;
+using SmartSolutionsLab.BauDoku.Sync.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace BauDoku.Sync.Infrastructure.Persistence.Configurations;
+namespace SmartSolutionsLab.BauDoku.Sync.Infrastructure.Persistence.Configurations;
 
 public sealed class ConflictRecordConfiguration : IEntityTypeConfiguration<ConflictRecord>
 {

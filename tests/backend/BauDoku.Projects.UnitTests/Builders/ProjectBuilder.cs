@@ -1,6 +1,6 @@
-using BauDoku.Projects.Domain;
+using SmartSolutionsLab.BauDoku.Projects.Domain;
 
-namespace BauDoku.Projects.UnitTests.Builders;
+namespace SmartSolutionsLab.BauDoku.Projects.UnitTests.Builders;
 
 internal sealed class ProjectBuilder
 {

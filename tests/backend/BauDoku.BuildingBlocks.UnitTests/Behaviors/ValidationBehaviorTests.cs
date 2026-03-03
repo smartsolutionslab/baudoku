@@ -1,10 +1,10 @@
 using AwesomeAssertions;
-using BauDoku.BuildingBlocks.Application.Behaviors;
-using BauDoku.BuildingBlocks.Application.Commands;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Behaviors;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Commands;
 using FluentValidation;
 using NSubstitute;
 
-namespace BauDoku.BuildingBlocks.UnitTests.Behaviors;
+namespace SmartSolutionsLab.BauDoku.BuildingBlocks.UnitTests.Behaviors;
 
 public sealed class ValidationBehaviorTests
 {

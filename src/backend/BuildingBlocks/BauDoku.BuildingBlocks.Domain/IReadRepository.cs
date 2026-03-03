@@ -1,4 +1,4 @@
-namespace BauDoku.BuildingBlocks.Domain;
+namespace SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
 
 public interface IReadRepository<TDto, in TId> where TId : IValueObject
 {

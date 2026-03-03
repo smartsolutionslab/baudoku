@@ -1,8 +1,8 @@
-using BauDoku.Sync.Application.Commands;
-using BauDoku.Sync.Api.Endpoints;
-using BauDoku.Sync.Domain;
+using SmartSolutionsLab.BauDoku.Sync.Application.Commands;
+using SmartSolutionsLab.BauDoku.Sync.Api.Endpoints;
+using SmartSolutionsLab.BauDoku.Sync.Domain;
 
-namespace BauDoku.Sync.Api.Mapping;
+namespace SmartSolutionsLab.BauDoku.Sync.Api.Mapping;
 
 public static class SyncRequestMappingExtensions
 {

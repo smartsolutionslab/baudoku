@@ -1,7 +1,7 @@
 using AwesomeAssertions;
-using BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
 
-namespace BauDoku.BuildingBlocks.UnitTests.ValueObjects;
+namespace SmartSolutionsLab.BauDoku.BuildingBlocks.UnitTests.ValueObjects;
 
 public sealed class PageNumberTests
 {

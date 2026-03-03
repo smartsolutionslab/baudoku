@@ -1,10 +1,10 @@
 using AwesomeAssertions;
-using BauDoku.Documentation.Application.Commands;
-using BauDoku.Documentation.Application.Commands.Handlers;
-using BauDoku.Documentation.Domain;
+using SmartSolutionsLab.BauDoku.Documentation.Application.Commands;
+using SmartSolutionsLab.BauDoku.Documentation.Application.Commands.Handlers;
+using SmartSolutionsLab.BauDoku.Documentation.Domain;
 using NSubstitute;
 
-namespace BauDoku.Documentation.UnitTests.Application.Commands;
+namespace SmartSolutionsLab.BauDoku.Documentation.UnitTests.Application.Commands;
 
 public sealed class DocumentInstallationCommandHandlerTests
 {

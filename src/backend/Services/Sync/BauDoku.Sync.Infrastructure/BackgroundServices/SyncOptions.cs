@@ -1,4 +1,4 @@
-namespace BauDoku.Sync.Infrastructure.BackgroundServices;
+namespace SmartSolutionsLab.BauDoku.Sync.Infrastructure.BackgroundServices;
 
 public sealed class SyncOptions
 {

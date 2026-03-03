@@ -1,4 +1,4 @@
-namespace BauDoku.Sync.IntegrationTests.Fixtures;
+namespace SmartSolutionsLab.BauDoku.Sync.IntegrationTests.Fixtures;
 
 [CollectionDefinition(Name)]
 public sealed class PostgreSqlCollection : ICollectionFixture<PostgreSqlFixture>

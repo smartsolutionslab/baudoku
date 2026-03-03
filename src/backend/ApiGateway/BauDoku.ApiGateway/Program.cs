@@ -1,6 +1,6 @@
-using BauDoku.ApiGateway.Endpoints;
-using BauDoku.BuildingBlocks.Auth;
-using BauDoku.ServiceDefaults;
+using SmartSolutionsLab.BauDoku.ApiGateway.Endpoints;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Auth;
+using SmartSolutionsLab.BauDoku.ServiceDefaults;
 
 var builder = WebApplication.CreateBuilder(args);
 

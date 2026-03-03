@@ -1,7 +1,7 @@
-using BauDoku.Sync.Domain;
+using SmartSolutionsLab.BauDoku.Sync.Domain;
 using Microsoft.EntityFrameworkCore;
 
-namespace BauDoku.Sync.Infrastructure.Persistence;
+namespace SmartSolutionsLab.BauDoku.Sync.Infrastructure.Persistence;
 
 public sealed class SyncReadDbContext(DbContextOptions<SyncReadDbContext> options) : DbContext(options)
 {

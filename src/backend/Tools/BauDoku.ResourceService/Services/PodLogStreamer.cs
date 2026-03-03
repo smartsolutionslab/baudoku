@@ -1,7 +1,7 @@
 using k8s;
 using Microsoft.Extensions.Options;
 
-namespace BauDoku.ResourceService.Services;
+namespace SmartSolutionsLab.BauDoku.ResourceService.Services;
 
 public sealed class PodLogStreamer(IKubernetes kubernetes, IOptions<KubernetesOptions> options, ILogger<PodLogStreamer> logger)
 {

@@ -1,16 +1,16 @@
-using BauDoku.BuildingBlocks.Application.Dispatcher;
-using BauDoku.BuildingBlocks.Application.Pagination;
-using BauDoku.BuildingBlocks.Application.Responses;
-using BauDoku.BuildingBlocks.Domain;
-using BauDoku.BuildingBlocks.Auth;
-using BauDoku.Projects.Api.Mapping;
-using BauDoku.Projects.Application.Commands;
-using BauDoku.Projects.Application.Queries;
-using BauDoku.Projects.ReadModel;
-using BauDoku.Projects.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Dispatcher;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Pagination;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Responses;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Auth;
+using SmartSolutionsLab.BauDoku.Projects.Api.Mapping;
+using SmartSolutionsLab.BauDoku.Projects.Application.Commands;
+using SmartSolutionsLab.BauDoku.Projects.Application.Queries;
+using SmartSolutionsLab.BauDoku.Projects.ReadModel;
+using SmartSolutionsLab.BauDoku.Projects.Domain;
 using Microsoft.AspNetCore.Http.HttpResults;
 
-namespace BauDoku.Projects.Api.Endpoints;
+namespace SmartSolutionsLab.BauDoku.Projects.Api.Endpoints;
 
 public static class ProjectEndpoints
 {

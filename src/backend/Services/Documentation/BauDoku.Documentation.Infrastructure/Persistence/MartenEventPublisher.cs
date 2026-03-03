@@ -1,10 +1,10 @@
-using BauDoku.BuildingBlocks.Application.Dispatcher;
-using BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Dispatcher;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
 using Marten;
 using Marten.Services;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace BauDoku.Documentation.Infrastructure.Persistence;
+namespace SmartSolutionsLab.BauDoku.Documentation.Infrastructure.Persistence;
 
 public sealed class MartenEventPublisher(IServiceScopeFactory scopeFactory) : DocumentSessionListenerBase
 {

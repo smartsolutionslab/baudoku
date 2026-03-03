@@ -1,10 +1,10 @@
-using BauDoku.BuildingBlocks.Application.Commands;
-using BauDoku.BuildingBlocks.Application.Persistence;
-using BauDoku.BuildingBlocks.Domain;
-using BauDoku.Projects.Application.Diagnostics;
-using BauDoku.Projects.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Commands;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Persistence;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.Projects.Application.Diagnostics;
+using SmartSolutionsLab.BauDoku.Projects.Domain;
 
-namespace BauDoku.Projects.Application.Commands.Handlers;
+namespace SmartSolutionsLab.BauDoku.Projects.Application.Commands.Handlers;
 
 public sealed class AddZoneCommandHandler(IProjectRepository projects, IUnitOfWork unitOfWork)
     : ICommandHandler<AddZoneCommand>

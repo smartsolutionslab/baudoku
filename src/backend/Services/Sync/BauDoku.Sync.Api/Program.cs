@@ -1,9 +1,9 @@
-using BauDoku.BuildingBlocks.Auth;
-using BauDoku.ServiceDefaults;
-using BauDoku.Sync.Api.Endpoints;
-using BauDoku.Sync.Application;
-using BauDoku.Sync.Infrastructure;
-using BauDoku.Sync.Infrastructure.BackgroundServices;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Auth;
+using SmartSolutionsLab.BauDoku.ServiceDefaults;
+using SmartSolutionsLab.BauDoku.Sync.Api.Endpoints;
+using SmartSolutionsLab.BauDoku.Sync.Application;
+using SmartSolutionsLab.BauDoku.Sync.Infrastructure;
+using SmartSolutionsLab.BauDoku.Sync.Infrastructure.BackgroundServices;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);

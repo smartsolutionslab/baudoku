@@ -1,4 +1,4 @@
-namespace BauDoku.Documentation.ReadModel;
+namespace SmartSolutionsLab.BauDoku.Documentation.ReadModel;
 
 public sealed record InstallationDto(
     Guid Id,

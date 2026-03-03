@@ -3,7 +3,7 @@ using Grpc.Core;
 using k8s;
 using Microsoft.Extensions.Options;
 
-namespace BauDoku.ResourceService.Services;
+namespace SmartSolutionsLab.BauDoku.ResourceService.Services;
 
 public sealed class KubernetesDashboardService(
     PodWatcher podWatcher,

@@ -2,7 +2,7 @@ using k8s.Models;
 using Aspire.DashboardService.Proto.V1;
 using Google.Protobuf.WellKnownTypes;
 
-namespace BauDoku.ResourceService.Services;
+namespace SmartSolutionsLab.BauDoku.ResourceService.Services;
 
 public static class ResourceStateMapper
 {

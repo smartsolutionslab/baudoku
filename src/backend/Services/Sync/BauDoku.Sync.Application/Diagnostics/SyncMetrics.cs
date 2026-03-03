@@ -1,6 +1,6 @@
 using System.Diagnostics.Metrics;
 
-namespace BauDoku.Sync.Application.Diagnostics;
+namespace SmartSolutionsLab.BauDoku.Sync.Application.Diagnostics;
 
 public static class SyncMetrics
 {

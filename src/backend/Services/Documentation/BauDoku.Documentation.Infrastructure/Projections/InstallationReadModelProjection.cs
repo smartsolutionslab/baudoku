@@ -1,12 +1,12 @@
 using System.Collections.Frozen;
-using BauDoku.Documentation.Domain;
-using BauDoku.Documentation.Infrastructure.ReadModel;
+using SmartSolutionsLab.BauDoku.Documentation.Domain;
+using SmartSolutionsLab.BauDoku.Documentation.Infrastructure.ReadModel;
 using Marten;
 using Marten.Events;
 using Marten.Events.Projections;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace BauDoku.Documentation.Infrastructure.Projections;
+namespace SmartSolutionsLab.BauDoku.Documentation.Infrastructure.Projections;
 
 public sealed class InstallationReadModelProjection(IServiceScopeFactory scopeFactory) : IProjection
 {

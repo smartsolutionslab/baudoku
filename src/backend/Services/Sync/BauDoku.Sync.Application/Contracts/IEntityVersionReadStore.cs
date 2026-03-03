@@ -1,7 +1,7 @@
-using BauDoku.Sync.ReadModel;
-using BauDoku.Sync.Domain;
+using SmartSolutionsLab.BauDoku.Sync.ReadModel;
+using SmartSolutionsLab.BauDoku.Sync.Domain;
 
-namespace BauDoku.Sync.Application.Contracts;
+namespace SmartSolutionsLab.BauDoku.Sync.Application.Contracts;
 
 public interface IEntityVersionReadStore
 {

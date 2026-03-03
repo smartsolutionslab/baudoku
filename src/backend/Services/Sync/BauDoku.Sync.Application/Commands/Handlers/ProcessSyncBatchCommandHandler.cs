@@ -1,12 +1,12 @@
-using BauDoku.BuildingBlocks.Application.Commands;
-using BauDoku.BuildingBlocks.Application.Persistence;
-using BauDoku.Sync.Application.Contracts;
-using BauDoku.Sync.Application.Diagnostics;
-using BauDoku.Sync.Application.Mapping;
-using BauDoku.Sync.ReadModel;
-using BauDoku.Sync.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Commands;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Persistence;
+using SmartSolutionsLab.BauDoku.Sync.Application.Contracts;
+using SmartSolutionsLab.BauDoku.Sync.Application.Diagnostics;
+using SmartSolutionsLab.BauDoku.Sync.Application.Mapping;
+using SmartSolutionsLab.BauDoku.Sync.ReadModel;
+using SmartSolutionsLab.BauDoku.Sync.Domain;
 
-namespace BauDoku.Sync.Application.Commands.Handlers;
+namespace SmartSolutionsLab.BauDoku.Sync.Application.Commands.Handlers;
 
 public sealed class ProcessSyncBatchCommandHandler(ISyncBatchRepository syncBatches, IEntityVersionStore entityVersionStore, IUnitOfWork unitOfWork)
     : ICommandHandler<ProcessSyncBatchCommand, ProcessSyncBatchResult>

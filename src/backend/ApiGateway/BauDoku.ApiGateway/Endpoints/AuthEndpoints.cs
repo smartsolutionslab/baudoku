@@ -1,9 +1,9 @@
-using BauDoku.BuildingBlocks.Domain;
-using BauDoku.BuildingBlocks.Auth;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Auth;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Extensions.Options;
 
-namespace BauDoku.ApiGateway.Endpoints;
+namespace SmartSolutionsLab.BauDoku.ApiGateway.Endpoints;
 
 public static class AuthEndpoints
 {

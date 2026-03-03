@@ -1,12 +1,12 @@
 using AwesomeAssertions;
-using BauDoku.ResourceService.Services;
+using SmartSolutionsLab.BauDoku.ResourceService.Services;
 using k8s;
 using k8s.Autorest;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using NSubstitute;
 
-namespace BauDoku.ResourceService.UnitTests.Services;
+namespace SmartSolutionsLab.BauDoku.ResourceService.UnitTests.Services;
 
 public sealed class PodLogStreamerTests
 {

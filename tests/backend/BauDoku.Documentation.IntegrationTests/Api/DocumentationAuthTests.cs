@@ -1,9 +1,9 @@
 using System.Net;
 using System.Net.Http.Json;
 using AwesomeAssertions;
-using BauDoku.Documentation.IntegrationTests.Fixtures;
+using SmartSolutionsLab.BauDoku.Documentation.IntegrationTests.Fixtures;
 
-namespace BauDoku.Documentation.IntegrationTests.Api;
+namespace SmartSolutionsLab.BauDoku.Documentation.IntegrationTests.Api;
 
 [Collection(PostgreSqlCollection.Name)]
 public sealed class DocumentationAuthTests : IDisposable

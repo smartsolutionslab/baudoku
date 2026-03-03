@@ -1,4 +1,4 @@
-namespace BauDoku.ResourceService;
+namespace SmartSolutionsLab.BauDoku.ResourceService;
 
 public sealed class KubernetesOptions
 {

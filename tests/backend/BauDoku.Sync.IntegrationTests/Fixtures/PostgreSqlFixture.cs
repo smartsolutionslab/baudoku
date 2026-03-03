@@ -1,8 +1,8 @@
-using BauDoku.Sync.Infrastructure.Persistence;
+using SmartSolutionsLab.BauDoku.Sync.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Testcontainers.PostgreSql;
 
-namespace BauDoku.Sync.IntegrationTests.Fixtures;
+namespace SmartSolutionsLab.BauDoku.Sync.IntegrationTests.Fixtures;
 
 public sealed class PostgreSqlFixture : IAsyncLifetime
 {

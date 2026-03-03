@@ -1,8 +1,8 @@
-using BauDoku.BuildingBlocks.Application.Queries;
-using BauDoku.Sync.Application.Contracts;
-using BauDoku.Sync.Application.Queries;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Queries;
+using SmartSolutionsLab.BauDoku.Sync.Application.Contracts;
+using SmartSolutionsLab.BauDoku.Sync.Application.Queries;
 
-namespace BauDoku.Sync.Application.Queries.Handlers;
+namespace SmartSolutionsLab.BauDoku.Sync.Application.Queries.Handlers;
 
 public sealed class GetChangesSinceQueryHandler(IEntityVersionReadStore entityVersionReadStore)
     : IQueryHandler<GetChangesSinceQuery, ChangeSetResult>

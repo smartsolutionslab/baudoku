@@ -1,7 +1,7 @@
-using BauDoku.BuildingBlocks.Domain;
-using BauDoku.Documentation.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.Documentation.Domain;
 
-namespace BauDoku.Documentation.ReadModel;
+namespace SmartSolutionsLab.BauDoku.Documentation.ReadModel;
 
 public sealed record InstallationListFilter(
     ProjectIdentifier? ProjectId = null,

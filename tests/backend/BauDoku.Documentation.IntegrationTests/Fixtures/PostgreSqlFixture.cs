@@ -1,15 +1,15 @@
-using BauDoku.BuildingBlocks.Domain;
-using BauDoku.BuildingBlocks.Serialization;
-using BauDoku.Documentation.Domain;
-using BauDoku.Documentation.Infrastructure.Persistence;
-using BauDoku.Documentation.Infrastructure.ReadModel;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Serialization;
+using SmartSolutionsLab.BauDoku.Documentation.Domain;
+using SmartSolutionsLab.BauDoku.Documentation.Infrastructure.Persistence;
+using SmartSolutionsLab.BauDoku.Documentation.Infrastructure.ReadModel;
 using Marten;
 using Marten.Events;
 using Microsoft.EntityFrameworkCore;
 using Testcontainers.PostgreSql;
 using Weasel.Core;
 
-namespace BauDoku.Documentation.IntegrationTests.Fixtures;
+namespace SmartSolutionsLab.BauDoku.Documentation.IntegrationTests.Fixtures;
 
 public sealed class PostgreSqlFixture : IAsyncLifetime
 {

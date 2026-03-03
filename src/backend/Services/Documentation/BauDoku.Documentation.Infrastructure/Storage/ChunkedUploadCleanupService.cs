@@ -1,10 +1,10 @@
-using BauDoku.BuildingBlocks.Storage;
-using BauDoku.Documentation.Application.Contracts;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Storage;
+using SmartSolutionsLab.BauDoku.Documentation.Application.Contracts;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace BauDoku.Documentation.Infrastructure.Storage;
+namespace SmartSolutionsLab.BauDoku.Documentation.Infrastructure.Storage;
 
 public sealed class ChunkedUploadCleanupService(IOptions<PhotoStorageOptions> options, ILogger<ChunkedUploadCleanupService> logger)
     : BackgroundService

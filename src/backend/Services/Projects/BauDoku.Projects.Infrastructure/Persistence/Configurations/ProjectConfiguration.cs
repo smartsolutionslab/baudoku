@@ -1,8 +1,8 @@
-using BauDoku.Projects.Domain;
+using SmartSolutionsLab.BauDoku.Projects.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace BauDoku.Projects.Infrastructure.Persistence.Configurations;
+namespace SmartSolutionsLab.BauDoku.Projects.Infrastructure.Persistence.Configurations;
 
 public sealed class ProjectConfiguration : IEntityTypeConfiguration<Project>
 {

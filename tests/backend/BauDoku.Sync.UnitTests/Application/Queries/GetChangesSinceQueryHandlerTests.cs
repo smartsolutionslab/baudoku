@@ -1,12 +1,12 @@
 using AwesomeAssertions;
-using BauDoku.Sync.Application.Contracts;
-using BauDoku.Sync.ReadModel;
-using BauDoku.Sync.Application.Queries;
-using BauDoku.Sync.Application.Queries.Handlers;
-using BauDoku.Sync.Domain;
+using SmartSolutionsLab.BauDoku.Sync.Application.Contracts;
+using SmartSolutionsLab.BauDoku.Sync.ReadModel;
+using SmartSolutionsLab.BauDoku.Sync.Application.Queries;
+using SmartSolutionsLab.BauDoku.Sync.Application.Queries.Handlers;
+using SmartSolutionsLab.BauDoku.Sync.Domain;
 using NSubstitute;
 
-namespace BauDoku.Sync.UnitTests.Application.Queries;
+namespace SmartSolutionsLab.BauDoku.Sync.UnitTests.Application.Queries;
 
 public sealed class GetChangesSinceQueryHandlerTests
 {

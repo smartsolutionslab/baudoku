@@ -1,12 +1,12 @@
 using AwesomeAssertions;
-using BauDoku.BuildingBlocks.Application.Persistence;
-using BauDoku.Projects.Application.Commands;
-using BauDoku.Projects.Application.Commands.Handlers;
-using BauDoku.Projects.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Persistence;
+using SmartSolutionsLab.BauDoku.Projects.Application.Commands;
+using SmartSolutionsLab.BauDoku.Projects.Application.Commands.Handlers;
+using SmartSolutionsLab.BauDoku.Projects.Domain;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 
-namespace BauDoku.Projects.UnitTests.Application.Commands;
+namespace SmartSolutionsLab.BauDoku.Projects.UnitTests.Application.Commands;
 
 public sealed class AddZoneCommandHandlerTests
 {

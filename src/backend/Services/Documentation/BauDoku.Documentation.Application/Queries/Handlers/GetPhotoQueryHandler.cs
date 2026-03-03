@@ -1,8 +1,8 @@
-using BauDoku.BuildingBlocks.Application.Queries;
-using BauDoku.BuildingBlocks.Domain;
-using BauDoku.Documentation.ReadModel;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Queries;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.Documentation.ReadModel;
 
-namespace BauDoku.Documentation.Application.Queries.Handlers;
+namespace SmartSolutionsLab.BauDoku.Documentation.Application.Queries.Handlers;
 
 public sealed class GetPhotoQueryHandler(IPhotoReadRepository photos) : IQueryHandler<GetPhotoQuery, PhotoDto>
 {

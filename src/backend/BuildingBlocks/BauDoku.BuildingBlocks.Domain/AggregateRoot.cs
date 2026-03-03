@@ -1,4 +1,4 @@
-namespace BauDoku.BuildingBlocks.Domain;
+namespace SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
 
 public abstract class AggregateRoot<TIdentity> : Entity<TIdentity>, IAggregateRoot where TIdentity : IValueObject
 {

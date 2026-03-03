@@ -1,12 +1,12 @@
 extern alias DocumentationApi;
 
-using BauDoku.E2E.SmokeTests.Fixtures;
+using SmartSolutionsLab.BauDoku.E2E.SmokeTests.Fixtures;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace BauDoku.E2E.SmokeTests.Api;
+namespace SmartSolutionsLab.BauDoku.E2E.SmokeTests.Api;
 
 public sealed class DocumentationApiFactory(E2EFixture fixture) : WebApplicationFactory<DocumentationApi::Program>
 {

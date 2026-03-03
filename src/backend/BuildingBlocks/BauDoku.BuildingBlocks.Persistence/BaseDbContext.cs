@@ -1,7 +1,7 @@
-using BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
 using Microsoft.EntityFrameworkCore;
 
-namespace BauDoku.BuildingBlocks.Persistence;
+namespace SmartSolutionsLab.BauDoku.BuildingBlocks.Persistence;
 
 public abstract class BaseDbContext(DbContextOptions options) : DbContext(options)
 {

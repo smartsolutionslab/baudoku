@@ -1,6 +1,6 @@
 using System.Runtime.CompilerServices;
 
-namespace BauDoku.BuildingBlocks.Guards;
+namespace SmartSolutionsLab.BauDoku.BuildingBlocks.Guards;
 
 public static class Ensure
 {

@@ -1,12 +1,12 @@
-using BauDoku.BuildingBlocks.Application.Dispatcher;
-using BauDoku.BuildingBlocks.Application.Responses;
-using BauDoku.BuildingBlocks.Auth;
-using BauDoku.Documentation.Api.Mapping;
-using BauDoku.Documentation.Application.Commands;
-using BauDoku.Documentation.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Dispatcher;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Responses;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Auth;
+using SmartSolutionsLab.BauDoku.Documentation.Api.Mapping;
+using SmartSolutionsLab.BauDoku.Documentation.Application.Commands;
+using SmartSolutionsLab.BauDoku.Documentation.Domain;
 using Microsoft.AspNetCore.Http.HttpResults;
 
-namespace BauDoku.Documentation.Api.Endpoints;
+namespace SmartSolutionsLab.BauDoku.Documentation.Api.Endpoints;
 
 public static class ChunkedUploadEndpoints
 {

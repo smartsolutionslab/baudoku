@@ -1,7 +1,7 @@
 using AwesomeAssertions;
-using BauDoku.Sync.Domain;
+using SmartSolutionsLab.BauDoku.Sync.Domain;
 
-namespace BauDoku.Sync.UnitTests.Domain.ValueObjects;
+namespace SmartSolutionsLab.BauDoku.Sync.UnitTests.Domain.ValueObjects;
 
 public sealed class SyncBatchIdentifierTests
 {

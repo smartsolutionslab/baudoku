@@ -1,8 +1,8 @@
-using BauDoku.BuildingBlocks.Application.Commands;
-using BauDoku.Documentation.Application.Diagnostics;
-using BauDoku.Documentation.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Commands;
+using SmartSolutionsLab.BauDoku.Documentation.Application.Diagnostics;
+using SmartSolutionsLab.BauDoku.Documentation.Domain;
 
-namespace BauDoku.Documentation.Application.Commands.Handlers;
+namespace SmartSolutionsLab.BauDoku.Documentation.Application.Commands.Handlers;
 
 public sealed class DocumentInstallationCommandHandler(IInstallationRepository installations): ICommandHandler<DocumentInstallationCommand, InstallationIdentifier>
 {

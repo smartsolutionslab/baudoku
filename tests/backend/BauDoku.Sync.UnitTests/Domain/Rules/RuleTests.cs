@@ -1,7 +1,7 @@
 using AwesomeAssertions;
-using BauDoku.Sync.Domain;
+using SmartSolutionsLab.BauDoku.Sync.Domain;
 
-namespace BauDoku.Sync.UnitTests.Domain.Rules;
+namespace SmartSolutionsLab.BauDoku.Sync.UnitTests.Domain.Rules;
 
 public sealed class RuleTests
 {

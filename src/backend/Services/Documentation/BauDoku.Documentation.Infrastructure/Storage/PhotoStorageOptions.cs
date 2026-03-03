@@ -1,4 +1,4 @@
-namespace BauDoku.Documentation.Infrastructure.Storage;
+namespace SmartSolutionsLab.BauDoku.Documentation.Infrastructure.Storage;
 
 public sealed class PhotoStorageOptions
 {

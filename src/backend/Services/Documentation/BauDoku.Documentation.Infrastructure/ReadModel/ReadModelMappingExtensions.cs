@@ -1,6 +1,6 @@
-using BauDoku.Documentation.ReadModel;
+using SmartSolutionsLab.BauDoku.Documentation.ReadModel;
 
-namespace BauDoku.Documentation.Infrastructure.ReadModel;
+namespace SmartSolutionsLab.BauDoku.Documentation.Infrastructure.ReadModel;
 
 internal static class ReadModelMappingExtensions
 {

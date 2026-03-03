@@ -1,6 +1,6 @@
-using BauDoku.Documentation.Domain;
+using SmartSolutionsLab.BauDoku.Documentation.Domain;
 
-namespace BauDoku.Documentation.ReadModel;
+namespace SmartSolutionsLab.BauDoku.Documentation.ReadModel;
 
 public static class GpsPositionDtoExtensions
 {

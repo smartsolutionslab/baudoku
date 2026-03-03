@@ -1,7 +1,7 @@
-using BauDoku.Projects.Domain;
+using SmartSolutionsLab.BauDoku.Projects.Domain;
 using Microsoft.EntityFrameworkCore;
 
-namespace BauDoku.Projects.Infrastructure.Persistence;
+namespace SmartSolutionsLab.BauDoku.Projects.Infrastructure.Persistence;
 
 public sealed class ProjectsReadDbContext(DbContextOptions<ProjectsReadDbContext> options) : DbContext(options)
 {

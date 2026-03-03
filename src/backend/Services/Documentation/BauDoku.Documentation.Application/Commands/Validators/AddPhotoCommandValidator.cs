@@ -1,7 +1,7 @@
-using BauDoku.Documentation.Application.Constants;
+using SmartSolutionsLab.BauDoku.Documentation.Application.Constants;
 using FluentValidation;
 
-namespace BauDoku.Documentation.Application.Commands.Validators;
+namespace SmartSolutionsLab.BauDoku.Documentation.Application.Commands.Validators;
 
 public sealed class AddPhotoCommandValidator : AbstractValidator<AddPhotoCommand>
 {

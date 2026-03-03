@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace BauDoku.Sync.Infrastructure.Persistence.Configurations;
+namespace SmartSolutionsLab.BauDoku.Sync.Infrastructure.Persistence.Configurations;
 
 public sealed class EntityVersionEntryConfiguration : IEntityTypeConfiguration<EntityVersionEntry>
 {

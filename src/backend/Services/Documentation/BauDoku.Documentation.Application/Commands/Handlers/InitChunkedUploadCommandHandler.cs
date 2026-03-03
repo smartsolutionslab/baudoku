@@ -1,10 +1,10 @@
-using BauDoku.BuildingBlocks.Application.Commands;
-using BauDoku.BuildingBlocks.Domain;
-using BauDoku.Documentation.Application.Contracts;
-using BauDoku.Documentation.ReadModel;
-using BauDoku.Documentation.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Commands;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.Documentation.Application.Contracts;
+using SmartSolutionsLab.BauDoku.Documentation.ReadModel;
+using SmartSolutionsLab.BauDoku.Documentation.Domain;
 
-namespace BauDoku.Documentation.Application.Commands.Handlers;
+namespace SmartSolutionsLab.BauDoku.Documentation.Application.Commands.Handlers;
 
 public sealed class InitChunkedUploadCommandHandler(IInstallationRepository installations, IChunkedUploadStorage chunkedUploadStorage)
     : ICommandHandler<InitChunkedUploadCommand, UploadSessionIdentifier>

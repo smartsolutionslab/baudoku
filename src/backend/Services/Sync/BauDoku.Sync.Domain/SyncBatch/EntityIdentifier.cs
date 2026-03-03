@@ -1,7 +1,7 @@
-using BauDoku.BuildingBlocks.Domain;
-using BauDoku.BuildingBlocks.Guards;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Guards;
 
-namespace BauDoku.Sync.Domain;
+namespace SmartSolutionsLab.BauDoku.Sync.Domain;
 
 public sealed record EntityIdentifier : IValueObject
 {

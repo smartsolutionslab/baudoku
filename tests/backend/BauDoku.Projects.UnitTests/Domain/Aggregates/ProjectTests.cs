@@ -1,9 +1,9 @@
 using AwesomeAssertions;
-using BauDoku.BuildingBlocks.Domain;
-using BauDoku.Projects.Domain;
-using BauDoku.Projects.UnitTests.Builders;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.Projects.Domain;
+using SmartSolutionsLab.BauDoku.Projects.UnitTests.Builders;
 
-namespace BauDoku.Projects.UnitTests.Domain.Aggregates;
+namespace SmartSolutionsLab.BauDoku.Projects.UnitTests.Domain.Aggregates;
 
 public sealed class ProjectTests
 {

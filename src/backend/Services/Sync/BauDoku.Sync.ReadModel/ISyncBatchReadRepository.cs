@@ -1,6 +1,6 @@
-using BauDoku.Sync.Domain;
+using SmartSolutionsLab.BauDoku.Sync.Domain;
 
-namespace BauDoku.Sync.ReadModel;
+namespace SmartSolutionsLab.BauDoku.Sync.ReadModel;
 
 public interface ISyncBatchReadRepository
 {

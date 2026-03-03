@@ -1,8 +1,8 @@
-using BauDoku.BuildingBlocks.Persistence;
-using BauDoku.Projects.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Persistence;
+using SmartSolutionsLab.BauDoku.Projects.Domain;
 using Microsoft.EntityFrameworkCore;
 
-namespace BauDoku.Projects.Infrastructure.Persistence;
+namespace SmartSolutionsLab.BauDoku.Projects.Infrastructure.Persistence;
 
 public sealed class ProjectsDbContext(DbContextOptions<ProjectsDbContext> options)
     : BaseDbContext(options)

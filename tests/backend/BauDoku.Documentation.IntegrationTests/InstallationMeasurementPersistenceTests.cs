@@ -1,9 +1,9 @@
 using AwesomeAssertions;
-using BauDoku.Documentation.Domain;
-using BauDoku.Documentation.IntegrationTests.Fixtures;
+using SmartSolutionsLab.BauDoku.Documentation.Domain;
+using SmartSolutionsLab.BauDoku.Documentation.IntegrationTests.Fixtures;
 using Marten;
 
-namespace BauDoku.Documentation.IntegrationTests;
+namespace SmartSolutionsLab.BauDoku.Documentation.IntegrationTests;
 
 [Collection(PostgreSqlCollection.Name)]
 public sealed class InstallationMeasurementPersistenceTests(PostgreSqlFixture fixture)

@@ -1,4 +1,4 @@
-namespace BauDoku.BuildingBlocks.Auth;
+namespace SmartSolutionsLab.BauDoku.BuildingBlocks.Auth;
 
 public sealed class KeycloakOptions
 {

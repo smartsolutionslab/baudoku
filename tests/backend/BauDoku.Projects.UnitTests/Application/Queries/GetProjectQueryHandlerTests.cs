@@ -1,13 +1,13 @@
 using AwesomeAssertions;
-using BauDoku.Projects.Application.Mapping;
-using BauDoku.Projects.Application.Queries;
-using BauDoku.Projects.Application.Queries.Handlers;
-using BauDoku.Projects.Domain;
-using BauDoku.Projects.ReadModel;
+using SmartSolutionsLab.BauDoku.Projects.Application.Mapping;
+using SmartSolutionsLab.BauDoku.Projects.Application.Queries;
+using SmartSolutionsLab.BauDoku.Projects.Application.Queries.Handlers;
+using SmartSolutionsLab.BauDoku.Projects.Domain;
+using SmartSolutionsLab.BauDoku.Projects.ReadModel;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 
-namespace BauDoku.Projects.UnitTests.Application.Queries;
+namespace SmartSolutionsLab.BauDoku.Projects.UnitTests.Application.Queries;
 
 public sealed class GetProjectQueryHandlerTests
 {

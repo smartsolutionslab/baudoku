@@ -1,16 +1,16 @@
-using BauDoku.BuildingBlocks.Application.Dispatcher;
-using BauDoku.BuildingBlocks.Application.Pagination;
-using BauDoku.BuildingBlocks.Application.Responses;
-using BauDoku.BuildingBlocks.Domain;
-using BauDoku.BuildingBlocks.Auth;
-using BauDoku.Documentation.Api.Mapping;
-using BauDoku.Documentation.Application.Commands;
-using BauDoku.Documentation.Domain;
-using BauDoku.Documentation.Application.Queries;
-using BauDoku.Documentation.ReadModel;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Dispatcher;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Pagination;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Responses;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Auth;
+using SmartSolutionsLab.BauDoku.Documentation.Api.Mapping;
+using SmartSolutionsLab.BauDoku.Documentation.Application.Commands;
+using SmartSolutionsLab.BauDoku.Documentation.Domain;
+using SmartSolutionsLab.BauDoku.Documentation.Application.Queries;
+using SmartSolutionsLab.BauDoku.Documentation.ReadModel;
 using Microsoft.AspNetCore.Http.HttpResults;
 
-namespace BauDoku.Documentation.Api.Endpoints;
+namespace SmartSolutionsLab.BauDoku.Documentation.Api.Endpoints;
 
 public static class InstallationEndpoints
 {

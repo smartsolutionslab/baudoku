@@ -1,9 +1,9 @@
 using System.Linq.Expressions;
-using BauDoku.Sync.ReadModel;
-using BauDoku.Sync.Domain;
+using SmartSolutionsLab.BauDoku.Sync.ReadModel;
+using SmartSolutionsLab.BauDoku.Sync.Domain;
 using Microsoft.EntityFrameworkCore;
 
-namespace BauDoku.Sync.Infrastructure.Persistence.Repositories;
+namespace SmartSolutionsLab.BauDoku.Sync.Infrastructure.Persistence.Repositories;
 
 public sealed class SyncBatchReadRepository(SyncReadDbContext context) : ISyncBatchReadRepository
 {

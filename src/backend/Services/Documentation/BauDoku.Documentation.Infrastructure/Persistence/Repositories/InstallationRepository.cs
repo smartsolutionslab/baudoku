@@ -1,8 +1,8 @@
-using BauDoku.BuildingBlocks.Domain;
-using BauDoku.Documentation.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.Documentation.Domain;
 using Marten;
 
-namespace BauDoku.Documentation.Infrastructure.Persistence.Repositories;
+namespace SmartSolutionsLab.BauDoku.Documentation.Infrastructure.Persistence.Repositories;
 
 public sealed class InstallationRepository(IDocumentSession session) : IInstallationRepository
 {

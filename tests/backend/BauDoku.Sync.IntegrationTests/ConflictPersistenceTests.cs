@@ -1,9 +1,9 @@
 using AwesomeAssertions;
-using BauDoku.Sync.Domain;
-using BauDoku.Sync.IntegrationTests.Fixtures;
+using SmartSolutionsLab.BauDoku.Sync.Domain;
+using SmartSolutionsLab.BauDoku.Sync.IntegrationTests.Fixtures;
 using Microsoft.EntityFrameworkCore;
 
-namespace BauDoku.Sync.IntegrationTests;
+namespace SmartSolutionsLab.BauDoku.Sync.IntegrationTests;
 
 [Collection(PostgreSqlCollection.Name)]
 public sealed class ConflictPersistenceTests(PostgreSqlFixture fixture)

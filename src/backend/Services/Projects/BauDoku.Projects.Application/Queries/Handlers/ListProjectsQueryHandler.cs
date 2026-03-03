@@ -1,8 +1,8 @@
-using BauDoku.BuildingBlocks.Application.Pagination;
-using BauDoku.BuildingBlocks.Application.Queries;
-using BauDoku.Projects.ReadModel;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Pagination;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Queries;
+using SmartSolutionsLab.BauDoku.Projects.ReadModel;
 
-namespace BauDoku.Projects.Application.Queries.Handlers;
+namespace SmartSolutionsLab.BauDoku.Projects.Application.Queries.Handlers;
 
 public sealed class ListProjectsQueryHandler(IProjectReadRepository projects) : IQueryHandler<ListProjectsQuery, PagedResult<ProjectListItemDto>>
 {

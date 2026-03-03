@@ -1,11 +1,11 @@
-using BauDoku.BuildingBlocks.Application.Persistence;
-using BauDoku.Sync.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Persistence;
+using SmartSolutionsLab.BauDoku.Sync.Domain;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace BauDoku.Sync.Infrastructure.BackgroundServices;
+namespace SmartSolutionsLab.BauDoku.Sync.Infrastructure.BackgroundServices;
 
 public sealed class SyncSchedulerService(
     IServiceScopeFactory scopeFactory,

@@ -1,4 +1,4 @@
-namespace BauDoku.Documentation.Infrastructure;
+namespace SmartSolutionsLab.BauDoku.Documentation.Infrastructure;
 
 public static class DocumentationSchemas
 {

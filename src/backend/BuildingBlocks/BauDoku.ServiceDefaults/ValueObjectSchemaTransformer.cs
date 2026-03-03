@@ -1,9 +1,9 @@
 using System.Reflection;
-using BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi;
 
-namespace BauDoku.ServiceDefaults;
+namespace SmartSolutionsLab.BauDoku.ServiceDefaults;
 
 public sealed class ValueObjectSchemaTransformer : IOpenApiSchemaTransformer
 {

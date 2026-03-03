@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
-namespace BauDoku.Documentation.Infrastructure.ReadModel;
+namespace SmartSolutionsLab.BauDoku.Documentation.Infrastructure.ReadModel;
 
 public sealed class ReadModelDbContextFactory : IDesignTimeDbContextFactory<ReadModelDbContext>
 {

@@ -1,4 +1,4 @@
-namespace BauDoku.Documentation.Application.Constants;
+namespace SmartSolutionsLab.BauDoku.Documentation.Application.Constants;
 
 public static class PhotoUploadConstants
 {

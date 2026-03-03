@@ -1,4 +1,4 @@
-namespace BauDoku.Sync.Infrastructure.Persistence;
+namespace SmartSolutionsLab.BauDoku.Sync.Infrastructure.Persistence;
 
 public sealed class EntityVersionEntry
 {

@@ -1,6 +1,6 @@
 using System.Security.Claims;
 
-namespace BauDoku.BuildingBlocks.Auth;
+namespace SmartSolutionsLab.BauDoku.BuildingBlocks.Auth;
 
 public static class ClaimsPrincipalExtensions
 {

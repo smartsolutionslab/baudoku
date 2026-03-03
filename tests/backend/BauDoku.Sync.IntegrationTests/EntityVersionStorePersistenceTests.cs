@@ -1,9 +1,9 @@
 using AwesomeAssertions;
-using BauDoku.Sync.Domain;
-using BauDoku.Sync.Infrastructure.Persistence.Repositories;
-using BauDoku.Sync.IntegrationTests.Fixtures;
+using SmartSolutionsLab.BauDoku.Sync.Domain;
+using SmartSolutionsLab.BauDoku.Sync.Infrastructure.Persistence.Repositories;
+using SmartSolutionsLab.BauDoku.Sync.IntegrationTests.Fixtures;
 
-namespace BauDoku.Sync.IntegrationTests;
+namespace SmartSolutionsLab.BauDoku.Sync.IntegrationTests;
 
 [Collection(PostgreSqlCollection.Name)]
 public sealed class EntityVersionStorePersistenceTests(PostgreSqlFixture fixture)

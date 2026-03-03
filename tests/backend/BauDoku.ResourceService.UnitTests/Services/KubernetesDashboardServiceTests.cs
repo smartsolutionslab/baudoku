@@ -1,6 +1,6 @@
 using Aspire.DashboardService.Proto.V1;
 using AwesomeAssertions;
-using BauDoku.ResourceService.Services;
+using SmartSolutionsLab.BauDoku.ResourceService.Services;
 using Grpc.Core;
 using Grpc.Core.Testing;
 using k8s;
@@ -11,7 +11,7 @@ using Microsoft.Extensions.Options;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 
-namespace BauDoku.ResourceService.UnitTests.Services;
+namespace SmartSolutionsLab.BauDoku.ResourceService.UnitTests.Services;
 
 public sealed class KubernetesDashboardServiceTests
 {

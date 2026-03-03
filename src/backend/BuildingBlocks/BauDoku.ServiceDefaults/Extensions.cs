@@ -15,12 +15,12 @@ using OpenTelemetry.Trace;
 using Serilog;
 using Serilog.Enrichers.Span;
 using Serilog.Events;
-using BauDoku.BuildingBlocks.Auth;
-using BauDoku.BuildingBlocks.Domain;
-using BauDoku.BuildingBlocks.Serialization;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Auth;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Serialization;
 using Serilog.Sinks.OpenTelemetry;
 
-namespace BauDoku.ServiceDefaults;
+namespace SmartSolutionsLab.BauDoku.ServiceDefaults;
 
 public static class Extensions
 {

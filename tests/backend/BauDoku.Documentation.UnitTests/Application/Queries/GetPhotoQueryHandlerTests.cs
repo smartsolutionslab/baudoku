@@ -1,12 +1,12 @@
 using AwesomeAssertions;
-using BauDoku.Documentation.ReadModel;
-using BauDoku.Documentation.Application.Queries;
-using BauDoku.Documentation.Application.Queries.Handlers;
-using BauDoku.Documentation.Domain;
+using SmartSolutionsLab.BauDoku.Documentation.ReadModel;
+using SmartSolutionsLab.BauDoku.Documentation.Application.Queries;
+using SmartSolutionsLab.BauDoku.Documentation.Application.Queries.Handlers;
+using SmartSolutionsLab.BauDoku.Documentation.Domain;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 
-namespace BauDoku.Documentation.UnitTests.Application.Queries;
+namespace SmartSolutionsLab.BauDoku.Documentation.UnitTests.Application.Queries;
 
 public sealed class GetPhotoQueryHandlerTests
 {

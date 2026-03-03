@@ -1,11 +1,11 @@
-using BauDoku.Documentation.Application.Contracts;
-using BauDoku.Documentation.ReadModel;
-using BauDoku.Documentation.Domain;
-using BauDoku.Documentation.Infrastructure.Persistence;
-using BauDoku.Documentation.Infrastructure.Persistence.Repositories;
-using BauDoku.Documentation.Infrastructure.Projections;
-using BauDoku.Documentation.Infrastructure.ReadModel;
-using BauDoku.Documentation.Infrastructure.Storage;
+using SmartSolutionsLab.BauDoku.Documentation.Application.Contracts;
+using SmartSolutionsLab.BauDoku.Documentation.ReadModel;
+using SmartSolutionsLab.BauDoku.Documentation.Domain;
+using SmartSolutionsLab.BauDoku.Documentation.Infrastructure.Persistence;
+using SmartSolutionsLab.BauDoku.Documentation.Infrastructure.Persistence.Repositories;
+using SmartSolutionsLab.BauDoku.Documentation.Infrastructure.Projections;
+using SmartSolutionsLab.BauDoku.Documentation.Infrastructure.ReadModel;
+using SmartSolutionsLab.BauDoku.Documentation.Infrastructure.Storage;
 using Marten;
 using Marten.Events.Daemon.Resiliency;
 using Marten.Events.Projections;
@@ -14,7 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-namespace BauDoku.Documentation.Infrastructure;
+namespace SmartSolutionsLab.BauDoku.Documentation.Infrastructure;
 
 public static class DependencyInjection
 {

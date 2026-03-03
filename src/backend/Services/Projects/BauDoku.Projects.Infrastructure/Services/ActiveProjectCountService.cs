@@ -1,10 +1,10 @@
-using BauDoku.Projects.Application.Contracts;
-using BauDoku.Projects.Application.Diagnostics;
+using SmartSolutionsLab.BauDoku.Projects.Application.Contracts;
+using SmartSolutionsLab.BauDoku.Projects.Application.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace BauDoku.Projects.Infrastructure.Services;
+namespace SmartSolutionsLab.BauDoku.Projects.Infrastructure.Services;
 
 public sealed class ActiveProjectCountService(IServiceScopeFactory scopeFactory, ILogger<ActiveProjectCountService> logger)
     : BackgroundService

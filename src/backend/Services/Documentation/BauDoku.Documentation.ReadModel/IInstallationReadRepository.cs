@@ -1,7 +1,7 @@
-using BauDoku.BuildingBlocks.Application.Pagination;
-using BauDoku.Documentation.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Pagination;
+using SmartSolutionsLab.BauDoku.Documentation.Domain;
 
-namespace BauDoku.Documentation.ReadModel;
+namespace SmartSolutionsLab.BauDoku.Documentation.ReadModel;
 
 public interface IInstallationReadRepository : IReadRepository<InstallationDto, InstallationIdentifier, InstallationListItemDto, InstallationListFilter>
 {

@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace BauDoku.Documentation.Infrastructure.ReadModel;
+namespace SmartSolutionsLab.BauDoku.Documentation.Infrastructure.ReadModel;
 
 public sealed class ReadModelDbContext(DbContextOptions<ReadModelDbContext> options) : DbContext(options)
 {

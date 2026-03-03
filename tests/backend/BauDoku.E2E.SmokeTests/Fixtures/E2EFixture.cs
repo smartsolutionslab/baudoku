@@ -1,14 +1,14 @@
-using BauDoku.Documentation.Infrastructure.Persistence;
-using BauDoku.Documentation.Infrastructure.ReadModel;
-using BauDoku.Projects.Infrastructure.Persistence;
-using BauDoku.Sync.Infrastructure.Persistence;
+using SmartSolutionsLab.BauDoku.Documentation.Infrastructure.Persistence;
+using SmartSolutionsLab.BauDoku.Documentation.Infrastructure.ReadModel;
+using SmartSolutionsLab.BauDoku.Projects.Infrastructure.Persistence;
+using SmartSolutionsLab.BauDoku.Sync.Infrastructure.Persistence;
 using Marten;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using Testcontainers.PostgreSql;
 using Weasel.Core;
 
-namespace BauDoku.E2E.SmokeTests.Fixtures;
+namespace SmartSolutionsLab.BauDoku.E2E.SmokeTests.Fixtures;
 
 public sealed class E2EFixture : IAsyncLifetime
 {

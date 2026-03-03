@@ -1,11 +1,11 @@
 using AwesomeAssertions;
-using BauDoku.BuildingBlocks.Application.Events;
-using BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Events;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 
-namespace BauDoku.BuildingBlocks.UnitTests.Dispatcher;
+namespace SmartSolutionsLab.BauDoku.BuildingBlocks.UnitTests.Dispatcher;
 
 public sealed record DispatcherTestEvent(string Message) : IDomainEvent
 {

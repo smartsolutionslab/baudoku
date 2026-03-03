@@ -1,8 +1,8 @@
 using AwesomeAssertions;
-using BauDoku.BuildingBlocks.Application.Pagination;
-using BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Pagination;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
 
-namespace BauDoku.BuildingBlocks.UnitTests.Pagination;
+namespace SmartSolutionsLab.BauDoku.BuildingBlocks.UnitTests.Pagination;
 
 public sealed class PagedResultTests
 {

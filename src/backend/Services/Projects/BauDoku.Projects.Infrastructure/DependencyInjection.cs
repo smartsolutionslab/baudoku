@@ -1,15 +1,15 @@
-using BauDoku.BuildingBlocks.Application.Persistence;
-using BauDoku.BuildingBlocks.Persistence;
-using BauDoku.Projects.Application.Contracts;
-using BauDoku.Projects.ReadModel;
-using BauDoku.Projects.Domain;
-using BauDoku.Projects.Infrastructure.Persistence;
-using BauDoku.Projects.Infrastructure.Persistence.Repositories;
-using BauDoku.Projects.Infrastructure.Services;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Persistence;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Persistence;
+using SmartSolutionsLab.BauDoku.Projects.Application.Contracts;
+using SmartSolutionsLab.BauDoku.Projects.ReadModel;
+using SmartSolutionsLab.BauDoku.Projects.Domain;
+using SmartSolutionsLab.BauDoku.Projects.Infrastructure.Persistence;
+using SmartSolutionsLab.BauDoku.Projects.Infrastructure.Persistence.Repositories;
+using SmartSolutionsLab.BauDoku.Projects.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace BauDoku.Projects.Infrastructure;
+namespace SmartSolutionsLab.BauDoku.Projects.Infrastructure;
 
 public static class DependencyInjection
 {

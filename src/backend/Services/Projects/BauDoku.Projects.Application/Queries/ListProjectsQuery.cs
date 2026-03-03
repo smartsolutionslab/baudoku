@@ -1,8 +1,8 @@
-using BauDoku.BuildingBlocks.Application.Pagination;
-using BauDoku.BuildingBlocks.Application.Queries;
-using BauDoku.BuildingBlocks.Domain;
-using BauDoku.Projects.ReadModel;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Pagination;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Queries;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.Projects.ReadModel;
 
-namespace BauDoku.Projects.Application.Queries;
+namespace SmartSolutionsLab.BauDoku.Projects.Application.Queries;
 
 public sealed record ListProjectsQuery(SearchTerm? Search, PageNumber Page, PageSize PageSize) : IQuery<PagedResult<ProjectListItemDto>>;

@@ -1,5 +1,5 @@
-using BauDoku.ResourceService;
-using BauDoku.ResourceService.Services;
+using SmartSolutionsLab.BauDoku.ResourceService;
+using SmartSolutionsLab.BauDoku.ResourceService.Services;
 using k8s;
 
 var builder = WebApplication.CreateBuilder(args);

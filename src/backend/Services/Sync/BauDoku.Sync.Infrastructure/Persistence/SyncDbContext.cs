@@ -1,8 +1,8 @@
-using BauDoku.BuildingBlocks.Persistence;
-using BauDoku.Sync.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Persistence;
+using SmartSolutionsLab.BauDoku.Sync.Domain;
 using Microsoft.EntityFrameworkCore;
 
-namespace BauDoku.Sync.Infrastructure.Persistence;
+namespace SmartSolutionsLab.BauDoku.Sync.Infrastructure.Persistence;
 
 public sealed class SyncDbContext(DbContextOptions<SyncDbContext> options)
     : BaseDbContext(options)

@@ -1,8 +1,8 @@
-using BauDoku.Documentation.Infrastructure.Persistence;
-using BauDoku.Documentation.Infrastructure.ReadModel;
-using BauDoku.Projects.Infrastructure.Persistence;
-using BauDoku.ServiceDefaults;
-using BauDoku.Sync.Infrastructure.Persistence;
+using SmartSolutionsLab.BauDoku.Documentation.Infrastructure.Persistence;
+using SmartSolutionsLab.BauDoku.Documentation.Infrastructure.ReadModel;
+using SmartSolutionsLab.BauDoku.Projects.Infrastructure.Persistence;
+using SmartSolutionsLab.BauDoku.ServiceDefaults;
+using SmartSolutionsLab.BauDoku.Sync.Infrastructure.Persistence;
 using Marten;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;

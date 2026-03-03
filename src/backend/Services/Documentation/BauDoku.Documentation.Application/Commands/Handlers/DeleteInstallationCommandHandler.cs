@@ -1,9 +1,9 @@
-using BauDoku.BuildingBlocks.Application.Commands;
-using BauDoku.BuildingBlocks.Domain;
-using BauDoku.Documentation.Application.Diagnostics;
-using BauDoku.Documentation.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Commands;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.Documentation.Application.Diagnostics;
+using SmartSolutionsLab.BauDoku.Documentation.Domain;
 
-namespace BauDoku.Documentation.Application.Commands.Handlers;
+namespace SmartSolutionsLab.BauDoku.Documentation.Application.Commands.Handlers;
 
 public sealed class DeleteInstallationCommandHandler(IInstallationRepository installations) : ICommandHandler<DeleteInstallationCommand>
 {

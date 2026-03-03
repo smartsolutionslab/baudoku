@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
-namespace BauDoku.Projects.Infrastructure.Persistence;
+namespace SmartSolutionsLab.BauDoku.Projects.Infrastructure.Persistence;
 
 public sealed class ProjectsDbContextFactory : IDesignTimeDbContextFactory<ProjectsDbContext>
 {

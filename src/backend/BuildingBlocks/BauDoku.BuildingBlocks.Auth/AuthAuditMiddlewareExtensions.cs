@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 
-namespace BauDoku.BuildingBlocks.Auth;
+namespace SmartSolutionsLab.BauDoku.BuildingBlocks.Auth;
 
 public static class AuthAuditMiddlewareExtensions
 {

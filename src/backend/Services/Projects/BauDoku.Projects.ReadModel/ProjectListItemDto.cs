@@ -1,4 +1,4 @@
-namespace BauDoku.Projects.ReadModel;
+namespace SmartSolutionsLab.BauDoku.Projects.ReadModel;
 
 public sealed record ProjectListItemDto(
     Guid Id,

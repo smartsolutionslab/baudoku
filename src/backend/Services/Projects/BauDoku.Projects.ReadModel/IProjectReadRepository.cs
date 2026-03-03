@@ -1,8 +1,8 @@
-using BauDoku.BuildingBlocks.Application.Pagination;
-using BauDoku.BuildingBlocks.Domain;
-using BauDoku.Projects.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Pagination;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.Projects.Domain;
 
-namespace BauDoku.Projects.ReadModel;
+namespace SmartSolutionsLab.BauDoku.Projects.ReadModel;
 
 public interface IProjectReadRepository : IReadRepository<ProjectDto, ProjectIdentifier, ProjectListItemDto, SearchTerm?>
 {

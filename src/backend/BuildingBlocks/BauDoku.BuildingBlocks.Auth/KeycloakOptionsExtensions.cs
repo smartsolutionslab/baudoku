@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace BauDoku.BuildingBlocks.Auth;
+namespace SmartSolutionsLab.BauDoku.BuildingBlocks.Auth;
 
 public static class KeycloakOptionsExtensions
 {

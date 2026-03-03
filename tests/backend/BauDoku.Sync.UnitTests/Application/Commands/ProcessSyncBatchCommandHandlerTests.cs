@@ -1,13 +1,13 @@
 using AwesomeAssertions;
-using BauDoku.BuildingBlocks.Application.Persistence;
-using BauDoku.Sync.Application.Commands;
-using BauDoku.Sync.Application.Commands.Handlers;
-using BauDoku.Sync.Application.Contracts;
-using BauDoku.Sync.ReadModel;
-using BauDoku.Sync.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Persistence;
+using SmartSolutionsLab.BauDoku.Sync.Application.Commands;
+using SmartSolutionsLab.BauDoku.Sync.Application.Commands.Handlers;
+using SmartSolutionsLab.BauDoku.Sync.Application.Contracts;
+using SmartSolutionsLab.BauDoku.Sync.ReadModel;
+using SmartSolutionsLab.BauDoku.Sync.Domain;
 using NSubstitute;
 
-namespace BauDoku.Sync.UnitTests.Application.Commands;
+namespace SmartSolutionsLab.BauDoku.Sync.UnitTests.Application.Commands;
 
 public sealed class ProcessSyncBatchCommandHandlerTests
 {

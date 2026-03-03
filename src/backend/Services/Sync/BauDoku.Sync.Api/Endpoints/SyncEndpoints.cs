@@ -1,13 +1,13 @@
-using BauDoku.BuildingBlocks.Application.Dispatcher;
-using BauDoku.BuildingBlocks.Auth;
-using BauDoku.Sync.Api.Mapping;
-using BauDoku.Sync.Application.Commands;
-using BauDoku.Sync.ReadModel;
-using BauDoku.Sync.Application.Queries;
-using BauDoku.Sync.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Dispatcher;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Auth;
+using SmartSolutionsLab.BauDoku.Sync.Api.Mapping;
+using SmartSolutionsLab.BauDoku.Sync.Application.Commands;
+using SmartSolutionsLab.BauDoku.Sync.ReadModel;
+using SmartSolutionsLab.BauDoku.Sync.Application.Queries;
+using SmartSolutionsLab.BauDoku.Sync.Domain;
 using Microsoft.AspNetCore.Http.HttpResults;
 
-namespace BauDoku.Sync.Api.Endpoints;
+namespace SmartSolutionsLab.BauDoku.Sync.Api.Endpoints;
 
 public static class SyncEndpoints
 {

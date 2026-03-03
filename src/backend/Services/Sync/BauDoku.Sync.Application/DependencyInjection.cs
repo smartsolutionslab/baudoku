@@ -1,7 +1,7 @@
-using BauDoku.BuildingBlocks.Application;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace BauDoku.Sync.Application;
+namespace SmartSolutionsLab.BauDoku.Sync.Application;
 
 public static class DependencyInjection
 {

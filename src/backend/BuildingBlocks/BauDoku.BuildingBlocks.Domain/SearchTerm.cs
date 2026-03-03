@@ -1,6 +1,6 @@
-using BauDoku.BuildingBlocks.Guards;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Guards;
 
-namespace BauDoku.BuildingBlocks.Domain;
+namespace SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
 
 public sealed record SearchTerm : IValueObject
 {

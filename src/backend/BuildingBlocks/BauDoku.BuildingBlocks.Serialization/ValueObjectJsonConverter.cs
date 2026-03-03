@@ -2,7 +2,7 @@ using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace BauDoku.BuildingBlocks.Serialization;
+namespace SmartSolutionsLab.BauDoku.BuildingBlocks.Serialization;
 
 public sealed class ValueObjectJsonConverter<TVo, TValue>(MethodInfo? fromMethod) : JsonConverter<TVo>
 {

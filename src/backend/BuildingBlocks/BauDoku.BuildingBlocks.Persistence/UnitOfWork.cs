@@ -1,7 +1,7 @@
-using BauDoku.BuildingBlocks.Application.Dispatcher;
-using BauDoku.BuildingBlocks.Application.Persistence;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Dispatcher;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Persistence;
 
-namespace BauDoku.BuildingBlocks.Persistence;
+namespace SmartSolutionsLab.BauDoku.BuildingBlocks.Persistence;
 
 public sealed class UnitOfWork<TContext>(TContext context, IDispatcher dispatcher) : IUnitOfWork
     where TContext : BaseDbContext

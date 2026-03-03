@@ -1,11 +1,11 @@
-using BauDoku.BuildingBlocks.Application.Commands;
-using BauDoku.BuildingBlocks.Application.Events;
-using BauDoku.BuildingBlocks.Application.Queries;
-using BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Commands;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Events;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Queries;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace BauDoku.BuildingBlocks.Application.Dispatcher;
+namespace SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Dispatcher;
 
 public sealed class Dispatcher(IServiceProvider serviceProvider, ILogger<Dispatcher> logger)
     : IDispatcher

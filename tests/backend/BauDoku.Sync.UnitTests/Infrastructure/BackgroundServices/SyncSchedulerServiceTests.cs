@@ -1,13 +1,13 @@
 using AwesomeAssertions;
-using BauDoku.BuildingBlocks.Application.Persistence;
-using BauDoku.Sync.Domain;
-using BauDoku.Sync.Infrastructure.BackgroundServices;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Persistence;
+using SmartSolutionsLab.BauDoku.Sync.Domain;
+using SmartSolutionsLab.BauDoku.Sync.Infrastructure.BackgroundServices;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NSubstitute;
 
-namespace BauDoku.Sync.UnitTests.Infrastructure.BackgroundServices;
+namespace SmartSolutionsLab.BauDoku.Sync.UnitTests.Infrastructure.BackgroundServices;
 
 public sealed class SyncSchedulerServiceTests
 {

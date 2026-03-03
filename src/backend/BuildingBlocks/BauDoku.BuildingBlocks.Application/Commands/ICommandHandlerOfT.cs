@@ -1,4 +1,4 @@
-namespace BauDoku.BuildingBlocks.Application.Commands;
+namespace SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Commands;
 
 public interface ICommandHandler<in TCommand, TResult> where TCommand : ICommand<TResult>
 {

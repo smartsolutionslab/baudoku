@@ -1,10 +1,10 @@
 using AwesomeAssertions;
-using BauDoku.Documentation.Application.Commands;
-using BauDoku.Documentation.Application.Commands.Validators;
-using BauDoku.Documentation.Domain;
+using SmartSolutionsLab.BauDoku.Documentation.Application.Commands;
+using SmartSolutionsLab.BauDoku.Documentation.Application.Commands.Validators;
+using SmartSolutionsLab.BauDoku.Documentation.Domain;
 using FluentValidation.TestHelper;
 
-namespace BauDoku.Documentation.UnitTests.Application.Validators;
+namespace SmartSolutionsLab.BauDoku.Documentation.UnitTests.Application.Validators;
 
 public sealed class InitChunkedUploadCommandValidatorTests
 {

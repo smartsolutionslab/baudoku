@@ -1,9 +1,9 @@
 using AwesomeAssertions;
-using BauDoku.BuildingBlocks.Domain;
-using BauDoku.Documentation.Domain;
-using BauDoku.Documentation.UnitTests.Builders;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.Documentation.Domain;
+using SmartSolutionsLab.BauDoku.Documentation.UnitTests.Builders;
 
-namespace BauDoku.Documentation.UnitTests.Domain.Aggregates;
+namespace SmartSolutionsLab.BauDoku.Documentation.UnitTests.Domain.Aggregates;
 
 public sealed class InstallationPhotoTests
 {

@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace BauDoku.Documentation.Infrastructure.ReadModel.Migrations
+namespace SmartSolutionsLab.BauDoku.Documentation.Infrastructure.ReadModel.Migrations
 {
     /// <inheritdoc />
     public partial class InitialReadModel : Migration

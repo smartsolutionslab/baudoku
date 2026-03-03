@@ -1,6 +1,6 @@
-using BauDoku.Documentation.Domain;
+using SmartSolutionsLab.BauDoku.Documentation.Domain;
 
-namespace BauDoku.Documentation.Application.Contracts;
+namespace SmartSolutionsLab.BauDoku.Documentation.Application.Contracts;
 
 public interface IPhotoStorage
 {

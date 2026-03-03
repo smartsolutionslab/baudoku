@@ -1,8 +1,8 @@
-using BauDoku.Projects.Application.Commands;
-using BauDoku.Projects.Api.Endpoints;
-using BauDoku.Projects.Domain;
+using SmartSolutionsLab.BauDoku.Projects.Application.Commands;
+using SmartSolutionsLab.BauDoku.Projects.Api.Endpoints;
+using SmartSolutionsLab.BauDoku.Projects.Domain;
 
-namespace BauDoku.Projects.Api.Mapping;
+namespace SmartSolutionsLab.BauDoku.Projects.Api.Mapping;
 
 public static class ProjectRequestMappingExtensions
 {

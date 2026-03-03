@@ -1,6 +1,6 @@
-using BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
 
-namespace BauDoku.Sync.Domain;
+namespace SmartSolutionsLab.BauDoku.Sync.Domain;
 
 public interface ISyncBatchRepository : IRepository<SyncBatch, SyncBatchIdentifier>
 {

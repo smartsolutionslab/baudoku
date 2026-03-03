@@ -2,9 +2,9 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using AwesomeAssertions;
-using BauDoku.Auth.IntegrationTests.Fixtures;
+using SmartSolutionsLab.BauDoku.Auth.IntegrationTests.Fixtures;
 
-namespace BauDoku.Auth.IntegrationTests.Api;
+namespace SmartSolutionsLab.BauDoku.Auth.IntegrationTests.Api;
 
 [Collection(KeycloakCollection.Name)]
 public sealed class KeycloakAuthTests : IDisposable

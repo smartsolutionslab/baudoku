@@ -1,4 +1,4 @@
-namespace BauDoku.Sync.ReadModel;
+namespace SmartSolutionsLab.BauDoku.Sync.ReadModel;
 
 public sealed record SyncDeltaDto(
     string EntityType,

@@ -1,7 +1,7 @@
 using AwesomeAssertions;
-using BauDoku.BuildingBlocks.Storage;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Storage;
 
-namespace BauDoku.BuildingBlocks.UnitTests.Storage;
+namespace SmartSolutionsLab.BauDoku.BuildingBlocks.UnitTests.Storage;
 
 public sealed class LocalStorageDirectoryTests : IDisposable
 {

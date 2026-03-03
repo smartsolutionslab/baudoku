@@ -1,13 +1,13 @@
 using System.Linq.Expressions;
-using BauDoku.BuildingBlocks.Application.Pagination;
-using BauDoku.Projects.ReadModel;
-using BauDoku.Projects.Application.Mapping;
-using BauDoku.BuildingBlocks.Domain;
-using BauDoku.BuildingBlocks.Persistence.Pagination;
-using BauDoku.Projects.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Pagination;
+using SmartSolutionsLab.BauDoku.Projects.ReadModel;
+using SmartSolutionsLab.BauDoku.Projects.Application.Mapping;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Persistence.Pagination;
+using SmartSolutionsLab.BauDoku.Projects.Domain;
 using Microsoft.EntityFrameworkCore;
 
-namespace BauDoku.Projects.Infrastructure.Persistence.Repositories;
+namespace SmartSolutionsLab.BauDoku.Projects.Infrastructure.Persistence.Repositories;
 
 public sealed class ProjectReadRepository(ProjectsReadDbContext context) : IProjectReadRepository
 {

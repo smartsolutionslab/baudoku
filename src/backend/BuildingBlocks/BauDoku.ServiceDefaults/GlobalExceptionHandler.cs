@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace BauDoku.ServiceDefaults;
+namespace SmartSolutionsLab.BauDoku.ServiceDefaults;
 
 public sealed class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger, IHostEnvironment environment)
     : IExceptionHandler
