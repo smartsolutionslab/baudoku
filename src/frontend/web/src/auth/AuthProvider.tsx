@@ -10,13 +10,13 @@ import { UserManager, type User } from 'oidc-client-ts';
 import { oidcConfig } from './oidcConfig';
 import { setAuthToken, onUnauthorized } from '@baudoku/core';
 
-interface AuthContextValue {
+type AuthContextValue = {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   login: () => Promise<void>;
   logout: () => Promise<void>;
-}
+};
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 

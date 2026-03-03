@@ -2,9 +2,9 @@ import { useRef, useState } from 'react';
 import { PHOTO_TYPE_LABELS } from '@baudoku/documentation';
 import type { PhotoType } from '@baudoku/documentation';
 
-interface PhotoCaptureProps {
+type PhotoCaptureProps = {
   onCapture: (file: File, type: PhotoType, caption?: string) => void;
-}
+};
 
 const typeOptions = Object.entries(PHOTO_TYPE_LABELS).map(([value, label]) => ({
   value: value as PhotoType,

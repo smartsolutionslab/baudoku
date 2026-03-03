@@ -1,13 +1,13 @@
 import type { SelectHTMLAttributes } from 'react';
-import type { FieldError } from 'react-hook-form';
+import type { FieldError, UseFormRegisterReturn } from 'react-hook-form';
 
-interface FormSelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
+type FormSelectProps = SelectHTMLAttributes<HTMLSelectElement> & {
   label: string;
   error?: FieldError;
-  register: object;
+  register: UseFormRegisterReturn;
   options: { value: string; label: string }[];
   placeholder?: string;
-}
+};
 
 export function FormSelect({
   label,

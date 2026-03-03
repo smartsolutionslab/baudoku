@@ -1,8 +1,8 @@
-interface SearchBarProps {
+type SearchBarProps = {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
-}
+};
 
 export function SearchBar({
   value,

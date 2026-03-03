@@ -3,10 +3,10 @@ import type { Photo } from '@baudoku/documentation';
 import { PHOTO_TYPE_LABELS } from '@baudoku/documentation';
 import { getBaseUrl } from '@baudoku/core';
 
-interface PhotoGalleryProps {
+type PhotoGalleryProps = {
   photos: Photo[];
   onDelete?: (photoId: string) => void;
-}
+};
 
 export function PhotoGallery({ photos, onDelete }: PhotoGalleryProps) {
   const [viewPhoto, setViewPhoto] = useState<Photo | null>(null);

@@ -1,11 +1,11 @@
 import type { InputHTMLAttributes } from 'react';
-import type { FieldError } from 'react-hook-form';
+import type { FieldError, UseFormRegisterReturn } from 'react-hook-form';
 
-interface FormFieldProps extends InputHTMLAttributes<HTMLInputElement> {
+type FormFieldProps = InputHTMLAttributes<HTMLInputElement> & {
   label: string;
   error?: FieldError;
-  register: object;
-}
+  register: UseFormRegisterReturn;
+};
 
 export function FormField({ label, error, register, ...props }: FormFieldProps) {
   return (

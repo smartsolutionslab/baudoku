@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 
-interface ConfirmDialogProps {
+type ConfirmDialogProps = {
   open: boolean;
   title: string;
   message: string;
@@ -9,7 +9,7 @@ interface ConfirmDialogProps {
   variant?: 'danger' | 'default';
   onConfirm: () => void;
   onCancel: () => void;
-}
+};
 
 export function ConfirmDialog({
   open,

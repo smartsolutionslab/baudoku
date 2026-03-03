@@ -1,8 +1,8 @@
-interface FilterChipsProps {
+type FilterChipsProps = {
   options: { value: string; label: string }[];
   selected: string | null;
   onChange: (value: string | null) => void;
-}
+};
 
 export function FilterChips({ options, selected, onChange }: FilterChipsProps) {
   return (

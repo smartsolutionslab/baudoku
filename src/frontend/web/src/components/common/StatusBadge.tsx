@@ -19,10 +19,10 @@ const allLabels: Record<string, string> = {
   ...MEASUREMENT_RESULT_LABELS,
 };
 
-interface StatusBadgeProps {
+type StatusBadgeProps = {
   status: string;
   className?: string;
-}
+};
 
 export function StatusBadge({ status, className = '' }: StatusBadgeProps) {
   return (

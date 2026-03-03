@@ -2,10 +2,10 @@ import type { Measurement } from '@baudoku/documentation';
 import { StatusBadge } from '../common/StatusBadge';
 import { TrashIcon } from '@/components/icons';
 
-interface MeasurementCardProps {
+type MeasurementCardProps = {
   measurement: Measurement;
   onDelete?: (id: string) => void;
-}
+};
 
 export function MeasurementCard({ measurement, onDelete }: MeasurementCardProps) {
   return (
