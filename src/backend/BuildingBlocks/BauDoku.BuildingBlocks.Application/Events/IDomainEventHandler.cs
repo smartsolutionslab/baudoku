@@ -1,6 +1,6 @@
-using BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
 
-namespace BauDoku.BuildingBlocks.Application.Events;
+namespace SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Events;
 
 public interface IDomainEventHandler<in TEvent> where TEvent : IDomainEvent
 {

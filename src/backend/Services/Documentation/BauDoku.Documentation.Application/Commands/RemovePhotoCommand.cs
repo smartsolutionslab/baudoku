@@ -1,7 +1,7 @@
-using BauDoku.BuildingBlocks.Application.Commands;
-using BauDoku.Documentation.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Commands;
+using SmartSolutionsLab.BauDoku.Documentation.Domain;
 
-namespace BauDoku.Documentation.Application.Commands;
+namespace SmartSolutionsLab.BauDoku.Documentation.Application.Commands;
 
 public sealed record RemovePhotoCommand(
     InstallationIdentifier InstallationId,

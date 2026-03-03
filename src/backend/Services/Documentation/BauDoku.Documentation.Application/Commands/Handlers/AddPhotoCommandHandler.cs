@@ -1,24 +1,23 @@
-using BauDoku.BuildingBlocks.Application.Commands;
-using BauDoku.Documentation.Application.Contracts;
-using BauDoku.Documentation.Application.Diagnostics;
-using BauDoku.Documentation.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Commands;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.Documentation.Application.Contracts;
+using SmartSolutionsLab.BauDoku.Documentation.Application.Diagnostics;
+using SmartSolutionsLab.BauDoku.Documentation.Domain;
 
-namespace BauDoku.Documentation.Application.Commands.Handlers;
+namespace SmartSolutionsLab.BauDoku.Documentation.Application.Commands.Handlers;
 
 public sealed class AddPhotoCommandHandler(IInstallationRepository installations, IPhotoStorage photoStorage)
     : ICommandHandler<AddPhotoCommand, PhotoIdentifier>
 {
     public async Task<PhotoIdentifier> Handle(AddPhotoCommand command, CancellationToken cancellationToken = default)
     {
-        var installation = await installations.GetByIdAsync(command.InstallationId, cancellationToken);
+        var (installationId, fileName, contentType, fileSize, photoType, caption, description, position, stream, takenAt) = command;
 
-        var blobUrl = await photoStorage.UploadAsync(command.Stream, command.FileName, command.ContentType, cancellationToken);
-
+        var installation = await installations.With(installationId, cancellationToken);
+        var blobUrl = await photoStorage.UploadAsync(stream, fileName, contentType, cancellationToken);
         var photoId = PhotoIdentifier.New();
 
-        installation.AddPhoto(
-            photoId, command.FileName, blobUrl, command.ContentType, command.FileSize,
-            command.PhotoType, command.Caption, command.Description, command.Position, command.TakenAt);
+        installation.AddPhoto(photoId, fileName, blobUrl, contentType, fileSize, photoType, caption, description, position, takenAt);
 
         try
         {
@@ -31,7 +30,7 @@ public sealed class AddPhotoCommandHandler(IInstallationRepository installations
         }
 
         DocumentationMetrics.PhotosAdded.Add(1);
-        DocumentationMetrics.PhotoFileSize.Record(command.FileSize.Value);
+        DocumentationMetrics.PhotoFileSize.Record(fileSize.Value);
 
         return photoId;
     }

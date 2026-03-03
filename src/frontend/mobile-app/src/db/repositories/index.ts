@@ -1,10 +1,10 @@
-export * as projectRepo from "./projectRepo";
-export * as zoneRepo from "./zoneRepo";
-export * as installationRepo from "./installationRepo";
-export * as photoRepo from "./photoRepo";
-export * as measurementRepo from "./measurementRepo";
-export * as syncRepo from "./syncRepo";
-export * as directWriteRepo from "./directWriteRepo";
+export * as projectRepo from './projectRepo';
+export * as zoneRepo from './zoneRepo';
+export * as installationRepo from './installationRepo';
+export * as photoRepo from './photoRepo';
+export * as measurementRepo from './measurementRepo';
+export * as syncRepo from './syncRepo';
+export * as directWriteRepo from './directWriteRepo';
 export type {
   Project,
   NewProject,
@@ -18,4 +18,4 @@ export type {
   NewMeasurement,
   SyncOutboxEntry,
   NewSyncOutboxEntry,
-} from "./types";
+} from './types';

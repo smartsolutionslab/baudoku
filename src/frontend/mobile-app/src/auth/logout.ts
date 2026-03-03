@@ -1,8 +1,7 @@
-import { apiPost } from "@baudoku/core";
-import { setAuthToken } from "@baudoku/core";
-import { useAuthStore } from "../store";
-import { logoutFromKeycloak } from "./keycloak";
-import { clearTokens } from "./tokenStorage";
+import { apiPost, setAuthToken } from '@baudoku/core';
+import { useAuthStore } from '../store';
+import { logoutFromKeycloak } from './keycloak';
+import { clearTokens } from './tokenStorage';
 
 export async function performLogout(): Promise<void> {
   const { refreshToken, idToken, clearAuth } = useAuthStore.getState();
@@ -10,7 +9,7 @@ export async function performLogout(): Promise<void> {
   // 1. Revoke refresh token via backend (best-effort)
   if (refreshToken) {
     try {
-      await apiPost<void>("/api/auth/logout", { refreshToken });
+      await apiPost<void>('/api/auth/logout', { refreshToken });
     } catch {
       // Backend revocation failed — continue with local cleanup
     }

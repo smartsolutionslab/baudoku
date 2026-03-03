@@ -1,6 +1,6 @@
-using BauDoku.Documentation.Application.Queries.Dtos;
+using SmartSolutionsLab.BauDoku.Documentation.ReadModel;
 
-namespace BauDoku.Documentation.Infrastructure.ReadModel;
+namespace SmartSolutionsLab.BauDoku.Documentation.Infrastructure.ReadModel;
 
 internal static class ReadModelMappingExtensions
 {
@@ -17,6 +17,53 @@ internal static class ReadModelMappingExtensions
             i.CreatedAt,
             i.PhotoCount,
             i.MeasurementCount));
+
+    internal static InstallationDto ToInstallationDto(this InstallationReadModel i, List<PhotoDto> photos, List<MeasurementDto> measurements) =>
+        new(i.Id,
+            i.ProjectId,
+            i.ZoneId,
+            i.Type,
+            i.Status,
+            i.Latitude.HasValue
+                ? new GpsPositionDto(
+                    i.Latitude.Value,
+                    i.Longitude!.Value,
+                    i.Altitude,
+                    i.HorizontalAccuracy!.Value,
+                    i.GpsSource!,
+                    i.CorrectionService,
+                    i.RtkFixStatus,
+                    i.SatelliteCount,
+                    i.Hdop,
+                    i.CorrectionAge)
+                : null,
+            i.QualityGrade,
+            i.Description,
+            i.CableType,
+            i.CrossSection,
+            i.CableColor,
+            i.ConductorCount,
+            i.DepthMm,
+            i.Manufacturer,
+            i.ModelName,
+            i.SerialNumber,
+            i.CreatedAt,
+            i.CompletedAt,
+            photos,
+            measurements);
+
+    internal static IQueryable<MeasurementDto> SelectMeasurementDtos(this IQueryable<MeasurementReadModel> query) =>
+        query.Select(m => new MeasurementDto(
+            m.Id,
+            m.InstallationId,
+            m.Type,
+            m.Value,
+            m.Unit,
+            m.MinThreshold,
+            m.MaxThreshold,
+            m.Result,
+            m.Notes,
+            m.MeasuredAt));
 
     internal static IQueryable<PhotoDto> SelectPhotoDtos(this IQueryable<PhotoReadModel> query) =>
         query.Select(p => new PhotoDto(

@@ -1,6 +1,6 @@
 using System.Diagnostics.Metrics;
 
-namespace BauDoku.Documentation.Application.Diagnostics;
+namespace SmartSolutionsLab.BauDoku.Documentation.Application.Diagnostics;
 
 public static class DocumentationMetrics
 {

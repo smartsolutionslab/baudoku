@@ -1,9 +1,9 @@
 using System.Reflection;
-using BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi;
 
-namespace BauDoku.ServiceDefaults;
+namespace SmartSolutionsLab.BauDoku.ServiceDefaults;
 
 public sealed class ValueObjectSchemaTransformer : IOpenApiSchemaTransformer
 {
@@ -11,8 +11,7 @@ public sealed class ValueObjectSchemaTransformer : IOpenApiSchemaTransformer
     {
         var type = context.JsonTypeInfo.Type;
 
-        if (!typeof(IValueObject).IsAssignableFrom(type) || type.IsAbstract || type.IsInterface)
-            return Task.CompletedTask;
+        if (!typeof(IValueObject).IsAssignableFrom(type) || type.IsAbstract || type.IsInterface) return Task.CompletedTask;
 
         var valueProperty = type.GetProperty("Value", BindingFlags.Public | BindingFlags.Instance);
         if (valueProperty is null) return Task.CompletedTask;

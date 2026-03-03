@@ -1,5 +1,5 @@
-import { useState, useCallback } from "react";
-import type { ZodSchema } from "zod";
+import { useState, useCallback } from 'react';
+import type { ZodSchema } from 'zod';
 
 export function useFormValidation<T>(schema: ZodSchema<T>) {
   const [errors, setErrors] = useState<Record<string, string>>({});

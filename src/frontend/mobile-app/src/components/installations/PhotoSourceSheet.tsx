@@ -1,7 +1,7 @@
-import { Text, TouchableOpacity, StyleSheet } from "react-native";
-import { FontAwesome } from "@expo/vector-icons";
-import { BottomSheet } from "../common";
-import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
+import { Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { FontAwesome } from '@expo/vector-icons';
+import { BottomSheet } from '../common';
+import { Colors, Spacing, FontSize, Radius } from '../../styles/tokens';
 
 type PhotoSourceSheetProps = {
   visible: boolean;
@@ -17,10 +17,10 @@ export function PhotoSourceSheet({
   onClose,
 }: PhotoSourceSheetProps) {
   return (
-    <BottomSheet visible={visible} onClose={onClose} title="Foto hinzufügen">
+    <BottomSheet visible={visible} onClose={onClose} title='Foto hinzufügen'>
       <TouchableOpacity style={styles.option} onPress={onCamera}>
         <FontAwesome
-          name="camera"
+          name='camera'
           size={20}
           color={Colors.primary}
           style={styles.icon}
@@ -30,7 +30,7 @@ export function PhotoSourceSheet({
 
       <TouchableOpacity style={styles.option} onPress={onGallery}>
         <FontAwesome
-          name="image"
+          name='image'
           size={20}
           color={Colors.primary}
           style={styles.icon}
@@ -47,8 +47,8 @@ export function PhotoSourceSheet({
 
 const styles = StyleSheet.create({
   option: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingVertical: Spacing.md,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: Colors.separator,
@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
     marginLeft: Spacing.sm,
   },
   cancelButton: {
-    alignItems: "center",
+    alignItems: 'center',
     paddingVertical: 14,
     marginTop: Spacing.lg,
     backgroundColor: Colors.background,
@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
   },
   cancelText: {
     fontSize: FontSize.callout,
-    fontWeight: "600",
+    fontWeight: '600',
     color: Colors.textTertiary,
   },
 });

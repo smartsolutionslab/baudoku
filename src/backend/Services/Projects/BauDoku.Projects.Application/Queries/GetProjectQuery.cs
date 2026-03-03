@@ -1,7 +1,7 @@
-using BauDoku.BuildingBlocks.Application.Queries;
-using BauDoku.Projects.Application.Queries.Dtos;
-using BauDoku.Projects.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Queries;
+using SmartSolutionsLab.BauDoku.Projects.ReadModel;
+using SmartSolutionsLab.BauDoku.Projects.Domain;
 
-namespace BauDoku.Projects.Application.Queries;
+namespace SmartSolutionsLab.BauDoku.Projects.Application.Queries;
 
 public sealed record GetProjectQuery(ProjectIdentifier ProjectId) : IQuery<ProjectDto>;

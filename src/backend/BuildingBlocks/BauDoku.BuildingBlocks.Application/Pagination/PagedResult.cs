@@ -1,6 +1,6 @@
-using BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
 
-namespace BauDoku.BuildingBlocks.Application.Pagination;
+namespace SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Pagination;
 
 public sealed record PagedResult<T>
 {

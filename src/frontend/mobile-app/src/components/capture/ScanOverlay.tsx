@@ -1,7 +1,7 @@
-import { View, Text, StyleSheet, Dimensions } from "react-native";
-import { Colors, FontSize, Radius } from "../../styles/tokens";
+import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import { Colors, FontSize, Radius } from '../../styles/tokens';
 
-const { width } = Dimensions.get("window");
+const { width } = Dimensions.get('window');
 const SCAN_SIZE = width * 0.7;
 
 export function ScanOverlay() {
@@ -33,17 +33,17 @@ const styles = StyleSheet.create({
   topOverlay: {
     flex: 1,
     backgroundColor: Colors.overlay,
-    justifyContent: "flex-end",
-    alignItems: "center",
+    justifyContent: 'flex-end',
+    alignItems: 'center',
     paddingBottom: 20,
   },
   hint: {
     color: Colors.white,
     fontSize: FontSize.callout,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   middleRow: {
-    flexDirection: "row",
+    flexDirection: 'row',
     height: SCAN_SIZE,
   },
   sideOverlay: {
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.overlay,
   },
   corner: {
-    position: "absolute",
+    position: 'absolute',
     width: CORNER_SIZE,
     height: CORNER_SIZE,
   },

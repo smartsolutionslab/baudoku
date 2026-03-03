@@ -1,9 +1,10 @@
-using BauDoku.BuildingBlocks.Application.Commands;
-using BauDoku.Documentation.Application.Contracts;
-using BauDoku.Documentation.Application.Diagnostics;
-using BauDoku.Documentation.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Commands;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.Documentation.Application.Contracts;
+using SmartSolutionsLab.BauDoku.Documentation.Application.Diagnostics;
+using SmartSolutionsLab.BauDoku.Documentation.Domain;
 
-namespace BauDoku.Documentation.Application.Commands.Handlers;
+namespace SmartSolutionsLab.BauDoku.Documentation.Application.Commands.Handlers;
 
 public sealed class RemovePhotoCommandHandler(IInstallationRepository installations, IPhotoStorage photoStorage)
     : ICommandHandler<RemovePhotoCommand>
@@ -12,15 +13,10 @@ public sealed class RemovePhotoCommandHandler(IInstallationRepository installati
     {
         var (installationId, photoId) = command;
 
-        var installation = await installations.GetByIdAsync(installationId, cancellationToken);
-
-        var photo = installation.Photos.FirstOrDefault(p => p.Id == photoId)
-            ?? throw new KeyNotFoundException($"Foto mit ID {photoId.Value} nicht gefunden.");
-
+        var installation = await installations.With(installationId, cancellationToken);
+        var photo = installation.Photos.FirstOrDefault(p => p.Id == photoId) ?? throw new KeyNotFoundException($"Foto mit ID {photoId.Value} nicht gefunden.");
         installation.RemovePhoto(photoId);
-
         await installations.SaveAsync(installation, cancellationToken);
-
         await photoStorage.DeleteAsync(photo.BlobUrl, cancellationToken);
 
         DocumentationMetrics.PhotosRemoved.Add(1);

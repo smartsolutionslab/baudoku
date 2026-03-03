@@ -1,4 +1,4 @@
-namespace BauDoku.BuildingBlocks.Guards;
+namespace SmartSolutionsLab.BauDoku.BuildingBlocks.Guards;
 
 public ref struct GuidGuard
 {

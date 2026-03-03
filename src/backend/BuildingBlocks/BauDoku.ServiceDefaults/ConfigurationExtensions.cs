@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Configuration;
 
-namespace BauDoku.ServiceDefaults;
+namespace SmartSolutionsLab.BauDoku.ServiceDefaults;
 
 public static class ConfigurationExtensions
 {

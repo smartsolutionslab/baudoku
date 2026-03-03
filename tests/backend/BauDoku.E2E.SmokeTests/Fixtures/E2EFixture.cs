@@ -1,16 +1,14 @@
-using BauDoku.BuildingBlocks.Application.Dispatcher;
-using BauDoku.Documentation.Infrastructure.Persistence;
-using BauDoku.Documentation.Infrastructure.ReadModel;
-using BauDoku.Projects.Infrastructure.Persistence;
-using BauDoku.Sync.Infrastructure.Persistence;
+using SmartSolutionsLab.BauDoku.Documentation.Infrastructure.Persistence;
+using SmartSolutionsLab.BauDoku.Documentation.Infrastructure.ReadModel;
+using SmartSolutionsLab.BauDoku.Projects.Infrastructure.Persistence;
+using SmartSolutionsLab.BauDoku.Sync.Infrastructure.Persistence;
 using Marten;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
-using NSubstitute;
 using Testcontainers.PostgreSql;
 using Weasel.Core;
 
-namespace BauDoku.E2E.SmokeTests.Fixtures;
+namespace SmartSolutionsLab.BauDoku.E2E.SmokeTests.Fixtures;
 
 public sealed class E2EFixture : IAsyncLifetime
 {
@@ -56,13 +54,11 @@ public sealed class E2EFixture : IAsyncLifetime
         builder.Database = "sync_e2e";
         SyncConnectionString = builder.ConnectionString;
 
-        var dispatcher = Substitute.For<IDispatcher>();
-
         // Projects BC: EF Core
         var projectsOptions = new DbContextOptionsBuilder<ProjectsDbContext>()
             .UseNpgsql(ProjectsConnectionString)
             .Options;
-        await using (var ctx = new ProjectsDbContext(projectsOptions, dispatcher))
+        await using (var ctx = new ProjectsDbContext(projectsOptions))
             await ctx.Database.EnsureCreatedAsync();
 
         // Documentation BC: ReadModelDbContext FIRST (EnsureCreatedAsync is a no-op if any tables exist)
@@ -85,7 +81,7 @@ public sealed class E2EFixture : IAsyncLifetime
         var syncOptions = new DbContextOptionsBuilder<SyncDbContext>()
             .UseNpgsql(SyncConnectionString)
             .Options;
-        await using (var ctx = new SyncDbContext(syncOptions, dispatcher))
+        await using (var ctx = new SyncDbContext(syncOptions))
             await ctx.Database.EnsureCreatedAsync();
     }
 

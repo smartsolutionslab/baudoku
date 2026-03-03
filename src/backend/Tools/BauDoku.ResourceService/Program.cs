@@ -1,9 +1,27 @@
-using BauDoku.ResourceService.Services;
+using SmartSolutionsLab.BauDoku.ResourceService;
+using SmartSolutionsLab.BauDoku.ResourceService.Services;
 using k8s;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddGrpc();
+
+builder.Services.Configure<KubernetesOptions>(options =>
+{
+    builder.Configuration.GetSection(KubernetesOptions.SectionName).Bind(options);
+
+    var envNamespace = Environment.GetEnvironmentVariable("KUBERNETES_NAMESPACE");
+    if (!string.IsNullOrEmpty(envNamespace))
+    {
+        options.Namespace = envNamespace;
+    }
+
+    var envAppName = Environment.GetEnvironmentVariable("APPLICATION_NAME");
+    if (!string.IsNullOrEmpty(envAppName))
+    {
+        options.ApplicationName = envAppName;
+    }
+});
 
 builder.Services.AddSingleton<IKubernetes>(_ =>
 {
@@ -13,9 +31,9 @@ builder.Services.AddSingleton<IKubernetes>(_ =>
     return new Kubernetes(config);
 });
 
-builder.Services.AddSingleton<PodWatcher>();
-builder.Services.AddHostedService(sp => sp.GetRequiredService<PodWatcher>());
-builder.Services.AddSingleton<PodLogStreamer>();
+builder.Services.AddSingleton<PodWatcher>()
+                .AddHostedService(sp => sp.GetRequiredService<PodWatcher>())
+                .AddSingleton<PodLogStreamer>();
 
 var app = builder.Build();
 

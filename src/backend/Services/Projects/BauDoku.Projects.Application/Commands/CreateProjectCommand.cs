@@ -1,7 +1,7 @@
-using BauDoku.BuildingBlocks.Application.Commands;
-using BauDoku.Projects.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Commands;
+using SmartSolutionsLab.BauDoku.Projects.Domain;
 
-namespace BauDoku.Projects.Application.Commands;
+namespace SmartSolutionsLab.BauDoku.Projects.Application.Commands;
 
 public sealed record CreateProjectCommand(
     ProjectName Name,

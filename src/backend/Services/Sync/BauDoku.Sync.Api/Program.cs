@@ -1,10 +1,9 @@
-using BauDoku.BuildingBlocks.Application;
-using BauDoku.BuildingBlocks.Auth;
-using BauDoku.BuildingBlocks.Serialization;
-using BauDoku.ServiceDefaults;
-using BauDoku.Sync.Api.Endpoints;
-using BauDoku.Sync.Infrastructure;
-using BauDoku.Sync.Infrastructure.BackgroundServices;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Auth;
+using SmartSolutionsLab.BauDoku.ServiceDefaults;
+using SmartSolutionsLab.BauDoku.Sync.Api.Endpoints;
+using SmartSolutionsLab.BauDoku.Sync.Application;
+using SmartSolutionsLab.BauDoku.Sync.Infrastructure;
+using SmartSolutionsLab.BauDoku.Sync.Infrastructure.BackgroundServices;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,16 +15,11 @@ builder.AddServiceDefaults(health =>
     health.AddNpgSql(connectionString, name: "postgresql", tags: ["ready"]);
 });
 
-builder.Services.ConfigureHttpJsonOptions(options => options.SerializerOptions.Converters.Add(new ValueObjectJsonConverterFactory()));
+builder.AddBauDokuApiDefaults();
 
-builder.Services.AddOpenApi(options => options.AddSchemaTransformer<ValueObjectSchemaTransformer>());
-
-builder.Services.AddBauDokuAuthentication(builder.Configuration, builder.Environment);
-
-builder.Services.Configure<SyncOptions>(builder.Configuration.GetSection("Sync"));
-
-builder.Services.AddApplication(BauDoku.Sync.Application.DependencyInjection.Assembly);
-builder.Services.AddSyncInfrastructure(connectionString);
+builder.Services.Configure<SyncOptions>(builder.Configuration.GetSection("Sync"))
+                .AddSyncApplication()
+                .AddSyncInfrastructure(connectionString);
 
 var app = builder.Build();
 
@@ -35,12 +29,12 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
-app.UseAuthentication();
-app.UseAuthorization();
-app.UseAuthAuditLogging();
+app.UseAuthentication()
+    .UseAuthorization()
+    .UseAuthAuditLogging();
 
-app.MapDefaultEndpoints();
-app.MapSyncEndpoints();
+app.MapDefaultEndpoints()
+    .MapSyncEndpoints();
 
 app.Run();
 

@@ -1,7 +1,7 @@
-using BauDoku.Sync.Domain;
+using SmartSolutionsLab.BauDoku.Sync.Domain;
 using FluentValidation;
 
-namespace BauDoku.Sync.Application.Commands.Validators;
+namespace SmartSolutionsLab.BauDoku.Sync.Application.Commands.Validators;
 
 public sealed class ProcessSyncBatchCommandValidator : AbstractValidator<ProcessSyncBatchCommand>
 {

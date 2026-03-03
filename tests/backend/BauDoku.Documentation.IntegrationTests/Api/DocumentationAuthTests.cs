@@ -1,20 +1,20 @@
 using System.Net;
 using System.Net.Http.Json;
 using AwesomeAssertions;
-using BauDoku.Documentation.IntegrationTests.Fixtures;
+using SmartSolutionsLab.BauDoku.Documentation.IntegrationTests.Fixtures;
 
-namespace BauDoku.Documentation.IntegrationTests.Api;
+namespace SmartSolutionsLab.BauDoku.Documentation.IntegrationTests.Api;
 
 [Collection(PostgreSqlCollection.Name)]
 public sealed class DocumentationAuthTests : IDisposable
 {
-    private readonly DocumentationApiFactory _factory;
-    private readonly HttpClient _client;
+    private readonly DocumentationApiFactory factory;
+    private readonly HttpClient client;
 
     public DocumentationAuthTests(PostgreSqlFixture fixture)
     {
-        _factory = new DocumentationApiFactory(fixture);
-        _client = _factory.CreateClient();
+        factory = new DocumentationApiFactory(fixture);
+        client = factory.CreateClient();
     }
 
     [Fact]
@@ -23,7 +23,7 @@ public sealed class DocumentationAuthTests : IDisposable
         TestAuthHandler.Roles = ["user"];
         try
         {
-            var response = await _client.PostAsJsonAsync("/api/documentation/installations", new
+            var response = await client.PostAsJsonAsync("/api/documentation/installations", new
             {
                 ProjectId = Guid.NewGuid(),
                 Type = "cable_tray",
@@ -52,7 +52,7 @@ public sealed class DocumentationAuthTests : IDisposable
         TestAuthHandler.Roles = ["inspector"];
         try
         {
-            var response = await _client.PostAsJsonAsync("/api/documentation/installations", new
+            var response = await client.PostAsJsonAsync("/api/documentation/installations", new
             {
                 ProjectId = Guid.NewGuid(),
                 Type = "cable_tray",
@@ -84,7 +84,7 @@ public sealed class DocumentationAuthTests : IDisposable
             var installationId = Guid.NewGuid();
             var photoId = Guid.NewGuid();
 
-            var response = await _client.DeleteAsync(
+            var response = await client.DeleteAsync(
                 $"/api/documentation/installations/{installationId}/photos/{photoId}");
 
             response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
@@ -101,7 +101,7 @@ public sealed class DocumentationAuthTests : IDisposable
         TestAuthHandler.IsAuthenticated = false;
         try
         {
-            var response = await _client.GetAsync("/api/documentation/installations");
+            var response = await client.GetAsync("/api/documentation/installations");
 
             response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
         }
@@ -113,7 +113,7 @@ public sealed class DocumentationAuthTests : IDisposable
 
     public void Dispose()
     {
-        _client.Dispose();
-        _factory.Dispose();
+        client.Dispose();
+        factory.Dispose();
     }
 }

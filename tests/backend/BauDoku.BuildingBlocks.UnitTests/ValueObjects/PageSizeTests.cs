@@ -1,7 +1,7 @@
 using AwesomeAssertions;
-using BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
 
-namespace BauDoku.BuildingBlocks.UnitTests.ValueObjects;
+namespace SmartSolutionsLab.BauDoku.BuildingBlocks.UnitTests.ValueObjects;
 
 public sealed class PageSizeTests
 {
@@ -38,5 +38,21 @@ public sealed class PageSizeTests
     public void Max_ShouldBeHundred()
     {
         PageSize.Max.Should().Be(100);
+    }
+
+    [Fact]
+    public void FromNullable_WithValue_ShouldCreatePageSize()
+    {
+        var size = PageSize.FromNullable(10);
+
+        size.Value.Should().Be(10);
+    }
+
+    [Fact]
+    public void FromNullable_WithNull_ShouldReturnDefault()
+    {
+        var size = PageSize.FromNullable(null);
+
+        size.Should().Be(PageSize.Default);
     }
 }

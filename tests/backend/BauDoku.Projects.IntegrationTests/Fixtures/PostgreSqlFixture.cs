@@ -1,10 +1,8 @@
-using BauDoku.BuildingBlocks.Application.Dispatcher;
-using BauDoku.Projects.Infrastructure.Persistence;
+using SmartSolutionsLab.BauDoku.Projects.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
-using NSubstitute;
 using Testcontainers.PostgreSql;
 
-namespace BauDoku.Projects.IntegrationTests.Fixtures;
+namespace SmartSolutionsLab.BauDoku.Projects.IntegrationTests.Fixtures;
 
 public sealed class PostgreSqlFixture : IAsyncLifetime
 {
@@ -25,8 +23,7 @@ public sealed class PostgreSqlFixture : IAsyncLifetime
             .UseNpgsql(ConnectionString)
             .Options;
 
-        var dispatcher = Substitute.For<IDispatcher>();
-        return new ProjectsDbContext(options, dispatcher);
+        return new ProjectsDbContext(options);
     }
 
     public async Task DisposeAsync()

@@ -1,7 +1,7 @@
 using AwesomeAssertions;
-using BauDoku.Documentation.Domain;
+using SmartSolutionsLab.BauDoku.Documentation.Domain;
 
-namespace BauDoku.Documentation.UnitTests.Domain.ValueObjects;
+namespace SmartSolutionsLab.BauDoku.Documentation.UnitTests.Domain.ValueObjects;
 
 public sealed class CaptionTests
 {

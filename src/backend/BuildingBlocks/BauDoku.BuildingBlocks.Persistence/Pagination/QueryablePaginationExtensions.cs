@@ -1,7 +1,7 @@
-using BauDoku.BuildingBlocks.Application.Pagination;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Pagination;
 using Microsoft.EntityFrameworkCore;
 
-namespace BauDoku.BuildingBlocks.Persistence.Pagination;
+namespace SmartSolutionsLab.BauDoku.BuildingBlocks.Persistence.Pagination;
 
 public static class QueryablePaginationExtensions
 {

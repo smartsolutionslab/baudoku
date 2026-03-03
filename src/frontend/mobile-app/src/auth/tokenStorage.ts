@@ -1,8 +1,8 @@
-import * as SecureStore from "expo-secure-store";
+import * as SecureStore from 'expo-secure-store';
 
-const ACCESS_TOKEN_KEY = "baudoku_access_token";
-const REFRESH_TOKEN_KEY = "baudoku_refresh_token";
-const ID_TOKEN_KEY = "baudoku_id_token";
+const ACCESS_TOKEN_KEY = 'baudoku_access_token';
+const REFRESH_TOKEN_KEY = 'baudoku_refresh_token';
+const ID_TOKEN_KEY = 'baudoku_id_token';
 
 export async function saveTokens(accessToken: string, refreshToken: string, idToken: string): Promise<void> {
   await SecureStore.setItemAsync(ACCESS_TOKEN_KEY, accessToken);

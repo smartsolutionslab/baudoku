@@ -1,9 +1,9 @@
 using AwesomeAssertions;
-using BauDoku.Sync.Domain;
-using BauDoku.Sync.IntegrationTests.Fixtures;
+using SmartSolutionsLab.BauDoku.Sync.Domain;
+using SmartSolutionsLab.BauDoku.Sync.IntegrationTests.Fixtures;
 using Microsoft.EntityFrameworkCore;
 
-namespace BauDoku.Sync.IntegrationTests;
+namespace SmartSolutionsLab.BauDoku.Sync.IntegrationTests;
 
 [Collection(PostgreSqlCollection.Name)]
 public sealed class SyncBatchPersistenceTests(PostgreSqlFixture fixture)
@@ -41,7 +41,7 @@ public sealed class SyncBatchPersistenceTests(PostgreSqlFixture fixture)
         var batchId = SyncBatchIdentifier.New();
         var batch = SyncBatch.Create(batchId, DeviceIdentifier.From("device-delta"), DateTime.UtcNow);
 
-        var entityRef = EntityReference.Create(EntityType.Project, Guid.NewGuid());
+        var entityRef = EntityReference.Create(EntityType.Project, EntityIdentifier.New());
         batch.AddDelta(
             SyncDeltaIdentifier.New(),
             entityRef,
@@ -76,7 +76,7 @@ public sealed class SyncBatchPersistenceTests(PostgreSqlFixture fixture)
         var batchId = SyncBatchIdentifier.New();
         var batch = SyncBatch.Create(batchId, DeviceIdentifier.From("device-conflict"), DateTime.UtcNow);
 
-        var entityRef = EntityReference.Create(EntityType.Installation, Guid.NewGuid());
+        var entityRef = EntityReference.Create(EntityType.Installation, EntityIdentifier.New());
         batch.AddConflict(
             ConflictRecordIdentifier.New(),
             entityRef,
@@ -111,7 +111,7 @@ public sealed class SyncBatchPersistenceTests(PostgreSqlFixture fixture)
         var batchId = SyncBatchIdentifier.New();
         var batch = SyncBatch.Create(batchId, DeviceIdentifier.From("device-getby"), DateTime.UtcNow);
         var conflictId = ConflictRecordIdentifier.New();
-        var entityRef = EntityReference.Create(EntityType.Project, Guid.NewGuid());
+        var entityRef = EntityReference.Create(EntityType.Project, EntityIdentifier.New());
 
         batch.AddConflict(
             conflictId,

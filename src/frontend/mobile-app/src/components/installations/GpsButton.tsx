@@ -4,12 +4,12 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   StyleSheet,
-} from "react-native";
-import { FontAwesome } from "@expo/vector-icons";
-import type { GpsPosition } from "../../hooks";
-import { QualityIndicator } from "./QualityIndicator";
-import { calculateGpsQuality } from "../../utils";
-import { Colors, Spacing, FontSize, FontFamily, Radius } from "../../styles/tokens";
+} from 'react-native';
+import { FontAwesome } from '@expo/vector-icons';
+import type { GpsPosition } from '../../hooks';
+import { QualityIndicator } from './QualityIndicator';
+import { calculateGpsQuality } from '../../utils';
+import { Colors, Spacing, FontSize, FontFamily, Radius } from '../../styles/tokens';
 
 type GpsButtonProps = {
   position: GpsPosition | null;
@@ -23,7 +23,7 @@ export function GpsButton({ position, capturing, error, onCapture, onClear}: Gps
   if (capturing) {
     return (
       <View style={styles.captureCard}>
-        <ActivityIndicator size="small" color={Colors.primary} />
+        <ActivityIndicator size='small' color={Colors.primary} />
         <Text style={styles.captureText}>GPS-Position wird erfasst...</Text>
       </View>
     );
@@ -36,7 +36,7 @@ export function GpsButton({ position, capturing, error, onCapture, onClear}: Gps
       <View style={[styles.successCard, { backgroundColor: quality.bgColor }]}>
         <View style={styles.successHeader}>
           <FontAwesome
-            name="map-marker"
+            name='map-marker'
             size={16}
             color={quality.color}
             style={styles.successIcon}
@@ -46,7 +46,7 @@ export function GpsButton({ position, capturing, error, onCapture, onClear}: Gps
           </Text>
           {position.isMocked && (
             <View style={styles.externalBadge}>
-              <FontAwesome name="bluetooth-b" size={12} color={Colors.primary} />
+              <FontAwesome name='bluetooth-b' size={12} color={Colors.primary} />
               <Text style={styles.externalBadgeText}>Extern</Text>
             </View>
           )}
@@ -55,13 +55,13 @@ export function GpsButton({ position, capturing, error, onCapture, onClear}: Gps
               style={styles.recaptureButton}
               onPress={onCapture}
             >
-              <FontAwesome name="refresh" size={14} color={Colors.primary} />
+              <FontAwesome name='refresh' size={14} color={Colors.primary} />
               <Text style={styles.recaptureText}>Erneut</Text>
             </TouchableOpacity>
             {onClear && (
               <TouchableOpacity onPress={onClear} style={styles.clearButton}>
                 <FontAwesome
-                  name="close"
+                  name='close'
                   size={16}
                   color={Colors.textTertiary}
                 />
@@ -87,7 +87,7 @@ export function GpsButton({ position, capturing, error, onCapture, onClear}: Gps
     <View>
       <TouchableOpacity style={styles.button} onPress={onCapture}>
         <FontAwesome
-          name="crosshairs"
+          name='crosshairs'
           size={16}
           color={Colors.white}
           style={styles.buttonIcon}
@@ -102,9 +102,9 @@ export function GpsButton({ position, capturing, error, onCapture, onClear}: Gps
 const styles = StyleSheet.create({
   button: {
     backgroundColor: Colors.primary,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     paddingVertical: Spacing.md,
     borderRadius: Radius.md,
     marginTop: Spacing.lg,
@@ -115,12 +115,12 @@ const styles = StyleSheet.create({
   buttonText: {
     color: Colors.white,
     fontSize: FontSize.body,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   captureCard: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: Colors.background,
     borderRadius: Radius.md,
     paddingVertical: 14,
@@ -137,8 +137,8 @@ const styles = StyleSheet.create({
     marginTop: Spacing.lg,
   },
   successHeader: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: Spacing.xs,
   },
   successIcon: {
@@ -146,17 +146,17 @@ const styles = StyleSheet.create({
   },
   successTitle: {
     fontSize: FontSize.body,
-    fontWeight: "600",
+    fontWeight: '600',
     flex: 1,
   },
   headerActions: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: Spacing.sm,
   },
   recaptureButton: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: Spacing.sm,
     paddingVertical: Spacing.xs,
     borderRadius: 6,
@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
   recaptureText: {
     fontSize: FontSize.footnote,
     color: Colors.primary,
-    fontWeight: "600",
+    fontWeight: '600',
     marginLeft: Spacing.xs,
   },
   clearButton: {
@@ -177,8 +177,8 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.mono,
   },
   externalBadge: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: Colors.primaryLight,
     paddingHorizontal: 6,
     paddingVertical: 2,
@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
   externalBadgeText: {
     fontSize: FontSize.footnote,
     color: Colors.primary,
-    fontWeight: "600",
+    fontWeight: '600',
     marginLeft: Spacing.xs,
   },
   errorText: {

@@ -1,9 +1,9 @@
 using System.Text.Json;
 using AwesomeAssertions;
-using BauDoku.BuildingBlocks.Domain;
-using BauDoku.BuildingBlocks.Serialization;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Serialization;
 
-namespace BauDoku.BuildingBlocks.UnitTests.Serialization;
+namespace SmartSolutionsLab.BauDoku.BuildingBlocks.UnitTests.Serialization;
 
 public sealed class ValueObjectJsonConverterFactoryTests
 {

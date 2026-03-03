@@ -1,14 +1,13 @@
 using AwesomeAssertions;
-using BauDoku.BuildingBlocks.Application.Pagination;
-using BauDoku.BuildingBlocks.Domain;
-using BauDoku.Documentation.Application.Contracts;
-using BauDoku.Documentation.Application.Queries.Dtos;
-using BauDoku.Documentation.Application.Queries;
-using BauDoku.Documentation.Application.Queries.Handlers;
-using BauDoku.Documentation.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Pagination;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.Documentation.ReadModel;
+using SmartSolutionsLab.BauDoku.Documentation.Application.Queries;
+using SmartSolutionsLab.BauDoku.Documentation.Application.Queries.Handlers;
+using SmartSolutionsLab.BauDoku.Documentation.Domain;
 using NSubstitute;
 
-namespace BauDoku.Documentation.UnitTests.Application.Queries;
+namespace SmartSolutionsLab.BauDoku.Documentation.UnitTests.Application.Queries;
 
 public sealed class ListInstallationsQueryHandlerTests
 {
@@ -37,7 +36,7 @@ public sealed class ListInstallationsQueryHandlerTests
                 Arg.Any<CancellationToken>())
             .Returns(expected);
 
-        var result = await handler.Handle(new ListInstallationsQuery(projectId), CancellationToken.None);
+        var result = await handler.Handle(new ListInstallationsQuery(PageNumber.Default, PageSize.Default, projectId), CancellationToken.None);
 
         result.Should().BeSameAs(expected);
         result.Items.Should().ContainSingle();
@@ -62,11 +61,11 @@ public sealed class ListInstallationsQueryHandlerTests
             .Returns(expected);
 
         var query = new ListInstallationsQuery(
+            PageNumber.From(2), PageSize.From(10),
             projectId, zoneId,
             InstallationType.From("cable_tray"),
             InstallationStatus.From("in_progress"),
-            SearchTerm.From("test"),
-            PageNumber.From(2), PageSize.From(10));
+            SearchTerm.From("test"));
         var result = await handler.Handle(query, CancellationToken.None);
 
         result.Page.Should().Be(2);

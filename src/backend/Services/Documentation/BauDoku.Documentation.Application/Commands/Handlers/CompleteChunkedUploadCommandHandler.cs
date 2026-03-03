@@ -1,10 +1,11 @@
-using BauDoku.BuildingBlocks.Application.Commands;
-using BauDoku.Documentation.Application.Contracts;
-using BauDoku.Documentation.Application.Diagnostics;
-using BauDoku.Documentation.Application.Queries.Dtos;
-using BauDoku.Documentation.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Commands;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.Documentation.Application.Contracts;
+using SmartSolutionsLab.BauDoku.Documentation.Application.Diagnostics;
+using SmartSolutionsLab.BauDoku.Documentation.ReadModel;
+using SmartSolutionsLab.BauDoku.Documentation.Domain;
 
-namespace BauDoku.Documentation.Application.Commands.Handlers;
+namespace SmartSolutionsLab.BauDoku.Documentation.Application.Commands.Handlers;
 
 public sealed class CompleteChunkedUploadCommandHandler(IChunkedUploadStorage chunkedUploadStorage, IPhotoStorage photoStorage, IInstallationRepository installations)
     : ICommandHandler<CompleteChunkedUploadCommand, PhotoIdentifier>
@@ -25,7 +26,7 @@ public sealed class CompleteChunkedUploadCommandHandler(IChunkedUploadStorage ch
         var blobUrl = await photoStorage.UploadAsync(assembledStream, fileNameVo, contentTypeVo, cancellationToken);
 
         var installationId = InstallationIdentifier.From(session.InstallationId);
-        var installation = await installations.GetByIdAsync(installationId, cancellationToken);
+        var installation = await installations.With(installationId, cancellationToken);
 
         var photoId = PhotoIdentifier.New();
         var photoType = PhotoType.From(session.PhotoType);

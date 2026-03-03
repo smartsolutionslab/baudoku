@@ -1,5 +1,5 @@
-import { ScrollView, TouchableOpacity, Text, StyleSheet } from "react-native";
-import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
+import { ScrollView, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { Colors, Spacing, FontSize, Radius } from '../../styles/tokens';
 
 type FilterOption = {
   label: string;
@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
   chipText: {
     fontSize: FontSize.caption,
     color: Colors.textSecondary,
-    fontWeight: "500",
+    fontWeight: '500',
   },
   chipTextActive: {
     color: Colors.white,

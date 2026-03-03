@@ -1,12 +1,12 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef } from 'react';
 import {
   Animated,
   Text,
   StyleSheet,
   Pressable,
-} from "react-native";
-import { Colors, Spacing, FontSize, Radius, Shadows } from "../../styles/tokens";
-import { useToastStore, type ToastType } from "../../store";
+} from 'react-native';
+import { Colors, Spacing, FontSize, Radius, Shadows } from '../../styles/tokens';
+import { useToastStore, type ToastType } from '../../store';
 
 const backgroundColors: Record<ToastType, string> = {
   success: Colors.success,
@@ -84,8 +84,8 @@ export function Toast({ id, message, type, duration }: ToastProps) {
         styles.container,
         { backgroundColor: backgroundColors[type], opacity, transform: [{ translateY }] },
       ]}
-      accessibilityRole="alert"
-      accessibilityLiveRegion="polite"
+      accessibilityRole='alert'
+      accessibilityLiveRegion='polite'
     >
       <Pressable onPress={handlePress} style={styles.pressable}>
         <Text style={styles.text}>{message}</Text>
@@ -107,6 +107,6 @@ const styles = StyleSheet.create({
   text: {
     color: Colors.white,
     fontSize: FontSize.body,
-    fontWeight: "500",
+    fontWeight: '500',
   },
 });

@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   Modal as RNModal,
   View,
@@ -6,8 +6,8 @@ import {
   TouchableOpacity,
   Pressable,
   StyleSheet,
-} from "react-native";
-import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
+} from 'react-native';
+import { Colors, Spacing, FontSize, Radius } from '../../styles/tokens';
 
 type ModalProps = {
   visible: boolean;
@@ -19,7 +19,7 @@ type ModalProps = {
 
 export function Modal({ visible, onClose, title, children, footer }: ModalProps) {
   return (
-    <RNModal visible={visible} transparent animationType="slide">
+    <RNModal visible={visible} transparent animationType='slide'>
       <Pressable style={styles.overlay} onPress={onClose}>
         <Pressable style={styles.sheet} onPress={(e) => e.stopPropagation()}>
           <View style={styles.handle} />
@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
   overlay: {
     flex: 1,
     backgroundColor: Colors.overlay,
-    justifyContent: "flex-end",
+    justifyContent: 'flex-end',
   },
   sheet: {
     backgroundColor: Colors.card,
@@ -59,13 +59,13 @@ const styles = StyleSheet.create({
     height: 4,
     borderRadius: 2,
     backgroundColor: Colors.separator,
-    alignSelf: "center",
+    alignSelf: 'center',
     marginTop: Spacing.sm,
     marginBottom: Spacing.lg,
   },
   title: {
     fontSize: FontSize.headline,
-    fontWeight: "600",
+    fontWeight: '600',
     color: Colors.textPrimary,
     marginBottom: Spacing.lg,
   },
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
     marginTop: Spacing.sm,
   },
   closeButton: {
-    alignItems: "center",
+    alignItems: 'center',
     paddingVertical: 14,
     marginTop: Spacing.lg,
     backgroundColor: Colors.background,
@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
   },
   closeText: {
     fontSize: FontSize.callout,
-    fontWeight: "600",
+    fontWeight: '600',
     color: Colors.textTertiary,
   },
 });

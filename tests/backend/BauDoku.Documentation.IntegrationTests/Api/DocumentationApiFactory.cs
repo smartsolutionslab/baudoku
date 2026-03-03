@@ -1,10 +1,10 @@
-using BauDoku.Documentation.IntegrationTests.Fixtures;
+using SmartSolutionsLab.BauDoku.Documentation.IntegrationTests.Fixtures;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace BauDoku.Documentation.IntegrationTests.Api;
+namespace SmartSolutionsLab.BauDoku.Documentation.IntegrationTests.Api;
 
 public sealed class DocumentationApiFactory(PostgreSqlFixture fixture) : WebApplicationFactory<Program>
 {

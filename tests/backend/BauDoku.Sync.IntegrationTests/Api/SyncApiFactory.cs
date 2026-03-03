@@ -1,10 +1,10 @@
-using BauDoku.Sync.IntegrationTests.Fixtures;
+using SmartSolutionsLab.BauDoku.Sync.IntegrationTests.Fixtures;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace BauDoku.Sync.IntegrationTests.Api;
+namespace SmartSolutionsLab.BauDoku.Sync.IntegrationTests.Api;
 
 public sealed class SyncApiFactory(PostgreSqlFixture fixture) : WebApplicationFactory<Program>
 {

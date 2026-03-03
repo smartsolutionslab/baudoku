@@ -1,44 +1,46 @@
-export function InfoTab({ installation }: { installation: any }) {
+import type { Installation } from '@baudoku/documentation';
+
+export function InfoTab({ installation }: { installation: Installation }) {
   const sections = [
     {
-      title: "Komponente",
+      title: 'Komponente',
       fields: [
-        { label: "Hersteller", value: installation.manufacturer },
-        { label: "Modell", value: installation.model },
-        { label: "Seriennummer", value: installation.serialNumber },
+        { label: 'Hersteller', value: installation.manufacturer },
+        { label: 'Modell', value: installation.model },
+        { label: 'Seriennummer', value: installation.serialNumber },
       ],
     },
     {
-      title: "Kabel / Elektrisch",
+      title: 'Kabel / Elektrisch',
       fields: [
-        { label: "Kabeltyp", value: installation.cableType },
+        { label: 'Kabeltyp', value: installation.cableType },
         {
-          label: "Querschnitt",
+          label: 'Querschnitt',
           value: installation.crossSectionMm2
             ? `${installation.crossSectionMm2} mm²`
             : null,
         },
         {
-          label: "Länge",
+          label: 'Länge',
           value: installation.lengthM ? `${installation.lengthM} m` : null,
         },
-        { label: "Stromkreis", value: installation.circuitId },
-        { label: "Sicherung", value: installation.fuseType },
+        { label: 'Stromkreis', value: installation.circuitId },
+        { label: 'Sicherung', value: installation.fuseType },
         {
-          label: "Nennstrom",
+          label: 'Nennstrom',
           value: installation.fuseRatingA
             ? `${installation.fuseRatingA} A`
             : null,
         },
         {
-          label: "Spannung",
+          label: 'Spannung',
           value: installation.voltageV
             ? `${installation.voltageV} V`
             : null,
         },
-        { label: "Phase", value: installation.phase },
+        { label: 'Phase', value: installation.phase },
         {
-          label: "Tiefe",
+          label: 'Tiefe',
           value: installation.depthMm
             ? `${installation.depthMm} mm`
             : null,
@@ -46,44 +48,44 @@ export function InfoTab({ installation }: { installation: any }) {
       ],
     },
     {
-      title: "GPS-Position",
+      title: 'GPS-Position',
       fields: [
         {
-          label: "Koordinaten",
+          label: 'Koordinaten',
           value:
             installation.position?.latitude && installation.position?.longitude
               ? `${installation.position.latitude.toFixed(6)}, ${installation.position.longitude.toFixed(6)}`
               : null,
         },
         {
-          label: "Genauigkeit",
+          label: 'Genauigkeit',
           value: installation.position?.horizontalAccuracy
             ? `±${installation.position.horizontalAccuracy.toFixed(1)} m`
             : null,
         },
-        { label: "Quelle", value: installation.position?.gpsSource },
+        { label: 'Quelle', value: installation.position?.gpsSource },
       ],
     },
   ];
 
   return (
-    <div className="space-y-6">
+    <div className='space-y-6'>
       {sections.map((section) => {
         const filledFields = section.fields.filter((f) => f.value);
         if (filledFields.length === 0) return null;
         return (
           <div
             key={section.title}
-            className="rounded-xl border border-gray-200 bg-white p-5"
+            className='rounded-xl border border-gray-200 bg-white p-5'
           >
-            <h3 className="text-sm font-semibold text-gray-900">
+            <h3 className='text-sm font-semibold text-gray-900'>
               {section.title}
             </h3>
-            <dl className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            <dl className='mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3'>
               {filledFields.map((field) => (
                 <div key={field.label}>
-                  <dt className="text-xs text-gray-400">{field.label}</dt>
-                  <dd className="mt-0.5 text-sm text-gray-900">
+                  <dt className='text-xs text-gray-400'>{field.label}</dt>
+                  <dd className='mt-0.5 text-sm text-gray-900'>
                     {field.value}
                   </dd>
                 </div>
@@ -94,9 +96,9 @@ export function InfoTab({ installation }: { installation: any }) {
       })}
 
       {installation.notes && (
-        <div className="rounded-xl border border-gray-200 bg-white p-5">
-          <h3 className="text-sm font-semibold text-gray-900">Notizen</h3>
-          <p className="mt-2 whitespace-pre-wrap text-sm text-gray-600">
+        <div className='rounded-xl border border-gray-200 bg-white p-5'>
+          <h3 className='text-sm font-semibold text-gray-900'>Notizen</h3>
+          <p className='mt-2 whitespace-pre-wrap text-sm text-gray-600'>
             {installation.notes}
           </p>
         </div>

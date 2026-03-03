@@ -1,9 +1,8 @@
-using BauDoku.BuildingBlocks.Application;
-using BauDoku.BuildingBlocks.Auth;
-using BauDoku.BuildingBlocks.Serialization;
-using BauDoku.Documentation.Api.Endpoints;
-using BauDoku.Documentation.Infrastructure;
-using BauDoku.ServiceDefaults;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Auth;
+using SmartSolutionsLab.BauDoku.Documentation.Api.Endpoints;
+using SmartSolutionsLab.BauDoku.Documentation.Application;
+using SmartSolutionsLab.BauDoku.Documentation.Infrastructure;
+using SmartSolutionsLab.BauDoku.ServiceDefaults;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,14 +15,10 @@ builder.AddServiceDefaults(health =>
     health.AddNpgSql(connectionString, healthQuery: "SELECT PostGIS_Version()", name: "postgis", tags: ["ready"]);
 });
 
-builder.Services.ConfigureHttpJsonOptions(options => options.SerializerOptions.Converters.Add(new ValueObjectJsonConverterFactory()));
+builder.AddBauDokuApiDefaults();
 
-builder.Services.AddOpenApi(options => options.AddSchemaTransformer<ValueObjectSchemaTransformer>());
-
-builder.Services.AddBauDokuAuthentication(builder.Configuration, builder.Environment);
-
-builder.Services.AddApplication(BauDoku.Documentation.Application.DependencyInjection.Assembly);
-builder.Services.AddDocumentationInfrastructure(connectionString, builder.Configuration);
+builder.Services.AddDocumentationApplication()
+                .AddDocumentationInfrastructure(connectionString, builder.Configuration);
 
 var app = builder.Build();
 
@@ -33,15 +28,15 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
-app.UseAuthentication();
-app.UseAuthorization();
-app.UseAuthAuditLogging();
+app.UseAuthentication()
+    .UseAuthorization()
+    .UseAuthAuditLogging();
 
-app.MapDefaultEndpoints();
-app.MapInstallationEndpoints();
-app.MapPhotoEndpoints();
-app.MapMeasurementEndpoints();
-app.MapChunkedUploadEndpoints();
+app.MapDefaultEndpoints()
+    .MapInstallationEndpoints()
+    .MapPhotoEndpoints()
+    .MapMeasurementEndpoints()
+    .MapChunkedUploadEndpoints();
 
 app.Run();
 

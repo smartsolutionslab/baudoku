@@ -1,21 +1,55 @@
-using BauDoku.BuildingBlocks.Application.Pagination;
-using BauDoku.BuildingBlocks.Domain;
-using BauDoku.Documentation.Application.Contracts;
-using BauDoku.Documentation.Application.Queries.Dtos;
-using BauDoku.BuildingBlocks.Persistence.Pagination;
-using BauDoku.Documentation.Domain;
-using BauDoku.Documentation.Infrastructure.ReadModel;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Pagination;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.Documentation.ReadModel;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Persistence.Pagination;
+using SmartSolutionsLab.BauDoku.Documentation.Domain;
+using SmartSolutionsLab.BauDoku.Documentation.Infrastructure.ReadModel;
 using Microsoft.EntityFrameworkCore;
 
-namespace BauDoku.Documentation.Infrastructure.Persistence.Repositories;
+namespace SmartSolutionsLab.BauDoku.Documentation.Infrastructure.Persistence.Repositories;
 
 public sealed class InstallationReadRepository(ReadModelDbContext context) : IInstallationReadRepository
 {
+    public async Task<InstallationDto> GetByIdAsync(InstallationIdentifier id, CancellationToken cancellationToken = default)
+    {
+        var installation = (await context.Installations
+            .FirstOrDefaultAsync(i => i.Id == id.Value && !i.IsDeleted, cancellationToken))
+            .OrNotFound("Installation", id.Value);
+
+        var photos = await context.Photos
+            .Where(p => p.InstallationId == id.Value)
+            .OrderByDescending(p => p.TakenAt)
+            .SelectPhotoDtos()
+            .ToListAsync(cancellationToken);
+
+        var measurements = await context.Measurements
+            .Where(m => m.InstallationId == id.Value)
+            .OrderByDescending(m => m.MeasuredAt)
+            .SelectMeasurementDtos()
+            .ToListAsync(cancellationToken);
+
+        return installation.ToInstallationDto(photos, measurements);
+    }
+
+    public async Task<IReadOnlyList<MeasurementDto>> GetMeasurementsAsync(InstallationIdentifier installationId, CancellationToken cancellationToken = default)
+    {
+        var exists = await context.Installations
+            .AnyAsync(i => i.Id == installationId.Value && !i.IsDeleted, cancellationToken);
+
+        if (!exists) throw new KeyNotFoundException($"Installation mit ID '{installationId.Value}' wurde nicht gefunden.");
+
+        return await context.Measurements
+            .Where(m => m.InstallationId == installationId.Value)
+            .OrderByDescending(m => m.MeasuredAt)
+            .SelectMeasurementDtos()
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<PagedResult<InstallationListItemDto>> ListAsync(InstallationListFilter filter, PaginationParams pagination, CancellationToken cancellationToken = default)
     {
         var (projectId, zoneId, type, status, search) = filter;
 
-        var query = context.Installations.AsNoTracking().Where(i => !i.IsDeleted);
+        var query = context.Installations.Where(i => !i.IsDeleted);
 
         if (projectId is not null)
             query = query.Where(i => i.ProjectId == projectId.Value);
@@ -102,7 +136,7 @@ public sealed class InstallationReadRepository(ReadModelDbContext context) : IIn
                     ST_SetSRID(ST_MakePoint(longitude, latitude), 4326),
                     ST_MakeEnvelope({minLongitude}, {minLatitude}, {maxLongitude}, {maxLatitude}, 4326))
                 """)
-            .AsNoTracking();
+;
 
         if (projectId is not null)
             query = query.Where(i => i.ProjectId == projectId.Value);

@@ -2,7 +2,7 @@ using k8s.Models;
 using Aspire.DashboardService.Proto.V1;
 using Google.Protobuf.WellKnownTypes;
 
-namespace BauDoku.ResourceService.Services;
+namespace SmartSolutionsLab.BauDoku.ResourceService.Services;
 
 public static class ResourceStateMapper
 {
@@ -44,9 +44,14 @@ public static class ResourceStateMapper
             // All containers running — check readiness
             var allReady = containerStatuses.All(cs => cs.Ready);
             if (phase == "Running" && allReady)
+            {
                 return ("Running", "success");
+            }
+
             if (phase == "Running" && !allReady)
+            {
                 return ("Starting", "info");
+            }
         }
 
         return phase switch
@@ -64,22 +69,26 @@ public static class ResourceStateMapper
         var (state, stateStyle) = MapPodState(pod);
         var ownerKind = pod.Metadata?.OwnerReferences?.FirstOrDefault()?.Kind ?? "Pod";
 
-        var resource = new Resource
+        Resource resource = new Resource
         {
             Name = pod.Metadata?.Name ?? "unknown",
             ResourceType = ownerKind,
             DisplayName = pod.Metadata?.Name ?? "unknown",
-            Uid = pod.Metadata?.Uid ?? System.Guid.NewGuid().ToString(),
+            Uid = pod.Metadata?.Uid ?? Guid.NewGuid().ToString(),
             State = state,
             StateStyle = stateStyle
         };
 
         if (pod.Metadata?.CreationTimestamp is { } created)
+        {
             resource.CreatedAt = Timestamp.FromDateTime(created.ToUniversalTime());
+        }
 
         var containerStatus = pod.Status?.ContainerStatuses?.FirstOrDefault();
         if (containerStatus?.State?.Running?.StartedAt is { } started)
+        {
             resource.StartedAt = Timestamp.FromDateTime(started.ToUniversalTime());
+        }
 
         // Properties
         var image = pod.Spec?.Containers?.FirstOrDefault()?.Image;
@@ -89,7 +98,7 @@ public static class ResourceStateMapper
             {
                 Name = "container.image",
                 DisplayName = "Image",
-                Value = Google.Protobuf.WellKnownTypes.Value.ForString(image)
+                Value = Value.ForString(image)
             });
         }
 
@@ -99,7 +108,7 @@ public static class ResourceStateMapper
             {
                 Name = "pod.ip",
                 DisplayName = "Pod IP",
-                Value = Google.Protobuf.WellKnownTypes.Value.ForString(podIp)
+                Value = Value.ForString(podIp)
             });
         }
 
@@ -109,7 +118,7 @@ public static class ResourceStateMapper
             {
                 Name = "pod.node",
                 DisplayName = "Node",
-                Value = Google.Protobuf.WellKnownTypes.Value.ForString(nodeName)
+                Value = Value.ForString(nodeName)
             });
         }
 
@@ -119,7 +128,7 @@ public static class ResourceStateMapper
             {
                 Name = "container.restarts",
                 DisplayName = "Restarts",
-                Value = Google.Protobuf.WellKnownTypes.Value.ForNumber(containerStatus.RestartCount)
+                Value = Value.ForNumber(containerStatus.RestartCount)
             });
         }
 
@@ -129,9 +138,7 @@ public static class ResourceStateMapper
         {
             foreach (var condition in conditions)
             {
-                var healthStatus = condition.Status == "True"
-                    ? HealthStatus.Healthy
-                    : HealthStatus.Unhealthy;
+                var healthStatus = condition.Status == "True" ? HealthStatus.Healthy : HealthStatus.Unhealthy;
 
                 resource.HealthReports.Add(new HealthReport
                 {

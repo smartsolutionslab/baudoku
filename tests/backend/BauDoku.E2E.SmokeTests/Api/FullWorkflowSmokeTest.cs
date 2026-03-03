@@ -1,9 +1,9 @@
 using System.Net;
 using System.Net.Http.Json;
 using AwesomeAssertions;
-using BauDoku.E2E.SmokeTests.Fixtures;
+using SmartSolutionsLab.BauDoku.E2E.SmokeTests.Fixtures;
 
-namespace BauDoku.E2E.SmokeTests.Api;
+namespace SmartSolutionsLab.BauDoku.E2E.SmokeTests.Api;
 
 [Collection(E2ECollection.Name)]
 public sealed class FullWorkflowSmokeTest : IDisposable

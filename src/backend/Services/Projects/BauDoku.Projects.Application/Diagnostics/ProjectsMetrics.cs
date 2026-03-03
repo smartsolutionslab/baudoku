@@ -1,6 +1,6 @@
 using System.Diagnostics.Metrics;
 
-namespace BauDoku.Projects.Application.Diagnostics;
+namespace SmartSolutionsLab.BauDoku.Projects.Application.Diagnostics;
 
 public static class ProjectsMetrics
 {

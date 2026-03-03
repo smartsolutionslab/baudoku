@@ -1,12 +1,12 @@
 using System.Reflection;
-using BauDoku.BuildingBlocks.Application.Behaviors;
-using BauDoku.BuildingBlocks.Application.Commands;
-using BauDoku.BuildingBlocks.Application.Events;
-using BauDoku.BuildingBlocks.Application.Queries;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Behaviors;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Commands;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Events;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Queries;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace BauDoku.BuildingBlocks.Application;
+namespace SmartSolutionsLab.BauDoku.BuildingBlocks.Application;
 
 public static class DependencyInjection
 {

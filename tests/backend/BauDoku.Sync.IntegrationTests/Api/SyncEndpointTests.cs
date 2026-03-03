@@ -1,9 +1,9 @@
 using System.Net;
 using System.Net.Http.Json;
 using AwesomeAssertions;
-using BauDoku.Sync.IntegrationTests.Fixtures;
+using SmartSolutionsLab.BauDoku.Sync.IntegrationTests.Fixtures;
 
-namespace BauDoku.Sync.IntegrationTests.Api;
+namespace SmartSolutionsLab.BauDoku.Sync.IntegrationTests.Api;
 
 [Collection(PostgreSqlCollection.Name)]
 public sealed class SyncEndpointTests : IDisposable

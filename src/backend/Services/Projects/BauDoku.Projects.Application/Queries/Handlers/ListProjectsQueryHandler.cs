@@ -1,9 +1,8 @@
-using BauDoku.BuildingBlocks.Application.Pagination;
-using BauDoku.BuildingBlocks.Application.Queries;
-using BauDoku.Projects.Application.Contracts;
-using BauDoku.Projects.Application.Queries.Dtos;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Pagination;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Queries;
+using SmartSolutionsLab.BauDoku.Projects.ReadModel;
 
-namespace BauDoku.Projects.Application.Queries.Handlers;
+namespace SmartSolutionsLab.BauDoku.Projects.Application.Queries.Handlers;
 
 public sealed class ListProjectsQueryHandler(IProjectReadRepository projects) : IQueryHandler<ListProjectsQuery, PagedResult<ProjectListItemDto>>
 {
@@ -12,6 +11,6 @@ public sealed class ListProjectsQueryHandler(IProjectReadRepository projects) : 
         var (search, page, pageSize) = query;
 
         var pagination = new PaginationParams(page, pageSize);
-        return await projects.ListAsync(search, pagination, cancellationToken);
+        return await projects.With(search, pagination, cancellationToken);
     }
 }

@@ -2,9 +2,9 @@ using System.Collections.Concurrent;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
 
-namespace BauDoku.BuildingBlocks.Serialization;
+namespace SmartSolutionsLab.BauDoku.BuildingBlocks.Serialization;
 
 public sealed class ValueObjectJsonConverterFactory : JsonConverterFactory
 {

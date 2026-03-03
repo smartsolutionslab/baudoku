@@ -1,38 +1,41 @@
-using BauDoku.BuildingBlocks.Application.Commands;
-using BauDoku.Documentation.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Commands;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.Documentation.Domain;
 
-namespace BauDoku.Documentation.Application.Commands.Handlers;
+namespace SmartSolutionsLab.BauDoku.Documentation.Application.Commands.Handlers;
 
 public sealed class UpdateInstallationCommandHandler(IInstallationRepository installations)
     : ICommandHandler<UpdateInstallationCommand>
 {
     public async Task Handle(UpdateInstallationCommand command, CancellationToken cancellationToken = default)
     {
-        var installation = await installations.GetByIdAsync(command.InstallationId, cancellationToken);
+        var (installationId, position, description, cableType, crossSection, cableColor, conductorCount, depth, manufacturer, modelName, serialNumber) = command;
+        var installation = await installations.With(installationId, cancellationToken);
 
-        if (command.Position is not null)
+        if (position is not null)
         {
-            installation.UpdatePosition(command.Position);
+            installation.UpdatePosition(position);
         }
 
-        if (command.Description is not null)
+        if (description is not null)
         {
-            installation.UpdateDescription(command.Description);
+            installation.UpdateDescription(description);
         }
 
-        if (command.CableType is not null)
+        var cableSpec = CableSpec.FromNullable(cableType, crossSection, cableColor, conductorCount);
+        if (cableSpec is not null)
         {
-            installation.UpdateCableSpec(CableSpec.Create(command.CableType, command.CrossSection, command.CableColor, command.ConductorCount));
+            installation.UpdateCableSpec(cableSpec);
         }
 
-        if (command.Depth is not null)
+        if (depth is not null)
         {
-            installation.UpdateDepth(command.Depth);
+            installation.UpdateDepth(depth);
         }
 
-        if (command.Manufacturer is not null || command.ModelName is not null || command.SerialNumber is not null)
+        if (manufacturer is not null || modelName is not null || serialNumber is not null)
         {
-            installation.UpdateDeviceInfo(command.Manufacturer, command.ModelName, command.SerialNumber);
+            installation.UpdateDeviceInfo(manufacturer, modelName, serialNumber);
         }
 
         await installations.SaveAsync(installation, cancellationToken);

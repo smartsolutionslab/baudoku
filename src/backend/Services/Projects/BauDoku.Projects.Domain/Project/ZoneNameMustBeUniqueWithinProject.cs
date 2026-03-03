@@ -1,6 +1,6 @@
-using BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
 
-namespace BauDoku.Projects.Domain;
+namespace SmartSolutionsLab.BauDoku.Projects.Domain;
 
 public sealed class ZoneNameMustBeUniqueWithinProject(IReadOnlyList<Zone> existingZones, ZoneName newZoneName, ZoneIdentifier? parentZoneIdentifier = null)
     : IBusinessRule

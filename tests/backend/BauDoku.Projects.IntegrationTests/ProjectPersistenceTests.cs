@@ -1,9 +1,9 @@
 using AwesomeAssertions;
-using BauDoku.Projects.Domain;
-using BauDoku.Projects.IntegrationTests.Fixtures;
+using SmartSolutionsLab.BauDoku.Projects.Domain;
+using SmartSolutionsLab.BauDoku.Projects.IntegrationTests.Fixtures;
 using Microsoft.EntityFrameworkCore;
 
-namespace BauDoku.Projects.IntegrationTests;
+namespace SmartSolutionsLab.BauDoku.Projects.IntegrationTests;
 
 [Collection(PostgreSqlCollection.Name)]
 public sealed class ProjectPersistenceTests(PostgreSqlFixture fixture)

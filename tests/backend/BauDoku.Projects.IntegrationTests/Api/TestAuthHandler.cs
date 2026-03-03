@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace BauDoku.Projects.IntegrationTests.Api;
+namespace SmartSolutionsLab.BauDoku.Projects.IntegrationTests.Api;
 
 public sealed class TestAuthHandler(IOptionsMonitor<AuthenticationSchemeOptions> options, ILoggerFactory logger, UrlEncoder encoder)
     : AuthenticationHandler<AuthenticationSchemeOptions>(options, logger, encoder)
@@ -20,12 +20,12 @@ public sealed class TestAuthHandler(IOptionsMonitor<AuthenticationSchemeOptions>
         if (!IsAuthenticated)
             return Task.FromResult(AuthenticateResult.NoResult());
 
-        var claims = new List<Claim>
-        {
+        List<Claim> claims =
+        [
             new(ClaimTypes.NameIdentifier, "test-user-id"),
             new(ClaimTypes.Name, "Test User"),
-            new(ClaimTypes.Email, "test@example.com"),
-        };
+            new(ClaimTypes.Email, "test@example.com")
+        ];
 
         foreach (var role in Roles)
         {

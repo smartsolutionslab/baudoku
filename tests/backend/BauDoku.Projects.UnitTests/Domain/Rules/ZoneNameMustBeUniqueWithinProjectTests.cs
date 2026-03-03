@@ -1,8 +1,8 @@
 using AwesomeAssertions;
-using BauDoku.Projects.Domain;
-using BauDoku.Projects.UnitTests.Builders;
+using SmartSolutionsLab.BauDoku.Projects.Domain;
+using SmartSolutionsLab.BauDoku.Projects.UnitTests.Builders;
 
-namespace BauDoku.Projects.UnitTests.Domain.Rules;
+namespace SmartSolutionsLab.BauDoku.Projects.UnitTests.Domain.Rules;
 
 public sealed class ZoneNameMustBeUniqueWithinProjectTests
 {

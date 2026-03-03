@@ -1,39 +1,23 @@
-using System.Linq.Expressions;
-using BauDoku.Sync.Application.Contracts;
-using BauDoku.Sync.Application.Queries.Dtos;
-using BauDoku.Sync.Domain;
+using SmartSolutionsLab.BauDoku.Sync.Application.Contracts;
+using SmartSolutionsLab.BauDoku.Sync.Domain;
 using Microsoft.EntityFrameworkCore;
 
-namespace BauDoku.Sync.Infrastructure.Persistence.Repositories;
+namespace SmartSolutionsLab.BauDoku.Sync.Infrastructure.Persistence.Repositories;
 
-public sealed class EntityVersionStore(SyncDbContext context) : IEntityVersionStore, IEntityVersionReadStore
+public sealed class EntityVersionStore(SyncDbContext context) : IEntityVersionStore
 {
-    private static readonly Expression<Func<EntityVersionEntry, ServerDeltaDto>> toServerDelta = e => new ServerDeltaDto(
-        e.EntityType,
-        e.EntityId,
-        "update",
-        e.Version,
-        e.Payload,
-        e.LastModified);
-
-    public async Task<SyncVersion> GetCurrentVersionAsync(
-        EntityReference entityRef,
-        CancellationToken cancellationToken = default)
+    public async Task<SyncVersion> GetCurrentVersionAsync(EntityReference entityRef, CancellationToken cancellationToken = default)
     {
         var (entityType, entityId) = entityRef;
-        var entry = await context.EntityVersionEntries
-            .FirstOrDefaultAsync(e => e.EntityType == entityType.Value && e.EntityId == entityId, cancellationToken);
+        var entry = await context.EntityVersionEntries.FirstOrDefaultAsync(e => e.EntityType == entityType.Value && e.EntityId == entityId.Value, cancellationToken);
 
         return entry is not null ? SyncVersion.From(entry.Version) : SyncVersion.Initial;
     }
 
-    public async Task<string> GetCurrentPayloadAsync(
-        EntityReference entityRef,
-        CancellationToken cancellationToken = default)
+    public async Task<string> GetCurrentPayloadAsync(EntityReference entityRef, CancellationToken cancellationToken = default)
     {
         var (entityType, entityId) = entityRef;
-        var entry = await context.EntityVersionEntries
-            .FirstOrDefaultAsync(e => e.EntityType == entityType.Value && e.EntityId == entityId, cancellationToken);
+        var entry = await context.EntityVersionEntries.FirstOrDefaultAsync(e => e.EntityType == entityType.Value && e.EntityId == entityId.Value, cancellationToken);
 
         return entry?.Payload ?? "{}";
     }
@@ -46,8 +30,7 @@ public sealed class EntityVersionStore(SyncDbContext context) : IEntityVersionSt
         CancellationToken cancellationToken = default)
     {
         var (entityType, entityId) = entityRef;
-        var entry = await context.EntityVersionEntries
-            .FirstOrDefaultAsync(e => e.EntityType == entityType.Value && e.EntityId == entityId, cancellationToken);
+        var entry = await context.EntityVersionEntries.FirstOrDefaultAsync(e => e.EntityType == entityType.Value && e.EntityId == entityId.Value, cancellationToken);
 
         if (entry is not null)
         {
@@ -61,7 +44,7 @@ public sealed class EntityVersionStore(SyncDbContext context) : IEntityVersionSt
             entry = new EntityVersionEntry
             {
                 EntityType = entityType.Value,
-                EntityId = entityId,
+                EntityId = entityId.Value,
                 Version = version.Value,
                 Payload = payload,
                 LastModified = DateTime.UtcNow,
@@ -69,26 +52,5 @@ public sealed class EntityVersionStore(SyncDbContext context) : IEntityVersionSt
             };
             await context.EntityVersionEntries.AddAsync(entry, cancellationToken);
         }
-    }
-
-    public async Task<List<ServerDeltaDto>> GetChangedSinceAsync(
-        DateTime? since,
-        DeviceIdentifier? excludeDeviceId,
-        int limit,
-        CancellationToken cancellationToken = default)
-    {
-        var query = context.EntityVersionEntries.AsNoTracking().AsQueryable();
-
-        if (since is not null)
-            query = query.Where(e => e.LastModified > since.Value);
-
-        if (excludeDeviceId is not null)
-            query = query.Where(e => e.LastDeviceId != excludeDeviceId.Value);
-
-        return await query
-            .OrderBy(e => e.LastModified)
-            .Take(limit)
-            .Select(toServerDelta)
-            .ToListAsync(cancellationToken);
     }
 }

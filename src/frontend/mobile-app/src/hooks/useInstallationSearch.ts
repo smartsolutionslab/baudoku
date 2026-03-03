@@ -1,7 +1,7 @@
-import { useState, useEffect, useRef, useCallback } from "react";
-import * as installationRepo from "../db/repositories/installationRepo";
-import type { SearchResult } from "../db/repositories/installationRepo";
-import type { ProjectId } from "../types/branded";
+import { useState, useEffect, useRef, useCallback } from 'react';
+import * as installationRepo from '../db/repositories/installationRepo';
+import type { SearchResult } from '../db/repositories/installationRepo';
+import type { ProjectId } from '../types/branded';
 
 type SearchFilters = {
   status?: string[];
@@ -21,7 +21,7 @@ type UseInstallationSearchReturn = {
 const DEBOUNCE_MS = 300;
 
 export function useInstallationSearch(): UseInstallationSearchReturn {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState('');
   const [filters, setFilters] = useState<SearchFilters>({});
   const [results, setResults] = useState<SearchResult[]>([]);
   const [searching, setSearching] = useState(false);

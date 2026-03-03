@@ -1,6 +1,7 @@
 using System.Reflection;
+using Microsoft.AspNetCore.Http.HttpResults;
 
-namespace BauDoku.ApiGateway.Endpoints;
+namespace SmartSolutionsLab.BauDoku.ApiGateway.Endpoints;
 
 public static class SystemEndpoints
 {
@@ -11,43 +12,46 @@ public static class SystemEndpoints
         "http://sync-api/version"
     ];
 
-    public static void MapSystemEndpoints(this IEndpointRouteBuilder app)
+    public static IEndpointRouteBuilder MapSystemEndpoints(this IEndpointRouteBuilder app)
     {
-        app.MapGet("/api/system/info", async (IHttpClientFactory httpClientFactory) =>
-        {
-            var assembly = Assembly.GetEntryAssembly();
-            var gatewayVersion = assembly?.GetCustomAttribute<AssemblyInformationalVersionAttribute>()
-                ?.InformationalVersion ?? "dev";
-            var gatewayName = assembly?.GetName().Name ?? "unknown";
+        app.MapGet("/api/system/info", GetSystemInfo)
+            .WithTags("System")
+            .WithName("GetSystemInfo")
+            .WithSummary("Aggregated version info for all services")
+            .AllowAnonymous();
 
-            var client = httpClientFactory.CreateClient();
-            var services = await Task.WhenAll(ServiceUrls.Select(url => FetchVersionAsync(client, url)));
+        return app;
 
-            return new
-            {
-                gateway = new { service = gatewayName, version = gatewayVersion },
-                services
-            };
-        })
-        .WithTags("System")
-        .WithName("GetSystemInfo")
-        .WithSummary("Aggregated version info for all services")
-        .AllowAnonymous();
     }
 
-    private static async Task<object> FetchVersionAsync(HttpClient client, string url)
+    private static async Task<Ok<SystemInfoResponse>> GetSystemInfo(IHttpClientFactory httpClientFactory)
+    {
+        var assembly = Assembly.GetEntryAssembly();
+        var gatewayVersion = assembly?.GetCustomAttribute<AssemblyInformationalVersionAttribute>()
+            ?.InformationalVersion ?? "dev";
+        var gatewayName = assembly?.GetName().Name ?? "unknown";
+
+        var client = httpClientFactory.CreateClient();
+        var services = await Task.WhenAll(ServiceUrls.Select(url => FetchVersionAsync(client, url)));
+
+        return TypedResults.Ok(new SystemInfoResponse(new ServiceInfo(gatewayName, gatewayVersion, "ok"), services));
+    }
+
+    private static async Task<ServiceInfo> FetchVersionAsync(HttpClient client, string url)
     {
         try
         {
             var response = await client.GetFromJsonAsync<ServiceVersion>(url);
-            return new { service = response?.Service ?? "unknown", version = response?.Version ?? "unknown", status = "ok" };
+            return new ServiceInfo(response?.Service ?? "unknown", response?.Version ?? "unknown", "ok");
         }
         catch
         {
             var serviceName = url.Replace("http://", "").Replace("/version", "");
-            return new { service = serviceName, version = "unknown", status = "unreachable" };
+            return new ServiceInfo(serviceName, "unknown", "unreachable");
         }
     }
 
     private sealed record ServiceVersion(string Service, string Version);
+    internal sealed record SystemInfoResponse(ServiceInfo Gateway, ServiceInfo[] Services);
+    internal sealed record ServiceInfo(string Service, string Version, string Status);
 }

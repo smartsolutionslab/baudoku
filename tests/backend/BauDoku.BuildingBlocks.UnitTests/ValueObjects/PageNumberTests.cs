@@ -1,7 +1,7 @@
 using AwesomeAssertions;
-using BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
 
-namespace BauDoku.BuildingBlocks.UnitTests.ValueObjects;
+namespace SmartSolutionsLab.BauDoku.BuildingBlocks.UnitTests.ValueObjects;
 
 public sealed class PageNumberTests
 {
@@ -36,5 +36,21 @@ public sealed class PageNumberTests
     public void Default_ShouldBeOne()
     {
         PageNumber.Default.Value.Should().Be(1);
+    }
+
+    [Fact]
+    public void FromNullable_WithValue_ShouldCreatePageNumber()
+    {
+        var page = PageNumber.FromNullable(5);
+
+        page.Value.Should().Be(5);
+    }
+
+    [Fact]
+    public void FromNullable_WithNull_ShouldReturnDefault()
+    {
+        var page = PageNumber.FromNullable(null);
+
+        page.Should().Be(PageNumber.Default);
     }
 }

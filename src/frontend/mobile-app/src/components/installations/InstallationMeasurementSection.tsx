@@ -1,9 +1,9 @@
-import { View, Text, StyleSheet } from "react-native";
-import { EmptyState } from "@/components/common";
-import { MeasurementCard, MeasurementForm } from "@/components/installations";
-import { Colors, Spacing, FontSize } from "@/styles/tokens";
-import type { Measurement } from "@/db/repositories/types";
-import type { MeasurementFormData } from "@/validation/schemas";
+import { View, Text, StyleSheet } from 'react-native';
+import { EmptyState } from '@/components/common';
+import { MeasurementCard, MeasurementForm } from '@/components/installations';
+import { Colors, Spacing, FontSize } from '@/styles/tokens';
+import type { Measurement } from '@/db/repositories/types';
+import type { MeasurementFormData } from '@/validation/schemas';
 
 type InstallationMeasurementSectionProps = {
   measurements: Measurement[];
@@ -35,7 +35,7 @@ export function InstallationMeasurementSection({
         </View>
       )}
       {measurements.length === 0 ? (
-        <EmptyState icon="bar-chart" title="Noch keine Messungen" />
+        <EmptyState icon='bar-chart' title='Noch keine Messungen' />
       ) : (
         measurements.map((m) => (
           <MeasurementCard
@@ -52,7 +52,7 @@ export function InstallationMeasurementSection({
 const styles = StyleSheet.create({
   cardTitle: {
     fontSize: FontSize.headline,
-    fontWeight: "600",
+    fontWeight: '600',
     marginBottom: Spacing.md,
   },
   measurementsSection: {

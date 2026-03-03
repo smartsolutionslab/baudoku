@@ -1,6 +1,6 @@
-using BauDoku.BuildingBlocks.Guards;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Guards;
 
-namespace BauDoku.BuildingBlocks.Domain;
+namespace SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
 
 public sealed record PageSize : IValueObject
 {
@@ -18,5 +18,5 @@ public sealed record PageSize : IValueObject
         return new PageSize(value);
     }
 
-    public static PageSize? FromNullable(int? value) => value.HasValue ? From(value.Value) : null;
+    public static PageSize FromNullable(int? value) => value.HasValue ? From(value.Value) : Default;
 }

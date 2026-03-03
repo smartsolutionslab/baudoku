@@ -1,8 +1,8 @@
-using BauDoku.BuildingBlocks.Application.Commands;
-using BauDoku.Documentation.Application.Contracts;
-using BauDoku.Documentation.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Commands;
+using SmartSolutionsLab.BauDoku.Documentation.Application.Contracts;
+using SmartSolutionsLab.BauDoku.Documentation.Domain;
 
-namespace BauDoku.Documentation.Application.Commands.Handlers;
+namespace SmartSolutionsLab.BauDoku.Documentation.Application.Commands.Handlers;
 
 public sealed class UploadChunkCommandHandler(IChunkedUploadStorage chunkedUploadStorage) : ICommandHandler<UploadChunkCommand>
 {

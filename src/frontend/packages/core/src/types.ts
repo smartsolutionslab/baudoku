@@ -1,4 +1,4 @@
-export interface PagedResult<T> {
+export type PagedResult<T> = {
   items: T[];
   totalCount: number;
   page: number;
@@ -6,8 +6,8 @@ export interface PagedResult<T> {
   totalPages: number;
   hasNextPage: boolean;
   hasPreviousPage: boolean;
-}
+};
 
-export interface PhotoUploadResult {
+export type PhotoUploadResult = {
   id: string;
-}
+};

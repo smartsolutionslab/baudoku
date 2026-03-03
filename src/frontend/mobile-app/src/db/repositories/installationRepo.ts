@@ -1,10 +1,10 @@
-import { and, eq, like, or, inArray, sql, count } from "drizzle-orm";
-import { db } from "../client";
-import { installations, zones, projects } from "../schema";
-import { generateId } from "../../utils";
-import { createOutboxEntry } from "./syncRepo";
-import type { Installation, NewInstallation } from "./types";
-import type { InstallationId, ProjectId, ZoneId, ProjectName, ZoneName } from "../../types/branded";
+import { and, eq, like, or, inArray, sql, count } from 'drizzle-orm';
+import { db } from '../client';
+import { installations, zones, projects } from '../schema';
+import { generateId } from '../../utils';
+import { createOutboxEntry } from './syncRepo';
+import type { Installation, NewInstallation } from './types';
+import type { InstallationId, ProjectId, ZoneId, ProjectName, ZoneName } from '../../types/branded';
 
 export async function getByZoneId(zoneId: ZoneId): Promise<Installation[]> {
   return db.select().from(installations).where(eq(installations.zoneId, zoneId)).all() as unknown as Installation[];
@@ -18,7 +18,7 @@ export async function getById(id: InstallationId): Promise<Installation | undefi
   return db.select().from(installations).where(eq(installations.id, id)).get() as unknown as Installation | undefined;
 }
 
-export async function create(data: Omit<NewInstallation, "id" | "createdAt" | "updatedAt" | "version">): Promise<Installation> {
+export async function create(data: Omit<NewInstallation, 'id' | 'createdAt' | 'updatedAt' | 'version'>): Promise<Installation> {
   const now = new Date();
   const installation: NewInstallation = {
     ...data,
@@ -30,16 +30,16 @@ export async function create(data: Omit<NewInstallation, "id" | "createdAt" | "u
 
   await db.insert(installations).values(installation);
   await createOutboxEntry(
-    "installation",
+    'installation',
     installation.id,
-    "create",
+    'create',
     installation
   );
 
   return installation as unknown as Installation;
 }
 
-export async function update(id: InstallationId, data: Partial<Omit<NewInstallation, "id" | "createdAt" | "updatedAt" | "version" | "projectId" | "zoneId">>): Promise<Installation | undefined> {
+export async function update(id: InstallationId, data: Partial<Omit<NewInstallation, 'id' | 'createdAt' | 'updatedAt' | 'version' | 'projectId' | 'zoneId'>>): Promise<Installation | undefined> {
   const existing = await getById(id);
   if (!existing) return undefined;
 
@@ -50,7 +50,7 @@ export async function update(id: InstallationId, data: Partial<Omit<NewInstallat
   };
 
   await db.update(installations).set(updated).where(eq(installations.id, id));
-  await createOutboxEntry("installation", id, "update", {
+  await createOutboxEntry('installation', id, 'update', {
     ...existing,
     ...updated,
   });
@@ -60,7 +60,7 @@ export async function update(id: InstallationId, data: Partial<Omit<NewInstallat
 
 export async function remove(id: InstallationId): Promise<void> {
   await db.delete(installations).where(eq(installations.id, id));
-  await createOutboxEntry("installation", id, "delete", { id });
+  await createOutboxEntry('installation', id, 'delete', { id });
 }
 
 export type SearchResult = Installation & {
@@ -97,7 +97,7 @@ export async function search(query: string, filters?: { status?: string[]; proje
   }
 
   if (filters?.status && filters.status.length > 0) {
-    conditions.push(inArray(installations.status, filters.status as ("planned" | "in_progress" | "completed" | "inspected")[]));
+    conditions.push(inArray(installations.status, filters.status as ('planned' | 'in_progress' | 'completed' | 'inspected')[]));
   }
 
   if (filters?.projectId) {

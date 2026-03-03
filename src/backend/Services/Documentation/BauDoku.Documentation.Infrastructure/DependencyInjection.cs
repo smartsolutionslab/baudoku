@@ -1,10 +1,11 @@
-using BauDoku.Documentation.Application.Contracts;
-using BauDoku.Documentation.Domain;
-using BauDoku.Documentation.Infrastructure.Persistence;
-using BauDoku.Documentation.Infrastructure.Persistence.Repositories;
-using BauDoku.Documentation.Infrastructure.Projections;
-using BauDoku.Documentation.Infrastructure.ReadModel;
-using BauDoku.Documentation.Infrastructure.Storage;
+using SmartSolutionsLab.BauDoku.Documentation.Application.Contracts;
+using SmartSolutionsLab.BauDoku.Documentation.ReadModel;
+using SmartSolutionsLab.BauDoku.Documentation.Domain;
+using SmartSolutionsLab.BauDoku.Documentation.Infrastructure.Persistence;
+using SmartSolutionsLab.BauDoku.Documentation.Infrastructure.Persistence.Repositories;
+using SmartSolutionsLab.BauDoku.Documentation.Infrastructure.Projections;
+using SmartSolutionsLab.BauDoku.Documentation.Infrastructure.ReadModel;
+using SmartSolutionsLab.BauDoku.Documentation.Infrastructure.Storage;
 using Marten;
 using Marten.Events.Daemon.Resiliency;
 using Marten.Events.Projections;
@@ -13,45 +14,41 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-namespace BauDoku.Documentation.Infrastructure;
+namespace SmartSolutionsLab.BauDoku.Documentation.Infrastructure;
 
 public static class DependencyInjection
 {
     public static IServiceCollection AddDocumentationInfrastructure(this IServiceCollection services, string connectionString, IConfiguration configuration)
     {
-        services.AddMarten(sp =>
-            {
-                var options = new StoreOptions();
-                MartenConfiguration.Configure(options, connectionString);
-                var scopeFactory = sp.GetRequiredService<IServiceScopeFactory>();
-                options.Listeners.Add(new MartenEventPublisher(scopeFactory));
-                options.Projections.Add(new InstallationReadModelProjection(scopeFactory), ProjectionLifecycle.Async);
-                return options;
-            })
-            .AddAsyncDaemon(DaemonMode.Solo);
+        services.AddMarten(serviceProvider => {
+            var options = new StoreOptions();
+            MartenConfiguration.Configure(options, connectionString);
+            var scopeFactory = serviceProvider.GetRequiredService<IServiceScopeFactory>();
+            options.Listeners.Add(new MartenEventPublisher(scopeFactory));
+            options.Projections.Add(new InstallationReadModelProjection(scopeFactory), ProjectionLifecycle.Async);
+            return options;
+        }).AddAsyncDaemon(DaemonMode.Solo);
 
-        services.AddDbContext<ReadModelDbContext>(options => options.UseNpgsql(connectionString, npgsql =>
-        {
+        services.AddDbContext<ReadModelDbContext>(options => options.UseNpgsql(connectionString, npgsql => {
             npgsql.UseNetTopologySuite();
             npgsql.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
         }));
 
-        services.AddScoped<IInstallationRepository, InstallationRepository>();
-        services.AddScoped<IInstallationReadRepository, InstallationReadRepository>();
-        services.AddScoped<IPhotoReadRepository, PhotoReadRepository>();
+        services.AddScoped<IInstallationRepository, InstallationRepository>()
+                .AddScoped<IInstallationReadRepository, InstallationReadRepository>()
+                .AddScoped<IPhotoReadRepository, PhotoReadRepository>();
 
-        services.Configure<PhotoStorageOptions>(configuration.GetSection("PhotoStorage"));
+        services.Configure<PhotoStorageOptions>(configuration.GetSection(PhotoStorageOptions.SectionName));
 
-        services.AddSingleton<IPhotoStorage>(sp =>
-        {
+        services.AddSingleton<IPhotoStorage>(sp => {
             var options = sp.GetRequiredService<IOptions<PhotoStorageOptions>>();
-            return options.Value.Provider.Equals("Azure", StringComparison.OrdinalIgnoreCase)
+            return options.Value.IsAzure
                 ? new AzureBlobPhotoStorage(options)
                 : new LocalFilePhotoStorage(options);
         });
 
-        services.AddSingleton<IChunkedUploadStorage, LocalChunkedUploadStorage>();
-        services.AddHostedService<ChunkedUploadCleanupService>();
+        services.AddSingleton<IChunkedUploadStorage, LocalChunkedUploadStorage>()
+                .AddHostedService<ChunkedUploadCleanupService>();
 
         return services;
     }

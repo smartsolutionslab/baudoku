@@ -1,6 +1,6 @@
-import { View, Text, StyleSheet } from "react-native";
-import { useSyncStatus } from "../../hooks";
-import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
+import { View, Text, StyleSheet } from 'react-native';
+import { useSyncStatus } from '../../hooks';
+import { Colors, Spacing, FontSize, Radius } from '../../styles/tokens';
 
 export function SyncIndicator() {
   const { isOnline, unsyncedCount } = useSyncStatus();
@@ -9,7 +9,7 @@ export function SyncIndicator() {
     <View style={styles.container}>
       <View style={[styles.dot, isOnline ? styles.online : styles.offline]}/>
       <Text style={styles.text}>
-        {isOnline ? "Online" : "Offline"}
+        {isOnline ? 'Online' : 'Offline'}
         {unsyncedCount > 0 && ` (${unsyncedCount})`}
       </Text>
     </View>
@@ -18,8 +18,8 @@ export function SyncIndicator() {
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.xs,
   },

@@ -1,7 +1,7 @@
-using BauDoku.BuildingBlocks.Domain;
-using BauDoku.BuildingBlocks.Guards;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Guards;
 
-namespace BauDoku.Documentation.Domain;
+namespace SmartSolutionsLab.BauDoku.Documentation.Domain;
 
 public sealed record MeasurementUnit : IValueObject
 {

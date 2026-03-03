@@ -1,11 +1,11 @@
-import * as syncRepo from "../db/repositories/syncRepo";
-import * as photoRepo from "../db/repositories/photoRepo";
-import * as syncApi from "./syncApi";
-import { applyServerDelta } from "./applyServerDelta";
-import { getDeviceId } from "../utils";
-import { uploadPhotoChunked } from "./chunkedUpload";
-import { useUploadStore } from "../store";
-import type { SyncDeltaDto, ProcessSyncBatchResult, ChangeSetResult } from "./syncApi";
+import * as syncRepo from '../db/repositories/syncRepo';
+import * as photoRepo from '../db/repositories/photoRepo';
+import * as syncApi from './syncApi';
+import { applyServerDelta } from './applyServerDelta';
+import { getDeviceId } from '../utils';
+import { uploadPhotoChunked } from './chunkedUpload';
+import { useUploadStore } from '../store';
+import type { SyncDeltaDto, ProcessSyncBatchResult, ChangeSetResult } from './syncApi';
 
 export type SyncResult = {
   pushed: number;
@@ -57,7 +57,7 @@ export class SyncManager {
     } catch (error) {
       await syncRepo.markAsFailed(ids);
       const message =
-        error instanceof Error ? error.message : "Unbekannter Fehler";
+        error instanceof Error ? error.message : 'Unbekannter Fehler';
       return { appliedCount: 0, conflictCount: 0, errors: [message] };
     }
   }
@@ -77,7 +77,7 @@ export class SyncManager {
 
       return { pulled: result.changes.length, errors: [] };
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Unbekannter Fehler";
+      const message = error instanceof Error ? error.message : 'Unbekannter Fehler';
       return { pulled: 0, errors: [message] };
     }
   }
@@ -103,30 +103,30 @@ export class SyncManager {
 
     for (const photo of photos) {
       try {
-        await photoRepo.updateUploadStatus(photo.id, "uploading");
+        await photoRepo.updateUploadStatus(photo.id, 'uploading');
         store.updateProgress(photo.id, 0);
 
-        const fileName = photo.localPath.split("/").pop() ?? `photo_${photo.id}.jpg`;
+        const fileName = photo.localPath.split('/').pop() ?? `photo_${photo.id}.jpg`;
 
         const remoteId = await uploadPhotoChunked(
           photo.id,
           photo.installationId,
           photo.localPath,
           fileName,
-          "image/jpeg",
-          photo.type ?? "other",
+          'image/jpeg',
+          photo.type ?? 'other',
           undefined,
           (progress) => {
             store.updateProgress(photo.id, progress.percentage);
           }
         );
 
-        await photoRepo.updateUploadStatus(photo.id, "uploaded", remoteId);
+        await photoRepo.updateUploadStatus(photo.id, 'uploaded', remoteId);
         store.markCompleted(photo.id);
         uploaded++;
       } catch (error) {
         const message =
-          error instanceof Error ? error.message : "Foto-Upload fehlgeschlagen";
+          error instanceof Error ? error.message : 'Foto-Upload fehlgeschlagen';
         await photoRepo.markUploadFailed(photo.id, message);
         store.markFailed(photo.id, message);
         errors.push(message);

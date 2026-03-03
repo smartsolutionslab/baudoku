@@ -1,10 +1,10 @@
-using BauDoku.BuildingBlocks.Serialization;
-using BauDoku.Documentation.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Serialization;
+using SmartSolutionsLab.BauDoku.Documentation.Domain;
 using Marten;
 using Marten.Events;
 using Weasel.Core;
 
-namespace BauDoku.Documentation.Infrastructure.Persistence;
+namespace SmartSolutionsLab.BauDoku.Documentation.Infrastructure.Persistence;
 
 public static class MartenConfiguration
 {

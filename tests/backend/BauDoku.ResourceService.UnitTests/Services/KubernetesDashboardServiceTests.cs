@@ -1,17 +1,17 @@
 using Aspire.DashboardService.Proto.V1;
 using AwesomeAssertions;
-using BauDoku.ResourceService.Services;
+using SmartSolutionsLab.BauDoku.ResourceService.Services;
 using Grpc.Core;
 using Grpc.Core.Testing;
 using k8s;
 using k8s.Autorest;
 using k8s.Models;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 
-namespace BauDoku.ResourceService.UnitTests.Services;
+namespace SmartSolutionsLab.BauDoku.ResourceService.UnitTests.Services;
 
 public sealed class KubernetesDashboardServiceTests
 {
@@ -23,20 +23,18 @@ public sealed class KubernetesDashboardServiceTests
         kubernetes.CoreV1.Returns(coreV1);
     }
 
-    private KubernetesDashboardService CreateService(Dictionary<string, string?>? config = null)
+    private KubernetesDashboardService CreateService(KubernetesOptions? kubernetesOptions = null)
     {
-        var configuration = new ConfigurationBuilder()
-            .AddInMemoryCollection(config ?? [])
-            .Build();
+        var options = Options.Create(kubernetesOptions ?? new KubernetesOptions());
 
-        var podWatcher = new PodWatcher(kubernetes, configuration, NullLogger<PodWatcher>.Instance);
-        var podLogStreamer = new PodLogStreamer(kubernetes, configuration, NullLogger<PodLogStreamer>.Instance);
+        var podWatcher = new PodWatcher(kubernetes, options, NullLogger<PodWatcher>.Instance);
+        var podLogStreamer = new PodLogStreamer(kubernetes, options, NullLogger<PodLogStreamer>.Instance);
 
         return new KubernetesDashboardService(
             podWatcher,
             podLogStreamer,
             kubernetes,
-            configuration,
+            options,
             NullLogger<KubernetesDashboardService>.Instance);
     }
 
@@ -57,20 +55,19 @@ public sealed class KubernetesDashboardServiceTests
     }
 
     [Fact]
-    public async Task GetApplicationInformation_ReturnsNameWithNamespace()
+    public async Task GetApplicationInformation_ReturnsConfiguredName()
     {
-        var config = new Dictionary<string, string?> { ["KUBERNETES_NAMESPACE"] = "staging" };
-        var service = CreateService(config);
+        var service = CreateService(new KubernetesOptions { Namespace = "staging", ApplicationName = "BauDoku Staging" });
 
         var response = await service.GetApplicationInformation(
             new ApplicationInformationRequest(),
             CreateTestCallContext());
 
-        response.ApplicationName.Should().Be("BauDoku (staging)");
+        response.ApplicationName.Should().Be("BauDoku Staging");
     }
 
     [Fact]
-    public async Task GetApplicationInformation_DefaultNamespace_UsesDefault()
+    public async Task GetApplicationInformation_DefaultOptions_UsesDefault()
     {
         var service = CreateService();
 
@@ -78,7 +75,7 @@ public sealed class KubernetesDashboardServiceTests
             new ApplicationInformationRequest(),
             CreateTestCallContext());
 
-        response.ApplicationName.Should().Be("BauDoku (default)");
+        response.ApplicationName.Should().Be("BauDoku");
     }
 
     [Fact]

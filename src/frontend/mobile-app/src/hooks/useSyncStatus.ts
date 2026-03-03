@@ -1,5 +1,5 @@
-import { useSyncStore } from "../store";
-import { useSyncStatusQuery } from "./useOfflineData";
+import { useSyncStore } from '../store';
+import { useSyncStatusQuery } from './useSyncQueries';
 
 export function useSyncStatus() {
   const { isOnline } = useSyncStore();

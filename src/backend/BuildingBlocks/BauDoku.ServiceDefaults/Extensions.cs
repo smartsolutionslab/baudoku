@@ -15,24 +15,24 @@ using OpenTelemetry.Trace;
 using Serilog;
 using Serilog.Enrichers.Span;
 using Serilog.Events;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Auth;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Serialization;
 using Serilog.Sinks.OpenTelemetry;
 
-namespace BauDoku.ServiceDefaults;
+namespace SmartSolutionsLab.BauDoku.ServiceDefaults;
 
 public static class Extensions
 {
     public static IHostApplicationBuilder AddServiceDefaults(this IHostApplicationBuilder builder, Action<IHealthChecksBuilder>? configureHealthChecks = null)
     {
-        builder.ConfigureSerilog();
+        builder.ConfigureSerilog()
+               .ConfigureOpenTelemetry()
+               .AddDefaultHealthChecks(configureHealthChecks);
 
-        builder.ConfigureOpenTelemetry();
-
-        builder.AddDefaultHealthChecks(configureHealthChecks);
-
-        builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
-        builder.Services.AddProblemDetails();
-
-        builder.Services.AddServiceDiscovery();
+        builder.Services.AddExceptionHandler<GlobalExceptionHandler>()
+                        .AddProblemDetails()
+                        .AddServiceDiscovery();
 
         builder.Services.ConfigureHttpClientDefaults(http =>
         {
@@ -43,26 +43,35 @@ public static class Extensions
         return builder;
     }
 
+    public static IHostApplicationBuilder AddBauDokuApiDefaults(this IHostApplicationBuilder builder)
+    {
+        builder.Services.ConfigureHttpJsonOptions(options =>
+            options.SerializerOptions.Converters.Add(new ValueObjectJsonConverterFactory()));
+
+        builder.Services.AddOpenApi(options =>
+            options.AddSchemaTransformer<ValueObjectSchemaTransformer>());
+
+        builder.Services.AddBauDokuAuthentication(builder.Configuration, builder.Environment);
+
+        return builder;
+    }
+
     public static WebApplication MapDefaultEndpoints(this WebApplication app)
     {
         app.UseExceptionHandler();
 
-        app.UseSerilogRequestLogging(options =>
-        {
-            options.EnrichDiagnosticContext = static (diagnosticContext, httpContext) =>
-            {
+        app.UseSerilogRequestLogging(options => {
+            options.EnrichDiagnosticContext = static (diagnosticContext, httpContext) => {
                 var remoteIpAddress = httpContext.Connection.RemoteIpAddress;
                 var userAgent = httpContext.Request.Headers.UserAgent;
                 diagnosticContext.Set("ClientIP", remoteIpAddress?.ToString() ?? "-");
                 diagnosticContext.Set("UserAgent", userAgent.ToString());
             };
-            options.GetLevel = static (httpContext, _, _) =>
-            {
+            options.GetLevel = static (httpContext, _, _) => {
                 var request = httpContext.Request;
+                var path =  request.Path;
 
-                return request.Path.StartsWithSegments("/health")
-                    || request.Path.StartsWithSegments("/alive")
-                    || request.Path.StartsWithSegments("/version")
+                return path.StartsWithSegments("/health") || path.StartsWithSegments("/alive") || path.StartsWithSegments("/version")
                     ? LogEventLevel.Verbose
                     : LogEventLevel.Information;
             };
@@ -84,83 +93,82 @@ public static class Extensions
             ?.InformationalVersion ?? "dev";
         var serviceName = assembly?.GetName().Name ?? "unknown";
 
-        app.MapGet("/version", () => new { service = serviceName, version })
-            .ExcludeFromDescription();
+        app.MapGet("/version", () => new { service = serviceName, version }).ExcludeFromDescription();
 
         return app;
     }
 
-    private static IHostApplicationBuilder ConfigureSerilog(this IHostApplicationBuilder builder)
+    extension(IHostApplicationBuilder builder)
     {
-        var serviceName = builder.Environment.ApplicationName;
-
-        var configuration = new LoggerConfiguration()
-            .ReadFrom.Configuration(builder.Configuration)
-            .Enrich.FromLogContext()
-            .Enrich.WithProperty("ServiceName", serviceName)
-            .Enrich.WithMachineName()
-            .Enrich.WithEnvironmentName()
-            .Enrich.WithThreadId()
-            .Enrich.WithSpan();
-
-        if (builder.Environment.IsDevelopment())
+        private IHostApplicationBuilder ConfigureSerilog()
         {
-            configuration.WriteTo.Console();
+            var serviceName = builder.Environment.ApplicationName;
+
+            var configuration = new LoggerConfiguration()
+                .ReadFrom.Configuration(builder.Configuration)
+                .Enrich.FromLogContext()
+                .Enrich.WithProperty("ServiceName", serviceName)
+                .Enrich.WithMachineName()
+                .Enrich.WithEnvironmentName()
+                .Enrich.WithThreadId()
+                .Enrich.WithSpan();
+
+            if (builder.Environment.IsDevelopment())
+            {
+                configuration.WriteTo.Console();
+            }
+            else
+            {
+                configuration.WriteTo.Console(new Serilog.Formatting.Compact.CompactJsonFormatter());
+            }
+
+            if (builder.Configuration.TryGetOtlpExporterEndpoint(out var otlpEndpoint))
+            {
+                configuration.WriteTo.OpenTelemetry(options => {
+                    options.Endpoint = otlpEndpoint;
+                    options.Protocol = OtlpProtocol.Grpc;
+                    options.ResourceAttributes = new Dictionary<string, object>
+                    {
+                        ["service.name"] = serviceName
+                    };
+                });
+            }
+
+            Log.Logger = configuration.CreateLogger();
+            builder.Services.AddSerilog();
+
+            return builder;
         }
-        else
+
+        private IHostApplicationBuilder ConfigureOpenTelemetry()
         {
-            configuration.WriteTo.Console(new Serilog.Formatting.Compact.CompactJsonFormatter());
+            builder.Services.AddOpenTelemetry()
+                .WithMetrics(metrics => {
+                    metrics.AddAspNetCoreInstrumentation()
+                        .AddHttpClientInstrumentation()
+                        .AddRuntimeInstrumentation()
+                        .AddMeter("BauDoku.Projects", "BauDoku.Documentation", "BauDoku.Sync");
+                })
+                .WithTracing(tracing => {
+                    if (builder.Environment.IsDevelopment())
+                    {
+                        tracing.SetSampler<AlwaysOnSampler>();
+                    }
+                    else
+                    {
+                        tracing.SetSampler(new TraceIdRatioBasedSampler(0.1));
+                    }
+
+                    tracing.AddSource(builder.Environment.ApplicationName)
+                        .AddAspNetCoreInstrumentation()
+                        .AddHttpClientInstrumentation()
+                        .AddEntityFrameworkCoreInstrumentation();
+                });
+
+            AddOpenTelemetryExporters(builder);
+
+            return builder;
         }
-
-        if (builder.Configuration.TryGetOtlpExporterEndpoint(out var otlpEndpoint))
-        {
-            configuration.WriteTo.OpenTelemetry(options =>
-            {
-                options.Endpoint = otlpEndpoint;
-                options.Protocol = OtlpProtocol.Grpc;
-                options.ResourceAttributes = new Dictionary<string, object>
-                {
-                    ["service.name"] = serviceName
-                };
-            });
-        }
-
-        Log.Logger = configuration.CreateLogger();
-        builder.Services.AddSerilog();
-
-        return builder;
-    }
-
-    private static IHostApplicationBuilder ConfigureOpenTelemetry(this IHostApplicationBuilder builder)
-    {
-        builder.Services.AddOpenTelemetry()
-            .WithMetrics(metrics =>
-            {
-                metrics.AddAspNetCoreInstrumentation()
-                    .AddHttpClientInstrumentation()
-                    .AddRuntimeInstrumentation()
-                    .AddMeter("BauDoku.Projects", "BauDoku.Documentation", "BauDoku.Sync");
-            })
-            .WithTracing(tracing =>
-            {
-                if (builder.Environment.IsDevelopment())
-                {
-                    tracing.SetSampler<AlwaysOnSampler>();
-                }
-                else
-                {
-                    tracing.SetSampler(new TraceIdRatioBasedSampler(0.1));
-                }
-
-                tracing.AddSource(builder.Environment.ApplicationName)
-                    .AddAspNetCoreInstrumentation()
-                    .AddHttpClientInstrumentation()
-                    .AddEntityFrameworkCoreInstrumentation();
-            });
-
-        AddOpenTelemetryExporters(builder);
-
-        return builder;
     }
 
     private static void AddOpenTelemetryExporters(IHostApplicationBuilder builder)
@@ -173,22 +181,23 @@ public static class Extensions
 
     private static IHostApplicationBuilder AddDefaultHealthChecks(this IHostApplicationBuilder builder, Action<IHealthChecksBuilder>? configureHealthChecks)
     {
-        var healthChecks = builder.Services.AddHealthChecks().AddCheck("self", () => HealthCheckResult.Healthy(), ["live"]);
+        var healthChecks = builder.Services.AddHealthChecks()
+            .AddCheck("self", () => HealthCheckResult.Healthy(), ["live"]);
 
         configureHealthChecks?.Invoke(healthChecks);
 
         var rabbitConnection = builder.Configuration.GetConnectionString(ConnectionStringNames.RabbitMq);
-        if (!string.IsNullOrEmpty(rabbitConnection))
+        if (rabbitConnection.HasValue())
         {
-            var rabbitUri = new Uri(rabbitConnection);
+            var rabbitUri = new Uri(rabbitConnection!);
             var lazyConnection = new Lazy<Task<IConnection>>(() => new ConnectionFactory { Uri = rabbitUri }.CreateConnectionAsync());
             healthChecks.AddRabbitMQ(sp => lazyConnection.Value, name: "rabbitmq", failureStatus: HealthStatus.Degraded, tags: ["ready"]);
         }
 
         var redisConnection = builder.Configuration.GetConnectionString(ConnectionStringNames.Redis);
-        if (!string.IsNullOrEmpty(redisConnection))
+        if (redisConnection.HasValue())
         {
-            healthChecks.AddRedis(redisConnection, name: "redis", failureStatus: HealthStatus.Degraded, tags: ["ready"]);
+            healthChecks.AddRedis(redisConnection!, name: "redis", failureStatus: HealthStatus.Degraded, tags: ["ready"]);
         }
 
         return builder;
@@ -197,9 +206,9 @@ public static class Extensions
     private static bool TryGetOtlpExporterEndpoint(this IConfiguration configuration, out string endpoint)
     {
         var value = configuration["OTEL_EXPORTER_OTLP_ENDPOINT"];
-        if (!string.IsNullOrWhiteSpace(value))
+        if (value.HasValue())
         {
-            endpoint = value;
+            endpoint = value!;
             return true;
         }
 
@@ -209,14 +218,14 @@ public static class Extensions
 
     private static Task WriteHealthCheckResponse(HttpContext context, HealthReport report)
     {
-        context.Response.ContentType = "application/json";
+        var response = context.Response;
+        response.ContentType = "application/json";
 
         var result = new
         {
             status = report.Status.ToString(),
             totalDuration = report.TotalDuration.TotalMilliseconds,
-            entries = report.Entries.Select(e => new
-            {
+            entries = report.Entries.Select(e => new {
                 name = e.Key,
                 status = e.Value.Status.ToString(),
                 duration = e.Value.Duration.TotalMilliseconds,
@@ -226,7 +235,7 @@ public static class Extensions
             })
         };
 
-        return context.Response.WriteAsJsonAsync(result, new JsonSerializerOptions
+        return response.WriteAsJsonAsync(result, new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull

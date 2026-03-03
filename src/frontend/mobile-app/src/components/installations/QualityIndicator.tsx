@@ -1,11 +1,11 @@
-import { View, Text, StyleSheet } from "react-native";
-import { FontAwesome } from "@expo/vector-icons";
+import { View, Text, StyleSheet } from 'react-native';
+import { FontAwesome } from '@expo/vector-icons';
 import {
   calculateGpsQuality,
   gpsSourceLabels,
   type GpsQualityResult,
-} from "../../utils";
-import { Colors, Spacing, FontSize, FontFamily } from "../../styles/tokens";
+} from '../../utils';
+import { Colors, Spacing, FontSize, FontFamily } from '../../styles/tokens';
 
 type QualityIndicatorProps = {
   horizontalAccuracy: number;
@@ -49,7 +49,7 @@ export function QualityIndicator({
         {satelliteCount != null && (
           <View style={styles.detailItem}>
             <FontAwesome
-              name="signal"
+              name='signal'
               size={11}
               color={Colors.textTertiary}
               style={styles.detailIcon}
@@ -60,7 +60,7 @@ export function QualityIndicator({
         {gpsSource && (
           <View style={styles.detailItem}>
             <FontAwesome
-              name="location-arrow"
+              name='location-arrow'
               size={11}
               color={Colors.textTertiary}
               style={styles.detailIcon}
@@ -77,10 +77,10 @@ export function QualityIndicator({
         )}
       </View>
 
-      {quality.grade === "D" && (
+      {quality.grade === 'D' && (
         <View style={styles.warningBanner}>
           <FontAwesome
-            name="exclamation-triangle"
+            name='exclamation-triangle'
             size={12}
             color={Colors.danger}
             style={styles.warningIcon}
@@ -107,25 +107,25 @@ const styles = StyleSheet.create({
     gap: Spacing.xs,
   },
   topRow: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: Spacing.sm,
   },
   gradeBadge: {
     width: 24,
     height: 24,
     borderRadius: 6,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   gradeText: {
     color: Colors.white,
     fontSize: FontSize.footnote,
-    fontWeight: "700",
+    fontWeight: '700',
   },
   qualityLabel: {
     fontSize: FontSize.body,
-    fontWeight: "600",
+    fontWeight: '600',
     flex: 1,
   },
   accuracyText: {
@@ -134,13 +134,13 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.mono,
   },
   detailRow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: Spacing.md,
   },
   detailItem: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   detailIcon: {
     marginRight: Spacing.xs,
@@ -150,8 +150,8 @@ const styles = StyleSheet.create({
     color: Colors.textTertiary,
   },
   warningBanner: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: Colors.gpsBgD,
     paddingHorizontal: Spacing.sm,
     paddingVertical: Spacing.xs,

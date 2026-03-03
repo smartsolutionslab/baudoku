@@ -1,7 +1,7 @@
-import { useEffect, useRef } from "react";
-import { Animated, Text, StyleSheet } from "react-native";
-import { Colors, Spacing, FontSize } from "../../styles/tokens";
-import { useSyncStatus } from "../../hooks";
+import { useEffect, useRef } from 'react';
+import { Animated, Text, StyleSheet } from 'react-native';
+import { Colors, Spacing, FontSize } from '../../styles/tokens';
+import { useSyncStatus } from '../../hooks';
 
 export function OfflineBanner() {
   const { isOnline } = useSyncStatus();
@@ -16,7 +16,7 @@ export function OfflineBanner() {
   }, [isOnline, translateY]);
 
   return (
-    <Animated.View style={[styles.banner, { transform: [{ translateY }] }]} pointerEvents={isOnline ? "none" : "auto"}>
+    <Animated.View style={[styles.banner, { transform: [{ translateY }] }]} pointerEvents={isOnline ? 'none' : 'auto'}>
       <Text style={styles.text}>
         Keine Internetverbindung — Daten werden lokal gespeichert
       </Text>
@@ -26,7 +26,7 @@ export function OfflineBanner() {
 
 const styles = StyleSheet.create({
   banner: {
-    position: "absolute",
+    position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
   text: {
     color: Colors.white,
     fontSize: FontSize.caption,
-    textAlign: "center",
-    fontWeight: "500",
+    textAlign: 'center',
+    fontWeight: '500',
   },
 });

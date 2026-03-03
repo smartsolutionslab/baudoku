@@ -1,15 +1,15 @@
-import { Text, TouchableOpacity, StyleSheet } from "react-native";
-import { BottomSheet } from "../common";
-import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
+import { Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { BottomSheet } from '../common';
+import { Colors, Spacing, FontSize, Radius } from '../../styles/tokens';
 
 const PHOTO_TYPES = [
-  { value: "before", label: "Vorher" },
-  { value: "after", label: "Nachher" },
-  { value: "detail", label: "Detail" },
-  { value: "overview", label: "Übersicht" },
+  { value: 'before', label: 'Vorher' },
+  { value: 'after', label: 'Nachher' },
+  { value: 'detail', label: 'Detail' },
+  { value: 'overview', label: 'Übersicht' },
 ] as const;
 
-export type PhotoType = (typeof PHOTO_TYPES)[number]["value"];
+export type PhotoType = (typeof PHOTO_TYPES)[number]['value'];
 
 type PhotoTypeSheetProps = {
   visible: boolean;
@@ -23,7 +23,7 @@ export function PhotoTypeSheet({
   onClose,
 }: PhotoTypeSheetProps) {
   return (
-    <BottomSheet visible={visible} onClose={onClose} title="Foto-Typ wählen">
+    <BottomSheet visible={visible} onClose={onClose} title='Foto-Typ wählen'>
       {PHOTO_TYPES.map((pt) => (
         <TouchableOpacity
           key={pt.value}
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
     color: Colors.textPrimary,
   },
   cancelButton: {
-    alignItems: "center",
+    alignItems: 'center',
     paddingVertical: 14,
     marginTop: Spacing.lg,
     backgroundColor: Colors.background,
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
   },
   cancelText: {
     fontSize: FontSize.callout,
-    fontWeight: "600",
+    fontWeight: '600',
     color: Colors.textTertiary,
   },
 });

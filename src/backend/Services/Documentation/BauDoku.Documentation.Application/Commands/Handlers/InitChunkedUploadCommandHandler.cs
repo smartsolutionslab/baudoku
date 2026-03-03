@@ -1,29 +1,32 @@
-using BauDoku.BuildingBlocks.Application.Commands;
-using BauDoku.Documentation.Application.Contracts;
-using BauDoku.Documentation.Application.Queries.Dtos;
-using BauDoku.Documentation.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Commands;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.Documentation.Application.Contracts;
+using SmartSolutionsLab.BauDoku.Documentation.ReadModel;
+using SmartSolutionsLab.BauDoku.Documentation.Domain;
 
-namespace BauDoku.Documentation.Application.Commands.Handlers;
+namespace SmartSolutionsLab.BauDoku.Documentation.Application.Commands.Handlers;
 
 public sealed class InitChunkedUploadCommandHandler(IInstallationRepository installations, IChunkedUploadStorage chunkedUploadStorage)
     : ICommandHandler<InitChunkedUploadCommand, UploadSessionIdentifier>
 {
     public async Task<UploadSessionIdentifier> Handle(InitChunkedUploadCommand command, CancellationToken cancellationToken = default)
     {
-        _ = await installations.GetByIdAsync(command.InstallationId, cancellationToken);
+        var (installationId, fileName, contentType, totalSize, totalChunks, photoType, caption, description, position) = command;
+
+        _ = await installations.With(installationId, cancellationToken);
 
         var sessionIdentifier = UploadSessionIdentifier.New();
         var session = new ChunkedUploadSession(
             SessionId: sessionIdentifier.Value,
-            InstallationId: command.InstallationId.Value,
-            FileName: command.FileName.Value,
-            ContentType: command.ContentType.Value,
-            TotalSize: command.TotalSize.Value,
-            TotalChunks: command.TotalChunks.Value,
-            PhotoType: command.PhotoType.Value,
-            Caption: command.Caption?.Value,
-            Description: command.Description?.Value,
-            Position: command.Position?.ToGpsDto(),
+            InstallationId: installationId.Value,
+            FileName: fileName.Value,
+            ContentType: contentType.Value,
+            TotalSize: totalSize.Value,
+            TotalChunks: totalChunks.Value,
+            PhotoType: photoType.Value,
+            Caption: caption?.Value,
+            Description: description?.Value,
+            Position: position?.ToGpsDto(),
             CreatedAt: DateTime.UtcNow);
 
         await chunkedUploadStorage.InitSessionAsync(session, cancellationToken);

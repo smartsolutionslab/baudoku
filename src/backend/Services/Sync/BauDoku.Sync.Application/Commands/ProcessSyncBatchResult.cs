@@ -1,7 +1,7 @@
-using BauDoku.Sync.Application.Queries.Dtos;
-using BauDoku.Sync.Domain;
+using SmartSolutionsLab.BauDoku.Sync.ReadModel;
+using SmartSolutionsLab.BauDoku.Sync.Domain;
 
-namespace BauDoku.Sync.Application.Commands;
+namespace SmartSolutionsLab.BauDoku.Sync.Application.Commands;
 
 public sealed record ProcessSyncBatchResult(
     SyncBatchIdentifier BatchId,

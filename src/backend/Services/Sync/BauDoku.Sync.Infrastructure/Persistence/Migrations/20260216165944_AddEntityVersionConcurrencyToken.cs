@@ -1,8 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace BauDoku.Sync.Infrastructure.Persistence.Migrations
+namespace SmartSolutionsLab.BauDoku.Sync.Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
     public partial class AddEntityVersionConcurrencyToken : Migration

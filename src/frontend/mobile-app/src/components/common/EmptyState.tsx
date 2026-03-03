@@ -1,10 +1,10 @@
-import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
+import React from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { Colors, Spacing, FontSize, Radius } from '../../styles/tokens';
 
 type EmptyStateProps = {
-  icon?: React.ComponentProps<typeof FontAwesome>["name"];
+  icon?: React.ComponentProps<typeof FontAwesome>['name'];
   title: string;
   subtitle?: string;
   actionLabel?: string;
@@ -31,8 +31,8 @@ export function EmptyState({ icon, title, subtitle, actionLabel, onAction }: Emp
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     paddingHorizontal: Spacing.xl,
     paddingTop: 40,
   },
@@ -41,15 +41,15 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: FontSize.headline,
-    fontWeight: "600",
+    fontWeight: '600',
     color: Colors.textPrimary,
-    textAlign: "center",
+    textAlign: 'center',
     marginBottom: Spacing.sm,
   },
   subtitle: {
     fontSize: FontSize.body,
     color: Colors.textTertiary,
-    textAlign: "center",
+    textAlign: 'center',
     marginBottom: Spacing.lg,
   },
   button: {
@@ -61,6 +61,6 @@ const styles = StyleSheet.create({
   buttonText: {
     color: Colors.white,
     fontSize: FontSize.body,
-    fontWeight: "600",
+    fontWeight: '600',
   },
 });

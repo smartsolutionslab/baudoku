@@ -1,9 +1,8 @@
-using BauDoku.BuildingBlocks.Application.Queries;
-using BauDoku.Sync.Application.Contracts;
-using BauDoku.Sync.Application.Queries;
-using BauDoku.Sync.Application.Queries.Dtos;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Queries;
+using SmartSolutionsLab.BauDoku.Sync.Application.Queries;
+using SmartSolutionsLab.BauDoku.Sync.ReadModel;
 
-namespace BauDoku.Sync.Application.Queries.Handlers;
+namespace SmartSolutionsLab.BauDoku.Sync.Application.Queries.Handlers;
 
 public sealed class GetConflictsQueryHandler(ISyncBatchReadRepository syncBatches)
     : IQueryHandler<GetConflictsQuery, List<ConflictDto>>

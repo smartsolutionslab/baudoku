@@ -1,47 +1,47 @@
 using AwesomeAssertions;
-using BauDoku.Documentation.Application.Queries;
-using BauDoku.Documentation.Application.Queries.Handlers;
-using BauDoku.Documentation.Domain;
+using SmartSolutionsLab.BauDoku.Documentation.Application.Queries;
+using SmartSolutionsLab.BauDoku.Documentation.ReadModel;
+using SmartSolutionsLab.BauDoku.Documentation.Application.Queries.Handlers;
+using SmartSolutionsLab.BauDoku.Documentation.Domain;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 
-namespace BauDoku.Documentation.UnitTests.Application.Queries;
+namespace SmartSolutionsLab.BauDoku.Documentation.UnitTests.Application.Queries;
 
 public sealed class GetInstallationQueryHandlerTests
 {
-    private readonly IInstallationRepository installations;
+    private readonly IInstallationReadRepository installations;
     private readonly GetInstallationQueryHandler handler;
 
     public GetInstallationQueryHandlerTests()
     {
-        installations = Substitute.For<IInstallationRepository>();
+        installations = Substitute.For<IInstallationReadRepository>();
         handler = new GetInstallationQueryHandler(installations);
     }
 
     [Fact]
     public async Task Handle_WhenInstallationExists_ShouldReturnDtoWithPhotosAndMeasurements()
     {
-        var installation = Installation.Create(
-            InstallationIdentifier.New(),
-            ProjectIdentifier.New(),
+        var installationId = InstallationIdentifier.New();
+        var dto = new InstallationDto(
+            installationId.Value,
+            Guid.NewGuid(),
             null,
-            InstallationType.CableTray,
-            GpsPosition.Create(Latitude.From(48.137154), Longitude.From(11.576124), Altitude.From(520.0), HorizontalAccuracy.From(3.5), GpsSource.From("gps")),
-            Description.From("Testbeschreibung"));
-
-        installation.AddPhoto(
-            PhotoIdentifier.New(), FileName.From("photo.jpg"), BlobUrl.From("https://blob/photo.jpg"), ContentType.From("image/jpeg"), FileSize.From(1024),
-            PhotoType.Before, Caption.From("Vorher"));
-
-        installation.RecordMeasurement(
-            MeasurementIdentifier.New(),
-            MeasurementType.InsulationResistance,
-            MeasurementValue.Create(500.0, MeasurementUnit.From("MΩ"), 1.0, null));
+            "cable_tray",
+            "in_progress",
+            new GpsPositionDto(48.137154, 11.576124, 520.0, 3.5, "gps", null, null, null, null, null),
+            "A",
+            "Testbeschreibung",
+            null, null, null, null, null, null, null, null,
+            DateTime.UtcNow,
+            null,
+            [new PhotoDto(Guid.NewGuid(), installationId.Value, "photo.jpg", "https://blob/photo.jpg", "image/jpeg", 1024, "before", "Vorher", null, null, DateTime.UtcNow)],
+            [new MeasurementDto(Guid.NewGuid(), installationId.Value, "insulation_resistance", 500.0, "MΩ", 1.0, null, "pass", null, DateTime.UtcNow)]);
 
         installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
-            .Returns(installation);
+            .Returns(dto);
 
-        var result = await handler.Handle(new GetInstallationQuery(installation.Id), CancellationToken.None);
+        var result = await handler.Handle(new GetInstallationQuery(installationId));
 
         result.Should().NotBeNull();
         result.Type.Should().Be("cable_tray");
@@ -59,7 +59,7 @@ public sealed class GetInstallationQueryHandlerTests
         installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Throws(new KeyNotFoundException());
 
-        var act = () => handler.Handle(new GetInstallationQuery(InstallationIdentifier.New()), CancellationToken.None);
+        var act = () => handler.Handle(new GetInstallationQuery(InstallationIdentifier.New()));
 
         await act.Should().ThrowAsync<KeyNotFoundException>();
     }
@@ -67,17 +67,25 @@ public sealed class GetInstallationQueryHandlerTests
     [Fact]
     public async Task Handle_ShouldMapAllGpsFields()
     {
-        var installation = Installation.Create(
-            InstallationIdentifier.New(),
-            ProjectIdentifier.New(),
-            ZoneIdentifier.New(),
-            InstallationType.JunctionBox,
-            GpsPosition.Create(Latitude.From(48.0), Longitude.From(11.0), Altitude.From(500.0), HorizontalAccuracy.From(2.5), GpsSource.From("dgnss"), CorrectionService.From("SAPOS-EPS"), RtkFixStatus.From("fix"), SatelliteCount.From(12), Hdop.From(0.8), CorrectionAge.From(1.5)));
+        var installationId = InstallationIdentifier.New();
+        var dto = new InstallationDto(
+            installationId.Value,
+            Guid.NewGuid(),
+            Guid.NewGuid(),
+            "junction_box",
+            "in_progress",
+            new GpsPositionDto(48.0, 11.0, 500.0, 2.5, "dgnss", "SAPOS-EPS", "fix", 12, 0.8, 1.5),
+            "A",
+            null, null, null, null, null, null, null, null, null,
+            DateTime.UtcNow,
+            null,
+            [],
+            []);
 
         installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
-            .Returns(installation);
+            .Returns(dto);
 
-        var result = await handler.Handle(new GetInstallationQuery(installation.Id), CancellationToken.None);
+        var result = await handler.Handle(new GetInstallationQuery(installationId));
 
         result.Should().NotBeNull();
         result.Position.GpsSource.Should().Be("dgnss");

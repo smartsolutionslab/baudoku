@@ -1,9 +1,9 @@
 using AwesomeAssertions;
-using BauDoku.Sync.Domain;
-using BauDoku.Sync.IntegrationTests.Fixtures;
+using SmartSolutionsLab.BauDoku.Sync.Domain;
+using SmartSolutionsLab.BauDoku.Sync.IntegrationTests.Fixtures;
 using Microsoft.EntityFrameworkCore;
 
-namespace BauDoku.Sync.IntegrationTests;
+namespace SmartSolutionsLab.BauDoku.Sync.IntegrationTests;
 
 [Collection(PostgreSqlCollection.Name)]
 public sealed class ConflictPersistenceTests(PostgreSqlFixture fixture)
@@ -12,7 +12,7 @@ public sealed class ConflictPersistenceTests(PostgreSqlFixture fixture)
     {
         var batch = SyncBatch.Create(SyncBatchIdentifier.New(), DeviceIdentifier.From("device-conflict-test"), DateTime.UtcNow);
         conflictId = ConflictRecordIdentifier.New();
-        var entityRef = EntityReference.Create(EntityType.Project, Guid.NewGuid());
+        var entityRef = EntityReference.Create(EntityType.Project, EntityIdentifier.New());
 
         batch.AddConflict(
             conflictId,
@@ -43,7 +43,7 @@ public sealed class ConflictPersistenceTests(PostgreSqlFixture fixture)
                 .FirstOrDefaultAsync(b => b.Id == batch.Id);
 
             loaded.Should().NotBeNull();
-            var conflict = loaded!.Conflicts.First(c => c.Id == conflictId);
+            var conflict = loaded.Conflicts.First(c => c.Id == conflictId);
             conflict.ClientPayload.Value.Should().Be("""{"client":"data"}""");
             conflict.ServerPayload.Value.Should().Be("""{"server":"data"}""");
             conflict.ClientVersion.Value.Should().Be(1);
@@ -95,7 +95,7 @@ public sealed class ConflictPersistenceTests(PostgreSqlFixture fixture)
 
         batch.AddConflict(
             ConflictRecordIdentifier.New(),
-            EntityReference.Create(EntityType.Installation, Guid.NewGuid()),
+            EntityReference.Create(EntityType.Installation, EntityIdentifier.New()),
             DeltaPayload.From("""{"c":"1"}"""),
             DeltaPayload.From("""{"s":"2"}"""),
             SyncVersion.From(0),
@@ -128,7 +128,7 @@ public sealed class ConflictPersistenceTests(PostgreSqlFixture fixture)
         var conflictId2 = ConflictRecordIdentifier.New();
         batch.AddConflict(
             conflictId2,
-            EntityReference.Create(EntityType.Zone, Guid.NewGuid()),
+            EntityReference.Create(EntityType.Zone, EntityIdentifier.New()),
             DeltaPayload.From("""{"c":"x"}"""),
             DeltaPayload.From("""{"s":"y"}"""),
             SyncVersion.From(0),

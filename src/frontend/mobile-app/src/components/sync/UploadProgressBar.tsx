@@ -1,7 +1,7 @@
-import { useEffect, useRef } from "react";
-import { View, Text, StyleSheet, Animated } from "react-native";
-import { useUploadStore } from "../../store";
-import { Colors, Spacing, FontSize, Radius, Shadows } from "../../styles/tokens";
+import { useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, Animated } from 'react-native';
+import { useUploadStore } from '../../store';
+import { Colors, Spacing, FontSize, Radius, Shadows } from '../../styles/tokens';
 
 export function UploadProgressBar() {
   const queue = useUploadStore((s) => s.queue);
@@ -9,9 +9,9 @@ export function UploadProgressBar() {
   const opacity = useRef(new Animated.Value(0)).current;
 
   const total = queue.length;
-  const completed = queue.filter((i) => i.status === "completed").length;
-  const failed = queue.filter((i) => i.status === "failed").length;
-  const uploading = queue.filter((i) => i.status === "uploading" || i.status === "queued").length;
+  const completed = queue.filter((i) => i.status === 'completed').length;
+  const failed = queue.filter((i) => i.status === 'failed').length;
+  const uploading = queue.filter((i) => i.status === 'uploading' || i.status === 'queued').length;
   const allDone = total > 0 && uploading === 0;
   const hasActive = uploading > 0;
 
@@ -48,7 +48,7 @@ export function UploadProgressBar() {
   if (total === 0) return null;
 
   const statusText = allDone
-    ? `${completed} Foto${completed !== 1 ? "s" : ""} hochgeladen${failed > 0 ? `, ${failed} fehlgeschlagen` : ""}`
+    ? `${completed} Foto${completed !== 1 ? 's' : ''} hochgeladen${failed > 0 ? `, ${failed} fehlgeschlagen` : ''}`
     : `Lade ${completed + 1}/${total} Fotos hoch...`;
 
   return (
@@ -75,7 +75,7 @@ export function UploadProgressBar() {
 
 const styles = StyleSheet.create({
   container: {
-    position: "absolute",
+    position: 'absolute',
     bottom: Spacing.lg,
     left: Spacing.lg,
     right: Spacing.lg,
@@ -93,10 +93,10 @@ const styles = StyleSheet.create({
     height: 4,
     backgroundColor: Colors.separator,
     borderRadius: 2,
-    overflow: "hidden",
+    overflow: 'hidden',
   },
   fill: {
-    height: "100%",
+    height: '100%',
     borderRadius: 2,
   },
 });

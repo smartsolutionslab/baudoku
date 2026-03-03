@@ -1,7 +1,7 @@
-import { View, Text, TouchableOpacity, Share, StyleSheet } from "react-native";
-import QRCode from "react-native-qrcode-svg";
-import { BottomSheet, statusLabels } from "../common";
-import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
+import { View, Text, TouchableOpacity, Share, StyleSheet } from 'react-native';
+import QRCode from 'react-native-qrcode-svg';
+import { BottomSheet, statusLabels } from '../common';
+import { Colors, Spacing, FontSize, Radius } from '../../styles/tokens';
 
 type ZoneQrSheetProps = {
   visible: boolean;
@@ -38,7 +38,7 @@ export function ZoneQrSheet({
             size={200}
             backgroundColor={Colors.white}
             color={Colors.black}
-            ecl="M"
+            ecl='M'
           />
         </View>
 
@@ -60,11 +60,11 @@ export function ZoneQrSheet({
 
 const styles = StyleSheet.create({
   centered: {
-    alignItems: "center",
+    alignItems: 'center',
   },
   title: {
     fontSize: FontSize.headline,
-    fontWeight: "700",
+    fontWeight: '700',
     color: Colors.textPrimary,
   },
   subtitle: {
@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
   hint: {
     fontSize: FontSize.caption,
     color: Colors.textTertiary,
-    textAlign: "center",
+    textAlign: 'center',
     marginBottom: Spacing.lg,
   },
   shareBtn: {
@@ -91,12 +91,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.xl,
     borderRadius: Radius.md,
     marginBottom: Spacing.md,
-    width: "100%",
-    alignItems: "center",
+    width: '100%',
+    alignItems: 'center',
   },
   shareBtnText: {
     color: Colors.white,
-    fontWeight: "600",
+    fontWeight: '600',
     fontSize: FontSize.body,
   },
   closeBtn: {

@@ -1,4 +1,4 @@
-namespace BauDoku.Documentation.Api.Endpoints;
+namespace SmartSolutionsLab.BauDoku.Documentation.Api.Endpoints;
 
 public sealed record AddPhotoRequest(
     string? PhotoType,

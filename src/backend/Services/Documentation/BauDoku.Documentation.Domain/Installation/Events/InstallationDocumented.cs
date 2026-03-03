@@ -1,6 +1,6 @@
-using BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
 
-namespace BauDoku.Documentation.Domain;
+namespace SmartSolutionsLab.BauDoku.Documentation.Domain;
 
 public sealed record InstallationDocumented(
     InstallationIdentifier InstallationId,
@@ -8,17 +8,17 @@ public sealed record InstallationDocumented(
     ZoneIdentifier? ZoneId,
     InstallationType Type,
     InstallationStatus Status,
-    Latitude Latitude,
-    Longitude Longitude,
+    Latitude? Latitude,
+    Longitude? Longitude,
     Altitude? Altitude,
-    HorizontalAccuracy HorizontalAccuracy,
-    GpsSource GpsSource,
+    HorizontalAccuracy? HorizontalAccuracy,
+    GpsSource? GpsSource,
     CorrectionService? CorrectionService,
     RtkFixStatus? RtkFixStatus,
     SatelliteCount? SatelliteCount,
     Hdop? Hdop,
     CorrectionAge? CorrectionAge,
-    GpsQualityGrade QualityGrade,
+    GpsQualityGrade? QualityGrade,
     Description? Description,
     CableType? CableType,
     CrossSection? CrossSection,

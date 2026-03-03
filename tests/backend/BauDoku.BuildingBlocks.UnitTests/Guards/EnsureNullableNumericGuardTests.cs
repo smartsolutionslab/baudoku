@@ -1,7 +1,7 @@
 using AwesomeAssertions;
-using BauDoku.BuildingBlocks.Guards;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Guards;
 
-namespace BauDoku.BuildingBlocks.UnitTests.Guards;
+namespace SmartSolutionsLab.BauDoku.BuildingBlocks.UnitTests.Guards;
 
 public sealed class EnsureNullableNumericGuardTests
 {

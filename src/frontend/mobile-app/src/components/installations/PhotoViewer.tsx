@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -10,14 +10,14 @@ import {
   SafeAreaView,
   KeyboardAvoidingView,
   Platform,
-} from "react-native";
-import { FontAwesome } from "@expo/vector-icons";
-import type { Photo } from "../../db/repositories/types";
-import type { PhotoId } from "../../types/branded";
-import { StatusBadge } from "../common";
-import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
-import { formatDateTime } from "../../utils";
-import { PHOTO_TYPE_LABELS } from "../../constants";
+} from 'react-native';
+import { FontAwesome } from '@expo/vector-icons';
+import type { Photo } from '../../db/repositories/types';
+import type { PhotoId } from '../../types/branded';
+import { StatusBadge } from '../common';
+import { Colors, Spacing, FontSize, Radius } from '../../styles/tokens';
+import { formatDateTime } from '../../utils';
+import { PHOTO_TYPE_LABELS } from '../../constants';
 
 type PhotoViewerProps = {
   photo: Photo | null;
@@ -34,12 +34,12 @@ export function PhotoViewer({
   onDelete,
   onSaveAnnotation,
 }: PhotoViewerProps) {
-  const [annotation, setAnnotation] = useState("");
+  const [annotation, setAnnotation] = useState('');
   const [dirty, setDirty] = useState(false);
 
   useEffect(() => {
     if (photo) {
-      setAnnotation(photo.annotations ?? "");
+      setAnnotation(photo.annotations ?? '');
       setDirty(false);
     }
   }, [photo]);
@@ -52,28 +52,28 @@ export function PhotoViewer({
   };
 
   return (
-    <Modal visible={visible} animationType="fade" statusBarTranslucent>
+    <Modal visible={visible} animationType='fade' statusBarTranslucent>
       <SafeAreaView style={styles.container}>
         <KeyboardAvoidingView
           style={styles.flex}
-          behavior={Platform.OS === "ios" ? "padding" : undefined}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         >
           <View style={styles.header}>
             <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-              <FontAwesome name="close" size={22} color={Colors.white} />
+              <FontAwesome name='close' size={22} color={Colors.white} />
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => onDelete(photo)}
               style={styles.deleteButton}
             >
-              <FontAwesome name="trash" size={20} color={Colors.danger} />
+              <FontAwesome name='trash' size={20} color={Colors.danger} />
             </TouchableOpacity>
           </View>
 
           <Image
             source={{ uri: photo.localPath }}
             style={styles.image}
-            resizeMode="contain"
+            resizeMode='contain'
           />
 
           <View style={styles.footer}>
@@ -95,7 +95,7 @@ export function PhotoViewer({
                   setAnnotation(text);
                   setDirty(true);
                 }}
-                placeholder="Notiz hinzufügen..."
+                placeholder='Notiz hinzufügen...'
                 placeholderTextColor={Colors.textTertiary}
                 multiline
                 maxLength={500}
@@ -105,7 +105,7 @@ export function PhotoViewer({
                   style={styles.saveBtn}
                   onPress={handleSave}
                 >
-                  <FontAwesome name="check" size={16} color={Colors.white} />
+                  <FontAwesome name='check' size={16} color={Colors.white} />
                 </TouchableOpacity>
               )}
             </View>
@@ -125,9 +125,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.md,
   },
@@ -145,9 +145,9 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.md,
   },
   footerTop: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: Spacing.sm,
   },
   date: {
@@ -155,13 +155,13 @@ const styles = StyleSheet.create({
     color: Colors.textQuaternary,
   },
   annotationRow: {
-    flexDirection: "row",
-    alignItems: "flex-end",
+    flexDirection: 'row',
+    alignItems: 'flex-end',
     gap: Spacing.sm,
   },
   annotationInput: {
     flex: 1,
-    backgroundColor: "rgba(255,255,255,0.1)",
+    backgroundColor: 'rgba(255,255,255,0.1)',
     borderRadius: Radius.sm,
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

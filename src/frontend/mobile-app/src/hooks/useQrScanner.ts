@@ -1,10 +1,10 @@
-import { useState, useCallback, useRef } from "react";
-import { decodeZoneQr } from "../utils";
-import type { BarcodeScanningResult } from "expo-camera";
-import type { ProjectId, ZoneId } from "../types/branded";
+import { useState, useCallback, useRef } from 'react';
+import { decodeZoneQr } from '../utils';
+import type { BarcodeScanningResult } from 'expo-camera';
+import type { ProjectId, ZoneId } from '../types/branded';
 
 export type QrScanResult = {
-  type: "zone";
+  type: 'zone';
   projectId: ProjectId;
   zoneId: ZoneId;
 };
@@ -31,18 +31,18 @@ export function useQrScanner(): UseQrScannerReturn {
       if (now - lastScanTime.current < DEBOUNCE_MS) return;
       lastScanTime.current = now;
 
-      if (result.type !== "qr") return;
+      if (result.type !== 'qr') return;
 
       const decoded = decodeZoneQr(result.data);
       if (!decoded) {
-        setError("Kein gültiger BauDoku QR-Code.");
+        setError('Kein gültiger BauDoku QR-Code.');
         setScanned(true);
         setScanResult(null);
         return;
       }
 
       setScanResult({
-        type: "zone",
+        type: 'zone',
         projectId: decoded.projectId as ProjectId,
         zoneId: decoded.zoneId as ZoneId,
       });

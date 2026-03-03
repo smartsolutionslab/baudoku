@@ -38,14 +38,16 @@ var projectsApi = builder.AddProject("projects-api", @"..\..\Services\Projects\B
     .WithReference(rabbitmq)
     .WaitFor(projectsDb)
     .WaitFor(rabbitmq)
-    .WaitFor(keycloak);
+    .WaitFor(keycloak)
+    .WithUrlForEndpoint("http", ep => new() { Url = "/scalar/v1", DisplayText = "Scalar API Docs" });
 
 var documentationApi = builder.AddProject("documentation-api", @"..\..\Services\Documentation\BauDoku.Documentation.Api\BauDoku.Documentation.Api.csproj")
     .WithReference(documentationDb)
     .WithReference(rabbitmq)
     .WaitFor(documentationDb)
     .WaitFor(rabbitmq)
-    .WaitFor(keycloak);
+    .WaitFor(keycloak)
+    .WithUrlForEndpoint("http", ep => new() { Url = "/scalar/v1", DisplayText = "Scalar API Docs" });
 
 var syncApi = builder.AddProject("sync-api", @"..\..\Services\Sync\BauDoku.Sync.Api\BauDoku.Sync.Api.csproj")
     .WithReference(syncDb)
@@ -54,7 +56,8 @@ var syncApi = builder.AddProject("sync-api", @"..\..\Services\Sync\BauDoku.Sync.
     .WaitFor(syncDb)
     .WaitFor(redis)
     .WaitFor(rabbitmq)
-    .WaitFor(keycloak);
+    .WaitFor(keycloak)
+    .WithUrlForEndpoint("http", ep => new() { Url = "/scalar/v1", DisplayText = "Scalar API Docs" });
 
 var apiGateway = builder.AddProject("api-gateway", @"..\..\ApiGateway\BauDoku.ApiGateway\BauDoku.ApiGateway.csproj")
     .WithReference(projectsApi)

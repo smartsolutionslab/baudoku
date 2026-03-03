@@ -1,6 +1,8 @@
-namespace BauDoku.BuildingBlocks.Domain;
+namespace SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
 
 public static class StringExtensions
 {
     public static bool HasValue(this string? value) => !string.IsNullOrWhiteSpace(value);
+
+    public static bool HasNoValue(this string? value) => string.IsNullOrWhiteSpace(value);
 }

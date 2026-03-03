@@ -1,9 +1,9 @@
-using BauDoku.Sync.Application.Commands;
-using BauDoku.Sync.Application.Commands.Validators;
-using BauDoku.Sync.Domain;
+using SmartSolutionsLab.BauDoku.Sync.Application.Commands;
+using SmartSolutionsLab.BauDoku.Sync.Application.Commands.Validators;
+using SmartSolutionsLab.BauDoku.Sync.Domain;
 using FluentValidation.TestHelper;
 
-namespace BauDoku.Sync.UnitTests.Application.Validators;
+namespace SmartSolutionsLab.BauDoku.Sync.UnitTests.Application.Validators;
 
 public sealed class ResolveConflictCommandValidatorTests
 {

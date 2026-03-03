@@ -1,7 +1,7 @@
-import { useState, useCallback } from "react";
-import { Alert } from "react-native";
-import { zoneSchema, type ZoneFormData } from "../validation/schemas";
-import { useFormValidation } from "./useFormValidation";
+import { useState, useCallback } from 'react';
+import { Alert } from 'react-native';
+import { zoneSchema, type ZoneFormData } from '../validation/schemas';
+import { useFormValidation } from './useFormValidation';
 
 export type UseZoneFormOptions = {
   initialValues?: Partial<ZoneFormData>;
@@ -18,7 +18,7 @@ export type UseZoneFormReturn = {
 
 export function useZoneForm({ initialValues, defaultParentZoneId, onSubmit }: UseZoneFormOptions): UseZoneFormReturn {
   const [form, setForm] = useState<Partial<ZoneFormData>>({
-    type: "building",
+    type: 'building',
     parentZoneId: defaultParentZoneId ?? null,
     ...initialValues,
   });
@@ -42,7 +42,7 @@ export function useZoneForm({ initialValues, defaultParentZoneId, onSubmit }: Us
     try {
       await onSubmit(data);
     } catch {
-      Alert.alert("Fehler", "Zone konnte nicht gespeichert werden.");
+      Alert.alert('Fehler', 'Zone konnte nicht gespeichert werden.');
     }
   }, [form, onSubmit, validate]);
 

@@ -1,9 +1,8 @@
-using BauDoku.BuildingBlocks.Application;
-using BauDoku.BuildingBlocks.Auth;
-using BauDoku.BuildingBlocks.Serialization;
-using BauDoku.Projects.Api.Endpoints;
-using BauDoku.Projects.Infrastructure;
-using BauDoku.ServiceDefaults;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Auth;
+using SmartSolutionsLab.BauDoku.Projects.Api.Endpoints;
+using SmartSolutionsLab.BauDoku.Projects.Application;
+using SmartSolutionsLab.BauDoku.Projects.Infrastructure;
+using SmartSolutionsLab.BauDoku.ServiceDefaults;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,14 +14,10 @@ builder.AddServiceDefaults(health =>
     health.AddNpgSql(connectionString, name: "postgresql", tags: ["ready"]);
 });
 
-builder.Services.ConfigureHttpJsonOptions(options => options.SerializerOptions.Converters.Add(new ValueObjectJsonConverterFactory()));
+builder.AddBauDokuApiDefaults();
 
-builder.Services.AddOpenApi(options => options.AddSchemaTransformer<ValueObjectSchemaTransformer>());
-
-builder.Services.AddBauDokuAuthentication(builder.Configuration, builder.Environment);
-
-builder.Services.AddApplication(BauDoku.Projects.Application.DependencyInjection.Assembly);
-builder.Services.AddProjectsInfrastructure(connectionString);
+builder.Services.AddProjectsApplication()
+                .AddProjectsInfrastructure(connectionString);
 
 var app = builder.Build();
 
@@ -32,12 +27,12 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
-app.UseAuthentication();
-app.UseAuthorization();
-app.UseAuthAuditLogging();
+app.UseAuthentication()
+    .UseAuthorization()
+    .UseAuthAuditLogging();
 
-app.MapDefaultEndpoints();
-app.MapProjectEndpoints();
+app.MapDefaultEndpoints()
+    .MapProjectEndpoints();
 
 app.Run();
 

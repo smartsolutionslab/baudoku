@@ -1,4 +1,4 @@
-namespace BauDoku.Documentation.Infrastructure.ReadModel;
+namespace SmartSolutionsLab.BauDoku.Documentation.Infrastructure.ReadModel;
 
 public sealed class MeasurementReadModel
 {

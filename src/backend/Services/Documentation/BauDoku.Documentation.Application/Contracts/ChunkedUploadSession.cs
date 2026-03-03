@@ -1,6 +1,6 @@
-using BauDoku.Documentation.Application.Queries.Dtos;
+using SmartSolutionsLab.BauDoku.Documentation.ReadModel;
 
-namespace BauDoku.Documentation.Application.Contracts;
+namespace SmartSolutionsLab.BauDoku.Documentation.Application.Contracts;
 
 public sealed record ChunkedUploadSession(
     Guid SessionId,

@@ -1,7 +1,7 @@
-using BauDoku.BuildingBlocks.Domain;
-using BauDoku.BuildingBlocks.Guards;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Guards;
 
-namespace BauDoku.Projects.Domain;
+namespace SmartSolutionsLab.BauDoku.Projects.Domain;
 
 public sealed record ProjectName : IValueObject
 {

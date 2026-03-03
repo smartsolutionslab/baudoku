@@ -1,7 +1,7 @@
-import { create } from "zustand";
-import type { PhotoId } from "../types/branded";
+import { create } from 'zustand';
+import type { PhotoId } from '../types/branded';
 
-export type UploadStatus = "queued" | "uploading" | "completed" | "failed";
+export type UploadStatus = 'queued' | 'uploading' | 'completed' | 'failed';
 
 export type UploadItem = {
   photoId: PhotoId;
@@ -30,7 +30,7 @@ export const useUploadStore = create<UploadState>((set) => ({
     set((state) => ({
       queue: [
         ...state.queue.filter((item) => item.photoId !== photoId),
-        { photoId, status: "queued" as UploadStatus, percentage: 0 },
+        { photoId, status: 'queued', percentage: 0 },
       ],
     })),
 
@@ -38,7 +38,7 @@ export const useUploadStore = create<UploadState>((set) => ({
     set((state) => ({
       queue: state.queue.map((item) =>
         item.photoId === photoId
-          ? { ...item, status: "uploading" as UploadStatus, percentage }
+          ? { ...item, status: 'uploading', percentage }
           : item
       ),
     })),
@@ -47,7 +47,7 @@ export const useUploadStore = create<UploadState>((set) => ({
     set((state) => ({
       queue: state.queue.map((item) =>
         item.photoId === photoId
-          ? { ...item, status: "completed" as UploadStatus, percentage: 100 }
+          ? { ...item, status: 'completed', percentage: 100 }
           : item
       ),
     })),
@@ -56,7 +56,7 @@ export const useUploadStore = create<UploadState>((set) => ({
     set((state) => ({
       queue: state.queue.map((item) =>
         item.photoId === photoId
-          ? { ...item, status: "failed" as UploadStatus, error }
+          ? { ...item, status: 'failed', error }
           : item
       ),
     })),
@@ -65,6 +65,6 @@ export const useUploadStore = create<UploadState>((set) => ({
 
   removeCompleted: () =>
     set((state) => ({
-      queue: state.queue.filter((item) => item.status !== "completed"),
+      queue: state.queue.filter((item) => item.status !== 'completed'),
     })),
 }));

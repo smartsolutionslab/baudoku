@@ -1,9 +1,9 @@
 using AwesomeAssertions;
-using BauDoku.Documentation.Domain;
-using BauDoku.Documentation.Infrastructure.Storage;
+using SmartSolutionsLab.BauDoku.Documentation.Domain;
+using SmartSolutionsLab.BauDoku.Documentation.Infrastructure.Storage;
 using Microsoft.Extensions.Options;
 
-namespace BauDoku.Documentation.UnitTests.Infrastructure.Storage;
+namespace SmartSolutionsLab.BauDoku.Documentation.UnitTests.Infrastructure.Storage;
 
 public sealed class LocalFilePhotoStorageTests : IDisposable
 {

@@ -1,4 +1,4 @@
-namespace BauDoku.ServiceDefaults;
+namespace SmartSolutionsLab.BauDoku.ServiceDefaults;
 
 public static class ConnectionStringNames
 {

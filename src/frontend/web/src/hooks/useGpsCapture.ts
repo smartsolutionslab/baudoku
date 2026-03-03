@@ -1,32 +1,32 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback } from 'react';
 
-interface GpsPosition {
+type GpsPosition = {
   latitude: number;
   longitude: number;
   altitude: number | null;
   accuracy: number;
-}
+};
 
-interface UseGpsCaptureResult {
+type UseGpsCaptureReturn = {
   position: GpsPosition | null;
-  loading: boolean;
+  capturing: boolean;
   error: string | null;
-  capture: () => void;
-  clear: () => void;
-}
+  capturePosition: () => void;
+  clearPosition: () => void;
+};
 
-export function useGpsCapture(): UseGpsCaptureResult {
+export function useGpsCapture(): UseGpsCaptureReturn {
   const [position, setPosition] = useState<GpsPosition | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [capturing, setCapturing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const capture = useCallback(() => {
+  const capturePosition = useCallback(() => {
     if (!navigator.geolocation) {
-      setError("GPS wird von diesem Browser nicht unterstützt.");
+      setError('GPS wird von diesem Browser nicht unterstützt.');
       return;
     }
 
-    setLoading(true);
+    setCapturing(true);
     setError(null);
 
     navigator.geolocation.getCurrentPosition(
@@ -37,25 +37,25 @@ export function useGpsCapture(): UseGpsCaptureResult {
           altitude: pos.coords.altitude,
           accuracy: pos.coords.accuracy,
         });
-        setLoading(false);
+        setCapturing(false);
       },
       (err) => {
         const messages: Record<number, string> = {
-          1: "GPS-Zugriff verweigert. Bitte erlauben Sie den Standortzugriff.",
-          2: "GPS-Position konnte nicht ermittelt werden.",
-          3: "GPS-Anfrage hat zu lange gedauert.",
+          1: 'GPS-Zugriff verweigert. Bitte erlauben Sie den Standortzugriff.',
+          2: 'GPS-Position konnte nicht ermittelt werden.',
+          3: 'GPS-Anfrage hat zu lange gedauert.',
         };
-        setError(messages[err.code] ?? "Unbekannter GPS-Fehler.");
-        setLoading(false);
+        setError(messages[err.code] ?? 'Unbekannter GPS-Fehler.');
+        setCapturing(false);
       },
       { enableHighAccuracy: true, timeout: 15_000, maximumAge: 0 }
     );
   }, []);
 
-  const clear = useCallback(() => {
+  const clearPosition = useCallback(() => {
     setPosition(null);
     setError(null);
   }, []);
 
-  return { position, loading, error, capture, clear };
+  return { position, capturing, error, capturePosition, clearPosition };
 }

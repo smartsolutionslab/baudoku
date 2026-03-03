@@ -1,45 +1,26 @@
 using Aspire.DashboardService.Proto.V1;
 using Grpc.Core;
 using k8s;
+using Microsoft.Extensions.Options;
 
-namespace BauDoku.ResourceService.Services;
+namespace SmartSolutionsLab.BauDoku.ResourceService.Services;
 
-public sealed class KubernetesDashboardService : DashboardService.DashboardServiceBase
+public sealed class KubernetesDashboardService(
+    PodWatcher podWatcher,
+    PodLogStreamer podLogStreamer,
+    IKubernetes kubernetes,
+    IOptions<KubernetesOptions> options,
+    ILogger<KubernetesDashboardService> logger)
+    : DashboardService.DashboardServiceBase
 {
-    private readonly PodWatcher podWatcher;
-    private readonly PodLogStreamer podLogStreamer;
-    private readonly IKubernetes kubernetes;
-    private readonly ILogger<KubernetesDashboardService> logger;
-    private readonly string kubernetesNamespace;
+    private readonly KubernetesOptions config = options.Value;
 
-    public KubernetesDashboardService(
-        PodWatcher podWatcher,
-        PodLogStreamer podLogStreamer,
-        IKubernetes kubernetes,
-        IConfiguration configuration,
-        ILogger<KubernetesDashboardService> logger)
+    public override Task<ApplicationInformationResponse> GetApplicationInformation(ApplicationInformationRequest request, ServerCallContext context)
     {
-        this.podWatcher = podWatcher;
-        this.podLogStreamer = podLogStreamer;
-        this.kubernetes = kubernetes;
-        this.logger = logger;
-        kubernetesNamespace = configuration["KUBERNETES_NAMESPACE"] ?? "default";
+        return Task.FromResult(new ApplicationInformationResponse { ApplicationName = config.ApplicationName });
     }
 
-    public override Task<ApplicationInformationResponse> GetApplicationInformation(
-        ApplicationInformationRequest request,
-        ServerCallContext context)
-    {
-        var appName = Environment.GetEnvironmentVariable("APPLICATION_NAME")
-            ?? $"BauDoku ({kubernetesNamespace})";
-
-        return Task.FromResult(new ApplicationInformationResponse { ApplicationName = appName });
-    }
-
-    public override async Task WatchResources(
-        WatchResourcesRequest request,
-        IServerStreamWriter<WatchResourcesUpdate> responseStream,
-        ServerCallContext context)
+    public override async Task WatchResources(WatchResourcesRequest request, IServerStreamWriter<WatchResourcesUpdate> responseStream, ServerCallContext context)
     {
         logger.LogInformation("Dashboard connected to WatchResources (reconnect={IsReconnect})", request.IsReconnect);
 
@@ -73,20 +54,14 @@ public sealed class KubernetesDashboardService : DashboardService.DashboardServi
         }
     }
 
-    public override async Task WatchResourceConsoleLogs(
-        WatchResourceConsoleLogsRequest request,
-        IServerStreamWriter<WatchResourceConsoleLogsUpdate> responseStream,
-        ServerCallContext context)
+    public override async Task WatchResourceConsoleLogs(WatchResourceConsoleLogsRequest request, IServerStreamWriter<WatchResourceConsoleLogsUpdate> responseStream, ServerCallContext context)
     {
         logger.LogInformation("Dashboard requested console logs for {Resource}", request.ResourceName);
 
         var lineNumber = 1;
         var follow = !request.SuppressFollow;
 
-        await foreach (var (line, isStdErr) in podLogStreamer.StreamLogsAsync(
-            request.ResourceName,
-            follow,
-            context.CancellationToken))
+        await foreach (var (line, isStdErr) in podLogStreamer.StreamLogsAsync(request.ResourceName, follow, context.CancellationToken))
         {
             var update = new WatchResourceConsoleLogsUpdate();
             update.LogLines.Add(new ConsoleLogLine
@@ -100,9 +75,7 @@ public sealed class KubernetesDashboardService : DashboardService.DashboardServi
         }
     }
 
-    public override async Task<ResourceCommandResponse> ExecuteResourceCommand(
-        ResourceCommandRequest request,
-        ServerCallContext context)
+    public override async Task<ResourceCommandResponse> ExecuteResourceCommand(ResourceCommandRequest request, ServerCallContext context)
     {
         logger.LogInformation("Executing command {Command} on {Resource}", request.CommandName, request.ResourceName);
 
@@ -110,10 +83,7 @@ public sealed class KubernetesDashboardService : DashboardService.DashboardServi
         {
             try
             {
-                await kubernetes.CoreV1.DeleteNamespacedPodAsync(
-                    request.ResourceName,
-                    kubernetesNamespace,
-                    cancellationToken: context.CancellationToken);
+                await kubernetes.CoreV1.DeleteNamespacedPodAsync(request.ResourceName, config.Namespace, cancellationToken: context.CancellationToken);
 
                 return new ResourceCommandResponse
                 {

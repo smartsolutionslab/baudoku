@@ -1,7 +1,7 @@
 using AwesomeAssertions;
-using BauDoku.Documentation.Domain;
+using SmartSolutionsLab.BauDoku.Documentation.Domain;
 
-namespace BauDoku.Documentation.UnitTests.Domain.ValueObjects;
+namespace SmartSolutionsLab.BauDoku.Documentation.UnitTests.Domain.ValueObjects;
 
 public sealed class CableSpecTests
 {
@@ -39,5 +39,21 @@ public sealed class CableSpecTests
     {
         var act = () => CrossSection.From(0);
         act.Should().Throw<ArgumentOutOfRangeException>();
+    }
+
+    [Fact]
+    public void FromNullable_WithNullCableType_ShouldReturnNull()
+    {
+        var result = CableSpec.FromNullable(null, CrossSection.From(2.5m), CableColor.From("rot"));
+        result.Should().BeNull();
+    }
+
+    [Fact]
+    public void FromNullable_WithCableType_ShouldReturnInstance()
+    {
+        var result = CableSpec.FromNullable(CableType.From("NYM-J 5x2.5"), CrossSection.From(25));
+        result.Should().NotBeNull();
+        result!.CableType.Value.Should().Be("NYM-J 5x2.5");
+        result.CrossSection!.Value.Should().Be(25);
     }
 }

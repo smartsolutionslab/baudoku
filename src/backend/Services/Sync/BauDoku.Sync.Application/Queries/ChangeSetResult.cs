@@ -1,6 +1,6 @@
-using BauDoku.Sync.Application.Queries.Dtos;
+using SmartSolutionsLab.BauDoku.Sync.ReadModel;
 
-namespace BauDoku.Sync.Application.Queries;
+namespace SmartSolutionsLab.BauDoku.Sync.Application.Queries;
 
 public sealed record ChangeSetResult(
     List<ServerDeltaDto> Changes,

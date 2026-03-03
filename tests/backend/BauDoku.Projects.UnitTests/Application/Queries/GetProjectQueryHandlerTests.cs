@@ -1,20 +1,22 @@
 using AwesomeAssertions;
-using BauDoku.Projects.Application.Queries;
-using BauDoku.Projects.Application.Queries.Handlers;
-using BauDoku.Projects.Domain;
+using SmartSolutionsLab.BauDoku.Projects.Application.Mapping;
+using SmartSolutionsLab.BauDoku.Projects.Application.Queries;
+using SmartSolutionsLab.BauDoku.Projects.Application.Queries.Handlers;
+using SmartSolutionsLab.BauDoku.Projects.Domain;
+using SmartSolutionsLab.BauDoku.Projects.ReadModel;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 
-namespace BauDoku.Projects.UnitTests.Application.Queries;
+namespace SmartSolutionsLab.BauDoku.Projects.UnitTests.Application.Queries;
 
 public sealed class GetProjectQueryHandlerTests
 {
-    private readonly IProjectRepository projects;
+    private readonly IProjectReadRepository projects;
     private readonly GetProjectQueryHandler handler;
 
     public GetProjectQueryHandlerTests()
     {
-        projects = Substitute.For<IProjectRepository>();
+        projects = Substitute.For<IProjectReadRepository>();
         handler = new GetProjectQueryHandler(projects);
     }
 
@@ -32,7 +34,8 @@ public sealed class GetProjectQueryHandlerTests
                 EmailAddress.From("max@example.com"),
                 PhoneNumber.From("+49 30 12345")));
 
-        projects.GetByIdReadOnlyAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>()).Returns(project);
+        var dto = project.ToDto();
+        projects.GetByIdAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>()).Returns(dto);
 
         var result = await handler.Handle(new GetProjectQuery(project.Id));
 
@@ -47,7 +50,7 @@ public sealed class GetProjectQueryHandlerTests
     [Fact]
     public async Task Handle_WhenProjectNotFound_ShouldThrow()
     {
-        projects.GetByIdReadOnlyAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>())
+        projects.GetByIdAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>())
             .Throws(new KeyNotFoundException());
 
         var act = () => handler.Handle(new GetProjectQuery(ProjectIdentifier.New()));
@@ -71,8 +74,9 @@ public sealed class GetProjectQueryHandlerTests
             ZoneIdentifier.New(),
             ZoneName.From("Erdgeschoss"), ZoneType.Floor);
 
-        projects.GetByIdReadOnlyAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>())
-            .Returns(project);
+        var dto = project.ToDto();
+        projects.GetByIdAsync(Arg.Any<ProjectIdentifier>(), Arg.Any<CancellationToken>())
+            .Returns(dto);
 
         var result = await handler.Handle(new GetProjectQuery(project.Id));
 

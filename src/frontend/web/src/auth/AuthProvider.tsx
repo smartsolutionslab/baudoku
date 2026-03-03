@@ -5,18 +5,18 @@ import {
   useState,
   useCallback,
   type ReactNode,
-} from "react";
-import { UserManager, type User } from "oidc-client-ts";
-import { oidcConfig } from "./oidcConfig";
-import { setAuthToken, onUnauthorized } from "@baudoku/core";
+} from 'react';
+import { UserManager, type User } from 'oidc-client-ts';
+import { oidcConfig } from './oidcConfig';
+import { setAuthToken, onUnauthorized } from '@baudoku/core';
 
-interface AuthContextValue {
+type AuthContextValue = {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   login: () => Promise<void>;
   logout: () => Promise<void>;
-}
+};
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
@@ -28,15 +28,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     // Check for existing session
-    userManager
-      .getUser()
-      .then((existingUser) => {
+    (async () => {
+      try {
+        const existingUser = await userManager.getUser();
         if (existingUser && !existingUser.expired) {
           setUser(existingUser);
           setAuthToken(existingUser.access_token);
         }
-      })
-      .finally(() => setIsLoading(false));
+      } finally {
+        setIsLoading(false);
+      }
+    })();
 
     // Handle token updates
     const onUserLoaded = (loadedUser: User) => {
@@ -91,6 +93,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 export function useAuth(): AuthContextValue {
   const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error("useAuth must be used within AuthProvider");
+  if (!ctx) throw new Error('useAuth must be used within AuthProvider');
   return ctx;
 }

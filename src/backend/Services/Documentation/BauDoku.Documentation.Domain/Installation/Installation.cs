@@ -1,7 +1,7 @@
 using System.Collections.Frozen;
-using BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
 
-namespace BauDoku.Documentation.Domain;
+namespace SmartSolutionsLab.BauDoku.Documentation.Domain;
 
 public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentifier>
 {
@@ -12,14 +12,14 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
     public ZoneIdentifier? ZoneId { get; private set; }
     public InstallationType Type { get; private set; } = default!;
     public InstallationStatus Status { get; private set; } = default!;
-    public GpsPosition Position { get; private set; } = default!;
+    public GpsPosition? Position { get; private set; }
     public Description? Description { get; private set; }
     public CableSpec? CableSpec { get; private set; }
     public Depth? Depth { get; private set; }
     public Manufacturer? Manufacturer { get; private set; }
     public ModelName? ModelName { get; private set; }
     public SerialNumber? SerialNumber { get; private set; }
-    public GpsQualityGrade QualityGrade { get; private set; } = default!;
+    public GpsQualityGrade? QualityGrade { get; private set; }
     public DateTime CreatedAt { get; private set; }
     public DateTime? CompletedAt { get; private set; }
     public bool IsDeleted { get; private set; }
@@ -33,7 +33,7 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
         ProjectIdentifier projectId,
         ZoneIdentifier? zoneId,
         InstallationType type,
-        GpsPosition position,
+        GpsPosition? position,
         Description? description = null,
         CableSpec? cableSpec = null,
         Depth? depth = null,
@@ -41,9 +41,10 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
         ModelName? modelName = null,
         SerialNumber? serialNumber = null)
     {
-        CheckRule(new InstallationMustHaveValidGpsPosition(position));
+        if (position is not null)
+            CheckRule(new InstallationMustHaveValidGpsPosition(position));
 
-        var qualityGrade = position.CalculateQualityGrade();
+        var qualityGrade = position?.CalculateQualityGrade();
         var now = DateTime.UtcNow;
 
         Installation installation = new();
@@ -54,16 +55,16 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
             zoneId,
             type,
             InstallationStatus.InProgress,
-            position.Latitude,
-            position.Longitude,
-            position.Altitude,
-            position.HorizontalAccuracy,
-            position.Source,
-            position.CorrectionService,
-            position.RtkFixStatus,
-            position.SatelliteCount,
-            position.Hdop,
-            position.CorrectionAge,
+            position?.Latitude,
+            position?.Longitude,
+            position?.Altitude,
+            position?.HorizontalAccuracy,
+            position?.Source,
+            position?.CorrectionService,
+            position?.RtkFixStatus,
+            position?.SatelliteCount,
+            position?.Hdop,
+            position?.CorrectionAge,
             qualityGrade,
             description,
             cableSpec?.CableType,
@@ -246,22 +247,22 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
     private static readonly FrozenDictionary<Type, Action<Installation, IDomainEvent>> eventAppliers =
         new Dictionary<Type, Action<Installation, IDomainEvent>>
         {
-            [typeof(InstallationDocumented)] = Dispatch<InstallationDocumented>((i, e) => i.Apply(e)),
-            [typeof(PhotoAdded)] = Dispatch<PhotoAdded>((i, e) => i.Apply(e)),
-            [typeof(PhotoRemoved)] = Dispatch<PhotoRemoved>((i, e) => i.Apply(e)),
-            [typeof(MeasurementRecorded)] = Dispatch<MeasurementRecorded>((i, e) => i.Apply(e)),
-            [typeof(MeasurementRemoved)] = Dispatch<MeasurementRemoved>((i, e) => i.Apply(e)),
-            [typeof(InstallationPositionUpdated)] = Dispatch<InstallationPositionUpdated>((i, e) => i.Apply(e)),
-            [typeof(InstallationDescriptionUpdated)] = Dispatch<InstallationDescriptionUpdated>((i, e) => i.Apply(e)),
-            [typeof(InstallationCableSpecUpdated)] = Dispatch<InstallationCableSpecUpdated>((i, e) => i.Apply(e)),
-            [typeof(InstallationDepthUpdated)] = Dispatch<InstallationDepthUpdated>((i, e) => i.Apply(e)),
-            [typeof(InstallationDeviceInfoUpdated)] = Dispatch<InstallationDeviceInfoUpdated>((i, e) => i.Apply(e)),
-            [typeof(InstallationCompleted)] = Dispatch<InstallationCompleted>((i, e) => i.Apply(e)),
-            [typeof(InstallationDeleted)] = Dispatch<InstallationDeleted>((i, e) => i.Apply(e)),
+            [typeof(InstallationDocumented)] = Dispatch<InstallationDocumented>((i, @event) => i.Apply(@event)),
+            [typeof(PhotoAdded)] = Dispatch<PhotoAdded>((i, @event) => i.Apply(@event)),
+            [typeof(PhotoRemoved)] = Dispatch<PhotoRemoved>((i, @event) => i.Apply(@event)),
+            [typeof(MeasurementRecorded)] = Dispatch<MeasurementRecorded>((i, @event) => i.Apply(@event)),
+            [typeof(MeasurementRemoved)] = Dispatch<MeasurementRemoved>((i, @event) => i.Apply(@event)),
+            [typeof(InstallationPositionUpdated)] = Dispatch<InstallationPositionUpdated>((i, @event) => i.Apply(@event)),
+            [typeof(InstallationDescriptionUpdated)] = Dispatch<InstallationDescriptionUpdated>((i, @event) => i.Apply(@event)),
+            [typeof(InstallationCableSpecUpdated)] = Dispatch<InstallationCableSpecUpdated>((i, @event) => i.Apply(@event)),
+            [typeof(InstallationDepthUpdated)] = Dispatch<InstallationDepthUpdated>((i, @event) => i.Apply(@event)),
+            [typeof(InstallationDeviceInfoUpdated)] = Dispatch<InstallationDeviceInfoUpdated>((i, @event) => i.Apply(@event)),
+            [typeof(InstallationCompleted)] = Dispatch<InstallationCompleted>((i, @event) => i.Apply(@event)),
+            [typeof(InstallationDeleted)] = Dispatch<InstallationDeleted>((i, @event) => i.Apply(@event)),
         }.ToFrozenDictionary();
 
     private static Action<Installation, IDomainEvent> Dispatch<TEvent>(Action<Installation, TEvent> handler) where TEvent : IDomainEvent =>
-        (i, e) => handler(i, (TEvent)e);
+        (i, @event) => handler(i, (TEvent)@event);
 
     public override void Apply(IDomainEvent @event)
     {
@@ -271,105 +272,119 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
         }
     }
 
-    public void Apply(InstallationDocumented e)
+    public void Apply(InstallationDocumented @event)
     {
-        Id = e.InstallationId;
-        ProjectId = e.ProjectId;
-        ZoneId = e.ZoneId;
-        Type = e.Type;
-        Status = e.Status;
-        Position = ReconstructPosition(e.Latitude, e.Longitude, e.Altitude, e.HorizontalAccuracy, e.GpsSource, e.CorrectionService, e.RtkFixStatus, e.SatelliteCount, e.Hdop, e.CorrectionAge);
-        QualityGrade = e.QualityGrade;
-        Description = e.Description;
-        CableSpec = ReconstructCableSpec(e.CableType, e.CrossSection, e.CableColor, e.ConductorCount);
-        Depth = Depth.FromNullable(e.DepthMm);
-        Manufacturer = e.Manufacturer;
-        ModelName = e.ModelName;
-        SerialNumber = e.SerialNumber;
-        CreatedAt = e.CreatedAt;
+        Id = @event.InstallationId;
+        ProjectId = @event.ProjectId;
+        ZoneId = @event.ZoneId;
+        Type = @event.Type;
+        Status = @event.Status;
+        Position = ReconstructNullablePosition(@event.Latitude, @event.Longitude, @event.Altitude, @event.HorizontalAccuracy, @event.GpsSource, @event.CorrectionService, @event.RtkFixStatus, @event.SatelliteCount, @event.Hdop, @event.CorrectionAge)!;
+        QualityGrade = @event.QualityGrade;
+        Description = @event.Description;
+        CableSpec = ReconstructCableSpec(@event.CableType, @event.CrossSection, @event.CableColor, @event.ConductorCount);
+        Depth = Depth.FromNullable(@event.DepthMm);
+        Manufacturer = @event.Manufacturer;
+        ModelName = @event.ModelName;
+        SerialNumber = @event.SerialNumber;
+        CreatedAt = @event.CreatedAt;
     }
 
-    public void Apply(PhotoAdded e)
+    public void Apply(PhotoAdded @event)
     {
-        var position = ReconstructNullablePosition(e.Latitude, e.Longitude, e.Altitude, e.HorizontalAccuracy, e.GpsSource, e.CorrectionService, e.RtkFixStatus, e.SatelliteCount, e.Hdop, e.CorrectionAge);
+        var position = ReconstructNullablePosition(@event.Latitude, @event.Longitude, @event.Altitude, @event.HorizontalAccuracy, @event.GpsSource, @event.CorrectionService, @event.RtkFixStatus, @event.SatelliteCount, @event.Hdop, @event.CorrectionAge);
 
         var photo = Photo.Reconstitute(
-            e.PhotoId,
-            e.FileName,
-            e.BlobUrl,
-            e.ContentType,
-            e.FileSize,
-            e.PhotoType,
-            e.Caption,
-            e.Description,
+            @event.PhotoId,
+            @event.FileName,
+            @event.BlobUrl,
+            @event.ContentType,
+            @event.FileSize,
+            @event.PhotoType,
+            @event.Caption,
+            @event.Description,
             position,
-            e.TakenAt);
+            @event.TakenAt);
 
         photos.Add(photo);
     }
 
-    public void Apply(PhotoRemoved e)
+    public void Apply(PhotoRemoved @event)
     {
-        var photo = photos.FirstOrDefault(p => p.Id == e.PhotoId);
+        var photo = photos.FirstOrDefault(p => p.Id == @event.PhotoId);
         if (photo is not null)
+        {
             photos.Remove(photo);
+        }
     }
 
-    public void Apply(MeasurementRecorded e)
+    public void Apply(MeasurementRecorded @event)
     {
         var measurement = Measurement.Reconstitute(
-            e.MeasurementId,
-            e.Type,
-            MeasurementValue.Create(e.Value, e.Unit, e.MinThreshold, e.MaxThreshold),
-            e.Result,
-            e.Notes,
-            e.MeasuredAt);
+            @event.MeasurementId,
+            @event.Type,
+            MeasurementValue.Create(@event.Value, @event.Unit, @event.MinThreshold, @event.MaxThreshold),
+            @event.Result,
+            @event.Notes,
+            @event.MeasuredAt);
 
         measurements.Add(measurement);
     }
 
-    public void Apply(MeasurementRemoved e)
+    public void Apply(MeasurementRemoved @event)
     {
-        var measurement = measurements.FirstOrDefault(m => m.Id == e.MeasurementId);
+        var measurement = measurements.FirstOrDefault(m => m.Id == @event.MeasurementId);
         if (measurement is not null)
+        {
             measurements.Remove(measurement);
+        }
     }
 
-    public void Apply(InstallationPositionUpdated e)
+    public void Apply(InstallationPositionUpdated @event)
     {
-        Position = ReconstructPosition(e.Latitude, e.Longitude, e.Altitude, e.HorizontalAccuracy, e.GpsSource, e.CorrectionService, e.RtkFixStatus, e.SatelliteCount, e.Hdop, e.CorrectionAge);
-        QualityGrade = e.QualityGrade;
+        Position = ReconstructPosition(
+            @event.Latitude,
+            @event.Longitude,
+            @event.Altitude,
+            @event.HorizontalAccuracy,
+            @event.GpsSource,
+            @event.CorrectionService,
+            @event.RtkFixStatus,
+            @event.SatelliteCount,
+            @event.Hdop,
+            @event.CorrectionAge);
+        QualityGrade = @event.QualityGrade;
     }
 
-    public void Apply(InstallationDescriptionUpdated e)
+    public void Apply(InstallationDescriptionUpdated @event)
     {
-        Description = e.Description;
+        Description = @event.Description;
     }
 
-    public void Apply(InstallationCableSpecUpdated e)
+    public void Apply(InstallationCableSpecUpdated @event)
     {
-        CableSpec = ReconstructCableSpec(e.CableType, e.CrossSection, e.CableColor, e.ConductorCount);
+        CableSpec = ReconstructCableSpec(@event.CableType, @event.CrossSection, @event.CableColor, @event.ConductorCount);
     }
 
-    public void Apply(InstallationDepthUpdated e)
+    public void Apply(InstallationDepthUpdated @event)
     {
-        Depth = Depth.FromNullable(e.DepthMm);
+        Depth = Depth.FromNullable(@event.DepthMm);
     }
 
-    public void Apply(InstallationDeviceInfoUpdated e)
+    public void Apply(InstallationDeviceInfoUpdated @event)
     {
-        Manufacturer = e.Manufacturer;
-        ModelName = e.ModelName;
-        SerialNumber = e.SerialNumber;
+        Manufacturer = @event.Manufacturer;
+        ModelName = @event.ModelName;
+        SerialNumber = @event.SerialNumber;
     }
 
-    public void Apply(InstallationCompleted e)
+    public void Apply(InstallationCompleted @event)
     {
         Status = InstallationStatus.Completed;
-        CompletedAt = e.CompletedAt;
+        CompletedAt = @event.CompletedAt;
     }
 
-    public void Apply(InstallationDeleted e)
+    public void Apply(InstallationDeleted @event)
     {
         IsDeleted = true;
     }
@@ -398,9 +413,5 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
     }
 
     private static CableSpec? ReconstructCableSpec(CableType? cableType, CrossSection? crossSection, CableColor? cableColor, ConductorCount? conductorCount)
-    {
-        return cableType is not null
-            ? CableSpec.Create(cableType, crossSection, cableColor, conductorCount)
-            : null;
-    }
+        => CableSpec.FromNullable(cableType, crossSection, cableColor, conductorCount);
 }

@@ -1,12 +1,12 @@
 using AwesomeAssertions;
-using BauDoku.Sync.Application.Contracts;
-using BauDoku.Sync.Application.Queries.Dtos;
-using BauDoku.Sync.Application.Queries;
-using BauDoku.Sync.Application.Queries.Handlers;
-using BauDoku.Sync.Domain;
+using SmartSolutionsLab.BauDoku.Sync.Application.Contracts;
+using SmartSolutionsLab.BauDoku.Sync.ReadModel;
+using SmartSolutionsLab.BauDoku.Sync.Application.Queries;
+using SmartSolutionsLab.BauDoku.Sync.Application.Queries.Handlers;
+using SmartSolutionsLab.BauDoku.Sync.Domain;
 using NSubstitute;
 
-namespace BauDoku.Sync.UnitTests.Application.Queries;
+namespace SmartSolutionsLab.BauDoku.Sync.UnitTests.Application.Queries;
 
 public sealed class GetChangesSinceQueryHandlerTests
 {
@@ -29,7 +29,7 @@ public sealed class GetChangesSinceQueryHandlerTests
         readStore.GetChangedSinceAsync(Arg.Any<DateTime?>(), Arg.Any<DeviceIdentifier>(), Arg.Any<int>(), Arg.Any<CancellationToken>())
             .Returns(changes);
 
-        var query = new GetChangesSinceQuery(DeviceIdentifier.From("device-001"), DateTime.UtcNow.AddHours(-1), 100);
+        var query = new GetChangesSinceQuery(DeviceIdentifier.From("device-001"), SyncLimit.From(100), DateTime.UtcNow.AddHours(-1));
 
         var result = await handler.Handle(query);
 
@@ -45,7 +45,7 @@ public sealed class GetChangesSinceQueryHandlerTests
         readStore.GetChangedSinceAsync(Arg.Any<DateTime?>(), Arg.Any<DeviceIdentifier>(), 3, Arg.Any<CancellationToken>())
             .Returns(changes);
 
-        var query = new GetChangesSinceQuery(DeviceIdentifier.From("device-001"), null, 2);
+        var query = new GetChangesSinceQuery(DeviceIdentifier.From("device-001"), SyncLimit.From(2));
 
         var result = await handler.Handle(query);
 
@@ -54,12 +54,12 @@ public sealed class GetChangesSinceQueryHandlerTests
     }
 
     [Fact]
-    public async Task Handle_WithNullLimit_ShouldDefault100()
+    public async Task Handle_WithDefaultLimit_ShouldUse100()
     {
         readStore.GetChangedSinceAsync(Arg.Any<DateTime?>(), Arg.Any<DeviceIdentifier>(), 101, Arg.Any<CancellationToken>())
             .Returns(new List<ServerDeltaDto>());
 
-        var query = new GetChangesSinceQuery(DeviceIdentifier.From("device-001"), null, null);
+        var query = new GetChangesSinceQuery(DeviceIdentifier.From("device-001"), SyncLimit.Default);
 
         var result = await handler.Handle(query);
 
@@ -76,7 +76,7 @@ public sealed class GetChangesSinceQueryHandlerTests
             .Returns(new List<ServerDeltaDto>());
 
         var before = DateTime.UtcNow;
-        var result = await handler.Handle(new GetChangesSinceQuery(DeviceIdentifier.From("device-001"), null, null));
+        var result = await handler.Handle(new GetChangesSinceQuery(DeviceIdentifier.From("device-001"), SyncLimit.Default));
         var after = DateTime.UtcNow;
 
         result.ServerTimestamp.Should().BeOnOrAfter(before);

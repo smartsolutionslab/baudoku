@@ -1,17 +1,16 @@
 using System.Linq.Expressions;
-using BauDoku.Sync.Application.Contracts;
-using BauDoku.Sync.Application.Queries.Dtos;
-using BauDoku.Sync.Domain;
+using SmartSolutionsLab.BauDoku.Sync.ReadModel;
+using SmartSolutionsLab.BauDoku.Sync.Domain;
 using Microsoft.EntityFrameworkCore;
 
-namespace BauDoku.Sync.Infrastructure.Persistence.Repositories;
+namespace SmartSolutionsLab.BauDoku.Sync.Infrastructure.Persistence.Repositories;
 
-public sealed class SyncBatchReadRepository(SyncDbContext context) : ISyncBatchReadRepository
+public sealed class SyncBatchReadRepository(SyncReadDbContext context) : ISyncBatchReadRepository
 {
     private static readonly Expression<Func<ConflictRecord, ConflictDto>> toConflictDto = c => new ConflictDto(
         c.Id.Value,
         c.EntityRef.EntityType.Value,
-        c.EntityRef.EntityId,
+        c.EntityRef.EntityId.Value,
         c.ClientPayload.Value,
         c.ServerPayload.Value,
         c.ClientVersion.Value,
@@ -24,7 +23,7 @@ public sealed class SyncBatchReadRepository(SyncDbContext context) : ISyncBatchR
         ConflictStatus? status,
         CancellationToken cancellationToken = default)
     {
-        var query = context.SyncBatches.AsNoTracking().AsQueryable();
+        var query = context.SyncBatches.AsQueryable();
 
         if (deviceId is not null)
             query = query.Where(b => b.DeviceId == deviceId);

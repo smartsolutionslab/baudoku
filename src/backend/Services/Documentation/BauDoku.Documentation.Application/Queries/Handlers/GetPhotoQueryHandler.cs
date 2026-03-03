@@ -1,8 +1,8 @@
-using BauDoku.BuildingBlocks.Application.Queries;
-using BauDoku.Documentation.Application.Contracts;
-using BauDoku.Documentation.Application.Queries.Dtos;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Queries;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.Documentation.ReadModel;
 
-namespace BauDoku.Documentation.Application.Queries.Handlers;
+namespace SmartSolutionsLab.BauDoku.Documentation.Application.Queries.Handlers;
 
 public sealed class GetPhotoQueryHandler(IPhotoReadRepository photos) : IQueryHandler<GetPhotoQuery, PhotoDto>
 {
@@ -10,6 +10,6 @@ public sealed class GetPhotoQueryHandler(IPhotoReadRepository photos) : IQueryHa
     {
         var photoId = query.PhotoId;
 
-        return await photos.GetByIdAsync(photoId, cancellationToken);
+        return await photos.With(photoId, cancellationToken);
     }
 }

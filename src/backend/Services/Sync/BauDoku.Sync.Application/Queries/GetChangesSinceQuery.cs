@@ -1,9 +1,9 @@
-using BauDoku.BuildingBlocks.Application.Queries;
-using BauDoku.Sync.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Queries;
+using SmartSolutionsLab.BauDoku.Sync.Domain;
 
-namespace BauDoku.Sync.Application.Queries;
+namespace SmartSolutionsLab.BauDoku.Sync.Application.Queries;
 
 public sealed record GetChangesSinceQuery(
     DeviceIdentifier DeviceId,
-    DateTime? Since,
-    int? Limit) : IQuery<ChangeSetResult>;
+    SyncLimit Limit,
+    DateTime? Since = null) : IQuery<ChangeSetResult>;

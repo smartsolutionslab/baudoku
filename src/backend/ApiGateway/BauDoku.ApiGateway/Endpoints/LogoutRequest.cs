@@ -1,3 +1,3 @@
-namespace BauDoku.ApiGateway.Endpoints;
+namespace SmartSolutionsLab.BauDoku.ApiGateway.Endpoints;
 
 public sealed record LogoutRequest(string RefreshToken);

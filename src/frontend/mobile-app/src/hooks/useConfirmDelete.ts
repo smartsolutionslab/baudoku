@@ -1,5 +1,5 @@
-import { useState, useCallback } from "react";
-import { Alert } from "react-native";
+import { useState, useCallback } from 'react';
+import { Alert } from 'react-native';
 
 type UseConfirmDeleteReturn = {
   deleting: boolean;
@@ -24,10 +24,10 @@ export function useConfirmDelete(): UseConfirmDeleteReturn {
       onConfirm: () => Promise<void>;
     }) => {
       Alert.alert(title, message, [
-        { text: "Abbrechen", style: "cancel" },
+        { text: 'Abbrechen', style: 'cancel' },
         {
-          text: "Löschen",
-          style: "destructive",
+          text: 'Löschen',
+          style: 'destructive',
           onPress: async () => {
             setDeleting(true);
             try {

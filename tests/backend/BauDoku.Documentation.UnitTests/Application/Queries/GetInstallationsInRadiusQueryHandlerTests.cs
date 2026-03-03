@@ -1,14 +1,13 @@
 using AwesomeAssertions;
-using BauDoku.BuildingBlocks.Application.Pagination;
-using BauDoku.BuildingBlocks.Domain;
-using BauDoku.Documentation.Application.Contracts;
-using BauDoku.Documentation.Application.Queries.Dtos;
-using BauDoku.Documentation.Application.Queries;
-using BauDoku.Documentation.Application.Queries.Handlers;
-using BauDoku.Documentation.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Pagination;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.Documentation.ReadModel;
+using SmartSolutionsLab.BauDoku.Documentation.Application.Queries;
+using SmartSolutionsLab.BauDoku.Documentation.Application.Queries.Handlers;
+using SmartSolutionsLab.BauDoku.Documentation.Domain;
 using NSubstitute;
 
-namespace BauDoku.Documentation.UnitTests.Application.Queries;
+namespace SmartSolutionsLab.BauDoku.Documentation.UnitTests.Application.Queries;
 
 public sealed class GetInstallationsInRadiusQueryHandlerTests
 {
@@ -38,7 +37,9 @@ public sealed class GetInstallationsInRadiusQueryHandlerTests
                 Arg.Any<CancellationToken>())
             .Returns(expected);
 
-        var query = new GetInstallationsInRadiusQuery(new SearchRadius(Latitude.From(48.0), Longitude.From(11.0), RadiusMeters.From(500.0)));
+        var query = new GetInstallationsInRadiusQuery(
+            new SearchRadius(Latitude.From(48.0), Longitude.From(11.0), RadiusMeters.From(500.0)),
+            PageNumber.Default, PageSize.Default);
         var result = await handler.Handle(query, CancellationToken.None);
 
         result.Should().BeSameAs(expected);
@@ -59,7 +60,9 @@ public sealed class GetInstallationsInRadiusQueryHandlerTests
                 Arg.Any<CancellationToken>())
             .Returns(expected);
 
-        var query = new GetInstallationsInRadiusQuery(new SearchRadius(Latitude.From(48.0), Longitude.From(11.0), RadiusMeters.From(1000.0)), projectId);
+        var query = new GetInstallationsInRadiusQuery(
+            new SearchRadius(Latitude.From(48.0), Longitude.From(11.0), RadiusMeters.From(1000.0)),
+            PageNumber.Default, PageSize.Default, projectId);
         var result = await handler.Handle(query, CancellationToken.None);
 
         result.Should().BeSameAs(expected);
@@ -82,7 +85,9 @@ public sealed class GetInstallationsInRadiusQueryHandlerTests
                 Arg.Any<CancellationToken>())
             .Returns(expected);
 
-        var query = new GetInstallationsInRadiusQuery(new SearchRadius(Latitude.From(48.0), Longitude.From(11.0), RadiusMeters.From(500.0)), Page: PageNumber.From(3), PageSize: PageSize.From(10));
+        var query = new GetInstallationsInRadiusQuery(
+            new SearchRadius(Latitude.From(48.0), Longitude.From(11.0), RadiusMeters.From(500.0)),
+            PageNumber.From(3), PageSize.From(10));
         var result = await handler.Handle(query, CancellationToken.None);
 
         result.Page.Should().Be(3);

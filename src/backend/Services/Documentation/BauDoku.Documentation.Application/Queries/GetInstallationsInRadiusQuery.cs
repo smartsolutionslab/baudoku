@@ -1,14 +1,13 @@
-using BauDoku.BuildingBlocks.Application.Pagination;
-using BauDoku.BuildingBlocks.Application.Queries;
-using BauDoku.BuildingBlocks.Domain;
-using BauDoku.Documentation.Application.Contracts;
-using BauDoku.Documentation.Application.Queries.Dtos;
-using BauDoku.Documentation.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Pagination;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Queries;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.Documentation.ReadModel;
+using SmartSolutionsLab.BauDoku.Documentation.Domain;
 
-namespace BauDoku.Documentation.Application.Queries;
+namespace SmartSolutionsLab.BauDoku.Documentation.Application.Queries;
 
 public sealed record GetInstallationsInRadiusQuery(
     SearchRadius Radius,
-    ProjectIdentifier? ProjectId = null,
-    PageNumber? Page = null,
-    PageSize? PageSize = null) : IQuery<PagedResult<NearbyInstallationDto>>;
+    PageNumber Page,
+    PageSize PageSize,
+    ProjectIdentifier? ProjectId = null) : IQuery<PagedResult<NearbyInstallationDto>>;

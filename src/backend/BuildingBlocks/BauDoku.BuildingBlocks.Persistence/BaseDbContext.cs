@@ -1,26 +1,11 @@
-using BauDoku.BuildingBlocks.Application.Dispatcher;
-using BauDoku.BuildingBlocks.Application.Persistence;
-using BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
 using Microsoft.EntityFrameworkCore;
 
-namespace BauDoku.BuildingBlocks.Persistence;
+namespace SmartSolutionsLab.BauDoku.BuildingBlocks.Persistence;
 
-public abstract class BaseDbContext(DbContextOptions options, IDispatcher dispatcher) : DbContext(options), IUnitOfWork
+public abstract class BaseDbContext(DbContextOptions options) : DbContext(options)
 {
-    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-    {
-        var domainEvents = GetDomainEvents();
-        var result = await base.SaveChangesAsync(cancellationToken);
-
-        foreach (var domainEvent in domainEvents)
-        {
-            await dispatcher.Publish(domainEvent, cancellationToken);
-        }
-
-        return result;
-    }
-
-    private List<IDomainEvent> GetDomainEvents()
+    public List<IDomainEvent> CollectDomainEvents()
     {
         var aggregateRoots = ChangeTracker
             .Entries<IAggregateRoot>()

@@ -1,6 +1,6 @@
-using BauDoku.BuildingBlocks.Guards;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Guards;
 
-namespace BauDoku.BuildingBlocks.Domain;
+namespace SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
 
 public abstract class EventSourcedAggregateRoot<TIdentity> : Entity<TIdentity>, IAggregateRoot
     where TIdentity : IValueObject

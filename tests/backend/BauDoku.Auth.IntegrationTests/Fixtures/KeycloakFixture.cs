@@ -1,14 +1,12 @@
 using System.Net.Http.Json;
 using System.Text.Json;
-using BauDoku.BuildingBlocks.Application.Dispatcher;
-using BauDoku.Projects.Infrastructure.Persistence;
+using SmartSolutionsLab.BauDoku.Projects.Infrastructure.Persistence;
 using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Containers;
 using Microsoft.EntityFrameworkCore;
-using NSubstitute;
 using Testcontainers.PostgreSql;
 
-namespace BauDoku.Auth.IntegrationTests.Fixtures;
+namespace SmartSolutionsLab.BauDoku.Auth.IntegrationTests.Fixtures;
 
 public sealed class KeycloakFixture : IAsyncLifetime
 {
@@ -88,7 +86,6 @@ public sealed class KeycloakFixture : IAsyncLifetime
             .UseNpgsql(PostgresConnectionString)
             .Options;
 
-        var dispatcher = Substitute.For<IDispatcher>();
-        return new ProjectsDbContext(options, dispatcher);
+        return new ProjectsDbContext(options);
     }
 }

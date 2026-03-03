@@ -1,4 +1,10 @@
-namespace BauDoku.BuildingBlocks.Auth;
+namespace SmartSolutionsLab.BauDoku.BuildingBlocks.Auth;
+
+public static class AuthRoles
+{
+    public const string User = "user";
+    public const string Admin = "admin";
+}
 
 public static class AuthPolicies
 {

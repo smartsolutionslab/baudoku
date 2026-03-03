@@ -1,4 +1,4 @@
-namespace BauDoku.BuildingBlocks.Domain;
+namespace SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
 
 public interface IEventSourcedRepository<TAggregateRoot, in TIdentifier>
     where TAggregateRoot : EventSourcedAggregateRoot<TIdentifier>

@@ -1,7 +1,7 @@
 using AwesomeAssertions;
-using BauDoku.Documentation.Domain;
+using SmartSolutionsLab.BauDoku.Documentation.Domain;
 
-namespace BauDoku.Documentation.UnitTests.Domain.Rules;
+namespace SmartSolutionsLab.BauDoku.Documentation.UnitTests.Domain.Rules;
 
 public sealed class MeasurementValueMustBeNonNegativeTests
 {

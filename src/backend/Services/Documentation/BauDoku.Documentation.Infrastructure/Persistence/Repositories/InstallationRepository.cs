@@ -1,8 +1,8 @@
-using BauDoku.BuildingBlocks.Domain;
-using BauDoku.Documentation.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.Documentation.Domain;
 using Marten;
 
-namespace BauDoku.Documentation.Infrastructure.Persistence.Repositories;
+namespace SmartSolutionsLab.BauDoku.Documentation.Infrastructure.Persistence.Repositories;
 
 public sealed class InstallationRepository(IDocumentSession session) : IInstallationRepository
 {
@@ -10,14 +10,14 @@ public sealed class InstallationRepository(IDocumentSession session) : IInstalla
     {
         var events = await session.Events.FetchStreamAsync(id.Value, token: cancellationToken);
 
-        if (events.Count == 0) throw new KeyNotFoundException($"Installation mit ID '{id.Value}' nicht gefunden.");
+        if (events.Count == 0) throw new KeyNotFoundException($"Installation mit ID '{id.Value}' wurde nicht gefunden.");
 
-        var domainEvents = events.Select(e => e.Data).OfType<IDomainEvent>().ToList();
+        var domainEvents = events.Select(@event => @event.Data).OfType<IDomainEvent>().ToList();
 
         var installation = new Installation();
         installation.LoadFromHistory(domainEvents, events[^1].Version);
 
-        if (installation.IsDeleted) throw new KeyNotFoundException($"Installation mit ID '{id.Value}' nicht gefunden.");
+        if (installation.IsDeleted) throw new KeyNotFoundException($"Installation mit ID '{id.Value}' wurde nicht gefunden.");
 
         return installation;
     }

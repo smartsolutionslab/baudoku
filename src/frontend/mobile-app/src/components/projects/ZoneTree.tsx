@@ -1,8 +1,8 @@
-import { useState, useCallback } from "react";
-import { View } from "react-native";
-import { ZoneCard } from "./ZoneCard";
-import type { ZoneNode } from "../../hooks";
-import type { ZoneId } from "../../types/branded";
+import { useState, useCallback } from 'react';
+import { View } from 'react-native';
+import { ZoneCard } from './ZoneCard';
+import type { ZoneNode } from '../../hooks';
+import { zoneId, type ZoneId } from '../../types/branded';
 
 type ZoneTreeProps = {
   nodes: ZoneNode[];
@@ -29,7 +29,7 @@ export function ZoneTree({ nodes, onZonePress }: ZoneTreeProps) {
           <ZoneCard
             node={node}
             expanded={isExpanded}
-            onPress={() => onZonePress(node.zone.id)}
+            onPress={() => onZonePress(zoneId(node.zone.id))}
             onToggle={() => toggle(node.zone.id)}
           />
           {isExpanded && node.children.length > 0 && renderNodes(node.children)}

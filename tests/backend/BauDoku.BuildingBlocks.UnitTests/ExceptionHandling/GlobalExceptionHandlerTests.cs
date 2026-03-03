@@ -1,7 +1,7 @@
 using System.Text.Json;
 using AwesomeAssertions;
-using BauDoku.BuildingBlocks.Domain;
-using BauDoku.ServiceDefaults;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.ServiceDefaults;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
@@ -11,7 +11,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 
-namespace BauDoku.BuildingBlocks.UnitTests.ExceptionHandling;
+namespace SmartSolutionsLab.BauDoku.BuildingBlocks.UnitTests.ExceptionHandling;
 
 public sealed class GlobalExceptionHandlerTests
 {
@@ -34,9 +34,10 @@ public sealed class GlobalExceptionHandlerTests
 
     private static async Task<ProblemDetails> ReadProblemDetails(HttpContext context)
     {
-        context.Response.Body.Seek(0, SeekOrigin.Begin);
-        return (await JsonSerializer.DeserializeAsync<ProblemDetails>(context.Response.Body,
-            new JsonSerializerOptions { PropertyNameCaseInsensitive = true }))!;
+        var responseBody = context.Response.Body;
+
+        responseBody.Seek(0, SeekOrigin.Begin);
+        return (await JsonSerializer.DeserializeAsync<ProblemDetails>(responseBody, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }))!;
     }
 
     [Fact]

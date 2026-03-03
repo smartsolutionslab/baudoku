@@ -1,12 +1,12 @@
 using AwesomeAssertions;
-using BauDoku.Documentation.Application.Commands;
-using BauDoku.Documentation.Application.Commands.Handlers;
-using BauDoku.Documentation.Application.Contracts;
-using BauDoku.Documentation.Domain;
+using SmartSolutionsLab.BauDoku.Documentation.Application.Commands;
+using SmartSolutionsLab.BauDoku.Documentation.Application.Commands.Handlers;
+using SmartSolutionsLab.BauDoku.Documentation.Application.Contracts;
+using SmartSolutionsLab.BauDoku.Documentation.Domain;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 
-namespace BauDoku.Documentation.UnitTests.Application.Commands;
+namespace SmartSolutionsLab.BauDoku.Documentation.UnitTests.Application.Commands;
 
 public sealed class AddPhotoCommandHandlerTests
 {

@@ -1,9 +1,9 @@
-using BauDoku.BuildingBlocks.Storage;
-using BauDoku.Documentation.Application.Contracts;
-using BauDoku.Documentation.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Storage;
+using SmartSolutionsLab.BauDoku.Documentation.Application.Contracts;
+using SmartSolutionsLab.BauDoku.Documentation.Domain;
 using Microsoft.Extensions.Options;
 
-namespace BauDoku.Documentation.Infrastructure.Storage;
+namespace SmartSolutionsLab.BauDoku.Documentation.Infrastructure.Storage;
 
 public sealed class LocalChunkedUploadStorage(IOptions<PhotoStorageOptions> options) : IChunkedUploadStorage
 {

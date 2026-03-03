@@ -4,9 +4,9 @@ import {
   FlatList,
   TouchableOpacity,
   StyleSheet,
-} from "react-native";
-import { Colors, Spacing, FontSize, Radius, FontFamily } from "../../styles/tokens";
-import type { ConflictDto } from "../../sync/syncApi";
+} from 'react-native';
+import { Colors, Spacing, FontSize, Radius, FontFamily } from '../../styles/tokens';
+import type { ConflictDto } from '../../sync/syncApi';
 
 type ConflictListProps = {
   conflicts: ConflictDto[];
@@ -72,9 +72,9 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
   },
   itemHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: Spacing.xs,
   },
   typeBadge: {
@@ -86,8 +86,8 @@ const styles = StyleSheet.create({
   typeBadgeText: {
     color: Colors.white,
     fontSize: 11,
-    fontWeight: "600",
-    textTransform: "capitalize",
+    fontWeight: '600',
+    textTransform: 'capitalize',
   },
   statusBadge: {
     backgroundColor: Colors.warning,
@@ -98,8 +98,8 @@ const styles = StyleSheet.create({
   statusBadgeText: {
     color: Colors.white,
     fontSize: 11,
-    fontWeight: "600",
-    textTransform: "capitalize",
+    fontWeight: '600',
+    textTransform: 'capitalize',
   },
   entityId: {
     fontSize: FontSize.caption,
@@ -113,8 +113,8 @@ const styles = StyleSheet.create({
   },
   empty: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     paddingTop: 60,
   },
   emptyText: {

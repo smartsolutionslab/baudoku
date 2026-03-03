@@ -1,7 +1,7 @@
 using System.Reflection;
 using AwesomeAssertions;
 
-namespace BauDoku.ArchitectureTests;
+namespace SmartSolutionsLab.BauDoku.ArchitectureTests;
 
 public sealed class DependencyTests
 {

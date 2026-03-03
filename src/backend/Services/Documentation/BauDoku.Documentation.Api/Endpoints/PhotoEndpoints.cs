@@ -1,83 +1,99 @@
 using System.Text.Json;
-using BauDoku.BuildingBlocks.Application.Dispatcher;
-using BauDoku.BuildingBlocks.Application.Responses;
-using BauDoku.BuildingBlocks.Auth;
-using BauDoku.Documentation.Api.Mapping;
-using BauDoku.Documentation.Application.Commands;
-using BauDoku.Documentation.Application.Contracts;
-using BauDoku.Documentation.Application.Queries;
-using BauDoku.Documentation.Application.Queries.Dtos;
-using BauDoku.Documentation.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Dispatcher;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Responses;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Auth;
+using SmartSolutionsLab.BauDoku.Documentation.Api.Mapping;
+using SmartSolutionsLab.BauDoku.Documentation.Application.Commands;
+using SmartSolutionsLab.BauDoku.Documentation.Application.Queries;
+using SmartSolutionsLab.BauDoku.Documentation.ReadModel;
+using SmartSolutionsLab.BauDoku.Documentation.Domain;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BauDoku.Documentation.Api.Endpoints;
+namespace SmartSolutionsLab.BauDoku.Documentation.Api.Endpoints;
 
 public static class PhotoEndpoints
 {
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
 
-    public static void MapPhotoEndpoints(this IEndpointRouteBuilder app)
+    public static IEndpointRouteBuilder MapPhotoEndpoints(this IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/api/documentation").WithTags("Photos");
+        var group = app.MapGroup("/api/documentation")
+            .WithTags("Photos")
+            .RequireAuthorization()
+            .ProducesProblem(StatusCodes.Status401Unauthorized);
 
-        group.MapPost("/installations/{installationId:guid}/photos", async (
-            Guid installationId,
-            IFormFile file,
-            [FromForm] string? metadata,
-            IDispatcher dispatcher,
-            CancellationToken ct) =>
-        {
-            var request = metadata is not null
-                ? JsonSerializer.Deserialize<AddPhotoRequest>(metadata, JsonOptions) ?? new AddPhotoRequest(null, null, null, null, null)
-                : new AddPhotoRequest(null, null, null, null, null);
-            await using var stream = file.OpenReadStream();
-            var command = request.ToCommand(installationId, file, stream);
-            var photoId = await dispatcher.Send(command, ct);
-            return Results.Created($"/api/documentation/photos/{photoId.Value}", new CreatedResponse(photoId.Value));
-        })
-        .RequireAuthorization(AuthPolicies.RequireUser)
-        .DisableAntiforgery()
-        .WithName("AddPhoto")
-        .WithSummary("Foto zu einer Installation hinzufuegen")
-        .Produces<CreatedResponse>(StatusCodes.Status201Created)
-        .ProducesValidationProblem();
+        group.MapPost("/installations/{installationId:guid}/photos", AddPhoto)
+            .RequireAuthorization(AuthPolicies.RequireUser)
+            .DisableAntiforgery()
+            .WithName("AddPhoto")
+            .WithSummary("Foto zu einer Installation hinzufuegen")
+            .ProducesValidationProblem();
 
-        group.MapGet("/installations/{installationId:guid}/photos", async (Guid installationId, IPhotoReadRepository photos, CancellationToken ct) =>
-        {
-            var photoList = await photos.ListByInstallationIdAsync(InstallationIdentifier.From(installationId), ct);
-            return Results.Ok(photoList);
-        })
-        .RequireAuthorization()
-        .WithName("ListPhotos")
-        .WithSummary("Fotos einer Installation auflisten")
-        .Produces<IReadOnlyList<PhotoDto>>(StatusCodes.Status200OK);
+        group.MapGet("/installations/{installationId:guid}/photos", ListPhotos)
+            .WithName("ListPhotos")
+            .WithSummary("Fotos einer Installation auflisten");
 
-        group.MapGet("/photos/{photoId:guid}", async (Guid photoId, IDispatcher dispatcher, CancellationToken ct) =>
-        {
-            var query = new GetPhotoQuery(PhotoIdentifier.From(photoId));
-            var result = await dispatcher.Query(query, ct);
-            return Results.Ok(result);
-        })
-        .RequireAuthorization()
-        .WithName("GetPhoto")
-        .WithSummary("Foto nach ID abrufen")
-        .Produces<PhotoDto>(StatusCodes.Status200OK)
-        .Produces(StatusCodes.Status404NotFound);
+        group.MapGet("/photos/{photoId:guid}", GetPhoto)
+            .WithName("GetPhoto")
+            .WithSummary("Foto nach ID abrufen")
+            .ProducesProblem(StatusCodes.Status404NotFound);
 
-        group.MapDelete("/installations/{installationId:guid}/photos/{photoId:guid}", async (
-            Guid photoId,
-            Guid installationId,
-            IDispatcher dispatcher,
-            CancellationToken ct) =>
+        group.MapDelete("/installations/{installationId:guid}/photos/{photoId:guid}", RemovePhoto)
+            .RequireAuthorization(AuthPolicies.RequireAdmin)
+            .WithName("RemovePhoto")
+            .WithSummary("Foto von einer Installation entfernen")
+            .ProducesProblem(StatusCodes.Status404NotFound);
+
+        return app;
+    }
+
+    private static async Task<Created<CreatedResponse>> AddPhoto(
+        Guid installationId,
+        IFormFile file,
+        [FromForm] string? metadata,
+        IDispatcher dispatcher,
+        CancellationToken cancellationToken)
+    {
+        var request = GetRequestFromFormData(metadata);
+        await using var stream = file.OpenReadStream();
+        var command = request.ToCommand(installationId, file, stream);
+        var photoId = await dispatcher.Send(command, cancellationToken);
+
+        return TypedResults.Created($"/api/documentation/photos/{photoId.Value}", new CreatedResponse(photoId.Value));
+    }
+
+    private static AddPhotoRequest GetRequestFromFormData(string? metadata)
+    {
+        AddPhotoRequest? deserialized = null;
+
+        if (metadata is not null)
         {
-            var command = new RemovePhotoCommand(InstallationIdentifier.From(installationId), PhotoIdentifier.From(photoId));
-            await dispatcher.Send(command, ct);
-            return Results.NoContent();
-        })
-        .RequireAuthorization(AuthPolicies.RequireAdmin)
-        .WithName("RemovePhoto")
-        .WithSummary("Foto von einer Installation entfernen")
-        .Produces(StatusCodes.Status204NoContent)
-        .Produces(StatusCodes.Status404NotFound);
+            deserialized = JsonSerializer.Deserialize<AddPhotoRequest>(metadata, JsonOptions);
+        }
+
+        return deserialized ?? new AddPhotoRequest(null, null, null, null, null);
+    }
+
+    private static async Task<Ok<IReadOnlyList<PhotoDto>>> ListPhotos(Guid installationId, IPhotoReadRepository photos, CancellationToken cancellationToken)
+    {
+        var photoList = await photos.ListByInstallationIdAsync(InstallationIdentifier.From(installationId), cancellationToken);
+
+        return TypedResults.Ok(photoList);
+    }
+
+    private static async Task<Ok<PhotoDto>> GetPhoto(Guid photoId, IDispatcher dispatcher, CancellationToken cancellationToken)
+    {
+        var query = new GetPhotoQuery(PhotoIdentifier.From(photoId));
+
+        return TypedResults.Ok(await dispatcher.Query(query, cancellationToken));
+    }
+
+    private static async Task<NoContent> RemovePhoto(Guid photoId, Guid installationId, IDispatcher dispatcher, CancellationToken cancellationToken)
+    {
+        var command = new RemovePhotoCommand(InstallationIdentifier.From(installationId), PhotoIdentifier.From(photoId));
+        await dispatcher.Send(command, cancellationToken);
+
+        return TypedResults.NoContent();
     }
 }

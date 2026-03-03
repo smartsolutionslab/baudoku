@@ -1,10 +1,10 @@
-import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { FontAwesome } from "@expo/vector-icons";
-import { Colors, Spacing, FontSize, Radius } from "../../styles/tokens";
+import React from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { FontAwesome } from '@expo/vector-icons';
+import { Colors, Spacing, FontSize, Radius } from '../../styles/tokens';
 
 export type ActionBarItem = {
-  icon: React.ComponentProps<typeof FontAwesome>["name"];
+  icon: React.ComponentProps<typeof FontAwesome>['name'];
   label: string;
   onPress: () => void;
   color?: string;
@@ -29,7 +29,7 @@ export function ActionBar({ actions }: ActionBarProps) {
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: "row",
+    flexDirection: 'row',
     backgroundColor: Colors.card,
     marginHorizontal: Spacing.lg,
     marginTop: Spacing.sm,
@@ -39,12 +39,12 @@ const styles = StyleSheet.create({
   },
   item: {
     flex: 1,
-    alignItems: "center",
+    alignItems: 'center',
     gap: Spacing.xs,
   },
   label: {
     fontSize: FontSize.footnote,
     color: Colors.primary,
-    fontWeight: "500",
+    fontWeight: '500',
   },
 });

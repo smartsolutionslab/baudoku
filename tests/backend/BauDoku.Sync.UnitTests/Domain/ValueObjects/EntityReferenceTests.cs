@@ -1,14 +1,14 @@
 using AwesomeAssertions;
-using BauDoku.Sync.Domain;
+using SmartSolutionsLab.BauDoku.Sync.Domain;
 
-namespace BauDoku.Sync.UnitTests.Domain.ValueObjects;
+namespace SmartSolutionsLab.BauDoku.Sync.UnitTests.Domain.ValueObjects;
 
 public sealed class EntityReferenceTests
 {
     [Fact]
     public void Create_WithValidValues_ShouldSucceed()
     {
-        var entityId = Guid.NewGuid();
+        var entityId = EntityIdentifier.From(Guid.NewGuid());
         var entityRef = EntityReference.Create(EntityType.Project, entityId);
 
         entityRef.EntityType.Should().Be(EntityType.Project);
@@ -18,14 +18,14 @@ public sealed class EntityReferenceTests
     [Fact]
     public void Create_WithNullEntityType_ShouldThrow()
     {
-        var act = () => EntityReference.Create(null!, Guid.NewGuid());
+        var act = () => EntityReference.Create(null!, EntityIdentifier.New());
         act.Should().Throw<ArgumentNullException>();
     }
 
     [Fact]
-    public void Create_WithEmptyEntityId_ShouldThrow()
+    public void Create_WithNullEntityId_ShouldThrow()
     {
-        var act = () => EntityReference.Create(EntityType.Project, Guid.Empty);
-        act.Should().Throw<ArgumentException>();
+        var act = () => EntityReference.Create(EntityType.Project, null!);
+        act.Should().Throw<ArgumentNullException>();
     }
 }

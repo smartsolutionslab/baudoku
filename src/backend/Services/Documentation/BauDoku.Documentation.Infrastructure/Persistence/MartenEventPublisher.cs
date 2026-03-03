@@ -1,14 +1,14 @@
-using BauDoku.BuildingBlocks.Application.Dispatcher;
-using BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Dispatcher;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
 using Marten;
 using Marten.Services;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace BauDoku.Documentation.Infrastructure.Persistence;
+namespace SmartSolutionsLab.BauDoku.Documentation.Infrastructure.Persistence;
 
 public sealed class MartenEventPublisher(IServiceScopeFactory scopeFactory) : DocumentSessionListenerBase
 {
-    public override async Task AfterCommitAsync(IDocumentSession session, IChangeSet commit, CancellationToken token)
+    public override async Task AfterCommitAsync(IDocumentSession session, IChangeSet commit, CancellationToken cancellationToken)
     {
         var events = commit.GetEvents().ToList();
         if (events.Count == 0) return;
@@ -20,7 +20,7 @@ public sealed class MartenEventPublisher(IServiceScopeFactory scopeFactory) : Do
         {
             if (@event.Data is IDomainEvent domainEvent)
             {
-                await dispatcher.Publish(domainEvent, token);
+                await dispatcher.Publish(domainEvent, cancellationToken);
             }
         }
     }

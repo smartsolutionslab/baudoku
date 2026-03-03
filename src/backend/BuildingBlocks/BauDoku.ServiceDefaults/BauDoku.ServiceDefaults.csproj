@@ -11,6 +11,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BauDoku.BuildingBlocks.Domain\BauDoku.BuildingBlocks.Domain.csproj" />
+    <ProjectReference Include="..\BauDoku.BuildingBlocks.Serialization\BauDoku.BuildingBlocks.Serialization.csproj" />
+    <ProjectReference Include="..\BauDoku.BuildingBlocks.Auth\BauDoku.BuildingBlocks.Auth.csproj" />
   </ItemGroup>
 
   <ItemGroup>

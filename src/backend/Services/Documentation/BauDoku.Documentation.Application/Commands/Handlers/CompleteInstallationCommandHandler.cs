@@ -1,8 +1,9 @@
-using BauDoku.BuildingBlocks.Application.Commands;
-using BauDoku.Documentation.Application.Diagnostics;
-using BauDoku.Documentation.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Commands;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
+using SmartSolutionsLab.BauDoku.Documentation.Application.Diagnostics;
+using SmartSolutionsLab.BauDoku.Documentation.Domain;
 
-namespace BauDoku.Documentation.Application.Commands.Handlers;
+namespace SmartSolutionsLab.BauDoku.Documentation.Application.Commands.Handlers;
 
 public sealed class CompleteInstallationCommandHandler(IInstallationRepository installations) : ICommandHandler<CompleteInstallationCommand>
 {
@@ -10,10 +11,8 @@ public sealed class CompleteInstallationCommandHandler(IInstallationRepository i
     {
         var installationId = command.InstallationId;
 
-        var installation = await installations.GetByIdAsync(installationId, cancellationToken);
-
+        var installation = await installations.With(installationId, cancellationToken);
         installation.MarkAsCompleted();
-
         await installations.SaveAsync(installation, cancellationToken);
 
         DocumentationMetrics.InstallationsCompleted.Add(1);

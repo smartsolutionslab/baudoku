@@ -1,4 +1,4 @@
-namespace BauDoku.BuildingBlocks.Application.Queries;
+namespace SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Queries;
 
 public interface IQueryHandler<in TQuery, TResult> where TQuery : IQuery<TResult>
 {

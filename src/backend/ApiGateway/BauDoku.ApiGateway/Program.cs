@@ -1,6 +1,6 @@
-using BauDoku.ApiGateway.Endpoints;
-using BauDoku.BuildingBlocks.Auth;
-using BauDoku.ServiceDefaults;
+using SmartSolutionsLab.BauDoku.ApiGateway.Endpoints;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Auth;
+using SmartSolutionsLab.BauDoku.ServiceDefaults;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,20 +12,17 @@ builder.AddServiceDefaults(health =>
 });
 
 builder.Services.AddHttpClient();
-builder.Services.Configure<KeycloakOptions>(builder.Configuration.GetSection("Authentication:Keycloak"));
+builder.Services.AddKeycloakOptions(builder.Configuration);
 
 builder.Services.AddReverseProxy()
     .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"))
     .AddServiceDiscoveryDestinationResolver();
 
-var allowedOrigins = builder.Configuration
-    .GetSection("Cors:AllowedOrigins")
-    .Get<string[]>() ?? [];
+var allowedOrigins = GetAllowedOrigins(builder);
 
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(policy =>
-    {
+    options.AddDefaultPolicy(policy => {
         policy.WithOrigins(allowedOrigins)
               .AllowAnyMethod()
               .AllowAnyHeader()
@@ -35,11 +32,20 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-app.UseCors();
-app.UseWebSockets();
+app.UseCors()
+   .UseWebSockets();
+
 app.MapReverseProxy();
-app.MapAuthEndpoints();
-app.MapSystemEndpoints();
+app.MapAuthEndpoints()
+   .MapSystemEndpoints();
+
 app.MapDefaultEndpoints();
 
 app.Run();
+
+string[] GetAllowedOrigins(WebApplicationBuilder webApplicationBuilder)
+{
+    return webApplicationBuilder.Configuration
+        .GetSection("Cors:AllowedOrigins")
+        .Get<string[]>() ?? [];
+}

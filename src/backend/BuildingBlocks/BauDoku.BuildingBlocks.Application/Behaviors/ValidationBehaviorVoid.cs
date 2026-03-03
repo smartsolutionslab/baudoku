@@ -1,7 +1,7 @@
-using BauDoku.BuildingBlocks.Application.Commands;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Commands;
 using FluentValidation;
 
-namespace BauDoku.BuildingBlocks.Application.Behaviors;
+namespace SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Behaviors;
 
 public sealed class ValidationBehaviorVoid<TCommand>(ICommandHandler<TCommand> inner, IEnumerable<IValidator<TCommand>> validators)
     : ICommandHandler<TCommand>

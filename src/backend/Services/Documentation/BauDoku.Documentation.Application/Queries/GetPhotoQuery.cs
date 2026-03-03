@@ -1,7 +1,7 @@
-using BauDoku.BuildingBlocks.Application.Queries;
-using BauDoku.Documentation.Application.Queries.Dtos;
-using BauDoku.Documentation.Domain;
+using SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Queries;
+using SmartSolutionsLab.BauDoku.Documentation.ReadModel;
+using SmartSolutionsLab.BauDoku.Documentation.Domain;
 
-namespace BauDoku.Documentation.Application.Queries;
+namespace SmartSolutionsLab.BauDoku.Documentation.Application.Queries;
 
 public sealed record GetPhotoQuery(PhotoIdentifier PhotoId) : IQuery<PhotoDto>;

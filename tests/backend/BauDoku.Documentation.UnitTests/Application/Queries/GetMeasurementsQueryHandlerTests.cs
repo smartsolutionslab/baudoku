@@ -1,43 +1,37 @@
 using AwesomeAssertions;
-using BauDoku.Documentation.Application.Queries;
-using BauDoku.Documentation.Application.Queries.Handlers;
-using BauDoku.Documentation.Domain;
+using SmartSolutionsLab.BauDoku.Documentation.Application.Queries;
+using SmartSolutionsLab.BauDoku.Documentation.ReadModel;
+using SmartSolutionsLab.BauDoku.Documentation.Application.Queries.Handlers;
+using SmartSolutionsLab.BauDoku.Documentation.Domain;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 
-namespace BauDoku.Documentation.UnitTests.Application.Queries;
+namespace SmartSolutionsLab.BauDoku.Documentation.UnitTests.Application.Queries;
 
 public sealed class GetMeasurementsQueryHandlerTests
 {
-    private readonly IInstallationRepository installations;
+    private readonly IInstallationReadRepository installations;
     private readonly GetMeasurementsQueryHandler handler;
 
     public GetMeasurementsQueryHandlerTests()
     {
-        installations = Substitute.For<IInstallationRepository>();
+        installations = Substitute.For<IInstallationReadRepository>();
         handler = new GetMeasurementsQueryHandler(installations);
     }
 
     [Fact]
     public async Task Handle_WhenInstallationHasMeasurements_ShouldReturnMappedDtos()
     {
-        var installation = Installation.Create(
-            InstallationIdentifier.New(),
-            ProjectIdentifier.New(),
-            null,
-            InstallationType.CableTray,
-            GpsPosition.Create(Latitude.From(48.0), Longitude.From(11.0), null, HorizontalAccuracy.From(3.5), GpsSource.From("gps")));
+        var installationId = InstallationIdentifier.New();
+        IReadOnlyList<MeasurementDto> measurements =
+        [
+            new MeasurementDto(Guid.NewGuid(), installationId.Value, "insulation_resistance", 500.0, "MΩ", 1.0, null, "pass", "Notiz", DateTime.UtcNow)
+        ];
 
-        installation.RecordMeasurement(
-            MeasurementIdentifier.New(),
-            MeasurementType.InsulationResistance,
-            MeasurementValue.Create(500.0, MeasurementUnit.From("MΩ"), 1.0, null),
-            Notes.From("Notiz"));
+        installations.GetMeasurementsAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
+            .Returns(measurements);
 
-        installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
-            .Returns(installation);
-
-        var result = await handler.Handle(new GetMeasurementsQuery(installation.Id), CancellationToken.None);
+        var result = await handler.Handle(new GetMeasurementsQuery(installationId));
 
         result.Should().ContainSingle();
         result[0].Type.Should().Be("insulation_resistance");
@@ -49,10 +43,10 @@ public sealed class GetMeasurementsQueryHandlerTests
     [Fact]
     public async Task Handle_WhenInstallationNotFound_ShouldThrow()
     {
-        installations.GetByIdAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
+        installations.GetMeasurementsAsync(Arg.Any<InstallationIdentifier>(), Arg.Any<CancellationToken>())
             .Throws(new KeyNotFoundException());
 
-        var act = () => handler.Handle(new GetMeasurementsQuery(InstallationIdentifier.New()), CancellationToken.None);
+        var act = () => handler.Handle(new GetMeasurementsQuery(InstallationIdentifier.New()));
 
         await act.Should().ThrowAsync<KeyNotFoundException>();
     }
