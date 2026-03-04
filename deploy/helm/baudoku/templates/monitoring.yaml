@@ -90,7 +90,7 @@ spec:
         app.kubernetes.io/name: otel-collector
         app.kubernetes.io/instance: {{ .Release.Name }}
       annotations:
-        checksum/config: {{ include (print $.Template.BasePath "/monitoring.yaml") . | sha256sum }}
+        checksum/config: {{ toYaml .Values.monitoring.otelCollector | sha256sum }}
     spec:
       containers:
         - name: otel-collector
@@ -222,7 +222,7 @@ spec:
         app.kubernetes.io/name: prometheus
         app.kubernetes.io/instance: {{ .Release.Name }}
       annotations:
-        checksum/config: {{ include (print $.Template.BasePath "/monitoring.yaml") . | sha256sum }}
+        checksum/config: {{ toYaml .Values.monitoring.prometheus | sha256sum }}
     spec:
       securityContext:
         fsGroup: 65534
@@ -378,7 +378,7 @@ spec:
         app.kubernetes.io/name: tempo
         app.kubernetes.io/instance: {{ .Release.Name }}
       annotations:
-        checksum/config: {{ include (print $.Template.BasePath "/monitoring.yaml") . | sha256sum }}
+        checksum/config: {{ toYaml .Values.monitoring.tempo | sha256sum }}
     spec:
       containers:
         - name: tempo
@@ -524,7 +524,7 @@ spec:
         app.kubernetes.io/name: loki
         app.kubernetes.io/instance: {{ .Release.Name }}
       annotations:
-        checksum/config: {{ include (print $.Template.BasePath "/monitoring.yaml") . | sha256sum }}
+        checksum/config: {{ toYaml .Values.monitoring.loki | sha256sum }}
     spec:
       containers:
         - name: loki
@@ -690,7 +690,7 @@ spec:
         app.kubernetes.io/name: grafana
         app.kubernetes.io/instance: {{ .Release.Name }}
       annotations:
-        checksum/config: {{ include (print $.Template.BasePath "/monitoring.yaml") . | sha256sum }}
+        checksum/config: {{ toYaml .Values.monitoring.grafana | sha256sum }}
     spec:
       containers:
         - name: grafana
