@@ -5,6 +5,13 @@ import { getBaseUrl } from '@baudoku/core';
 import type { PhotoId } from '@baudoku/core';
 import { XIcon } from '@/components/icons';
 
+function getPhotoUrl(photo: Photo, variant: 'full' | 'thumbnail' = 'full'): string | undefined {
+  const path = variant === 'full'
+    ? (photo.remotePath ?? photo.thumbnailPath)
+    : (photo.thumbnailPath ?? photo.remotePath);
+  return path ? `${getBaseUrl()}${path}` : undefined;
+}
+
 type PhotoGalleryProps = {
   photos: Photo[];
   onDelete?: (photoId: PhotoId) => void;
@@ -27,13 +34,7 @@ export function PhotoGallery({ photos, onDelete }: PhotoGalleryProps) {
             onClick={() => setViewPhoto(photo)}
           >
             <img
-              src={
-                photo.remotePath
-                  ? `${getBaseUrl()}${photo.remotePath}`
-                  : photo.thumbnailPath
-                    ? `${getBaseUrl()}${photo.thumbnailPath}`
-                    : undefined
-              }
+              src={getPhotoUrl(photo, 'thumbnail')}
               alt={photo.caption ?? 'Foto'}
               className="h-full w-full object-cover"
             />
@@ -69,7 +70,7 @@ export function PhotoGallery({ photos, onDelete }: PhotoGalleryProps) {
             <XIcon />
           </button>
           <img
-            src={viewPhoto.remotePath ? `${getBaseUrl()}${viewPhoto.remotePath}` : undefined}
+            src={getPhotoUrl(viewPhoto)}
             alt={viewPhoto.caption ?? 'Foto'}
             className="max-h-[90vh] max-w-[90vw] rounded-lg object-contain"
             onClick={(e) => e.stopPropagation()}

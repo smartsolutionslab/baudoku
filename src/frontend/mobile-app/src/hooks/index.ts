@@ -32,6 +32,7 @@ export { useQrScanner, type QrScanResult, type UseQrScannerReturn } from './useQ
 export { useSyncManager } from './useSyncManager';
 export { useSyncStatus } from './useSyncStatus';
 export { useToast } from './useToast';
+export { useToggle } from './useToggle';
 export { useZoneForm, type UseZoneFormOptions, type UseZoneFormReturn } from './useZoneForm';
 export { useZoneTree, type ZoneNode } from './useZoneTree';
 export {

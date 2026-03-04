@@ -1,13 +1,7 @@
-import { useMemo, useState, useCallback } from 'react';
+import { useMemo, useCallback } from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
-import {
-  useZonesByProject,
-  useInstallationsByZone,
-  useDeleteZone,
-  useUpdateZone,
-  useConfirmDelete,
-} from '@/hooks';
+import { useZonesByProject, useInstallationsByZone, useDeleteZone, useUpdateZone, useConfirmDelete, useToggle } from '@/hooks';
 import { InstallationCard } from '@/components/installations';
 import { StatusBadge, EmptyState, FloatingActionButton, ActionBar } from '@/components/common';
 import { ZoneQrSheet } from '@/components/projects';
@@ -41,7 +35,7 @@ export default function ZoneDetailScreen() {
   const deleteZone = useDeleteZone();
   const updateZone = useUpdateZone();
   const { confirmDelete } = useConfirmDelete();
-  const [qrSheetVisible, setQrSheetVisible] = useState(false);
+  const { value: qrSheetVisible, open: openQrSheet, close: closeQrSheet } = useToggle();
 
   const openEditZone = () =>
     router.push(`/(tabs)/projects/zone/edit?zoneId=${zoneId}&projectId=${projectId}`);
@@ -66,11 +60,11 @@ export default function ZoneDetailScreen() {
       if (zone && !zone.qrCode) {
         await updateZone.mutateAsync({ id: zoneId, data: { qrCode: qrValue } });
       }
-      setQrSheetVisible(true);
+      openQrSheet();
     } catch {
       // Global MutationCache.onError shows toast
     }
-  }, [zone, zoneId, qrValue, updateZone]);
+  }, [zone, zoneId, qrValue, updateZone, openQrSheet]);
 
   const handleDelete = () => {
     confirmDelete({
@@ -142,7 +136,7 @@ export default function ZoneDetailScreen() {
 
       <ZoneQrSheet
         visible={qrSheetVisible}
-        onClose={() => setQrSheetVisible(false)}
+        onClose={closeQrSheet}
         qrValue={qrValue}
         zoneName={name}
         zoneType={type}

@@ -3,6 +3,7 @@ import { useGpsCapture } from '@/hooks/useGpsCapture';
 import { latitude as toLatitude, longitude as toLongitude } from '@baudoku/core';
 import type { Latitude, Longitude } from '@baudoku/core';
 import { Button } from '../common/Button';
+import { LoadingSpinner } from '../common/LoadingSpinner';
 import { GpsIcon } from '../icons';
 
 export type GpsFormData = {
@@ -23,12 +24,7 @@ export function GpsPositionSelector({ gps, onGpsChange, error }: GpsPositionSele
   const [manualGps, setManualGps] = useState(false);
   const [manualLat, setManualLat] = useState('');
   const [manualLng, setManualLng] = useState('');
-  const {
-    position: browserPosition,
-    capturing,
-    error: captureError,
-    capturePosition,
-  } = useGpsCapture();
+  const {    position: browserPosition,    capturing,    error: captureError,    capturePosition  } = useGpsCapture();
 
   useEffect(() => {
     if (browserPosition) {
@@ -132,7 +128,7 @@ export function GpsPositionSelector({ gps, onGpsChange, error }: GpsPositionSele
               className="inline-flex items-center gap-2"
             >
               {capturing ? (
-                <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-blue-600" />
+                <LoadingSpinner size="sm" />
               ) : (
                 <GpsIcon />
               )}

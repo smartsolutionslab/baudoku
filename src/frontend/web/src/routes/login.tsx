@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { useAuth, userManager } from '../auth';
+import { LoadingSpinner } from '@/components/common';
 
 export function LoginPage() {
   const navigate = useNavigate();
@@ -44,8 +45,8 @@ export function LoginPage() {
         </div>
         <h1 className="text-xl font-semibold text-gray-900">BauDoku</h1>
         <p className="mt-2 text-sm text-gray-500">Anmeldung wird verarbeitet...</p>
-        <div className="mt-4">
-          <div className="mx-auto h-8 w-8 animate-spin rounded-full border-4 border-gray-200 border-t-blue-600" />
+        <div className="mt-4 flex justify-center">
+          <LoadingSpinner />
         </div>
       </div>
     </div>

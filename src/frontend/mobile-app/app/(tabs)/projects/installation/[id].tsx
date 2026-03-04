@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
 import { View, ScrollView, StyleSheet } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
@@ -13,6 +13,7 @@ import {
   useDeleteMeasurement,
   useDeleteInstallation,
   useConfirmDelete,
+  useToggle,
 } from '@/hooks';
 import { ActionBar } from '@/components/common';
 import {
@@ -46,8 +47,8 @@ export default function InstallationDetailScreen() {
   const deleteInstallation = useDeleteInstallation();
   const { confirmDelete } = useConfirmDelete();
 
-  const [showSourceSheet, setShowSourceSheet] = useState(false);
-  const [showMeasurementForm, setShowMeasurementForm] = useState(false);
+  const { value: showSourceSheet, open: openSourceSheet, close: closeSourceSheet } = useToggle();
+  const { value: showMeasurementForm, open: openMeasurementForm, close: closeMeasurementForm } = useToggle();
 
   const handleDeleteMeasurement = useCallback(
     (m: Measurement) => {
@@ -80,12 +81,12 @@ export default function InstallationDetailScreen() {
           measuredBy: data.measuredBy,
           measuredAt: new Date(),
         });
-        setShowMeasurementForm(false);
+        closeMeasurementForm();
       } catch {
         // Global MutationCache.onError shows toast
       }
     },
-    [id, addMeasurement],
+    [id, addMeasurement, closeMeasurementForm],
   );
 
   const handleDeleteInstallation = useCallback(() => {
@@ -106,8 +107,8 @@ export default function InstallationDetailScreen() {
   const openEdit = () => router.push(`/(tabs)/projects/installation/edit?id=${id}`);
 
   const actions = [
-    { icon: 'camera' as const, label: 'Foto', onPress: () => setShowSourceSheet(true) },
-    { icon: 'bar-chart' as const, label: 'Messung', onPress: () => setShowMeasurementForm(true) },
+    { icon: 'camera' as const, label: 'Foto', onPress: openSourceSheet },
+    { icon: 'bar-chart' as const, label: 'Messung', onPress: openMeasurementForm },
     { icon: 'pencil' as const, label: 'Bearbeiten', onPress: openEdit },
     {
       icon: 'trash' as const,
@@ -136,7 +137,7 @@ export default function InstallationDetailScreen() {
             void saveAnnotation({ id: photoId, annotation });
           }}
           showSourceSheet={showSourceSheet}
-          onShowSourceSheet={setShowSourceSheet}
+          onShowSourceSheet={(show) => show ? openSourceSheet() : closeSourceSheet()}
         />
 
         <InstallationMeasurementSection
@@ -144,7 +145,7 @@ export default function InstallationDetailScreen() {
           showForm={showMeasurementForm}
           submitting={addMeasurement.isPending}
           onSubmit={handleAddMeasurement}
-          onCancel={() => setShowMeasurementForm(false)}
+          onCancel={closeMeasurementForm}
           onDelete={handleDeleteMeasurement}
         />
       </ScrollView>

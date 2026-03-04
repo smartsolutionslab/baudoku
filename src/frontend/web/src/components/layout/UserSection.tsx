@@ -1,4 +1,4 @@
-import { useAuth } from '../../auth/AuthProvider';
+import { useAuth } from '@/auth';
 import { LogoutIcon } from '../icons';
 
 export function UserSection() {
@@ -17,11 +17,7 @@ export function UserSection() {
             {user?.profile?.name ?? 'Benutzer'}
           </p>
         </div>
-        <button
-          onClick={logout}
-          className="rounded p-1 text-gray-400 hover:text-gray-600"
-          title="Abmelden"
-        >
+        <button onClick={logout} className="rounded p-1 text-gray-400 hover:text-gray-600" title="Abmelden">
           <LogoutIcon />
         </button>
       </div>
