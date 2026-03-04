@@ -1,6 +1,7 @@
 import type { UserManagerSettings } from 'oidc-client-ts';
 
 declare global {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- interface required for declaration merging
   interface Window {
     __BAUDOKU_CONFIG__?: Record<string, string>;
   }

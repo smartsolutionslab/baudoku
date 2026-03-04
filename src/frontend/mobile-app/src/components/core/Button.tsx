@@ -6,7 +6,7 @@ import {
   type ViewStyle,
   type TextStyle,
 } from 'react-native';
-import { Colors, Spacing, FontSize, Radius } from '../../styles/tokens';
+import { Colors, FontSize, Radius } from '../../styles/tokens';
 
 type ButtonVariant = 'primary' | 'secondary' | 'danger';
 

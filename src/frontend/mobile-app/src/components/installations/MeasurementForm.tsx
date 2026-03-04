@@ -22,8 +22,7 @@ export function MeasurementForm({ onSubmit, onCancel, submitting }: MeasurementF
   const set = useCallback((key: string, value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }));
     setErrors((prev) => {
-      const next = { ...prev };
-      delete next[key];
+      const { [key]: _, ...next } = prev;
       return next;
     });
   }, []);

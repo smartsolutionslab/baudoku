@@ -6,6 +6,7 @@ import { Colors, Spacing, FontSize, Radius, Shadows } from '../../styles/tokens'
 export function UploadProgressBar() {
   const queue = useUploadStore((s) => s.queue);
   const dismissTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // eslint-disable-next-line react-hooks/refs
   const opacity = useRef(new Animated.Value(0)).current;
 
   const total = queue.length;

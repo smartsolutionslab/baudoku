@@ -6,7 +6,6 @@ import {
   MEASUREMENT_TYPES,
 } from '@baudoku/documentation';
 import { FormField } from '../common/FormField';
-import { FormSelect } from '../common/FormSelect';
 import { Button } from '../common/Button';
 import { inputClassName } from '../common/formStyles';
 
@@ -26,13 +25,10 @@ export function MeasurementForm({ onSubmit, onCancel, isSubmitting }: Measuremen
     register,
     handleSubmit,
     setValue,
-    watch,
     formState: { errors },
   } = useForm<MeasurementFormData>({
     resolver: typedZodResolver(measurementSchema),
   });
-
-  const selectedType = watch('type');
 
   // Auto-fill unit and thresholds when type changes
   const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {

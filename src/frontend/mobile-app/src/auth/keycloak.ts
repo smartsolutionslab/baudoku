@@ -1,6 +1,5 @@
 import * as AuthSession from 'expo-auth-session';
 import { KEYCLOAK_URL, KEYCLOAK_REALM, KEYCLOAK_CLIENT_ID } from '../config/environment';
-import { parseUserFromToken } from '@baudoku/core';
 
 const realmUrl = `${KEYCLOAK_URL}/realms/${KEYCLOAK_REALM}`;
 

@@ -39,6 +39,7 @@ export function PhotoViewer({
 
   useEffect(() => {
     if (photo) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- sync form state when photo changes
       setAnnotation(photo.annotations ?? '');
       setDirty(false);
     }

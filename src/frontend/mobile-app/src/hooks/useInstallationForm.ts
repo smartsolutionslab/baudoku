@@ -48,8 +48,7 @@ export function useInstallationForm({
     (key: string, value: unknown) => {
       setForm((prev) => ({ ...prev, [key]: value }));
       setErrors((prev) => {
-        const next = { ...prev };
-        delete next[key];
+        const { [key]: _, ...next } = prev;
         return next;
       });
     },

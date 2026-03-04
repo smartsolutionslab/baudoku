@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
-import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { useZonesByProject, useUpdateZone } from '@/hooks';
 import { ZoneForm } from '@/components/projects';
-import { Colors, Spacing, FontSize } from '@/styles/tokens';
+import { Colors } from '@/styles/tokens';
 import type { ZoneFormData } from '@/validation/schemas';
 import { projectId as toProjectId, zoneId as toZoneId } from '@baudoku/core';
 

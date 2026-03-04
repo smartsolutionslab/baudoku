@@ -9,7 +9,7 @@ type ZoneTreeProps = {
   zones: Zone[];
   projectId: ProjectId;
   onDelete?: (zoneId: ZoneId) => void;
-}
+};
 
 export function ZoneTree({ zones, projectId, onDelete }: ZoneTreeProps) {
   const tree = useMemo(() => buildZoneTree(zones), [zones]);

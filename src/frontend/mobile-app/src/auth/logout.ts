@@ -9,7 +9,7 @@ export async function performLogout(): Promise<void> {
   // 1. Revoke refresh token via backend (best-effort)
   if (refreshToken) {
     try {
-      await apiPost<void>('/api/auth/logout', { refreshToken });
+      await apiPost<undefined>('/api/auth/logout', { refreshToken });
     } catch {
       // Backend revocation failed — continue with local cleanup
     }

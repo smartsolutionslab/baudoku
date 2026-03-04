@@ -1,4 +1,4 @@
-import { and, eq, like, or, inArray, sql, count } from 'drizzle-orm';
+import { and, eq, like, or, inArray, count } from 'drizzle-orm';
 import { db } from '../client';
 import { installations, zones, projects } from '../schema';
 import { generateId } from '../../utils';

@@ -16,8 +16,8 @@ import { FormSection } from '../common/FormSection';
 import { FormSelect } from '../common/FormSelect';
 import { Button } from '../common/Button';
 import { GpsPositionSelector } from './GpsPositionSelector';
-export type { GpsFormData } from './GpsPositionSelector';
 import type { GpsFormData } from './GpsPositionSelector';
+export type { GpsFormData } from './GpsPositionSelector';
 
 type InstallationFormProps = {
   zones: Zone[];
@@ -52,8 +52,6 @@ export function InstallationForm({
   const {
     register,
     handleSubmit,
-    setValue,
-    watch,
     formState: { errors },
   } = useForm<InstallationWithZoneFormData>({
     resolver: typedZodResolver(installationWithZoneSchema),

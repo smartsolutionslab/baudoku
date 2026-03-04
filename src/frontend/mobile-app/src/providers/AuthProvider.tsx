@@ -59,6 +59,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             setUser(user);
           }
 
+          // eslint-disable-next-line react-hooks/immutability -- intentional recursive scheduling
           scheduleRefresh(tokens.accessToken, tokens.refreshToken, newIdToken);
         } catch {
           await handleLogout();

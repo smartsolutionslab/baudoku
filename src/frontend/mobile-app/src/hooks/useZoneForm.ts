@@ -33,8 +33,7 @@ export function useZoneForm({
     <K extends keyof ZoneFormData>(key: K, value: ZoneFormData[K]) => {
       setForm((prev) => ({ ...prev, [key]: value }));
       setErrors((prev) => {
-        const next = { ...prev };
-        delete next[key];
+        const { [key]: _, ...next } = prev;
         return next;
       });
     },

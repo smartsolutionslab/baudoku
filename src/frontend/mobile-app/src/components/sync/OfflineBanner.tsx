@@ -5,6 +5,7 @@ import { useSyncStatus } from '../../hooks';
 
 export function OfflineBanner() {
   const { isOnline } = useSyncStatus();
+  // eslint-disable-next-line react-hooks/refs -- Animated.Value ref is a stable animation driver
   const translateY = useRef(new Animated.Value(-50)).current;
 
   useEffect(() => {

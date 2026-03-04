@@ -39,6 +39,7 @@ export function GpsPositionSelector({ gps, onGpsChange, error }: GpsPositionSele
         accuracy: browserPosition.accuracy,
         source: 'browser',
       });
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- sync state when browser position arrives
       setManualGps(false);
     }
   }, [browserPosition, onGpsChange]);

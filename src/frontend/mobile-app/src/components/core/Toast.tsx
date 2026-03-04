@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/refs -- Animated.Value refs are used as stable animation drivers */
 import { useEffect, useRef } from 'react';
 import { Animated, Text, StyleSheet, Pressable } from 'react-native';
 import { Colors, Spacing, FontSize, Radius, Shadows } from '../../styles/tokens';

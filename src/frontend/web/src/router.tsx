@@ -129,7 +129,8 @@ export const router = createRouter({
 });
 
 declare module '@tanstack/react-router' {
-  type Register = {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- interface required for declaration merging
+  interface Register {
     router: typeof router;
   }
 }
