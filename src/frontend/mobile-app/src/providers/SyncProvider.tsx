@@ -55,11 +55,14 @@ export function SyncProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const value: SyncContextValue = {
+    // eslint-disable-next-line react-hooks/refs
     syncManager: managerRef.current,
+    // eslint-disable-next-line react-hooks/refs
     syncScheduler: schedulerRef.current,
   };
 
   return (
+    // eslint-disable-next-line react-hooks/refs -- refs hold stable singleton instances for context
     <SyncContext.Provider value={value}>
       {children}
       <UploadProgressBar />

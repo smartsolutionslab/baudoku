@@ -14,14 +14,21 @@ type FilterChipsProps = {
 
 export function FilterChips({ options, selected, onToggle }: FilterChipsProps) {
   return (
-    <ScrollView horizontal  showsHorizontalScrollIndicator={false} contentContainerStyle={styles.container}>
-      {options.map((opt) => {
-        const active = selected.includes(opt.value);
+    <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      contentContainerStyle={styles.container}
+    >
+      {options.map(({ label, value }) => {
+        const active = selected.includes(value);
         return (
-          <TouchableOpacity  key={opt.value} style={[styles.chip, active && styles.chipActive]} onPress={() => onToggle(opt.value)} activeOpacity={0.7}>
-            <Text style={[styles.chipText, active && styles.chipTextActive]}>
-              {opt.label}
-            </Text>
+          <TouchableOpacity
+            key={value}
+            style={[styles.chip, active && styles.chipActive]}
+            onPress={() => onToggle(value)}
+            activeOpacity={0.7}
+          >
+            <Text style={[styles.chipText, active && styles.chipTextActive]}>{label}</Text>
           </TouchableOpacity>
         );
       })}

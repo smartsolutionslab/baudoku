@@ -1,4 +1,4 @@
-import { SyncManager } from './SyncManager';
+import { type SyncManager } from './SyncManager';
 import type { SyncResult } from './SyncManager';
 
 const DEFAULT_INTERVAL_MS = 60_000;
@@ -16,7 +16,7 @@ export class SyncScheduler {
       intervalMs?: number;
       onSyncComplete?: (result: SyncResult) => void;
       onSyncError?: (error: Error) => void;
-    }
+    },
   ) {
     this.syncManager = syncManager;
     this.intervalMs = options?.intervalMs ?? DEFAULT_INTERVAL_MS;

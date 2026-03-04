@@ -27,17 +27,11 @@ function formatValue(value: unknown): string {
   return String(value);
 }
 
-function computeDiff(
-  clientPayload: string,
-  serverPayload: string
-): DiffRow[] {
+function computeDiff(clientPayload: string, serverPayload: string): DiffRow[] {
   const client = parsePayload(clientPayload);
   const server = parsePayload(serverPayload);
 
-  const allKeys = new Set([
-    ...Object.keys(client),
-    ...Object.keys(server),
-  ]);
+  const allKeys = new Set([...Object.keys(client), ...Object.keys(server)]);
 
   return Array.from(allKeys)
     .sort()
@@ -53,38 +47,22 @@ function computeDiff(
     });
 }
 
-export function ConflictDiffView({
-  clientPayload,
-  serverPayload,
-}: ConflictDiffViewProps) {
+export function ConflictDiffView({ clientPayload, serverPayload }: ConflictDiffViewProps) {
   const rows = computeDiff(clientPayload, serverPayload);
 
   return (
     <ScrollView horizontal>
       <View style={styles.table}>
         <View style={styles.headerRow}>
-          <Text style={[styles.cell, styles.fieldCell, styles.headerText]}>
-            Feld
-          </Text>
-          <Text style={[styles.cell, styles.valueCell, styles.headerText]}>
-            Ihre Version
-          </Text>
-          <Text style={[styles.cell, styles.valueCell, styles.headerText]}>
-            Server-Version
-          </Text>
+          <Text style={[styles.cell, styles.fieldCell, styles.headerText]}>Feld</Text>
+          <Text style={[styles.cell, styles.valueCell, styles.headerText]}>Ihre Version</Text>
+          <Text style={[styles.cell, styles.valueCell, styles.headerText]}>Server-Version</Text>
         </View>
         {rows.map((row) => (
-          <View
-            key={row.field}
-            style={[styles.row, row.isDifferent && styles.diffRow]}
-          >
+          <View key={row.field} style={[styles.row, row.isDifferent && styles.diffRow]}>
             <Text style={[styles.cell, styles.fieldCell]}>{row.field}</Text>
-            <Text style={[styles.cell, styles.valueCell]}>
-              {row.clientValue}
-            </Text>
-            <Text style={[styles.cell, styles.valueCell]}>
-              {row.serverValue}
-            </Text>
+            <Text style={[styles.cell, styles.valueCell]}>{row.clientValue}</Text>
+            <Text style={[styles.cell, styles.valueCell]}>{row.serverValue}</Text>
           </View>
         ))}
       </View>

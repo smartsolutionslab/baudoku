@@ -19,9 +19,7 @@ export function useSyncMutation<TVariables, TData = unknown>(opts: {
     mutationFn: opts.mutationFn,
     meta: { errorMessage: opts.errorMessage },
     onSuccess: (_data: TData, variables: TVariables) => {
-      const keys = opts.onSuccessKeys
-        ? opts.onSuccessKeys(variables)
-        : opts.invalidateKeys;
+      const keys = opts.onSuccessKeys ? opts.onSuccessKeys(variables) : opts.invalidateKeys;
       for (const key of keys) {
         queryClient.invalidateQueries({ queryKey: [...key] });
       }

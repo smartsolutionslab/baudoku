@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import type { Photo } from '../../db/repositories/types';
-import type { PhotoId } from '../../types/branded';
+import type { PhotoId } from '@baudoku/core';
 import { StatusBadge } from '../common';
 import { Colors, Spacing, FontSize, Radius } from '../../styles/tokens';
 import { formatDateTime } from '../../utils';
@@ -39,6 +39,7 @@ export function PhotoViewer({
 
   useEffect(() => {
     if (photo) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- sync form state when photo changes
       setAnnotation(photo.annotations ?? '');
       setDirty(false);
     }
@@ -52,7 +53,7 @@ export function PhotoViewer({
   };
 
   return (
-    <Modal visible={visible} animationType='fade' statusBarTranslucent>
+    <Modal visible={visible} animationType="fade" statusBarTranslucent>
       <SafeAreaView style={styles.container}>
         <KeyboardAvoidingView
           style={styles.flex}
@@ -60,21 +61,14 @@ export function PhotoViewer({
         >
           <View style={styles.header}>
             <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-              <FontAwesome name='close' size={22} color={Colors.white} />
+              <FontAwesome name="close" size={22} color={Colors.white} />
             </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => onDelete(photo)}
-              style={styles.deleteButton}
-            >
-              <FontAwesome name='trash' size={20} color={Colors.danger} />
+            <TouchableOpacity onPress={() => onDelete(photo)} style={styles.deleteButton}>
+              <FontAwesome name="trash" size={20} color={Colors.danger} />
             </TouchableOpacity>
           </View>
 
-          <Image
-            source={{ uri: photo.localPath }}
-            style={styles.image}
-            resizeMode='contain'
-          />
+          <Image source={{ uri: photo.localPath }} style={styles.image} resizeMode="contain" />
 
           <View style={styles.footer}>
             <View style={styles.footerTop}>
@@ -95,17 +89,14 @@ export function PhotoViewer({
                   setAnnotation(text);
                   setDirty(true);
                 }}
-                placeholder='Notiz hinzufügen...'
+                placeholder="Notiz hinzufügen..."
                 placeholderTextColor={Colors.textTertiary}
                 multiline
                 maxLength={500}
               />
               {dirty && (
-                <TouchableOpacity
-                  style={styles.saveBtn}
-                  onPress={handleSave}
-                >
-                  <FontAwesome name='check' size={16} color={Colors.white} />
+                <TouchableOpacity style={styles.saveBtn} onPress={handleSave}>
+                  <FontAwesome name="check" size={16} color={Colors.white} />
                 </TouchableOpacity>
               )}
             </View>

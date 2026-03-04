@@ -1,6 +1,17 @@
+import type {
+  ProjectId,
+  ZoneId,
+  InstallationId,
+  PhotoId,
+  MeasurementId,
+  Latitude,
+  Longitude,
+  DepthMm,
+} from '@baudoku/core';
+
 export type GpsPosition = {
-  latitude: number;
-  longitude: number;
+  latitude: Latitude;
+  longitude: Longitude;
   altitude: number | null;
   horizontalAccuracy: number;
   gpsSource: string;
@@ -12,15 +23,15 @@ export type GpsPosition = {
 };
 
 export type Installation = {
-  id: string;
-  projectId: string;
-  zoneId: string;
+  id: InstallationId;
+  projectId: ProjectId;
+  zoneId: ZoneId;
   type: string;
   status: InstallationStatus;
 
   // GPS / GNSS
   position: GpsPosition | null;
-  depthMm: number | null;
+  depthMm: DepthMm | null;
   positionOnPlan: string | null;
 
   // Component
@@ -49,32 +60,19 @@ export type Installation = {
   version: number;
 };
 
-export type InstallationStatus =
-  | 'planned'
-  | 'in_progress'
-  | 'completed'
-  | 'inspected';
+export type InstallationStatus = 'planned' | 'in_progress' | 'completed' | 'inspected';
 
 export type GpsSource = 'internal_gps' | 'external_dgnss' | 'external_rtk';
 
-export type GpsCorrectionService =
-  | 'none'
-  | 'sapos_eps'
-  | 'sapos_heps'
-  | 'sapos_gpps';
+export type GpsCorrectionService = 'none' | 'sapos_eps' | 'sapos_heps' | 'sapos_gpps';
 
-export type RtkFixStatus =
-  | 'no_fix'
-  | 'autonomous'
-  | 'dgps'
-  | 'rtk_float'
-  | 'rtk_fixed';
+export type RtkFixStatus = 'no_fix' | 'autonomous' | 'dgps' | 'rtk_float' | 'rtk_fixed';
 
 export type Phase = 'L1' | 'L2' | 'L3' | 'N' | 'PE';
 
 export type Photo = {
-  id: string;
-  installationId: string;
+  id: PhotoId;
+  installationId: InstallationId;
   localPath: string;
   remotePath: string | null;
   thumbnailPath: string | null;
@@ -82,8 +80,8 @@ export type Photo = {
   annotations: string | null;
   position: GpsPosition | null;
   caption: string | null;
-  exifLatitude: number | null;
-  exifLongitude: number | null;
+  exifLatitude: Latitude | null;
+  exifLongitude: Longitude | null;
   exifDateTime: string | null;
   exifCameraModel: string | null;
   takenAt: string;
@@ -96,8 +94,8 @@ export type PhotoType = 'before' | 'after' | 'detail' | 'overview';
 export type UploadStatus = 'pending' | 'uploading' | 'uploaded' | 'failed';
 
 export type Measurement = {
-  id: string;
-  installationId: string;
+  id: MeasurementId;
+  installationId: InstallationId;
   type: string;
   value: number;
   unit: string;

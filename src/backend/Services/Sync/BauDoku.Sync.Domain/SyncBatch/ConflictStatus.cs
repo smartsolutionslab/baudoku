@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using SmartSolutionsLab.BauDoku.BuildingBlocks.Domain;
 using SmartSolutionsLab.BauDoku.BuildingBlocks.Guards;
 
@@ -5,12 +6,20 @@ namespace SmartSolutionsLab.BauDoku.Sync.Domain;
 
 public sealed record ConflictStatus : IValueObject
 {
-    private static readonly HashSet<string> ValidValues = ["unresolved", "client_wins", "server_wins", "merged"];
-
     public static readonly ConflictStatus Unresolved = new("unresolved");
     public static readonly ConflictStatus ClientWins = new("client_wins");
     public static readonly ConflictStatus ServerWins = new("server_wins");
     public static readonly ConflictStatus Merged = new("merged");
+
+    public static IEnumerable<ConflictStatus> All { get; } =
+    [
+        Unresolved,
+        ClientWins,
+        ServerWins,
+        Merged
+    ];
+
+    private static HashSet<string> ValidValues => All.Select(item => item.Value).ToHashSet();
 
     public string Value { get; }
 

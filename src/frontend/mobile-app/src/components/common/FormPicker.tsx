@@ -1,12 +1,7 @@
 import { useState } from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  FlatList,
-  StyleSheet,
-} from 'react-native';
+import { Text, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
 import { BottomSheet } from './BottomSheet';
+import { FormFieldWrapper } from './FormFieldWrapper';
 import { Colors, Spacing, FontSize, Radius } from '../../styles/tokens';
 
 type PickerOption = {
@@ -37,11 +32,7 @@ export function FormPicker({
   const selected = options.find((o) => o.value === value);
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.label}>
-        {label}
-        {required && <Text style={styles.required}> *</Text>}
-      </Text>
+    <FormFieldWrapper label={label} error={error} required={required}>
       <TouchableOpacity
         style={[styles.picker, error && styles.pickerError]}
         onPress={() => setVisible(true)}
@@ -49,20 +40,16 @@ export function FormPicker({
         <Text style={selected ? styles.pickerText : styles.placeholder}>
           {selected?.label ?? placeholder}
         </Text>
-        <Text style={styles.chevron}>›</Text>
+        <Text style={styles.chevron}>&rsaquo;</Text>
       </TouchableOpacity>
-      {error ? <Text style={styles.error}>{error}</Text> : null}
 
       <BottomSheet visible={visible} onClose={() => setVisible(false)} title={label}>
-        <FlatList 
+        <FlatList
           data={options}
           keyExtractor={(item) => item.value}
           renderItem={({ item }) => (
             <TouchableOpacity
-              style={[
-                styles.option,
-                item.value === value && styles.optionActive,
-              ]}
+              style={[styles.option, item.value === value && styles.optionActive]}
               onPress={() => {
                 onValueChange(item.value);
                 setVisible(false);
@@ -75,23 +62,11 @@ export function FormPicker({
           )}
         />
       </BottomSheet>
-    </View>
+    </FormFieldWrapper>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    marginBottom: Spacing.md,
-  },
-  label: {
-    fontSize: FontSize.caption,
-    fontWeight: '600',
-    color: Colors.textSecondary,
-    marginBottom: Spacing.xs,
-  },
-  required: {
-    color: Colors.danger,
-  },
   picker: {
     backgroundColor: Colors.card,
     borderRadius: Radius.md,
@@ -117,11 +92,6 @@ const styles = StyleSheet.create({
   chevron: {
     fontSize: 20,
     color: Colors.textTertiary,
-  },
-  error: {
-    fontSize: FontSize.footnote,
-    color: Colors.danger,
-    marginTop: Spacing.xs,
   },
   option: {
     paddingVertical: 14,

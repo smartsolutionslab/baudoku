@@ -1,21 +1,21 @@
-import { View, Text, ScrollView, StyleSheet } from "react-native";
-import { useLocalSearchParams, useRouter, Stack } from "expo-router";
+import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import {
   useProject,
   useZonesByProject,
   useDeleteProject,
   useZoneTree,
   useConfirmDelete,
-} from "@/hooks";
-import { ZoneTree } from "@/components/projects";
-import { StatusBadge, EmptyState, FloatingActionButton, ActionBar } from "@/components/common";
-import { Colors, Spacing, FontSize, Radius } from "@/styles/tokens";
-import { formatDate } from "@/utils";
-import { projectId } from "@/types/branded";
+} from '@/hooks';
+import { ZoneTree } from '@/components/projects';
+import { StatusBadge, EmptyState, FloatingActionButton, ActionBar } from '@/components/common';
+import { Colors, Spacing, FontSize, Radius } from '@/styles/tokens';
+import { formatDate, requiredParam } from '@/utils';
+import { projectId } from '@baudoku/core';
 
 export default function ProjectDetailScreen() {
   const { id: rawId } = useLocalSearchParams<{ id: string }>();
-  const id = projectId(rawId!);
+  const id = projectId(requiredParam(rawId));
   const router = useRouter();
   const { data: project } = useProject(id);
   const { data: zones } = useZonesByProject(id);
@@ -23,21 +23,24 @@ export default function ProjectDetailScreen() {
   const deleteProject = useDeleteProject();
   const { confirmDelete } = useConfirmDelete();
 
+  const openInstallations = () => router.push(`/(tabs)/projects/installations?projectId=${id}`);
+  const openEdit = () => router.push(`/(tabs)/projects/edit?id=${id}`);
+  const openNewZone = () => router.push(`/(tabs)/projects/zone/new?projectId=${id}`);
+
   if (!project) return null;
 
-  const address = [project.street, project.zipCode, project.city]
-    .filter(Boolean)
-    .join(", ");
+  const { name, status, street, zipCode, city, clientName, clientContact, createdAt } = project;
+
+  const address = [street, zipCode, city].filter(Boolean).join(', ');
 
   const handleDelete = () => {
     confirmDelete({
-      title: "Projekt löschen",
-      message:
-        "Dieses Projekt und alle zugehörigen Daten wirklich löschen?",
+      title: 'Projekt löschen',
+      message: 'Dieses Projekt und alle zugehörigen Daten wirklich löschen?',
       onConfirm: async () => {
         try {
           await deleteProject.mutateAsync(id);
-          router.replace("/(tabs)/projects/");
+          router.replace('/(tabs)/projects/');
         } catch {
           // Global MutationCache.onError shows toast
         }
@@ -47,12 +50,12 @@ export default function ProjectDetailScreen() {
 
   return (
     <View style={styles.container}>
-      <Stack.Screen options={{ title: project.name }} />
+      <Stack.Screen options={{ title: name }} />
       <ScrollView contentContainerStyle={styles.scroll}>
         <View style={styles.card}>
           <View style={styles.row}>
             <Text style={styles.label}>Status</Text>
-            <StatusBadge status={project.status} />
+            <StatusBadge status={status} />
           </View>
           {address ? (
             <View style={styles.row}>
@@ -60,46 +63,29 @@ export default function ProjectDetailScreen() {
               <Text style={styles.value}>{address}</Text>
             </View>
           ) : null}
-          {project.clientName ? (
+          {clientName ? (
             <View style={styles.row}>
               <Text style={styles.label}>Auftraggeber</Text>
-              <Text style={styles.value}>{project.clientName}</Text>
+              <Text style={styles.value}>{clientName}</Text>
             </View>
           ) : null}
-          {project.clientContact ? (
+          {clientContact ? (
             <View style={styles.row}>
               <Text style={styles.label}>Kontakt</Text>
-              <Text style={styles.value}>{project.clientContact}</Text>
+              <Text style={styles.value}>{clientContact}</Text>
             </View>
           ) : null}
           <View style={styles.row}>
             <Text style={styles.label}>Erstellt am</Text>
-            <Text style={styles.value}>{formatDate(project.createdAt)}</Text>
+            <Text style={styles.value}>{formatDate(createdAt)}</Text>
           </View>
         </View>
 
         <ActionBar
           actions={[
-            {
-              icon: "list",
-              label: "Installationen",
-              onPress: () =>
-                router.push(
-                  `/(tabs)/projects/installations?projectId=${id}`
-                ),
-            },
-            {
-              icon: "pencil",
-              label: "Bearbeiten",
-              onPress: () =>
-                router.push(`/(tabs)/projects/edit?id=${id}`),
-            },
-            {
-              icon: "trash",
-              label: "Löschen",
-              onPress: handleDelete,
-              color: Colors.danger,
-            },
+            { icon: 'list', label: 'Installationen', onPress: openInstallations },
+            { icon: 'pencil', label: 'Bearbeiten', onPress: openEdit },
+            { icon: 'trash', label: 'Löschen', onPress: handleDelete, color: Colors.danger },
           ]}
         />
 
@@ -111,29 +97,21 @@ export default function ProjectDetailScreen() {
             title="Noch keine Zonen"
             subtitle="Erstelle Gebäude, Stockwerke oder Gräben."
             actionLabel="Neue Zone"
-            onAction={() =>
-              router.push(`/(tabs)/projects/zone/new?projectId=${id}`)
-            }
+            onAction={openNewZone}
           />
         ) : (
           <View style={styles.treeContainer}>
             <ZoneTree
               nodes={tree}
               onZonePress={(zoneId) =>
-                router.push(
-                  `/(tabs)/projects/zone/${zoneId}?projectId=${id}`
-                )
+                router.push(`/(tabs)/projects/zone/${zoneId}?projectId=${id}`)
               }
             />
           </View>
         )}
       </ScrollView>
 
-      <FloatingActionButton
-        onPress={() =>
-          router.push(`/(tabs)/projects/zone/new?projectId=${id}`)
-        }
-      />
+      <FloatingActionButton onPress={openNewZone} />
     </View>
   );
 }
@@ -154,9 +132,9 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
   },
   row: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   label: {
     fontSize: FontSize.body,
@@ -164,15 +142,15 @@ const styles = StyleSheet.create({
   },
   value: {
     fontSize: FontSize.body,
-    fontWeight: "500",
+    fontWeight: '500',
     color: Colors.textPrimary,
     flex: 1,
-    textAlign: "right",
+    textAlign: 'right',
     marginLeft: Spacing.lg,
   },
   sectionTitle: {
     fontSize: FontSize.headline,
-    fontWeight: "600",
+    fontWeight: '600',
     marginHorizontal: Spacing.lg,
     marginTop: Spacing.lg,
     marginBottom: Spacing.sm,

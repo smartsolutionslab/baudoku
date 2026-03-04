@@ -3,11 +3,7 @@ import { Alert } from 'react-native';
 
 type UseConfirmDeleteReturn = {
   deleting: boolean;
-  confirmDelete: (opts: {
-    title: string;
-    message: string;
-    onConfirm: () => Promise<void>;
-  }) => void;
+  confirmDelete: (opts: { title: string; message: string; onConfirm: () => Promise<void> }) => void;
 };
 
 export function useConfirmDelete(): UseConfirmDeleteReturn {
@@ -39,7 +35,7 @@ export function useConfirmDelete(): UseConfirmDeleteReturn {
         },
       ]);
     },
-    []
+    [],
   );
 
   return { deleting, confirmDelete };

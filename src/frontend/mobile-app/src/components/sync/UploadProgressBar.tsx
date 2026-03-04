@@ -6,6 +6,7 @@ import { Colors, Spacing, FontSize, Radius, Shadows } from '../../styles/tokens'
 export function UploadProgressBar() {
   const queue = useUploadStore((s) => s.queue);
   const dismissTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // eslint-disable-next-line react-hooks/refs
   const opacity = useRef(new Animated.Value(0)).current;
 
   const total = queue.length;
@@ -15,9 +16,8 @@ export function UploadProgressBar() {
   const allDone = total > 0 && uploading === 0;
   const hasActive = uploading > 0;
 
-  const overallPercentage = total > 0
-      ? Math.round(queue.reduce((sum, item) => sum + item.percentage, 0) / total)
-      : 0;
+  const overallPercentage =
+    total > 0 ? Math.round(queue.reduce((sum, item) => sum + item.percentage, 0) / total) : 0;
 
   useEffect(() => {
     if (hasActive || allDone) {

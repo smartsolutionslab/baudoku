@@ -1,15 +1,8 @@
-import { Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { BottomSheet } from '../common';
-import { Colors, Spacing, FontSize, Radius } from '../../styles/tokens';
+import { Text, TouchableOpacity } from 'react-native';
+import { PHOTO_TYPES, PHOTO_TYPE_LABELS } from '@baudoku/documentation';
+import { OptionSheet, optionSheetStyles } from '../common';
 
-const PHOTO_TYPES = [
-  { value: 'before', label: 'Vorher' },
-  { value: 'after', label: 'Nachher' },
-  { value: 'detail', label: 'Detail' },
-  { value: 'overview', label: 'Übersicht' },
-] as const;
-
-export type PhotoType = (typeof PHOTO_TYPES)[number]['value'];
+export type PhotoType = (typeof PHOTO_TYPES)[number];
 
 type PhotoTypeSheetProps = {
   visible: boolean;
@@ -17,50 +10,14 @@ type PhotoTypeSheetProps = {
   onClose: () => void;
 };
 
-export function PhotoTypeSheet({
-  visible,
-  onSelect,
-  onClose,
-}: PhotoTypeSheetProps) {
+export function PhotoTypeSheet({ visible, onSelect, onClose }: PhotoTypeSheetProps) {
   return (
-    <BottomSheet visible={visible} onClose={onClose} title='Foto-Typ wählen'>
+    <OptionSheet visible={visible} onClose={onClose} title="Foto-Typ wählen">
       {PHOTO_TYPES.map((pt) => (
-        <TouchableOpacity
-          key={pt.value}
-          style={styles.option}
-          onPress={() => onSelect(pt.value)}
-        >
-          <Text style={styles.optionText}>{pt.label}</Text>
+        <TouchableOpacity key={pt} style={optionSheetStyles.option} onPress={() => onSelect(pt)}>
+          <Text style={optionSheetStyles.optionText}>{PHOTO_TYPE_LABELS[pt]}</Text>
         </TouchableOpacity>
       ))}
-
-      <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
-        <Text style={styles.cancelText}>Abbrechen</Text>
-      </TouchableOpacity>
-    </BottomSheet>
+    </OptionSheet>
   );
 }
-
-const styles = StyleSheet.create({
-  option: {
-    paddingVertical: Spacing.md,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: Colors.separator,
-  },
-  optionText: {
-    fontSize: FontSize.callout,
-    color: Colors.textPrimary,
-  },
-  cancelButton: {
-    alignItems: 'center',
-    paddingVertical: 14,
-    marginTop: Spacing.lg,
-    backgroundColor: Colors.background,
-    borderRadius: Radius.md,
-  },
-  cancelText: {
-    fontSize: FontSize.callout,
-    fontWeight: '600',
-    color: Colors.textTertiary,
-  },
-});

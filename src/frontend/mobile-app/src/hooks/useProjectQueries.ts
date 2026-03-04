@@ -1,6 +1,7 @@
 import * as projectRepo from '../db/repositories/projectRepo';
 import type { NewProject } from '../db/repositories/types';
-import type { ProjectId } from '../types/branded';
+import type { ProjectId } from '@baudoku/core';
+import { MUTATION_ERRORS } from '../constants/strings';
 import { useListQuery, useSyncMutation } from './useQueryFactory';
 
 export function useProjects() {
@@ -13,16 +14,23 @@ export function useProject(id: ProjectId) {
 
 export function useCreateProject() {
   return useSyncMutation({
-    mutationFn: (data: Omit<NewProject, 'id' | 'createdAt' | 'updatedAt' | 'version'>) => projectRepo.create(data),
-    errorMessage: 'Projekt konnte nicht erstellt werden',
+    mutationFn: (data: Omit<NewProject, 'id' | 'createdAt' | 'updatedAt' | 'version'>) =>
+      projectRepo.create(data),
+    errorMessage: MUTATION_ERRORS.projectCreate,
     invalidateKeys: [['projects']],
   });
 }
 
 export function useUpdateProject() {
   return useSyncMutation({
-    mutationFn: ({ id, data }: { id: ProjectId; data: Partial<Omit<NewProject, 'id' | 'createdAt' | 'updatedAt' | 'version' | 'createdBy'>> }) => projectRepo.update(id, data),
-    errorMessage: 'Projekt konnte nicht aktualisiert werden',
+    mutationFn: ({
+      id,
+      data,
+    }: {
+      id: ProjectId;
+      data: Partial<Omit<NewProject, 'id' | 'createdAt' | 'updatedAt' | 'version' | 'createdBy'>>;
+    }) => projectRepo.update(id, data),
+    errorMessage: MUTATION_ERRORS.projectUpdate,
     invalidateKeys: [['projects']],
   });
 }
@@ -30,7 +38,7 @@ export function useUpdateProject() {
 export function useDeleteProject() {
   return useSyncMutation({
     mutationFn: (id: ProjectId) => projectRepo.remove(id),
-    errorMessage: 'Projekt konnte nicht gelöscht werden',
+    errorMessage: MUTATION_ERRORS.projectDelete,
     invalidateKeys: [['projects']],
   });
 }

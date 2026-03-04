@@ -4,6 +4,7 @@ export type { ProjectFormData, ZoneFormData } from './validation';
 export {
   ZONE_TYPES,
   ZONE_TYPE_LABELS,
+  formatZoneLabel,
   PROJECT_STATUSES,
   PROJECT_STATUS_LABELS,
 } from './constants';

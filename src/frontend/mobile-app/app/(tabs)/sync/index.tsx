@@ -1,51 +1,44 @@
-import { useEffect } from "react";
-import {
-  View,
-  Text,
-  FlatList,
-  StyleSheet,
-  TouchableOpacity,
-} from "react-native";
-import { useRouter } from "expo-router";
-import { useSyncStore } from "@/store";
-import { useSyncStatus, useSyncManager } from "@/hooks";
-import { UploadQueueCard } from "@/components/sync";
-import { Button } from "@/components/core";
-import { StatusBadge } from "@/components/common";
-import { Colors, Spacing, FontSize, Radius } from "@/styles/tokens";
-import { formatDateTime } from "@/utils";
-import type { SyncOutboxEntry } from "@/db/repositories/types";
+import { useEffect } from 'react';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { useRouter } from 'expo-router';
+import { useSyncStore } from '@/store';
+import { useSyncStatus, useSyncManager } from '@/hooks';
+import { UploadQueueCard } from '@/components/sync';
+import { Button } from '@/components/core';
+import { StatusBadge } from '@/components/common';
+import { Colors, Spacing, FontSize, Radius } from '@/styles/tokens';
+import { formatDateTime } from '@/utils';
+import type { SyncOutboxEntry } from '@/db/repositories/types';
 
 function operationLabel(op: string): string {
   switch (op) {
-    case "create":
-      return "Erstellt";
-    case "update":
-      return "Aktualisiert";
-    case "delete":
-      return "Gelöscht";
+    case 'create':
+      return 'Erstellt';
+    case 'update':
+      return 'Aktualisiert';
+    case 'delete':
+      return 'Gelöscht';
     default:
       return op;
   }
 }
 
-function OutboxItem({ item }: { item: SyncOutboxEntry }) {
+type OutboxItemProps = {
+  item: SyncOutboxEntry;
+};
+
+function OutboxItem({ item }: OutboxItemProps) {
+  const { entityType, status, operation, timestamp, retryCount } = item;
   return (
     <View style={itemStyles.container}>
       <View style={itemStyles.header}>
-        <Text style={itemStyles.entityType}>{item.entityType}</Text>
-        <StatusBadge status={item.status} />
+        <Text style={itemStyles.entityType}>{entityType}</Text>
+        <StatusBadge status={status} />
       </View>
-      <Text style={itemStyles.operation}>
-        {operationLabel(item.operation)}
-      </Text>
-      <Text style={itemStyles.timestamp}>
-        {formatDateTime(item.timestamp)}
-      </Text>
-      {item.retryCount != null && item.retryCount > 0 && (
-        <Text style={itemStyles.retry}>
-          Versuche: {item.retryCount}
-        </Text>
+      <Text style={itemStyles.operation}>{operationLabel(operation)}</Text>
+      <Text style={itemStyles.timestamp}>{formatDateTime(timestamp)}</Text>
+      {retryCount != null && retryCount > 0 && (
+        <Text style={itemStyles.retry}>Versuche: {retryCount}</Text>
       )}
     </View>
   );
@@ -57,6 +50,8 @@ export default function SyncScreen() {
   const { pendingEntries, loadPendingEntries, conflicts } = useSyncStore();
   const { sync, isSyncing, syncError } = useSyncManager();
 
+  const openConflicts = () => router.push('/(tabs)/sync/conflicts');
+
   useEffect(() => {
     loadPendingEntries();
   }, [loadPendingEntries]);
@@ -67,28 +62,19 @@ export default function SyncScreen() {
         <View style={styles.statusRow}>
           <Text style={styles.label}>Status</Text>
           <View style={styles.statusValue}>
-            <View
-              style={[
-                styles.dot,
-                isOnline ? styles.online : styles.offline,
-              ]}
-            />
-            <Text style={styles.value}>
-              {isOnline ? "Online" : "Offline"}
-            </Text>
+            <View style={[styles.dot, isOnline ? styles.online : styles.offline]} />
+            <Text style={styles.value}>{isOnline ? 'Online' : 'Offline'}</Text>
           </View>
         </View>
         <View style={styles.statusRow}>
           <Text style={styles.label}>Ausstehend</Text>
           <Text style={styles.value}>
-            {unsyncedCount} {unsyncedCount === 1 ? "Änderung" : "Änderungen"}
+            {unsyncedCount} {unsyncedCount === 1 ? 'Änderung' : 'Änderungen'}
           </Text>
         </View>
         <View style={styles.statusRow}>
           <Text style={styles.label}>Letzte Sync</Text>
-          <Text style={styles.value}>
-            {lastSyncTimestamp ?? "Noch nicht synchronisiert"}
-          </Text>
+          <Text style={styles.value}>{lastSyncTimestamp ?? 'Noch nicht synchronisiert'}</Text>
         </View>
 
         <Button
@@ -99,24 +85,19 @@ export default function SyncScreen() {
           style={{ marginTop: Spacing.xs }}
         />
 
-        {syncError && (
-          <Text style={styles.syncError}>{syncError}</Text>
-        )}
+        {syncError && <Text style={styles.syncError}>{syncError}</Text>}
       </View>
 
       <UploadQueueCard />
 
       {conflicts.length > 0 && (
-        <TouchableOpacity
-          style={styles.conflictCard}
-          onPress={() => router.push("/(tabs)/sync/conflicts")}
-        >
+        <TouchableOpacity style={styles.conflictCard} onPress={openConflicts}>
           <View style={styles.conflictBadge}>
             <Text style={styles.conflictBadgeText}>{conflicts.length}</Text>
           </View>
           <Text style={styles.conflictText}>
             {conflicts.length === 1
-              ? "1 Konflikt zu lösen"
+              ? '1 Konflikt zu lösen'
               : `${conflicts.length} Konflikte zu lösen`}
           </Text>
           <Text style={styles.chevron}>›</Text>
@@ -127,9 +108,7 @@ export default function SyncScreen() {
 
       {pendingEntries.length === 0 ? (
         <View style={styles.emptyState}>
-          <Text style={styles.emptyText}>
-            Keine ausstehenden Änderungen
-          </Text>
+          <Text style={styles.emptyText}>Keine ausstehenden Änderungen</Text>
         </View>
       ) : (
         <FlatList
@@ -156,13 +135,13 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
   },
   statusRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   statusValue: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   label: {
     fontSize: FontSize.body,
@@ -170,7 +149,7 @@ const styles = StyleSheet.create({
   },
   value: {
     fontSize: FontSize.body,
-    fontWeight: "500",
+    fontWeight: '500',
   },
   dot: {
     width: 8,
@@ -187,7 +166,7 @@ const styles = StyleSheet.create({
   syncError: {
     color: Colors.danger,
     fontSize: FontSize.caption,
-    textAlign: "center",
+    textAlign: 'center',
   },
   conflictCard: {
     backgroundColor: Colors.diffHighlight,
@@ -195,8 +174,8 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.lg,
     borderRadius: Radius.lg,
     padding: Spacing.md,
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: Spacing.sm,
   },
   conflictBadge: {
@@ -204,18 +183,18 @@ const styles = StyleSheet.create({
     width: 28,
     height: 28,
     borderRadius: 14,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   conflictBadgeText: {
     color: Colors.white,
     fontSize: FontSize.caption,
-    fontWeight: "700",
+    fontWeight: '700',
   },
   conflictText: {
     flex: 1,
     fontSize: FontSize.body,
-    fontWeight: "500",
+    fontWeight: '500',
     color: Colors.warningText,
   },
   chevron: {
@@ -224,7 +203,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: FontSize.headline,
-    fontWeight: "600",
+    fontWeight: '600',
     marginHorizontal: Spacing.lg,
     marginBottom: Spacing.sm,
   },
@@ -233,8 +212,8 @@ const styles = StyleSheet.create({
   },
   emptyState: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     paddingTop: 40,
   },
   emptyText: {
@@ -251,15 +230,15 @@ const itemStyles = StyleSheet.create({
     marginBottom: Spacing.sm,
   },
   header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: Spacing.xs,
   },
   entityType: {
     fontSize: FontSize.body,
-    fontWeight: "600",
-    textTransform: "capitalize",
+    fontWeight: '600',
+    textTransform: 'capitalize',
   },
   operation: {
     fontSize: FontSize.caption,

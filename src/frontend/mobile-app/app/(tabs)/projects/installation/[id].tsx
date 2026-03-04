@@ -1,8 +1,8 @@
-import { useState, useCallback } from "react";
-import { View, ScrollView, StyleSheet } from "react-native";
-import { useLocalSearchParams, useRouter, Stack } from "expo-router";
-import { useQuery } from "@tanstack/react-query";
-import * as installationRepo from "@/db/repositories/installationRepo";
+import { useCallback } from 'react';
+import { View, ScrollView, StyleSheet } from 'react-native';
+import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
+import { useQuery } from '@tanstack/react-query';
+import * as installationRepo from '@/db/repositories/installationRepo';
 import {
   usePhotosByInstallation,
   useMeasurementsByInstallation,
@@ -13,25 +13,27 @@ import {
   useDeleteMeasurement,
   useDeleteInstallation,
   useConfirmDelete,
-} from "@/hooks";
-import { ActionBar } from "@/components/common";
+  useToggle,
+} from '@/hooks';
+import { ActionBar } from '@/components/common';
 import {
   InstallationInfoSection,
   InstallationPhotoSection,
   InstallationMeasurementSection,
-} from "@/components/installations";
-import { Colors, Spacing } from "@/styles/tokens";
-import type { Measurement } from "@/db/repositories/types";
-import type { MeasurementFormData } from "@/validation/schemas";
-import { installationId } from "@/types/branded";
+} from '@/components/installations';
+import { Colors } from '@/styles/tokens';
+import type { Measurement } from '@/db/repositories/types';
+import type { MeasurementFormData } from '@/validation/schemas';
+import { installationId } from '@baudoku/core';
+import { requiredParam } from '@/utils';
 
 export default function InstallationDetailScreen() {
   const { id: rawId } = useLocalSearchParams<{ id: string }>();
-  const id = installationId(rawId!);
+  const id = installationId(requiredParam(rawId));
   const router = useRouter();
 
   const { data: installation } = useQuery({
-    queryKey: ["installation", id],
+    queryKey: ['installation', id],
     queryFn: () => installationRepo.getById(id),
     enabled: !!id,
   });
@@ -46,14 +48,18 @@ export default function InstallationDetailScreen() {
   const deleteInstallation = useDeleteInstallation();
   const { confirmDelete } = useConfirmDelete();
 
-  const [showSourceSheet, setShowSourceSheet] = useState(false);
-  const [showMeasurementForm, setShowMeasurementForm] = useState(false);
+  const { value: showSourceSheet, open: openSourceSheet, close: closeSourceSheet } = useToggle();
+  const {
+    value: showMeasurementForm,
+    open: openMeasurementForm,
+    close: closeMeasurementForm,
+  } = useToggle();
 
   const handleDeleteMeasurement = useCallback(
     (m: Measurement) => {
       confirmDelete({
-        title: "Messung löschen",
-        message: "Diese Messung wirklich löschen?",
+        title: 'Messung löschen',
+        message: 'Diese Messung wirklich löschen?',
         onConfirm: async () => {
           try {
             await deleteMeasurement.mutateAsync(m.id);
@@ -63,7 +69,7 @@ export default function InstallationDetailScreen() {
         },
       });
     },
-    [deleteMeasurement, confirmDelete]
+    [deleteMeasurement, confirmDelete],
   );
 
   const handleAddMeasurement = useCallback(
@@ -80,19 +86,18 @@ export default function InstallationDetailScreen() {
           measuredBy: data.measuredBy,
           measuredAt: new Date(),
         });
-        setShowMeasurementForm(false);
+        closeMeasurementForm();
       } catch {
         // Global MutationCache.onError shows toast
       }
     },
-    [id, addMeasurement]
+    [id, addMeasurement, closeMeasurementForm],
   );
 
   const handleDeleteInstallation = useCallback(() => {
     confirmDelete({
-      title: "Installation löschen",
-      message:
-        "Diese Installation und alle zugehörigen Daten wirklich löschen?",
+      title: 'Installation löschen',
+      message: 'Diese Installation und alle zugehörigen Daten wirklich löschen?',
       onConfirm: async () => {
         try {
           await deleteInstallation.mutateAsync(id);
@@ -104,6 +109,20 @@ export default function InstallationDetailScreen() {
     });
   }, [id, deleteInstallation, confirmDelete, router]);
 
+  const openEdit = () => router.push(`/(tabs)/projects/installation/edit?id=${id}`);
+
+  const actions = [
+    { icon: 'camera' as const, label: 'Foto', onPress: openSourceSheet },
+    { icon: 'bar-chart' as const, label: 'Messung', onPress: openMeasurementForm },
+    { icon: 'pencil' as const, label: 'Bearbeiten', onPress: openEdit },
+    {
+      icon: 'trash' as const,
+      label: 'Löschen',
+      onPress: handleDeleteInstallation,
+      color: Colors.danger,
+    },
+  ];
+
   if (!installation) return null;
 
   return (
@@ -112,34 +131,7 @@ export default function InstallationDetailScreen() {
       <ScrollView contentContainerStyle={styles.scroll}>
         <InstallationInfoSection installation={installation} />
 
-        <ActionBar
-          actions={[
-            {
-              icon: "camera",
-              label: "Foto",
-              onPress: () => setShowSourceSheet(true),
-            },
-            {
-              icon: "bar-chart",
-              label: "Messung",
-              onPress: () => setShowMeasurementForm(true),
-            },
-            {
-              icon: "pencil",
-              label: "Bearbeiten",
-              onPress: () =>
-                router.push(
-                  `/(tabs)/projects/installation/edit?id=${id}`
-                ),
-            },
-            {
-              icon: "trash",
-              label: "Löschen",
-              onPress: handleDeleteInstallation,
-              color: Colors.danger,
-            },
-          ]}
-        />
+        <ActionBar actions={actions} />
 
         <InstallationPhotoSection
           installationId={id}
@@ -150,7 +142,7 @@ export default function InstallationDetailScreen() {
             void saveAnnotation({ id: photoId, annotation });
           }}
           showSourceSheet={showSourceSheet}
-          onShowSourceSheet={setShowSourceSheet}
+          onShowSourceSheet={(show) => (show ? openSourceSheet() : closeSourceSheet())}
         />
 
         <InstallationMeasurementSection
@@ -158,7 +150,7 @@ export default function InstallationDetailScreen() {
           showForm={showMeasurementForm}
           submitting={addMeasurement.isPending}
           onSubmit={handleAddMeasurement}
-          onCancel={() => setShowMeasurementForm(false)}
+          onCancel={closeMeasurementForm}
           onDelete={handleDeleteMeasurement}
         />
       </ScrollView>

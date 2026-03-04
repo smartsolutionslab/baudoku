@@ -1,6 +1,6 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { apiGet } from '@baudoku/core';
-import type { PagedResult } from '@baudoku/core';
+import type { PagedResult, ProjectId } from '@baudoku/core';
 import type { Project, Zone, ProjectFormData, ZoneFormData } from '@baudoku/projects';
 import { useApiQuery, useApiPost, useApiPut, useApiDelete } from './useApiFactory';
 
@@ -20,12 +20,11 @@ export function useProjects(search?: string) {
       return apiGet<PagedResult<Project>>(`/api/projects?${params}`);
     },
     initialPageParam: 1,
-    getNextPageParam: (lastPage) =>
-      lastPage.hasNextPage ? lastPage.page + 1 : undefined,
+    getNextPageParam: (lastPage) => (lastPage.hasNextPage ? lastPage.page + 1 : undefined),
   });
 }
 
-export function useProject(projectId: string) {
+export function useProject(projectId: ProjectId) {
   return useApiQuery<Project>(['projects', projectId], `/api/projects/${projectId}`, !!projectId);
 }
 
@@ -33,7 +32,7 @@ export function useCreateProject() {
   return useApiPost<Project, ProjectFormData>('/api/projects', [['projects']]);
 }
 
-export function useUpdateProject(projectId: string) {
+export function useUpdateProject(projectId: ProjectId) {
   return useApiPut<Project, ProjectFormData>(`/api/projects/${projectId}`, [['projects']]);
 }
 
@@ -43,14 +42,23 @@ export function useDeleteProject() {
 
 // ─── Zones ──────────────────────────────────────────────────────
 
-export function useZones(projectId: string) {
-  return useApiQuery<Zone[]>(['projects', projectId, 'zones'], `/api/projects/${projectId}/zones`, !!projectId);
+export function useZones(projectId: ProjectId) {
+  return useApiQuery<Zone[]>(
+    ['projects', projectId, 'zones'],
+    `/api/projects/${projectId}/zones`,
+    !!projectId,
+  );
 }
 
-export function useCreateZone(projectId: string) {
-  return useApiPost<Zone, ZoneFormData>(`/api/projects/${projectId}/zones`, [['projects', projectId, 'zones']]);
+export function useCreateZone(projectId: ProjectId) {
+  return useApiPost<Zone, ZoneFormData>(`/api/projects/${projectId}/zones`, [
+    ['projects', projectId, 'zones'],
+  ]);
 }
 
-export function useDeleteZone(projectId: string) {
-  return useApiDelete((zoneId) => `/api/projects/${projectId}/zones/${zoneId}`, [['projects', projectId, 'zones']]);
+export function useDeleteZone(projectId: ProjectId) {
+  return useApiDelete(
+    (zoneId) => `/api/projects/${projectId}/zones/${zoneId}`,
+    [['projects', projectId, 'zones']],
+  );
 }

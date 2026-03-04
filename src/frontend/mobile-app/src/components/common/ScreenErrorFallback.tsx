@@ -16,7 +16,7 @@ export function ScreenErrorFallback({ error, retry }: ScreenErrorFallbackProps) 
   return (
     <View style={styles.container}>
       <FontAwesome
-        name='exclamation-triangle'
+        name="exclamation-triangle"
         size={48}
         color={Colors.danger}
         style={styles.icon}

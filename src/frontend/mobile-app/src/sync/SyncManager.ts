@@ -5,6 +5,7 @@ import { applyServerDelta } from './applyServerDelta';
 import { getDeviceId } from '../utils';
 import { uploadPhotoChunked } from './chunkedUpload';
 import { useUploadStore } from '../store';
+import { SYNC_MESSAGES } from '../constants/strings';
 import type { SyncDeltaDto, ProcessSyncBatchResult, ChangeSetResult } from './syncApi';
 
 export type SyncResult = {
@@ -45,7 +46,7 @@ export class SyncManager {
     }));
 
     try {
-      const result: ProcessSyncBatchResult = await syncApi.pushBatch(deviceId,  deltas);
+      const result: ProcessSyncBatchResult = await syncApi.pushBatch(deviceId, deltas);
 
       await syncRepo.markAsSynced(ids);
 
@@ -56,8 +57,7 @@ export class SyncManager {
       };
     } catch (error) {
       await syncRepo.markAsFailed(ids);
-      const message =
-        error instanceof Error ? error.message : 'Unbekannter Fehler';
+      const message = error instanceof Error ? error.message : SYNC_MESSAGES.unknownError;
       return { appliedCount: 0, conflictCount: 0, errors: [message] };
     }
   }
@@ -77,7 +77,7 @@ export class SyncManager {
 
       return { pulled: result.changes.length, errors: [] };
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unbekannter Fehler';
+      const message = error instanceof Error ? error.message : SYNC_MESSAGES.unknownError;
       return { pulled: 0, errors: [message] };
     }
   }
@@ -118,15 +118,14 @@ export class SyncManager {
           undefined,
           (progress) => {
             store.updateProgress(photo.id, progress.percentage);
-          }
+          },
         );
 
         await photoRepo.updateUploadStatus(photo.id, 'uploaded', remoteId);
         store.markCompleted(photo.id);
         uploaded++;
       } catch (error) {
-        const message =
-          error instanceof Error ? error.message : 'Foto-Upload fehlgeschlagen';
+        const message = error instanceof Error ? error.message : SYNC_MESSAGES.photoUploadFailed;
         await photoRepo.markUploadFailed(photo.id, message);
         store.markFailed(photo.id, message);
         errors.push(message);
@@ -152,11 +151,7 @@ export class SyncManager {
         pushed: pushResult.appliedCount + photoResult.uploaded,
         pulled: pullResult.pulled,
         conflicts: pushResult.conflictCount,
-        errors: [
-          ...pushResult.errors,
-          ...photoResult.errors,
-          ...pullResult.errors,
-        ],
+        errors: [...pushResult.errors, ...photoResult.errors, ...pullResult.errors],
       };
     } finally {
       this.syncing = false;

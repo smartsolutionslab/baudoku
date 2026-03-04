@@ -1,11 +1,4 @@
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  useCallback,
-  type ReactNode,
-} from 'react';
+import { createContext, useContext, useEffect, useState, useCallback, type ReactNode } from 'react';
 import { UserManager, type User } from 'oidc-client-ts';
 import { oidcConfig } from './oidcConfig';
 import { setAuthToken, onUnauthorized } from '@baudoku/core';

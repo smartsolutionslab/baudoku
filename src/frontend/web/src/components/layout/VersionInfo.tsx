@@ -11,20 +11,19 @@ type SystemInfo = {
   services: ServiceInfo[];
 };
 
-function ServiceRow({
-  label,
-  version,
-  status,
-}: {
+type ServiceRowProps = {
   label: string;
   version: string;
   status: string;
-}) {
+};
+
+function ServiceRow({ label, version, status }: ServiceRowProps) {
   return (
-    <div className='flex items-center justify-between'>
+    <div className="flex items-center justify-between">
       <span>{label}</span>
-      <span className='flex items-center gap-1'>
-        <span className={`inline-block h-1.5 w-1.5 rounded-full ${status === 'ok' ? 'bg-green-400' : 'bg-red-400'}`}
+      <span className="flex items-center gap-1">
+        <span
+          className={`inline-block h-1.5 w-1.5 rounded-full ${status === 'ok' ? 'bg-green-400' : 'bg-red-400'}`}
         />
         {version}
       </span>
@@ -50,34 +49,30 @@ export function VersionInfo() {
   }, [expanded, systemInfo]);
 
   return (
-    <div className='border-t border-gray-200 px-4 py-2'>
+    <div className="border-t border-gray-200 px-4 py-2">
       <button
         onClick={() => setExpanded(!expanded)}
-        className='text-xs text-gray-400 hover:text-gray-600 transition-colors'
+        className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
       >
         v{__APP_VERSION__}
       </button>
       {expanded && (
-        <div className='mt-2 space-y-1 text-xs text-gray-500'>
-          <p className='font-medium text-gray-600'>Services</p>
+        <div className="mt-2 space-y-1 text-xs text-gray-500">
+          <p className="font-medium text-gray-600">Services</p>
           {systemInfo ? (
             <>
-              <ServiceRow
-                label='Gateway'
-                version={systemInfo.gateway.version}
-                status='ok'
-              />
-              {systemInfo.services.map((s) => (
+              <ServiceRow label="Gateway" version={systemInfo.gateway.version} status="ok" />
+              {systemInfo.services.map(({ service, version, status = 'ok' }) => (
                 <ServiceRow
-                  key={s.service}
-                  label={s.service.replace('BauDoku.', '').replace('.Api', '')}
-                  version={s.version}
-                  status={s.status ?? 'ok'}
+                  key={service}
+                  label={service.replace('BauDoku.', '').replace('.Api', '')}
+                  version={version}
+                  status={status}
                 />
               ))}
             </>
           ) : (
-            <p className='text-gray-400'>Laden...</p>
+            <p className="text-gray-400">Laden...</p>
           )}
         </div>
       )}

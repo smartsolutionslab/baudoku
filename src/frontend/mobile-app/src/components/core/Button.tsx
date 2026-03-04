@@ -6,7 +6,7 @@ import {
   type ViewStyle,
   type TextStyle,
 } from 'react-native';
-import { Colors, Spacing, FontSize, Radius } from '../../styles/tokens';
+import { Colors, FontSize, Radius } from '../../styles/tokens';
 
 type ButtonVariant = 'primary' | 'secondary' | 'danger';
 
@@ -35,25 +35,31 @@ const variantStyles: Record<ButtonVariant, { container: ViewStyle; text: TextSty
   },
 };
 
-export function Button({ title, onPress, variant = 'primary', disabled = false, loading = false, style, testID }: ButtonProps) {
+export function Button({
+  title,
+  onPress,
+  variant = 'primary',
+  disabled = false,
+  loading = false,
+  style,
+  testID,
+}: ButtonProps) {
   const v = variantStyles[variant];
   const isDisabled = disabled || loading;
 
   return (
     <TouchableOpacity
-      style={[
-        styles.container,
-        v.container,
-        isDisabled && styles.disabled,
-        style,
-      ]}
+      style={[styles.container, v.container, isDisabled && styles.disabled, style]}
       onPress={onPress}
       disabled={isDisabled}
       activeOpacity={0.7}
       testID={testID}
     >
       {loading ? (
-        <ActivityIndicator size='small' color={variant === 'secondary' ? Colors.textTertiary : Colors.white}/>
+        <ActivityIndicator
+          size="small"
+          color={variant === 'secondary' ? Colors.textTertiary : Colors.white}
+        />
       ) : (
         <Text style={[styles.text, v.text]}>{title}</Text>
       )}

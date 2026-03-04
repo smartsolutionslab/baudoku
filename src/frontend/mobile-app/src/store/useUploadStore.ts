@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { PhotoId } from '../types/branded';
+import type { PhotoId } from '@baudoku/core';
 
 export type UploadStatus = 'queued' | 'uploading' | 'completed' | 'failed';
 
@@ -37,27 +37,21 @@ export const useUploadStore = create<UploadState>((set) => ({
   updateProgress: (photoId, percentage) =>
     set((state) => ({
       queue: state.queue.map((item) =>
-        item.photoId === photoId
-          ? { ...item, status: 'uploading', percentage }
-          : item
+        item.photoId === photoId ? { ...item, status: 'uploading', percentage } : item,
       ),
     })),
 
   markCompleted: (photoId) =>
     set((state) => ({
       queue: state.queue.map((item) =>
-        item.photoId === photoId
-          ? { ...item, status: 'completed', percentage: 100 }
-          : item
+        item.photoId === photoId ? { ...item, status: 'completed', percentage: 100 } : item,
       ),
     })),
 
   markFailed: (photoId, error) =>
     set((state) => ({
       queue: state.queue.map((item) =>
-        item.photoId === photoId
-          ? { ...item, status: 'failed', error }
-          : item
+        item.photoId === photoId ? { ...item, status: 'failed', error } : item,
       ),
     })),
 

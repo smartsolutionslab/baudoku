@@ -1,12 +1,13 @@
-import { useLocalSearchParams, useRouter, Stack } from "expo-router";
-import { useProject, useUpdateProject } from "@/hooks";
-import { ProjectForm } from "@/components/projects";
-import type { ProjectFormData } from "@/validation/schemas";
-import { projectId } from "@/types/branded";
+import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
+import { useProject, useUpdateProject } from '@/hooks';
+import { ProjectForm } from '@/components/projects';
+import type { ProjectFormData } from '@/validation/schemas';
+import { projectId } from '@baudoku/core';
+import { requiredParam } from '@/utils';
 
 export default function EditProjectScreen() {
   const { id: rawId } = useLocalSearchParams<{ id: string }>();
-  const id = projectId(rawId!);
+  const id = projectId(requiredParam(rawId));
   const router = useRouter();
   const { data: project } = useProject(id);
   const updateProject = useUpdateProject();
@@ -15,7 +16,7 @@ export default function EditProjectScreen() {
 
   const initialValues: Partial<ProjectFormData> = {
     name: project.name,
-    status: project.status as ProjectFormData["status"],
+    status: project.status as ProjectFormData['status'],
     street: project.street ?? undefined,
     city: project.city ?? undefined,
     zipCode: project.zipCode ?? undefined,
@@ -34,7 +35,7 @@ export default function EditProjectScreen() {
 
   return (
     <>
-      <Stack.Screen options={{ title: "Projekt bearbeiten" }} />
+      <Stack.Screen options={{ title: 'Projekt bearbeiten' }} />
       <ProjectForm
         onSubmit={handleSubmit}
         submitting={updateProject.isPending}

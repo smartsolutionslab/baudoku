@@ -5,11 +5,18 @@ namespace SmartSolutionsLab.BauDoku.Documentation.Domain;
 
 public sealed record InstallationStatus : IValueObject
 {
-    private static readonly HashSet<string> ValidValues = ["in_progress", "completed", "inspected"];
-
     public static readonly InstallationStatus InProgress = new("in_progress");
     public static readonly InstallationStatus Completed = new("completed");
     public static readonly InstallationStatus Inspected = new("inspected");
+
+    public static IEnumerable<InstallationStatus> All { get; } =
+    [
+        InProgress,
+        Completed,
+        Inspected,
+    ];
+
+    private static HashSet<string> ValidValues => All.Select(item => item.Value).ToHashSet();
 
     public string Value { get; }
 

@@ -1,47 +1,64 @@
 import { useState, useCallback } from 'react';
 import { Alert } from 'react-native';
 import { installationSchema, type InstallationFormData } from '../validation/schemas';
+import { ERROR_TITLE, MUTATION_ERRORS } from '../constants/strings';
 import { useFormValidation } from './useFormValidation';
 import type { GpsPosition } from './useGpsCapture';
 
 export type UseInstallationFormOptions = {
   initialValues?: Partial<InstallationFormData>;
-  initialGps?: GpsPosition | null;
   onSubmit: (data: InstallationFormData, gps: GpsPosition | null) => Promise<void>;
 };
+
+/** Form keys for type-safe field access */
+type FormKey = keyof InstallationFormData;
 
 export type UseInstallationFormReturn = {
   form: Record<string, unknown>;
   errors: Record<string, string>;
-  set: (key: string, value: unknown) => void;
-  str: (key: string) => string;
+  set: (key: FormKey, value: unknown) => void;
+  str: (key: FormKey) => string;
   handleSubmit: (currentGps: GpsPosition | null) => Promise<void>;
   hasComponentValues: boolean;
   hasCableValues: boolean;
   hasElectricalValues: boolean;
 };
 
-export function useInstallationForm({ initialValues, onSubmit }: UseInstallationFormOptions): UseInstallationFormReturn {
+export function useInstallationForm({
+  initialValues,
+  onSubmit,
+}: UseInstallationFormOptions): UseInstallationFormReturn {
   const [form, setForm] = useState<Record<string, unknown>>({
     status: 'in_progress',
     ...initialValues,
   });
   const { errors, setErrors, validate } = useFormValidation(installationSchema);
 
-  const hasComponentValues = !!initialValues?.manufacturer || !!initialValues?.model || !!initialValues?.serialNumber;
-  const hasCableValues = !!initialValues?.cableType || initialValues?.crossSectionMm2 != null || initialValues?.lengthM != null;
-  const hasElectricalValues = !!initialValues?.circuitId || !!initialValues?.fuseType || initialValues?.fuseRatingA != null || initialValues?.voltageV != null || initialValues?.phase != null;
+  const hasComponentValues =
+    !!initialValues?.manufacturer || !!initialValues?.model || !!initialValues?.serialNumber;
+  const hasCableValues =
+    !!initialValues?.cableType ||
+    initialValues?.crossSectionMm2 != null ||
+    initialValues?.lengthM != null;
+  const hasElectricalValues =
+    !!initialValues?.circuitId ||
+    !!initialValues?.fuseType ||
+    initialValues?.fuseRatingA != null ||
+    initialValues?.voltageV != null ||
+    initialValues?.phase != null;
 
-  const set = useCallback((key: string, value: unknown) => {
-    setForm((prev) => ({ ...prev, [key]: value }));
-    setErrors((prev) => {
-      const next = { ...prev };
-      delete next[key];
-      return next;
-    });
-  }, [setErrors]);
+  const set = useCallback(
+    (key: FormKey, value: unknown) => {
+      setForm((prev) => ({ ...prev, [key]: value }));
+      setErrors((prev) => {
+        const { [key]: _, ...next } = prev;
+        return next;
+      });
+    },
+    [setErrors],
+  );
 
-  const str = (key: string) => {
+  const str = (key: FormKey) => {
     const val = form[key];
     if (val == null) return '';
     return String(val);
@@ -61,10 +78,10 @@ export function useInstallationForm({ initialValues, onSubmit }: UseInstallation
       try {
         await onSubmit(data, currentGps);
       } catch {
-        Alert.alert('Fehler', 'Installation konnte nicht gespeichert werden.');
+        Alert.alert(ERROR_TITLE, MUTATION_ERRORS.installationSave);
       }
     },
-    [form, onSubmit, validate]
+    [form, onSubmit, validate],
   );
 
   return {

@@ -21,7 +21,9 @@ export const projects = sqliteTable('projects', {
 
 export const zones = sqliteTable('zones', {
   id: text('id').primaryKey(),
-  projectId: text('project_id').notNull().references(() => projects.id),
+  projectId: text('project_id')
+    .notNull()
+    .references(() => projects.id),
   parentZoneId: text('parent_zone_id'),
   name: text('name').notNull(),
   type: text('type', { enum: ['building', 'floor', 'room', 'trench'] }).notNull(),
@@ -34,8 +36,12 @@ export const zones = sqliteTable('zones', {
 
 export const installations = sqliteTable('installations', {
   id: text('id').primaryKey(),
-  projectId: text('project_id').notNull().references(() => projects.id),
-  zoneId: text('zone_id').notNull().references(() => zones.id),
+  projectId: text('project_id')
+    .notNull()
+    .references(() => projects.id),
+  zoneId: text('zone_id')
+    .notNull()
+    .references(() => zones.id),
   type: text('type').notNull(),
   status: text('status', { enum: ['planned', 'in_progress', 'completed', 'inspected'] }).notNull(),
 
@@ -46,8 +52,12 @@ export const installations = sqliteTable('installations', {
   gpsAltitudeMsl: real('gps_altitude_msl'),
   gpsAccuracy: real('gps_accuracy'),
   gpsSource: text('gps_source', { enum: ['internal_gps', 'external_dgnss', 'external_rtk'] }),
-  gpsCorrService: text('gps_corr_service', { enum: ['none', 'sapos_eps', 'sapos_heps', 'sapos_gpps'] }),
-  gpsRtkStatus: text('gps_rtk_status', { enum: ['no_fix', 'autonomous', 'dgps', 'rtk_float', 'rtk_fixed'] }),
+  gpsCorrService: text('gps_corr_service', {
+    enum: ['none', 'sapos_eps', 'sapos_heps', 'sapos_gpps'],
+  }),
+  gpsRtkStatus: text('gps_rtk_status', {
+    enum: ['no_fix', 'autonomous', 'dgps', 'rtk_float', 'rtk_fixed'],
+  }),
   gpsSatCount: integer('gps_sat_count'),
   gpsHdop: real('gps_hdop'),
   gpsCorrAge: real('gps_corr_age'),
@@ -82,7 +92,9 @@ export const installations = sqliteTable('installations', {
 
 export const photos = sqliteTable('photos', {
   id: text('id').primaryKey(),
-  installationId: text('installation_id').notNull().references(() => installations.id),
+  installationId: text('installation_id')
+    .notNull()
+    .references(() => installations.id),
   localPath: text('local_path').notNull(),
   remotePath: text('remote_path'),
   thumbnailPath: text('thumbnail_path'),
@@ -99,7 +111,9 @@ export const photos = sqliteTable('photos', {
   exifDateTime: text('exif_date_time'),
   exifCameraModel: text('exif_camera_model'),
   takenAt: integer('taken_at', { mode: 'timestamp' }).notNull(),
-  uploadStatus: text('upload_status', { enum: ['pending', 'uploading', 'uploaded', 'failed'] }).notNull(),
+  uploadStatus: text('upload_status', {
+    enum: ['pending', 'uploading', 'uploaded', 'failed'],
+  }).notNull(),
   retryCount: integer('retry_count').default(0),
   lastUploadError: text('last_upload_error'),
   version: integer('version').notNull().default(1),
@@ -107,7 +121,9 @@ export const photos = sqliteTable('photos', {
 
 export const measurements = sqliteTable('measurements', {
   id: text('id').primaryKey(),
-  installationId: text('installation_id').notNull().references(() => installations.id),
+  installationId: text('installation_id')
+    .notNull()
+    .references(() => installations.id),
   type: text('type').notNull(),
   value: real('value').notNull(),
   unit: text('unit').notNull(),

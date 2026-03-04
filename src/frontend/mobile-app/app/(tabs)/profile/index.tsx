@@ -1,17 +1,10 @@
-import {
-  View,
-  Text,
-  ScrollView,
-  StyleSheet,
-  Switch,
-  Platform,
-} from "react-native";
-import { useRouter } from "expo-router";
-import { useProjects, useSyncStatus } from "@/hooks";
-import { Button } from "@/components/core";
-import { useAuthStore, useSettingsStore } from "@/store";
-import { performLogout } from "@/auth";
-import { Colors, Spacing, FontSize, Radius } from "@/styles/tokens";
+import { View, Text, ScrollView, StyleSheet, Switch, Platform } from 'react-native';
+import { useRouter } from 'expo-router';
+import { useProjects, useSyncStatus } from '@/hooks';
+import { Button } from '@/components/core';
+import { useAuthStore, useSettingsStore } from '@/store';
+import { performLogout } from '@/auth';
+import { Colors, Spacing, FontSize, Radius } from '@/styles/tokens';
 
 export default function ProfileScreen() {
   const router = useRouter();
@@ -22,15 +15,17 @@ export default function ProfileScreen() {
 
   const projectCount = projects?.length ?? 0;
 
+  const openLogin = () => router.push('/(tabs)/profile/login');
+
   const handleLogout = async () => {
     await performLogout();
   };
 
   const displayRole = (roles: string[]) => {
-    if (roles.includes("admin")) return "Admin";
-    if (roles.includes("inspector")) return "Inspektor";
-    if (roles.includes("user")) return "Benutzer";
-    return roles[0] ?? "Unbekannt";
+    if (roles.includes('admin')) return 'Admin';
+    if (roles.includes('inspector')) return 'Inspektor';
+    if (roles.includes('user')) return 'Benutzer';
+    return roles[0] ?? 'Unbekannt';
   };
 
   return (
@@ -58,7 +53,7 @@ export default function ProfileScreen() {
         ) : (
           <>
             <Text style={styles.notLoggedInText}>Nicht angemeldet</Text>
-            <Button title="Anmelden" onPress={() => router.push("/(tabs)/profile/login")} />
+            <Button title="Anmelden" onPress={openLogin} />
           </>
         )}
       </View>
@@ -70,14 +65,9 @@ export default function ProfileScreen() {
           <Text style={styles.label}>Online-Status</Text>
           <View style={styles.statusValue}>
             <View
-              style={[
-                styles.dot,
-                { backgroundColor: isOnline ? Colors.success : Colors.danger },
-              ]}
+              style={[styles.dot, { backgroundColor: isOnline ? Colors.success : Colors.danger }]}
             />
-            <Text style={styles.value}>
-              {isOnline ? "Online" : "Offline"}
-            </Text>
+            <Text style={styles.value}>{isOnline ? 'Online' : 'Offline'}</Text>
           </View>
         </View>
       </View>
@@ -85,7 +75,7 @@ export default function ProfileScreen() {
       {/* GPS-Einstellungen */}
       <View style={styles.card}>
         <Text style={styles.cardTitle}>GPS-Einstellungen</Text>
-        {Platform.OS === "android" ? (
+        {Platform.OS === 'android' ? (
           <>
             <View style={styles.row}>
               <Text style={styles.label}>Externes GPS erlauben</Text>
@@ -96,8 +86,7 @@ export default function ProfileScreen() {
               />
             </View>
             <Text style={styles.helpText}>
-              Erlaubt die Nutzung externer GNSS-Empfänger (DGNSS/RTK) über Mock
-              Location.
+              Erlaubt die Nutzung externer GNSS-Empfänger (DGNSS/RTK) über Mock Location.
             </Text>
           </>
         ) : (
@@ -117,16 +106,18 @@ export default function ProfileScreen() {
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Synchronisation</Text>
         <Row label="Ausstehend" value={`${unsyncedCount} Änderungen`} />
-        <Row
-          label="Letzte Sync"
-          value={lastSyncTimestamp ?? "Noch nicht synchronisiert"}
-        />
+        <Row label="Letzte Sync" value={lastSyncTimestamp ?? 'Noch nicht synchronisiert'} />
       </View>
     </ScrollView>
   );
 }
 
-function Row({ label, value }: { label: string; value: string }) {
+type RowProps = {
+  label: string;
+  value: string;
+};
+
+function Row({ label, value }: RowProps) {
   return (
     <View style={styles.row}>
       <Text style={styles.label}>{label}</Text>
@@ -146,7 +137,7 @@ const styles = StyleSheet.create({
   },
   screenTitle: {
     fontSize: FontSize.title,
-    fontWeight: "700",
+    fontWeight: '700',
     marginBottom: Spacing.lg,
   },
   card: {
@@ -158,12 +149,12 @@ const styles = StyleSheet.create({
   },
   cardTitle: {
     fontSize: FontSize.headline,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   row: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   label: {
     fontSize: FontSize.body,
@@ -171,12 +162,12 @@ const styles = StyleSheet.create({
   },
   value: {
     fontSize: FontSize.body,
-    fontWeight: "500",
+    fontWeight: '500',
     color: Colors.textPrimary,
   },
   statusValue: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   dot: {
     width: 8,
@@ -187,11 +178,11 @@ const styles = StyleSheet.create({
   helpText: {
     fontSize: FontSize.caption,
     color: Colors.textTertiary,
-    fontStyle: "italic",
+    fontStyle: 'italic',
   },
   notLoggedInText: {
     fontSize: FontSize.body,
     color: Colors.textTertiary,
-    fontStyle: "italic",
+    fontStyle: 'italic',
   },
 });

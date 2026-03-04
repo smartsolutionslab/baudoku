@@ -66,17 +66,9 @@ export const INSTALLATION_TYPES = [
 
 // ─── Installation Status ────────────────────────────────────────
 
-export const INSTALLATION_STATUSES = [
-  'planned',
-  'in_progress',
-  'completed',
-  'inspected',
-] as const;
+export const INSTALLATION_STATUSES = ['planned', 'in_progress', 'completed', 'inspected'] as const;
 
-export const INSTALLATION_STATUS_LABELS: Record<
-  (typeof INSTALLATION_STATUSES)[number],
-  string
-> = {
+export const INSTALLATION_STATUS_LABELS: Record<(typeof INSTALLATION_STATUSES)[number], string> = {
   planned: 'Geplant',
   in_progress: 'In Arbeit',
   completed: 'Abgeschlossen',
@@ -87,10 +79,7 @@ export const INSTALLATION_STATUS_LABELS: Record<
 
 export const PHOTO_TYPES = ['before', 'after', 'detail', 'overview'] as const;
 
-export const PHOTO_TYPE_LABELS: Record<
-  (typeof PHOTO_TYPES)[number],
-  string
-> = {
+export const PHOTO_TYPE_LABELS: Record<(typeof PHOTO_TYPES)[number], string> = {
   before: 'Vorher',
   after: 'Nachher',
   detail: 'Detail',
@@ -99,16 +88,9 @@ export const PHOTO_TYPE_LABELS: Record<
 
 // ─── GPS Source Types ───────────────────────────────────────────
 
-export const GPS_SOURCES = [
-  'internal_gps',
-  'external_dgnss',
-  'external_rtk',
-] as const;
+export const GPS_SOURCES = ['internal_gps', 'external_dgnss', 'external_rtk'] as const;
 
-export const GPS_SOURCE_LABELS: Record<
-  (typeof GPS_SOURCES)[number],
-  string
-> = {
+export const GPS_SOURCE_LABELS: Record<(typeof GPS_SOURCES)[number], string> = {
   internal_gps: 'Internes GPS',
   external_dgnss: 'Ext. DGNSS',
   external_rtk: 'Ext. RTK',
@@ -129,3 +111,12 @@ export const MEASUREMENT_RESULT_LABELS: Record<string, string> = {
 // ─── Measurement Units ──────────────────────────────────────────
 
 export const MEASUREMENT_UNITS = ['Ω', 'MΩ', 'V', 'ms', '%', 'A'] as const;
+
+// ─── Pre-computed Options ────────────────────────────────────────
+
+export const INSTALLATION_TYPE_OPTIONS = INSTALLATION_TYPES.map((t) => ({ value: t, label: t }));
+export const PHASE_OPTIONS = PHASES.map((p) => ({ value: p, label: p }));
+export const MEASUREMENT_TYPE_OPTIONS = MEASUREMENT_TYPES.map((m) => ({
+  value: m.type,
+  label: `${m.type} (${m.unit})`,
+}));

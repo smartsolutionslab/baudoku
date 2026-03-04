@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { EmptyState } from '@/components/common';
 import { MeasurementCard, MeasurementForm } from '@/components/installations';
-import { Colors, Spacing, FontSize } from '@/styles/tokens';
+import { Spacing, FontSize } from '@/styles/tokens';
 import type { Measurement } from '@/db/repositories/types';
 import type { MeasurementFormData } from '@/validation/schemas';
 
@@ -27,23 +27,13 @@ export function InstallationMeasurementSection({
       <Text style={styles.cardTitle}>Messungen</Text>
       {showForm && (
         <View style={styles.formContainer}>
-          <MeasurementForm
-            onSubmit={onSubmit}
-            onCancel={onCancel}
-            submitting={submitting}
-          />
+          <MeasurementForm onSubmit={onSubmit} onCancel={onCancel} submitting={submitting} />
         </View>
       )}
       {measurements.length === 0 ? (
-        <EmptyState icon='bar-chart' title='Noch keine Messungen' />
+        <EmptyState icon="bar-chart" title="Noch keine Messungen" />
       ) : (
-        measurements.map((m) => (
-          <MeasurementCard
-            key={m.id}
-            measurement={m}
-            onDelete={onDelete}
-          />
-        ))
+        measurements.map((m) => <MeasurementCard key={m.id} measurement={m} onDelete={onDelete} />)
       )}
     </View>
   );

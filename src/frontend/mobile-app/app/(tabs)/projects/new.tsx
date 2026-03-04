@@ -1,7 +1,7 @@
-import { useRouter } from "expo-router";
-import { useCreateProject } from "@/hooks";
-import { ProjectForm } from "@/components/projects";
-import type { ProjectFormData } from "@/validation/schemas";
+import { useRouter } from 'expo-router';
+import { useCreateProject } from '@/hooks';
+import { ProjectForm } from '@/components/projects';
+import type { ProjectFormData } from '@/validation/schemas';
 
 export default function NewProjectScreen() {
   const router = useRouter();
@@ -17,7 +17,7 @@ export default function NewProjectScreen() {
         zipCode: data.zipCode || null,
         clientName: data.clientName || null,
         clientContact: data.clientContact || null,
-        createdBy: "local-user",
+        createdBy: 'local-user',
       });
       router.back();
     } catch {
@@ -25,7 +25,5 @@ export default function NewProjectScreen() {
     }
   };
 
-  return (
-    <ProjectForm onSubmit={handleSubmit} submitting={createProject.isPending} />
-  );
+  return <ProjectForm onSubmit={handleSubmit} submitting={createProject.isPending} />;
 }

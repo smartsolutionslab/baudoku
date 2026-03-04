@@ -1,17 +1,18 @@
-import { useLocalSearchParams, useRouter, Stack } from "expo-router";
-import { useQuery } from "@tanstack/react-query";
-import * as installationRepo from "@/db/repositories/installationRepo";
-import { useUpdateInstallation, type GpsPosition, type GpsSource, type GpsCorrService, type GpsRtkStatus } from "@/hooks";
-import { InstallationForm } from "@/components/installations";
-import type { InstallationFormData } from "@/validation/schemas";
-import { installationId } from "@/types/branded";
+import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
+import { useQuery } from '@tanstack/react-query';
+import * as installationRepo from '@/db/repositories/installationRepo';
+import { useUpdateInstallation, type GpsPosition } from '@/hooks';
+import { InstallationForm } from '@/components/installations';
+import type { InstallationFormData } from '@/validation/schemas';
+import { installationId } from '@baudoku/core';
+import { toGpsPosition, requiredParam } from '@/utils';
 
 export default function EditInstallationScreen() {
   const { id: rawId } = useLocalSearchParams<{ id: string }>();
-  const id = installationId(rawId!);
+  const id = installationId(requiredParam(rawId));
   const router = useRouter();
   const { data: installation } = useQuery({
-    queryKey: ["installation", id],
+    queryKey: ['installation', id],
     queryFn: () => installationRepo.getById(id),
     enabled: !!id,
   });
@@ -21,7 +22,7 @@ export default function EditInstallationScreen() {
 
   const initialValues: Partial<InstallationFormData> = {
     type: installation.type,
-    status: installation.status as InstallationFormData["status"],
+    status: installation.status as InstallationFormData['status'],
     manufacturer: installation.manufacturer ?? undefined,
     model: installation.model ?? undefined,
     serialNumber: installation.serialNumber ?? undefined,
@@ -32,32 +33,14 @@ export default function EditInstallationScreen() {
     fuseType: installation.fuseType ?? undefined,
     fuseRatingA: installation.fuseRatingA ?? undefined,
     voltageV: installation.voltageV ?? undefined,
-    phase: (installation.phase as InstallationFormData["phase"]) ?? undefined,
+    phase: (installation.phase as InstallationFormData['phase']) ?? undefined,
     depthMm: installation.depthMm ?? undefined,
     notes: installation.notes ?? undefined,
   };
 
-  const initialGps: GpsPosition | null =
-    installation.gpsLat != null && installation.gpsLng != null
-      ? {
-          latitude: installation.gpsLat,
-          longitude: installation.gpsLng,
-          altitude: installation.gpsAltitude ?? null,
-          horizontalAccuracy: installation.gpsAccuracy ?? 0,
-          gpsSource: (installation.gpsSource as GpsSource) ?? "internal_gps",
-          correctionService: (installation.gpsCorrService as GpsCorrService) ?? "none",
-          rtkFixStatus: (installation.gpsRtkStatus as GpsRtkStatus) ?? "autonomous",
-          satelliteCount: installation.gpsSatCount ?? null,
-          hdop: installation.gpsHdop ?? null,
-          correctionAge: installation.gpsCorrAge ?? null,
-          isMocked: installation.gpsSource === "external_dgnss" || installation.gpsSource === "external_rtk",
-        }
-      : null;
+  const initialGps: GpsPosition | null = toGpsPosition(installation);
 
-  const handleSubmit = async (
-    data: InstallationFormData,
-    gps: GpsPosition | null
-  ) => {
+  const handleSubmit = async (data: InstallationFormData, gps: GpsPosition | null) => {
     try {
       await updateInstallation.mutateAsync({
         id,
@@ -97,7 +80,7 @@ export default function EditInstallationScreen() {
 
   return (
     <>
-      <Stack.Screen options={{ title: "Installation bearbeiten" }} />
+      <Stack.Screen options={{ title: 'Installation bearbeiten' }} />
       <InstallationForm
         onSubmit={handleSubmit}
         submitting={updateInstallation.isPending}

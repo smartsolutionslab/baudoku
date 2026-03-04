@@ -1,3 +1,4 @@
+import type { ZoneId } from '@baudoku/core';
 import type { Zone } from './types';
 
 export type ZoneNode = {
@@ -7,7 +8,7 @@ export type ZoneNode = {
 };
 
 export function buildZoneTree(zones: Zone[]): ZoneNode[] {
-  const byParent = new Map<string | null, Zone[]>();
+  const byParent = new Map<ZoneId | null, Zone[]>();
   for (const z of zones) {
     const key = z.parentZoneId ?? null;
     const list = byParent.get(key) ?? [];
@@ -15,7 +16,7 @@ export function buildZoneTree(zones: Zone[]): ZoneNode[] {
     byParent.set(key, list);
   }
 
-  function recurse(parentId: string | null, level: number): ZoneNode[] {
+  function recurse(parentId: ZoneId | null, level: number): ZoneNode[] {
     const children = byParent.get(parentId) ?? [];
     children.sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
     return children.map((zone) => ({

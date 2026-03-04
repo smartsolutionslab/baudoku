@@ -9,28 +9,19 @@ type InstallationInfoSectionProps = {
 };
 
 export function InstallationInfoSection({ installation }: InstallationInfoSectionProps) {
-  const subtitle = [installation.manufacturer, installation.model]
-    .filter(Boolean)
-    .join(' — ');
+  const { type, status, manufacturer, model, serialNumber, notes } = installation;
+  const subtitle = [manufacturer, model].filter(Boolean).join(' — ');
 
   return (
     <>
       <View style={styles.card}>
         <View style={styles.headerRow}>
-          <Text style={styles.type}>{installation.type}</Text>
-          <StatusBadge status={installation.status} />
+          <Text style={styles.type}>{type}</Text>
+          <StatusBadge status={status} />
         </View>
-        {subtitle ? (
-          <Text style={styles.subtitle}>{subtitle}</Text>
-        ) : null}
-        {installation.serialNumber ? (
-          <Text style={styles.detail}>
-            SN: {installation.serialNumber}
-          </Text>
-        ) : null}
-        {installation.notes ? (
-          <Text style={styles.notes}>{installation.notes}</Text>
-        ) : null}
+        {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
+        {serialNumber ? <Text style={styles.detail}>SN: {serialNumber}</Text> : null}
+        {notes ? <Text style={styles.notes}>{notes}</Text> : null}
       </View>
 
       <InstallationDetails installation={installation} />

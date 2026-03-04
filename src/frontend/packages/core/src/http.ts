@@ -4,7 +4,7 @@ export class ApiError extends Error {
   constructor(
     public readonly status: number,
     public readonly statusText: string,
-    public readonly body: unknown
+    public readonly body: unknown,
   ) {
     super(`API Error ${status}: ${statusText}`);
     this.name = 'ApiError';
@@ -87,10 +87,7 @@ export async function apiDelete(path: string): Promise<void> {
   }
 }
 
-export async function apiUpload<T>(
-  path: string,
-  formData: FormData
-): Promise<T> {
+export async function apiUpload<T>(path: string, formData: FormData): Promise<T> {
   const response = await fetch(`${getBaseUrl()}${path}`, {
     method: 'POST',
     headers: getHeaders(),
@@ -113,7 +110,7 @@ export async function apiUpload<T>(
 export async function apiRawUpload(
   path: string,
   body: Blob | ArrayBuffer,
-  extraHeaders?: Record<string, string>
+  extraHeaders?: Record<string, string>,
 ): Promise<Response> {
   const headers: Record<string, string> = {
     ...extraHeaders,

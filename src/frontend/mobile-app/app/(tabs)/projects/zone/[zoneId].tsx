@@ -1,27 +1,25 @@
-import { useMemo, useState, useCallback } from "react";
-import { View, Text, FlatList, StyleSheet } from "react-native";
-import { useLocalSearchParams, useRouter, Stack } from "expo-router";
+import { useMemo, useCallback } from 'react';
+import { View, Text, FlatList, StyleSheet } from 'react-native';
+import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import {
   useZonesByProject,
   useInstallationsByZone,
   useDeleteZone,
   useUpdateZone,
   useConfirmDelete,
-} from "@/hooks";
-import { InstallationCard } from "@/components/installations";
-import { StatusBadge, EmptyState, FloatingActionButton, ActionBar } from "@/components/common";
-import { ZoneQrSheet } from "@/components/projects";
-import { encodeZoneQr } from "@/utils";
-import { Colors, Spacing, FontSize, Radius } from "@/styles/tokens";
-import type { Zone } from "@/db/repositories/types";
-import {
-  projectId as toProjectId,
-  zoneId as toZoneId,
-} from "@/types/branded";
-import type { ZoneId } from "@/types/branded";
+  useToggle,
+} from '@/hooks';
+import { InstallationCard } from '@/components/installations';
+import { StatusBadge, EmptyState, FloatingActionButton, ActionBar } from '@/components/common';
+import { ZoneQrSheet } from '@/components/projects';
+import { encodeZoneQr, requiredParam } from '@/utils';
+import { Colors, Spacing, FontSize, Radius } from '@/styles/tokens';
+import type { Zone } from '@/db/repositories/types';
+import { projectId as toProjectId, zoneId as toZoneId } from '@baudoku/core';
+import type { ZoneId } from '@baudoku/core';
 
 function buildBreadcrumb(zones: Zone[], id: ZoneId): string[] {
-  const byId = new Map(zones.map((z) => [z.id as string, z]));
+  const byId = new Map(zones.map((z) => [z.id as string, z] as const));
   const parts: string[] = [];
   let current = byId.get(id);
   while (current) {
@@ -36,50 +34,49 @@ export default function ZoneDetailScreen() {
     zoneId: string;
     projectId: string;
   }>();
-  const zoneId = toZoneId(rawZoneId!);
-  const projectId = toProjectId(rawProjectId!);
+  const zoneId = toZoneId(requiredParam(rawZoneId));
+  const projectId = toProjectId(requiredParam(rawProjectId));
   const router = useRouter();
   const { data: zones } = useZonesByProject(projectId);
-  const { data: installations, isLoading, refetch } =
-    useInstallationsByZone(zoneId);
+  const { data: installations, isLoading, refetch } = useInstallationsByZone(zoneId);
   const deleteZone = useDeleteZone();
   const updateZone = useUpdateZone();
   const { confirmDelete } = useConfirmDelete();
-  const [qrSheetVisible, setQrSheetVisible] = useState(false);
+  const { value: qrSheetVisible, open: openQrSheet, close: closeQrSheet } = useToggle();
 
-  const zone = useMemo(
-    () => zones?.find((z) => z.id === zoneId),
-    [zones, zoneId]
-  );
+  const openEditZone = () =>
+    router.push(`/(tabs)/projects/zone/edit?zoneId=${zoneId}&projectId=${projectId}`);
+  const openNewInstallation = () =>
+    router.push(`/(tabs)/capture/new?projectId=${projectId}&zoneId=${zoneId}`);
+  const openInstallation = (id: string) => router.push(`/(tabs)/projects/installation/${id}`);
+
+  const zone = useMemo(() => zones?.find((z) => z.id === zoneId), [zones, zoneId]);
 
   const breadcrumb = useMemo(
     () => (zones && zoneId ? buildBreadcrumb(zones, zoneId) : []),
-    [zones, zoneId]
+    [zones, zoneId],
   );
 
   const qrValue = useMemo(
-    () => (projectId && zoneId ? encodeZoneQr(projectId, zoneId) : ""),
-    [projectId, zoneId]
+    () => (projectId && zoneId ? encodeZoneQr(projectId, zoneId) : ''),
+    [projectId, zoneId],
   );
 
   const handleQrPress = useCallback(async () => {
     try {
       if (zone && !zone.qrCode) {
-        await updateZone.mutateAsync({
-          id: zoneId,
-          data: { qrCode: qrValue },
-        });
+        await updateZone.mutateAsync({ id: zoneId, data: { qrCode: qrValue } });
       }
-      setQrSheetVisible(true);
+      openQrSheet();
     } catch {
       // Global MutationCache.onError shows toast
     }
-  }, [zone, zoneId, qrValue, updateZone]);
+  }, [zone, zoneId, qrValue, updateZone, openQrSheet]);
 
   const handleDelete = () => {
     confirmDelete({
-      title: "Zone löschen",
-      message: "Diese Zone und alle zugehörigen Daten wirklich löschen?",
+      title: 'Zone löschen',
+      message: 'Diese Zone und alle zugehörigen Daten wirklich löschen?',
       onConfirm: async () => {
         try {
           await deleteZone.mutateAsync(zoneId);
@@ -93,39 +90,29 @@ export default function ZoneDetailScreen() {
 
   if (!zone) return null;
 
+  const { name, type } = zone;
+
   return (
     <View style={styles.container}>
-      <Stack.Screen options={{ title: zone.name }} />
+      <Stack.Screen options={{ title: name }} />
 
       <View style={styles.header}>
         <View style={styles.headerRow}>
-          <Text style={styles.title}>{zone.name}</Text>
-          <StatusBadge status={zone.type} />
+          <Text style={styles.title}>{name}</Text>
+          <StatusBadge status={type} />
         </View>
         {breadcrumb.length > 1 && (
           <Text style={styles.breadcrumb} numberOfLines={1}>
-            {breadcrumb.join(" > ")}
+            {breadcrumb.join(' > ')}
           </Text>
         )}
       </View>
 
       <ActionBar
         actions={[
-          { icon: "qrcode", label: "QR-Code", onPress: handleQrPress },
-          {
-            icon: "pencil",
-            label: "Bearbeiten",
-            onPress: () =>
-              router.push(
-                `/(tabs)/projects/zone/edit?zoneId=${zoneId}&projectId=${projectId}`
-              ),
-          },
-          {
-            icon: "trash-o",
-            label: "Löschen",
-            onPress: handleDelete,
-            color: Colors.danger,
-          },
+          { icon: 'qrcode', label: 'QR-Code', onPress: handleQrPress },
+          { icon: 'pencil', label: 'Bearbeiten', onPress: openEditZone },
+          { icon: 'trash-o', label: 'Löschen', onPress: handleDelete, color: Colors.danger },
         ]}
       />
 
@@ -137,23 +124,14 @@ export default function ZoneDetailScreen() {
           title="Noch keine Installationen"
           subtitle="Erfasse die erste Installation in dieser Zone."
           actionLabel="Installation erfassen"
-          onAction={() =>
-            router.push(
-              `/(tabs)/capture/new?projectId=${projectId}&zoneId=${zoneId}`
-            )
-          }
+          onAction={openNewInstallation}
         />
       ) : (
         <FlatList
           data={installations}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <InstallationCard
-              installation={item}
-              onPress={() =>
-                router.push(`/(tabs)/projects/installation/${item.id}`)
-              }
-            />
+            <InstallationCard installation={item} onPress={() => openInstallation(item.id)} />
           )}
           contentContainerStyle={styles.list}
           refreshing={isLoading}
@@ -161,20 +139,14 @@ export default function ZoneDetailScreen() {
         />
       )}
 
-      <FloatingActionButton
-        onPress={() =>
-          router.push(
-            `/(tabs)/capture/new?projectId=${projectId}&zoneId=${zoneId}`
-          )
-        }
-      />
+      <FloatingActionButton onPress={openNewInstallation} />
 
       <ZoneQrSheet
         visible={qrSheetVisible}
-        onClose={() => setQrSheetVisible(false)}
+        onClose={closeQrSheet}
         qrValue={qrValue}
-        zoneName={zone.name}
-        zoneType={zone.type}
+        zoneName={name}
+        zoneType={type}
       />
     </View>
   );
@@ -193,13 +165,13 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
   },
   headerRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   title: {
     fontSize: FontSize.headline,
-    fontWeight: "600",
+    fontWeight: '600',
     color: Colors.textPrimary,
     flex: 1,
     marginRight: Spacing.sm,
@@ -211,7 +183,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: FontSize.headline,
-    fontWeight: "600",
+    fontWeight: '600',
     marginHorizontal: Spacing.lg,
     marginTop: Spacing.lg,
     marginBottom: Spacing.sm,

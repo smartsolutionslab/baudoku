@@ -11,45 +11,29 @@ type ZoneQrSheetProps = {
   zoneType: string;
 };
 
-export function ZoneQrSheet({
-  visible,
-  onClose,
-  qrValue,
-  zoneName,
-  zoneType,
-}: ZoneQrSheetProps) {
+export function ZoneQrSheet({ visible, onClose, qrValue, zoneName, zoneType }: ZoneQrSheetProps) {
   const handleShare = async () => {
-    await Share.share({
-      message: `BauDoku Zone: ${zoneName}\n${qrValue}`,
-    });
+    await Share.share({ message: `BauDoku Zone: ${zoneName}\n${qrValue}` });
   };
 
   return (
     <BottomSheet visible={visible} onClose={onClose}>
       <View style={styles.centered}>
         <Text style={styles.title}>{zoneName}</Text>
-        <Text style={styles.subtitle}>
-          {statusLabels[zoneType] ?? zoneType}
-        </Text>
-
+        <Text style={styles.subtitle}>{statusLabels[zoneType] ?? zoneType}</Text>
         <View style={styles.qrContainer}>
           <QRCode
             value={qrValue}
             size={200}
             backgroundColor={Colors.white}
             color={Colors.black}
-            ecl='M'
+            ecl="M"
           />
         </View>
-
-        <Text style={styles.hint}>
-          QR-Code ausdrucken und an der Zone anbringen.
-        </Text>
-
+        <Text style={styles.hint}>QR-Code ausdrucken und an der Zone anbringen.</Text>
         <TouchableOpacity style={styles.shareBtn} onPress={handleShare}>
           <Text style={styles.shareBtnText}>QR-Code teilen</Text>
         </TouchableOpacity>
-
         <TouchableOpacity style={styles.closeBtn} onPress={onClose}>
           <Text style={styles.closeBtnText}>Schließen</Text>
         </TouchableOpacity>

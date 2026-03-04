@@ -5,14 +5,23 @@ namespace SmartSolutionsLab.BauDoku.Sync.Domain;
 
 public sealed record BatchStatus : IValueObject
 {
-    private static readonly HashSet<string> ValidValues =
-        ["pending", "processing", "completed", "partial_conflict", "failed"];
-
     public static readonly BatchStatus Pending = new("pending");
     public static readonly BatchStatus Processing = new("processing");
     public static readonly BatchStatus Completed = new("completed");
     public static readonly BatchStatus PartialConflict = new("partial_conflict");
     public static readonly BatchStatus Failed = new("failed");
+
+    public static IEnumerable<BatchStatus> All { get; } =
+    [
+        Pending,
+        Processing,
+        Completed,
+        PartialConflict,
+        Failed
+    ];
+
+    private static HashSet<string> ValidValues => All.Select(item => item.Value).ToHashSet();
+
 
     public string Value { get; }
 

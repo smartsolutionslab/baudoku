@@ -1,13 +1,13 @@
-import React from "react";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { Tabs } from "expo-router";
+import React from 'react';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { Tabs } from 'expo-router';
 
-import { Colors } from "@/styles/tokens";
-import { SyncIndicator } from "@/components/sync";
-import { useSyncStatus } from "@/hooks";
+import { Colors } from '@/styles/tokens';
+import { SyncIndicator } from '@/components/sync';
+import { useSyncStatus } from '@/hooks';
 
 function TabBarIcon(props: {
-  name: React.ComponentProps<typeof FontAwesome>["name"];
+  name: React.ComponentProps<typeof FontAwesome>['name'];
   color: string;
 }) {
   return <FontAwesome size={24} style={{ marginBottom: -3 }} {...props} />;
@@ -15,7 +15,7 @@ function TabBarIcon(props: {
 
 function formatBadge(count: number): string | undefined {
   if (count === 0) return undefined;
-  return count > 99 ? "99+" : String(count);
+  return count > 99 ? '99+' : String(count);
 }
 
 export default function TabLayout() {
@@ -31,38 +31,32 @@ export default function TabLayout() {
       <Tabs.Screen
         name="projects"
         options={{
-          title: "Projekte",
+          title: 'Projekte',
           headerShown: false,
-          tabBarIcon: ({ color }) => (
-            <TabBarIcon name="building" color={color} />
-          ),
+          tabBarIcon: ({ color }) => <TabBarIcon name="building" color={color} />,
           headerRight: () => <SyncIndicator />,
         }}
       />
       <Tabs.Screen
         name="capture"
         options={{
-          title: "Erfassen",
+          title: 'Erfassen',
           headerShown: false,
-          tabBarIcon: ({ color }) => (
-            <TabBarIcon name="camera" color={color} />
-          ),
+          tabBarIcon: ({ color }) => <TabBarIcon name="camera" color={color} />,
         }}
       />
       <Tabs.Screen
         name="sync"
         options={{
-          title: "Sync",
-          tabBarIcon: ({ color }) => (
-            <TabBarIcon name="refresh" color={color} />
-          ),
+          title: 'Sync',
+          tabBarIcon: ({ color }) => <TabBarIcon name="refresh" color={color} />,
           tabBarBadge: formatBadge(unsyncedCount + pendingUploads),
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
-          title: "Profil",
+          title: 'Profil',
           headerShown: false,
           tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
         }}

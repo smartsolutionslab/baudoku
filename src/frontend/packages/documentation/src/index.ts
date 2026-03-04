@@ -26,6 +26,9 @@ export {
   GPS_SOURCE_LABELS,
   MEASUREMENT_RESULT_LABELS,
   MEASUREMENT_UNITS,
+  INSTALLATION_TYPE_OPTIONS,
+  PHASE_OPTIONS,
+  MEASUREMENT_TYPE_OPTIONS,
 } from './constants';
 export type { MeasurementTypePreset } from './constants';
 export {
@@ -34,9 +37,5 @@ export {
   GPS_CORRECTION_SERVICE_LABELS,
   RTK_FIX_STATUS_LABELS,
 } from './gps-quality';
-export type {
-  GpsQualityGrade,
-  GpsQualityInput,
-  GpsQualityResult,
-} from './gps-quality';
+export type { GpsQualityGrade, GpsQualityInput, GpsQualityResult } from './gps-quality';
 export { uploadPhoto } from './api';

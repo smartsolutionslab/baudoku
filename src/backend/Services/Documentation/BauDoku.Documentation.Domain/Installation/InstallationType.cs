@@ -5,12 +5,6 @@ namespace SmartSolutionsLab.BauDoku.Documentation.Domain;
 
 public sealed record InstallationType : IValueObject
 {
-    private static readonly HashSet<string> ValidValues =
-    [
-        "cable_tray", "junction_box", "cable_pull", "conduit",
-        "grounding", "lightning_protection", "switchgear", "transformer", "other"
-    ];
-
     public static readonly InstallationType CableTray = new("cable_tray");
     public static readonly InstallationType JunctionBox = new("junction_box");
     public static readonly InstallationType CablePull = new("cable_pull");
@@ -20,6 +14,21 @@ public sealed record InstallationType : IValueObject
     public static readonly InstallationType Switchgear = new("switchgear");
     public static readonly InstallationType Transformer = new("transformer");
     public static readonly InstallationType Other = new("other");
+
+    public static IEnumerable<InstallationType> All { get; } =
+    [
+        CableTray,
+        JunctionBox,
+        CablePull,
+        Conduit,
+        Grounding,
+        LightningProtection,
+        Switchgear,
+        Transformer,
+        Other,
+    ];
+
+    private static HashSet<string> ValidValues => All.Select(item => item.Value).ToHashSet();
 
     public string Value { get; }
 

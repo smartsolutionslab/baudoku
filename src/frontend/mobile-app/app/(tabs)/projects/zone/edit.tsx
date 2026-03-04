@@ -1,38 +1,27 @@
-import { useMemo } from "react";
-import { View, Text, ActivityIndicator, StyleSheet } from "react-native";
-import { useLocalSearchParams, useRouter, Stack } from "expo-router";
-import {
-  useZonesByProject,
-  useUpdateZone,
-} from "@/hooks";
-import { ZoneForm } from "@/components/projects";
-import { Colors, Spacing, FontSize } from "@/styles/tokens";
-import type { ZoneFormData } from "@/validation/schemas";
-import {
-  projectId as toProjectId,
-  zoneId as toZoneId,
-} from "@/types/branded";
+import { useMemo } from 'react';
+import { View, ActivityIndicator, StyleSheet } from 'react-native';
+import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
+import { useZonesByProject, useUpdateZone } from '@/hooks';
+import { ZoneForm } from '@/components/projects';
+import { Colors } from '@/styles/tokens';
+import type { ZoneFormData } from '@/validation/schemas';
+import { projectId as toProjectId, zoneId as toZoneId } from '@baudoku/core';
+import { requiredParam } from '@/utils';
 
 export default function ZoneEditScreen() {
   const { zoneId: rawZoneId, projectId: rawProjectId } = useLocalSearchParams<{
     zoneId: string;
     projectId: string;
   }>();
-  const zoneId = toZoneId(rawZoneId!);
-  const projectId = toProjectId(rawProjectId!);
+  const zoneId = toZoneId(requiredParam(rawZoneId));
+  const projectId = toProjectId(requiredParam(rawProjectId));
   const router = useRouter();
   const { data: zones, isLoading } = useZonesByProject(projectId);
   const updateZone = useUpdateZone();
 
-  const zone = useMemo(
-    () => zones?.find((z) => z.id === zoneId),
-    [zones, zoneId]
-  );
+  const zone = useMemo(() => zones?.find((z) => z.id === zoneId), [zones, zoneId]);
 
-  const otherZones = useMemo(
-    () => zones?.filter((z) => z.id !== zoneId) ?? [],
-    [zones, zoneId]
-  );
+  const otherZones = useMemo(() => zones?.filter((z) => z.id !== zoneId) ?? [], [zones, zoneId]);
 
   const handleSubmit = async (data: ZoneFormData) => {
     try {
@@ -54,7 +43,7 @@ export default function ZoneEditScreen() {
   if (isLoading || !zone) {
     return (
       <View style={styles.loading}>
-        <Stack.Screen options={{ title: "Zone bearbeiten" }} />
+        <Stack.Screen options={{ title: 'Zone bearbeiten' }} />
         <ActivityIndicator size="large" color={Colors.primary} />
       </View>
     );
@@ -67,7 +56,7 @@ export default function ZoneEditScreen() {
         zones={otherZones}
         initialValues={{
           name: zone.name,
-          type: zone.type as ZoneFormData["type"],
+          type: zone.type as ZoneFormData['type'],
           parentZoneId: zone.parentZoneId,
           sortOrder: zone.sortOrder ?? undefined,
         }}
@@ -86,8 +75,8 @@ const styles = StyleSheet.create({
   },
   loading: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: Colors.background,
   },
 });

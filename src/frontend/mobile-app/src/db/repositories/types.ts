@@ -1,6 +1,18 @@
 import type { InferSelectModel, InferInsertModel } from 'drizzle-orm';
 import type { projects, zones, installations, photos, measurements, syncOutbox } from '../schema';
-import type { ProjectId, ZoneId, InstallationId, PhotoId, MeasurementId, SyncOutboxEntryId, ProjectName, ZoneName, Latitude, Longitude, DepthMm } from '../../types/branded';
+import type {
+  ProjectId,
+  ZoneId,
+  InstallationId,
+  PhotoId,
+  MeasurementId,
+  SyncOutboxEntryId,
+  ProjectName,
+  ZoneName,
+  Latitude,
+  Longitude,
+  DepthMm,
+} from '@baudoku/core';
 
 // ─── Raw DB types (Drizzle-inferred) ─────────────────────────────
 // These are used internally by the ORM layer.
@@ -29,7 +41,10 @@ export type Zone = Omit<RawZone, 'id' | 'projectId' | 'parentZoneId' | 'name'> &
   name: ZoneName;
 };
 
-export type Installation = Omit<RawInstallation, 'id' | 'projectId' | 'zoneId' | 'gpsLat' | 'gpsLng' | 'depthMm'> & {
+export type Installation = Omit<
+  RawInstallation,
+  'id' | 'projectId' | 'zoneId' | 'gpsLat' | 'gpsLng' | 'depthMm'
+> & {
   id: InstallationId;
   projectId: ProjectId;
   zoneId: ZoneId;

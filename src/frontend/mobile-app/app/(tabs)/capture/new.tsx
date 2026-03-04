@@ -1,24 +1,24 @@
-import { useLocalSearchParams, useRouter } from "expo-router";
-import { useCreateInstallation, type GpsPosition } from "@/hooks";
-import { InstallationForm } from "@/components/installations";
-import type { InstallationFormData } from "@/validation/schemas";
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useCreateInstallation, type GpsPosition } from '@/hooks';
+import { InstallationForm } from '@/components/installations';
+import type { InstallationFormData } from '@/validation/schemas';
+import { requiredParam } from '@/utils';
 
 export default function NewInstallationScreen() {
   const { projectId, zoneId } = useLocalSearchParams<{
     projectId: string;
     zoneId: string;
   }>();
+  const pid = requiredParam(projectId);
+  const zid = requiredParam(zoneId);
   const router = useRouter();
   const createInstallation = useCreateInstallation();
 
-  const handleSubmit = async (
-    data: InstallationFormData,
-    gps: GpsPosition | null
-  ) => {
+  const handleSubmit = async (data: InstallationFormData, gps: GpsPosition | null) => {
     try {
       const result = await createInstallation.mutateAsync({
-        projectId: projectId!,
-        zoneId: zoneId!,
+        projectId: pid,
+        zoneId: zid,
         type: data.type,
         status: data.status,
         manufacturer: data.manufacturer || null,
@@ -52,10 +52,5 @@ export default function NewInstallationScreen() {
     }
   };
 
-  return (
-    <InstallationForm
-      onSubmit={handleSubmit}
-      submitting={createInstallation.isPending}
-    />
-  );
+  return <InstallationForm onSubmit={handleSubmit} submitting={createInstallation.isPending} />;
 }

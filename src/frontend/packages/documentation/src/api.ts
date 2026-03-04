@@ -1,10 +1,10 @@
 import { apiUpload } from '@baudoku/core';
-import type { PhotoUploadResult } from '@baudoku/core';
+import type { PhotoUploadResult, InstallationId } from '@baudoku/core';
 
 export async function uploadPhoto(
-  installationId: string,
+  installationId: InstallationId,
   file: File,
-  caption?: string
+  caption?: string,
 ): Promise<PhotoUploadResult> {
   const formData = new FormData();
   formData.append('file', file);
@@ -12,6 +12,6 @@ export async function uploadPhoto(
 
   return apiUpload<PhotoUploadResult>(
     `/api/documentation/installations/${installationId}/photos`,
-    formData
+    formData,
   );
 }

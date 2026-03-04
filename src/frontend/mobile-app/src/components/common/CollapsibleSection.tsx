@@ -8,11 +8,7 @@ type CollapsibleSectionProps = {
   children: React.ReactNode;
 };
 
-export function CollapsibleSection({
-  title,
-  defaultOpen,
-  children,
-}: CollapsibleSectionProps) {
+export function CollapsibleSection({ title, defaultOpen, children }: CollapsibleSectionProps) {
   const [open, setOpen] = useState(defaultOpen ?? false);
   return (
     <View style={styles.container}>

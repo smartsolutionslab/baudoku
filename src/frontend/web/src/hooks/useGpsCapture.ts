@@ -1,8 +1,10 @@
 import { useState, useCallback } from 'react';
+import type { Latitude, Longitude } from '@baudoku/core';
+import { latitude as toLatitude, longitude as toLongitude } from '@baudoku/core';
 
 type GpsPosition = {
-  latitude: number;
-  longitude: number;
+  latitude: Latitude;
+  longitude: Longitude;
   altitude: number | null;
   accuracy: number;
 };
@@ -12,7 +14,6 @@ type UseGpsCaptureReturn = {
   capturing: boolean;
   error: string | null;
   capturePosition: () => void;
-  clearPosition: () => void;
 };
 
 export function useGpsCapture(): UseGpsCaptureReturn {
@@ -32,8 +33,8 @@ export function useGpsCapture(): UseGpsCaptureReturn {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         setPosition({
-          latitude: pos.coords.latitude,
-          longitude: pos.coords.longitude,
+          latitude: toLatitude(pos.coords.latitude),
+          longitude: toLongitude(pos.coords.longitude),
           altitude: pos.coords.altitude,
           accuracy: pos.coords.accuracy,
         });
@@ -48,14 +49,9 @@ export function useGpsCapture(): UseGpsCaptureReturn {
         setError(messages[err.code] ?? 'Unbekannter GPS-Fehler.');
         setCapturing(false);
       },
-      { enableHighAccuracy: true, timeout: 15_000, maximumAge: 0 }
+      { enableHighAccuracy: true, timeout: 15_000, maximumAge: 0 },
     );
   }, []);
 
-  const clearPosition = useCallback(() => {
-    setPosition(null);
-    setError(null);
-  }, []);
-
-  return { position, capturing, error, capturePosition, clearPosition };
+  return { position, capturing, error, capturePosition };
 }

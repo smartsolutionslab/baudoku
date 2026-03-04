@@ -1,10 +1,6 @@
+/* eslint-disable react-hooks/refs -- Animated.Value refs are used as stable animation drivers */
 import { useEffect, useRef } from 'react';
-import {
-  Animated,
-  Text,
-  StyleSheet,
-  Pressable,
-} from 'react-native';
+import { Animated, Text, StyleSheet, Pressable } from 'react-native';
 import { Colors, Spacing, FontSize, Radius, Shadows } from '../../styles/tokens';
 import { useToastStore, type ToastType } from '../../store';
 
@@ -84,8 +80,8 @@ export function Toast({ id, message, type, duration }: ToastProps) {
         styles.container,
         { backgroundColor: backgroundColors[type], opacity, transform: [{ translateY }] },
       ]}
-      accessibilityRole='alert'
-      accessibilityLiveRegion='polite'
+      accessibilityRole="alert"
+      accessibilityLiveRegion="polite"
     >
       <Pressable onPress={handlePress} style={styles.pressable}>
         <Text style={styles.text}>{message}</Text>

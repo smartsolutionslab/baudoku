@@ -3,12 +3,13 @@ import { MeasurementCard } from './MeasurementCard';
 import { MeasurementForm } from './MeasurementForm';
 import { PlusIcon } from '@/components/icons';
 import { Button } from '@/components/common/Button';
+import type { MeasurementId } from '@baudoku/core';
 import type { Measurement, MeasurementFormData } from '@baudoku/documentation';
 
 type MeasurementsTabProps = {
   measurements: Measurement[];
   onCreateMeasurement: (data: MeasurementFormData) => Promise<void>;
-  onDeleteMeasurement: (id: string) => void;
+  onDeleteMeasurement: (id: MeasurementId) => void;
   isCreating: boolean;
 };
 
@@ -21,9 +22,13 @@ export function MeasurementsTab({
   const [showForm, setShowForm] = useState(false);
 
   return (
-    <div className='space-y-4'>
+    <div className="space-y-4">
       {!showForm ? (
-        <Button variant='secondary' onClick={() => setShowForm(true)} className='inline-flex items-center gap-2'>
+        <Button
+          variant="secondary"
+          onClick={() => setShowForm(true)}
+          className="inline-flex items-center gap-2"
+        >
           <PlusIcon />
           Messung hinzufügen
         </Button>
@@ -39,20 +44,14 @@ export function MeasurementsTab({
       )}
 
       {measurements.length > 0 ? (
-        <div className='space-y-3'>
+        <div className="space-y-3">
           {measurements.map((m) => (
-            <MeasurementCard
-              key={m.id}
-              measurement={m}
-              onDelete={onDeleteMeasurement}
-            />
+            <MeasurementCard key={m.id} measurement={m} onDelete={onDeleteMeasurement} />
           ))}
         </div>
       ) : (
         !showForm && (
-          <p className='py-8 text-center text-sm text-gray-500'>
-            Noch keine Messungen vorhanden.
-          </p>
+          <p className="py-8 text-center text-sm text-gray-500">Noch keine Messungen vorhanden.</p>
         )
       )}
     </div>

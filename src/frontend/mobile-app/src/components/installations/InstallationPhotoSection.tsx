@@ -1,4 +1,3 @@
-import { useState, useCallback } from 'react';
 import { View, Text, TextInput, StyleSheet } from 'react-native';
 import { BottomSheet } from '@/components/common';
 import { Button } from '@/components/core';
@@ -9,29 +8,13 @@ import {
   type PhotoType,
   PhotoViewer,
 } from '@/components/installations';
-import { usePhotoCapture, type CapturedPhoto, useConfirmDelete } from '@/hooks';
-import { deletePhotoFile } from '@/utils';
+import { usePhotoFlow } from '@/hooks/usePhotoFlow';
 import { Colors, Spacing, FontSize, Radius } from '@/styles/tokens';
+import { UPLOAD_STATUS_COLORS, UPLOAD_STATUS_LABELS } from '@/utils/uploadStatus';
 import type { Photo } from '@/db/repositories/types';
-import type { InstallationId, PhotoId } from '@/types/branded';
+import type { InstallationId, PhotoId, Latitude, Longitude } from '@baudoku/core';
 
-function uploadStatusColor(status: string): string {
-  switch (status) {
-    case 'uploaded': return Colors.success;
-    case 'uploading': return Colors.primary;
-    case 'failed': return Colors.danger;
-    default: return Colors.textTertiary;
-  }
-}
-
-function uploadStatusLabel(status: string): string {
-  switch (status) {
-    case 'uploaded': return 'hochgeladen';
-    case 'uploading': return 'lädt hoch';
-    case 'failed': return 'fehlgeschlagen';
-    default: return 'ausstehend';
-  }
-}
+const UPLOAD_STATUSES = ['pending', 'uploading', 'uploaded', 'failed'] as const;
 
 type InstallationPhotoSectionProps = {
   installationId: InstallationId;
@@ -41,8 +24,8 @@ type InstallationPhotoSectionProps = {
     localPath: string;
     type: PhotoType;
     caption: string | null;
-    exifLatitude: number | null;
-    exifLongitude: number | null;
+    exifLatitude: Latitude | null;
+    exifLongitude: Longitude | null;
     exifDateTime: string | null;
     exifCameraModel: string | null;
     takenAt: Date;
@@ -63,84 +46,28 @@ export function InstallationPhotoSection({
   showSourceSheet,
   onShowSourceSheet,
 }: InstallationPhotoSectionProps) {
-  const { takePhoto, pickFromGallery } = usePhotoCapture();
-  const { confirmDelete } = useConfirmDelete();
-
-  const [showTypeSheet, setShowTypeSheet] = useState(false);
-  const [showCaptionModal, setShowCaptionModal] = useState(false);
-  const [pendingPhoto, setPendingPhoto] = useState<CapturedPhoto | null>(null);
-  const [pendingPhotoType, setPendingPhotoType] = useState<PhotoType | null>(null);
-  const [captionText, setCaptionText] = useState('');
-  const [viewerPhoto, setViewerPhoto] = useState<Photo | null>(null);
-  const [showViewer, setShowViewer] = useState(false);
-
-  const handleCameraCapture = useCallback(async () => {
-    onShowSourceSheet(false);
-    const result = await takePhoto();
-    if (result) {
-      setPendingPhoto(result);
-      setShowTypeSheet(true);
-    }
-  }, [takePhoto, onShowSourceSheet]);
-
-  const handleGalleryPick = useCallback(async () => {
-    onShowSourceSheet(false);
-    const result = await pickFromGallery();
-    if (result) {
-      setPendingPhoto(result);
-      setShowTypeSheet(true);
-    }
-  }, [pickFromGallery, onShowSourceSheet]);
-
-  const handlePhotoTypeSelect = useCallback((type: PhotoType) => {
-    setShowTypeSheet(false);
-    setPendingPhotoType(type);
-    setCaptionText('');
-    setShowCaptionModal(true);
-  }, []);
-
-  const handleCaptionConfirm = useCallback(async () => {
-    setShowCaptionModal(false);
-    if (!pendingPhoto || !pendingPhotoType) return;
-    try {
-      await onAddPhoto({
-        installationId,
-        localPath: pendingPhoto.localPath,
-        type: pendingPhotoType,
-        caption: captionText.trim() || null,
-        exifLatitude: pendingPhoto.exif?.gpsLatitude ?? null,
-        exifLongitude: pendingPhoto.exif?.gpsLongitude ?? null,
-        exifDateTime: pendingPhoto.exif?.dateTime ?? null,
-        exifCameraModel: pendingPhoto.exif?.cameraModel ?? null,
-        takenAt: new Date(),
-        uploadStatus: 'pending',
-      });
-    } catch {
-      // Global MutationCache.onError shows toast
-    }
-    setPendingPhoto(null);
-    setPendingPhotoType(null);
-    setCaptionText('');
-  }, [pendingPhoto, pendingPhotoType, captionText, installationId, onAddPhoto]);
-
-  const handleDeletePhoto = useCallback(
-    (photo: Photo) => {
-      setShowViewer(false);
-      confirmDelete({
-        title: 'Foto löschen',
-        message: 'Dieses Foto wirklich löschen?',
-        onConfirm: async () => {
-          try {
-            await onDeletePhoto(photo.id);
-            deletePhotoFile(photo.localPath);
-          } catch {
-            // Global MutationCache.onError shows toast
-          }
-        },
-      });
-    },
-    [onDeletePhoto, confirmDelete]
-  );
+  const {
+    handleCameraCapture,
+    handleGalleryPick,
+    showTypeSheet,
+    onCloseTypeSheet,
+    handlePhotoTypeSelect,
+    showCaptionModal,
+    onCloseCaptionModal,
+    captionText,
+    setCaptionText,
+    handleCaptionConfirm,
+    viewerPhoto,
+    showViewer,
+    openViewer,
+    closeViewer,
+    handleDeletePhoto,
+  } = usePhotoFlow({
+    installationId,
+    onAddPhoto,
+    onDeletePhoto,
+    onShowSourceSheet,
+  });
 
   return (
     <>
@@ -148,21 +75,24 @@ export function InstallationPhotoSection({
         <Text style={styles.cardTitle}>Fotos</Text>
         <PhotoGallery
           photos={photos}
-          onPhotoPress={(photo) => {
-            setViewerPhoto(photo);
-            setShowViewer(true);
-          }}
+          onPhotoPress={openViewer}
           onAddPhoto={() => onShowSourceSheet(true)}
         />
         {photos.length > 0 && (
           <View style={styles.uploadSummary}>
-            {(['pending', 'uploading', 'uploaded', 'failed'] as const).map((status) => {
-              const count = photos.filter((p) => p.uploadStatus === status).length;
+            {UPLOAD_STATUSES.map((status) => {
+              const count = photos.filter(({ uploadStatus }) => uploadStatus === status).length;
               if (count === 0) return null;
               return (
-                <View key={status} style={[styles.uploadBadge, { backgroundColor: uploadStatusColor(status) }]}>
+                <View
+                  key={status}
+                  style={[
+                    styles.uploadBadge,
+                    { backgroundColor: UPLOAD_STATUS_COLORS[status] ?? Colors.textTertiary },
+                  ]}
+                >
                   <Text style={styles.uploadBadgeText}>
-                    {count} {uploadStatusLabel(status)}
+                    {count} {UPLOAD_STATUS_LABELS[status] ?? 'ausstehend'}
                   </Text>
                 </View>
               );
@@ -180,25 +110,18 @@ export function InstallationPhotoSection({
       <PhotoTypeSheet
         visible={showTypeSheet}
         onSelect={handlePhotoTypeSelect}
-        onClose={() => {
-          setShowTypeSheet(false);
-          setPendingPhoto(null);
-        }}
+        onClose={onCloseTypeSheet}
       />
       <BottomSheet
         visible={showCaptionModal}
-        onClose={() => {
-          setShowCaptionModal(false);
-          setPendingPhoto(null);
-          setPendingPhotoType(null);
-        }}
-        title='Beschriftung (optional)'
+        onClose={onCloseCaptionModal}
+        title="Beschriftung (optional)"
       >
         <TextInput
           style={styles.captionInput}
           value={captionText}
           onChangeText={setCaptionText}
-          placeholder='z.B. Kabeltrasse Nordseite'
+          placeholder="z.B. Kabeltrasse Nordseite"
           placeholderTextColor={Colors.textTertiary}
           maxLength={200}
           autoFocus
@@ -211,7 +134,7 @@ export function InstallationPhotoSection({
       <PhotoViewer
         photo={viewerPhoto}
         visible={showViewer}
-        onClose={() => setShowViewer(false)}
+        onClose={closeViewer}
         onDelete={handleDeletePhoto}
         onSaveAnnotation={(photoId, annotation) => {
           onSaveAnnotation(photoId, annotation);

@@ -1,3 +1,5 @@
+import type { PhotoId } from './branded';
+
 export type PagedResult<T> = {
   items: T[];
   totalCount: number;
@@ -9,5 +11,5 @@ export type PagedResult<T> = {
 };
 
 export type PhotoUploadResult = {
-  id: string;
+  id: PhotoId;
 };

@@ -19,7 +19,7 @@ export function useFormValidation<T>(schema: ZodSchema<T>) {
       setErrors({});
       return result.data;
     },
-    [schema]
+    [schema],
   );
 
   return { errors, setErrors, validate };

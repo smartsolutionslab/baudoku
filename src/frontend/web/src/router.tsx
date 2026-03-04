@@ -125,10 +125,11 @@ const routeTree = rootRoute.addChildren([
 
 export const router = createRouter({
   routeTree,
-  context: { auth: undefined! },
+  context: { auth: { isAuthenticated: false } },
 });
 
 declare module '@tanstack/react-router' {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- interface required for declaration merging
   interface Register {
     router: typeof router;
   }

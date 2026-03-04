@@ -5,6 +5,7 @@ import { useSyncStatus } from '../../hooks';
 
 export function OfflineBanner() {
   const { isOnline } = useSyncStatus();
+  // eslint-disable-next-line react-hooks/refs -- Animated.Value ref is a stable animation driver
   const translateY = useRef(new Animated.Value(-50)).current;
 
   useEffect(() => {
@@ -16,10 +17,11 @@ export function OfflineBanner() {
   }, [isOnline, translateY]);
 
   return (
-    <Animated.View style={[styles.banner, { transform: [{ translateY }] }]} pointerEvents={isOnline ? 'none' : 'auto'}>
-      <Text style={styles.text}>
-        Keine Internetverbindung — Daten werden lokal gespeichert
-      </Text>
+    <Animated.View
+      style={[styles.banner, { transform: [{ translateY }] }]}
+      pointerEvents={isOnline ? 'none' : 'auto'}
+    >
+      <Text style={styles.text}>Keine Internetverbindung — Daten werden lokal gespeichert</Text>
     </Animated.View>
   );
 }

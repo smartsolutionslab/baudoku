@@ -1,6 +1,7 @@
 import * as zoneRepo from '../db/repositories/zoneRepo';
 import type { NewZone } from '../db/repositories/types';
-import type { ProjectId, ZoneId } from '../types/branded';
+import type { ProjectId, ZoneId } from '@baudoku/core';
+import { MUTATION_ERRORS } from '../constants/strings';
 import { useListQuery, useSyncMutation } from './useQueryFactory';
 
 export function useZonesByProject(projectId: ProjectId) {
@@ -10,7 +11,7 @@ export function useZonesByProject(projectId: ProjectId) {
 export function useCreateZone() {
   return useSyncMutation({
     mutationFn: (data: Omit<NewZone, 'id' | 'version'>) => zoneRepo.create(data),
-    errorMessage: 'Zone konnte nicht erstellt werden',
+    errorMessage: MUTATION_ERRORS.zoneCreate,
     invalidateKeys: [['zones']],
     onSuccessKeys: (variables) => [['zones', variables.projectId]],
   });
@@ -18,8 +19,14 @@ export function useCreateZone() {
 
 export function useUpdateZone() {
   return useSyncMutation({
-    mutationFn: ({ id, data }: { id: ZoneId; data: Partial<Omit<NewZone, 'id' | 'version' | 'projectId'>> }) => zoneRepo.update(id, data),
-    errorMessage: 'Zone konnte nicht aktualisiert werden',
+    mutationFn: ({
+      id,
+      data,
+    }: {
+      id: ZoneId;
+      data: Partial<Omit<NewZone, 'id' | 'version' | 'projectId'>>;
+    }) => zoneRepo.update(id, data),
+    errorMessage: MUTATION_ERRORS.zoneUpdate,
     invalidateKeys: [['zones']],
   });
 }
@@ -27,7 +34,7 @@ export function useUpdateZone() {
 export function useDeleteZone() {
   return useSyncMutation({
     mutationFn: (id: ZoneId) => zoneRepo.remove(id),
-    errorMessage: 'Zone konnte nicht gelöscht werden',
+    errorMessage: MUTATION_ERRORS.zoneDelete,
     invalidateKeys: [['zones']],
   });
 }

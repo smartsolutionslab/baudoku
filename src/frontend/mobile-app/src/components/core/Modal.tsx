@@ -19,7 +19,7 @@ type ModalProps = {
 
 export function Modal({ visible, onClose, title, children, footer }: ModalProps) {
   return (
-    <RNModal visible={visible} transparent animationType='slide'>
+    <RNModal visible={visible} transparent animationType="slide">
       <Pressable style={styles.overlay} onPress={onClose}>
         <Pressable style={styles.sheet} onPress={(e) => e.stopPropagation()}>
           <View style={styles.handle} />

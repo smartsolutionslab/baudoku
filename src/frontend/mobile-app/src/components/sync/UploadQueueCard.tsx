@@ -52,9 +52,7 @@ export function UploadQueueCard() {
       </View>
 
       {pendingPhotos.length > 0 && (
-        <Text style={styles.subtitle}>
-          {pendingPhotos.length} ausstehend
-        </Text>
+        <Text style={styles.subtitle}>{pendingPhotos.length} ausstehend</Text>
       )}
 
       {failedPhotos.length > 0 && (
@@ -74,9 +72,7 @@ export function UploadQueueCard() {
                   </Text>
                 )}
                 {photo.retryCount != null && photo.retryCount > 0 && (
-                  <Text style={styles.retryCount}>
-                    Versuche: {photo.retryCount}
-                  </Text>
+                  <Text style={styles.retryCount}>Versuche: {photo.retryCount}</Text>
                 )}
               </View>
               <TouchableOpacity
@@ -96,7 +92,7 @@ export function UploadQueueCard() {
         disabled={uploading}
       >
         {uploading ? (
-          <ActivityIndicator color={Colors.white} size='small' />
+          <ActivityIndicator color={Colors.white} size="small" />
         ) : (
           <Text style={styles.uploadButtonText}>Fotos hochladen</Text>
         )}

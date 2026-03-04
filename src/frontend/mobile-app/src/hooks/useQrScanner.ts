@@ -1,7 +1,7 @@
 import { useState, useCallback, useRef } from 'react';
 import { decodeZoneQr } from '../utils';
 import type { BarcodeScanningResult } from 'expo-camera';
-import type { ProjectId, ZoneId } from '../types/branded';
+import type { ProjectId, ZoneId } from '@baudoku/core';
 
 export type QrScanResult = {
   type: 'zone';
@@ -25,32 +25,29 @@ export function useQrScanner(): UseQrScannerReturn {
   const [error, setError] = useState<string | null>(null);
   const lastScanTime = useRef(0);
 
-  const onBarcodeScanned = useCallback(
-    (result: BarcodeScanningResult) => {
-      const now = Date.now();
-      if (now - lastScanTime.current < DEBOUNCE_MS) return;
-      lastScanTime.current = now;
+  const onBarcodeScanned = useCallback((result: BarcodeScanningResult) => {
+    const now = Date.now();
+    if (now - lastScanTime.current < DEBOUNCE_MS) return;
+    lastScanTime.current = now;
 
-      if (result.type !== 'qr') return;
+    if (result.type !== 'qr') return;
 
-      const decoded = decodeZoneQr(result.data);
-      if (!decoded) {
-        setError('Kein gültiger BauDoku QR-Code.');
-        setScanned(true);
-        setScanResult(null);
-        return;
-      }
-
-      setScanResult({
-        type: 'zone',
-        projectId: decoded.projectId as ProjectId,
-        zoneId: decoded.zoneId as ZoneId,
-      });
+    const decoded = decodeZoneQr(result.data);
+    if (!decoded) {
+      setError('Kein gültiger BauDoku QR-Code.');
       setScanned(true);
-      setError(null);
-    },
-    []
-  );
+      setScanResult(null);
+      return;
+    }
+
+    setScanResult({
+      type: 'zone',
+      projectId: decoded.projectId,
+      zoneId: decoded.zoneId,
+    });
+    setScanned(true);
+    setError(null);
+  }, []);
 
   const resetScanner = useCallback(() => {
     setScanned(false);

@@ -25,10 +25,9 @@ export function useSyncManager() {
       void loadPendingEntries();
       const total = result.pushed + result.pulled;
       if (total > 0) {
-        useToastStore.getState().show(
-          `${total} Änderung${total !== 1 ? 'en' : ''} synchronisiert`,
-          'success',
-        );
+        useToastStore
+          .getState()
+          .show(`${total} Änderung${total !== 1 ? 'en' : ''} synchronisiert`, 'success');
       }
       return result;
     } catch (error) {
@@ -43,7 +42,12 @@ export function useSyncManager() {
     startSync();
     try {
       const result = await syncManager.push();
-      setSyncResult({ pushed: result.appliedCount, pulled: 0, conflicts: result.conflictCount, errors: result.errors });
+      setSyncResult({
+        pushed: result.appliedCount,
+        pulled: 0,
+        conflicts: result.conflictCount,
+        errors: result.errors,
+      });
       void loadSyncStatus();
       void loadPendingEntries();
       return result;

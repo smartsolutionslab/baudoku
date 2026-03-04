@@ -26,12 +26,12 @@ function getDrizzleDb(): ExpoSQLiteDatabase<typeof schema> {
 // initialization is slow (e.g. CI emulators with software rendering).
 export const db = new Proxy({} as ExpoSQLiteDatabase<typeof schema>, {
   get(_target, prop) {
-    return (getDrizzleDb() as any)[prop];
+    return (getDrizzleDb() as unknown as Record<string | symbol, unknown>)[prop];
   },
 });
 
 export const expoDatabase = new Proxy({} as SQLiteDatabase, {
   get(_target, prop) {
-    return (getExpoDb() as any)[prop];
+    return (getExpoDb() as unknown as Record<string | symbol, unknown>)[prop];
   },
 });
