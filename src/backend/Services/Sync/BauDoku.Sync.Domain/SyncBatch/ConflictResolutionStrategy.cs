@@ -5,11 +5,18 @@ namespace SmartSolutionsLab.BauDoku.Sync.Domain;
 
 public sealed record ConflictResolutionStrategy : IValueObject
 {
-    private static readonly HashSet<string> ValidValues = ["client_wins", "server_wins", "manual_merge"];
-
     public static readonly ConflictResolutionStrategy ClientWins = new("client_wins");
     public static readonly ConflictResolutionStrategy ServerWins = new("server_wins");
     public static readonly ConflictResolutionStrategy ManualMerge = new("manual_merge");
+
+    public static IEnumerable<ConflictResolutionStrategy> All { get; } =
+    [
+        ClientWins,
+        ServerWins,
+        ManualMerge
+    ];
+
+    private static HashSet<string> ValidValues => All.Select(item => item.Value).ToHashSet();
 
     public string Value { get; }
 

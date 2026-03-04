@@ -5,12 +5,20 @@ namespace SmartSolutionsLab.BauDoku.Projects.Domain;
 
 public sealed record ZoneType : IValueObject
 {
-    private static readonly HashSet<string> ValidValues = ["building", "floor", "room", "trench"];
-
     public static readonly ZoneType Building = new("building");
     public static readonly ZoneType Floor = new("floor");
     public static readonly ZoneType Room = new("room");
     public static readonly ZoneType Trench = new("trench");
+
+    public static IEnumerable<ZoneType> All { get; } =
+    [
+        Building,
+        Floor,
+        Room,
+        Trench
+    ];
+
+    private static HashSet<string> ValidValues => All.Select(item => item.Value).ToHashSet();
 
     public string Value { get; }
 

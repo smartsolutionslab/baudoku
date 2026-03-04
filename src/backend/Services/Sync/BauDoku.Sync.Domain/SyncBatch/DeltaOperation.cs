@@ -5,11 +5,18 @@ namespace SmartSolutionsLab.BauDoku.Sync.Domain;
 
 public sealed record DeltaOperation : IValueObject
 {
-    private static readonly HashSet<string> ValidValues = ["create", "update", "delete"];
-
     public static readonly DeltaOperation Create = new("create");
     public static readonly DeltaOperation Update = new("update");
     public static readonly DeltaOperation Delete = new("delete");
+
+    public static IEnumerable<DeltaOperation> All { get; } =
+    [
+        Create,
+        Update,
+        Delete,
+    ];
+
+    private static HashSet<string> ValidValues => All.Select(item => item.Value).ToHashSet();
 
     public string Value { get; }
 

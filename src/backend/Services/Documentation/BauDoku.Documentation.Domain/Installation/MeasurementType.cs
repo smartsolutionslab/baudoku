@@ -5,12 +5,6 @@ namespace SmartSolutionsLab.BauDoku.Documentation.Domain;
 
 public sealed record MeasurementType : IValueObject
 {
-    private static readonly HashSet<string> ValidValues =
-    [
-        "insulation_resistance", "continuity", "loop_impedance",
-        "rcd_trip_time", "rcd_trip_current", "voltage", "other"
-    ];
-
     public static readonly MeasurementType InsulationResistance = new("insulation_resistance");
     public static readonly MeasurementType Continuity = new("continuity");
     public static readonly MeasurementType LoopImpedance = new("loop_impedance");
@@ -18,6 +12,19 @@ public sealed record MeasurementType : IValueObject
     public static readonly MeasurementType RcdTripCurrent = new("rcd_trip_current");
     public static readonly MeasurementType Voltage = new("voltage");
     public static readonly MeasurementType Other = new("other");
+
+    public static IEnumerable<MeasurementType> All { get; } =
+    [
+        InsulationResistance,
+        Continuity,
+        LoopImpedance,
+        RcdTripTime,
+        RcdTripCurrent,
+        Voltage,
+        Other
+    ];
+
+    private static HashSet<string> ValidValues => All.Select(item => item.Value).ToHashSet();
 
     public string Value { get; }
 

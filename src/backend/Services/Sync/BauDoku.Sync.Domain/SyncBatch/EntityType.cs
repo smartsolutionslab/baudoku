@@ -5,13 +5,22 @@ namespace SmartSolutionsLab.BauDoku.Sync.Domain;
 
 public sealed record EntityType : IValueObject
 {
-    private static readonly HashSet<string> ValidValues = ["project", "zone", "installation", "photo", "measurement"];
-
     public static readonly EntityType Project = new("project");
     public static readonly EntityType Zone = new("zone");
     public static readonly EntityType Installation = new("installation");
     public static readonly EntityType Photo = new("photo");
     public static readonly EntityType Measurement = new("measurement");
+
+    public static IEnumerable<EntityType> All { get; } =
+    [
+        Project,
+        Zone,
+        Installation,
+        Photo,
+        Measurement
+    ];
+
+    private static HashSet<string> ValidValues => All.Select(item => item.Value).ToHashSet();
 
     public string Value { get; }
 
