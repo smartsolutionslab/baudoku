@@ -1,10 +1,10 @@
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
-import tailwindcss from "@tailwindcss/vite";
-import path from "path";
-import { readFileSync } from "fs";
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
+import path from 'path';
+import { readFileSync } from 'fs';
 
-const pkg = JSON.parse(readFileSync(path.resolve(__dirname, "package.json"), "utf-8"));
+const pkg = JSON.parse(readFileSync(path.resolve(__dirname, 'package.json'), 'utf-8'));
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
@@ -13,7 +13,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
+      '@': path.resolve(__dirname, './src'),
     },
   },
   server: {
@@ -29,10 +29,10 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          router: ["@tanstack/react-router"],
-          query: ["@tanstack/react-query"],
-          forms: ["react-hook-form", "@hookform/resolvers", "zod"],
-          auth: ["oidc-client-ts"],
+          router: ['@tanstack/react-router'],
+          query: ['@tanstack/react-query'],
+          forms: ['react-hook-form', '@hookform/resolvers', 'zod'],
+          auth: ['oidc-client-ts'],
         },
       },
     },

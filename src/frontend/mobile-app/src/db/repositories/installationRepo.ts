@@ -7,18 +7,30 @@ import type { Installation, NewInstallation } from './types';
 import type { InstallationId, ProjectId, ZoneId, ProjectName, ZoneName } from '@baudoku/core';
 
 export async function getByZoneId(zoneId: ZoneId): Promise<Installation[]> {
-  return db.select().from(installations).where(eq(installations.zoneId, zoneId)).all() as unknown as Installation[];
+  return db
+    .select()
+    .from(installations)
+    .where(eq(installations.zoneId, zoneId))
+    .all() as unknown as Installation[];
 }
 
 export async function getByProjectId(projectId: ProjectId): Promise<Installation[]> {
-  return db.select().from(installations).where(eq(installations.projectId, projectId)).all() as unknown as Installation[];
+  return db
+    .select()
+    .from(installations)
+    .where(eq(installations.projectId, projectId))
+    .all() as unknown as Installation[];
 }
 
 export async function getById(id: InstallationId): Promise<Installation | undefined> {
-  return db.select().from(installations).where(eq(installations.id, id)).get() as unknown as Installation | undefined;
+  return db.select().from(installations).where(eq(installations.id, id)).get() as unknown as
+    | Installation
+    | undefined;
 }
 
-export async function create(data: Omit<NewInstallation, 'id' | 'createdAt' | 'updatedAt' | 'version'>): Promise<Installation> {
+export async function create(
+  data: Omit<NewInstallation, 'id' | 'createdAt' | 'updatedAt' | 'version'>,
+): Promise<Installation> {
   const now = new Date();
   const installation: NewInstallation = {
     ...data,
@@ -29,17 +41,17 @@ export async function create(data: Omit<NewInstallation, 'id' | 'createdAt' | 'u
   };
 
   await db.insert(installations).values(installation);
-  await createOutboxEntry(
-    'installation',
-    installation.id,
-    'create',
-    installation
-  );
+  await createOutboxEntry('installation', installation.id, 'create', installation);
 
   return installation as unknown as Installation;
 }
 
-export async function update(id: InstallationId, data: Partial<Omit<NewInstallation, 'id' | 'createdAt' | 'updatedAt' | 'version' | 'projectId' | 'zoneId'>>): Promise<Installation | undefined> {
+export async function update(
+  id: InstallationId,
+  data: Partial<
+    Omit<NewInstallation, 'id' | 'createdAt' | 'updatedAt' | 'version' | 'projectId' | 'zoneId'>
+  >,
+): Promise<Installation | undefined> {
   const existing = await getById(id);
   if (!existing) return undefined;
 
@@ -68,7 +80,10 @@ export type SearchResult = Installation & {
   projectName: ProjectName;
 };
 
-export async function search(query: string, filters?: { status?: string[]; projectId?: ProjectId }): Promise<SearchResult[]> {
+export async function search(
+  query: string,
+  filters?: { status?: string[]; projectId?: ProjectId },
+): Promise<SearchResult[]> {
   const pattern = `%${query}%`;
 
   let q = db
@@ -91,13 +106,18 @@ export async function search(query: string, filters?: { status?: string[]; proje
         like(installations.manufacturer, pattern),
         like(installations.model, pattern),
         like(installations.serialNumber, pattern),
-        like(installations.notes, pattern)
-      )
+        like(installations.notes, pattern),
+      ),
     );
   }
 
   if (filters?.status && filters.status.length > 0) {
-    conditions.push(inArray(installations.status, filters.status as ('planned' | 'in_progress' | 'completed' | 'inspected')[]));
+    conditions.push(
+      inArray(
+        installations.status,
+        filters.status as ('planned' | 'in_progress' | 'completed' | 'inspected')[],
+      ),
+    );
   }
 
   if (filters?.projectId) {
@@ -117,7 +137,11 @@ export async function search(query: string, filters?: { status?: string[]; proje
 }
 
 export async function getCountByStatus(): Promise<Record<string, number>> {
-  const rows = await db.select({ status: installations.status, count: count()}).from(installations).groupBy(installations.status).all();
+  const rows = await db
+    .select({ status: installations.status, count: count() })
+    .from(installations)
+    .groupBy(installations.status)
+    .all();
 
   const result: Record<string, number> = {};
   for (const r of rows) {

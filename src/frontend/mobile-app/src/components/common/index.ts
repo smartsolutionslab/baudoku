@@ -2,6 +2,7 @@ export { ActionBar, type ActionBarItem } from './ActionBar';
 export { BottomSheet } from './BottomSheet';
 export { CollapsibleSection } from './CollapsibleSection';
 export { DashboardCard } from './DashboardCard';
+export { DetailRow } from './DetailRow';
 export { EmptyState } from './EmptyState';
 export { FilterChips } from './FilterChips';
 export { FloatingActionButton } from './FloatingActionButton';

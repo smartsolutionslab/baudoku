@@ -1,12 +1,12 @@
-import { View, Text, ActivityIndicator, StyleSheet } from "react-native";
-import { useRouter } from "expo-router";
-import { ConflictList } from "@/components/sync";
-import { useConflicts } from "@/hooks";
-import { Colors, FontSize, Spacing } from "@/styles/tokens";
+import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
+import { useRouter } from 'expo-router';
+import { ConflictList } from '@/components/sync';
+import { useConflicts } from '@/hooks';
+import { Colors, FontSize, Spacing } from '@/styles/tokens';
 
 export default function ConflictsScreen() {
   const router = useRouter();
-  const { data: conflicts, isLoading, error } = useConflicts("unresolved");
+  const { data: conflicts, isLoading, error } = useConflicts('unresolved');
 
   if (isLoading) {
     return (
@@ -19,9 +19,7 @@ export default function ConflictsScreen() {
   if (error) {
     return (
       <View style={styles.center}>
-        <Text style={styles.errorText}>
-          Fehler beim Laden: {error.message}
-        </Text>
+        <Text style={styles.errorText}>Fehler beim Laden: {error.message}</Text>
       </View>
     );
   }
@@ -30,9 +28,7 @@ export default function ConflictsScreen() {
     <View style={styles.container}>
       <ConflictList
         conflicts={conflicts ?? []}
-        onSelect={(conflict) =>
-          router.push(`/(tabs)/sync/conflict/${conflict.id}`)
-        }
+        onSelect={(conflict) => router.push(`/(tabs)/sync/conflict/${conflict.id}`)}
       />
     </View>
   );
@@ -45,13 +41,13 @@ const styles = StyleSheet.create({
   },
   center: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   errorText: {
     color: Colors.danger,
     fontSize: FontSize.body,
-    textAlign: "center",
+    textAlign: 'center',
     padding: Spacing.xl,
   },
 });

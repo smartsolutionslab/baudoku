@@ -12,11 +12,9 @@ type FormFieldProps = InputHTMLAttributes<HTMLInputElement> & {
 export function FormField({ label, error, register, suffix, ...props }: FormFieldProps) {
   return (
     <div>
-      <label className='block text-sm font-medium text-gray-700'>
-        {label}
-      </label>
+      <label className="block text-sm font-medium text-gray-700">{label}</label>
       {suffix ? (
-        <div className='relative mt-1'>
+        <div className="relative mt-1">
           <input
             {...register}
             {...props}
@@ -26,20 +24,14 @@ export function FormField({ label, error, register, suffix, ...props }: FormFiel
                 : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
             }`}
           />
-          <span className='pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-sm text-gray-500'>
+          <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-sm text-gray-500">
             {suffix}
           </span>
         </div>
       ) : (
-        <input
-          {...register}
-          {...props}
-          className={inputClassName(!!error)}
-        />
+        <input {...register} {...props} className={inputClassName(!!error)} />
       )}
-      {error && (
-        <p className='mt-1 text-sm text-red-600'>{error.message}</p>
-      )}
+      {error && <p className="mt-1 text-sm text-red-600">{error.message}</p>}
     </div>
   );
 }

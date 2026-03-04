@@ -17,7 +17,12 @@ export function FormField({ label, error, required, suffix, style, ...props }: F
       </Text>
       <View style={styles.inputWrapper}>
         <TextInput
-          style={[styles.input, suffix && styles.inputWithSuffix, error && styles.inputError, style]}
+          style={[
+            styles.input,
+            suffix && styles.inputWithSuffix,
+            error && styles.inputError,
+            style,
+          ]}
           placeholderTextColor={Colors.textTertiary}
           {...props}
         />

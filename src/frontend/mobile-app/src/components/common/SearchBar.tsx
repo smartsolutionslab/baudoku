@@ -9,10 +9,15 @@ type SearchBarProps = {
   autoFocus?: boolean;
 };
 
-export function SearchBar({ value, onChangeText, placeholder = 'Suchen...', autoFocus = true}: SearchBarProps) {
+export function SearchBar({
+  value,
+  onChangeText,
+  placeholder = 'Suchen...',
+  autoFocus = true,
+}: SearchBarProps) {
   return (
     <View style={styles.container}>
-      <FontAwesome name='search' size={16} color={Colors.textTertiary} style={styles.icon}/>
+      <FontAwesome name="search" size={16} color={Colors.textTertiary} style={styles.icon} />
       <TextInput
         style={styles.input}
         value={value}
@@ -21,11 +26,11 @@ export function SearchBar({ value, onChangeText, placeholder = 'Suchen...', auto
         placeholderTextColor={Colors.textTertiary}
         autoFocus={autoFocus}
         autoCorrect={false}
-        clearButtonMode='while-editing'
+        clearButtonMode="while-editing"
       />
       {value.length > 0 && (
         <TouchableOpacity onPress={() => onChangeText('')} style={styles.clear}>
-          <FontAwesome name='times-circle' size={18} color={Colors.textTertiary} />
+          <FontAwesome name="times-circle" size={18} color={Colors.textTertiary} />
         </TouchableOpacity>
       )}
     </View>

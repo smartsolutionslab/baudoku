@@ -1,11 +1,11 @@
-import { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { useRouter } from "expo-router";
-import { Button } from "@/components/core";
-import { Colors, Spacing, FontSize, Radius } from "@/styles/tokens";
-import { loginWithKeycloak, parseUserFromToken, saveTokens } from "@/auth";
-import { useAuthStore } from "@/store";
-import { setAuthToken } from "@baudoku/core";
+import { useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { useRouter } from 'expo-router';
+import { Button } from '@/components/core';
+import { Colors, Spacing, FontSize, Radius } from '@/styles/tokens';
+import { loginWithKeycloak, parseUserFromToken, saveTokens } from '@/auth';
+import { useAuthStore } from '@/store';
+import { setAuthToken } from '@baudoku/core';
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -33,7 +33,7 @@ export default function LoginScreen() {
 
       router.back();
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Unbekannter Fehler bei der Anmeldung";
+      const message = err instanceof Error ? err.message : 'Unbekannter Fehler bei der Anmeldung';
       setError(message);
     } finally {
       setLoading(false);
@@ -45,8 +45,8 @@ export default function LoginScreen() {
       <View style={styles.content}>
         <Text style={styles.title}>BauDoku</Text>
         <Text style={styles.subtitle}>
-          Melden Sie sich an, um Ihre Daten mit dem Server zu synchronisieren und
-          auf allen Geräten verfügbar zu machen.
+          Melden Sie sich an, um Ihre Daten mit dem Server zu synchronisieren und auf allen Geräten
+          verfügbar zu machen.
         </Text>
 
         {error && (
@@ -55,8 +55,13 @@ export default function LoginScreen() {
           </View>
         )}
 
-        <Button title="Mit Keycloak anmelden" onPress={handleLogin} loading={loading} style={{ marginBottom: Spacing.md }} />
-        <TouchableOpacity style={styles.backButton} onPress={goBack} activeOpacity={0.7} >
+        <Button
+          title="Mit Keycloak anmelden"
+          onPress={handleLogin}
+          loading={loading}
+          style={{ marginBottom: Spacing.md }}
+        />
+        <TouchableOpacity style={styles.backButton} onPress={goBack} activeOpacity={0.7}>
           <Text style={styles.backButtonText}>Zurück</Text>
         </TouchableOpacity>
       </View>
@@ -68,22 +73,22 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.background,
-    justifyContent: "center",
+    justifyContent: 'center',
   },
   content: {
     padding: Spacing.xl,
-    alignItems: "center",
+    alignItems: 'center',
   },
   title: {
     fontSize: 32,
-    fontWeight: "700",
+    fontWeight: '700',
     color: Colors.primary,
     marginBottom: Spacing.md,
   },
   subtitle: {
     fontSize: FontSize.body,
     color: Colors.textSecondary,
-    textAlign: "center",
+    textAlign: 'center',
     marginBottom: Spacing.xl,
     lineHeight: 22,
   },
@@ -92,12 +97,12 @@ const styles = StyleSheet.create({
     borderRadius: Radius.sm,
     padding: Spacing.md,
     marginBottom: Spacing.lg,
-    width: "100%",
+    width: '100%',
   },
   errorText: {
     color: Colors.danger,
     fontSize: FontSize.body,
-    textAlign: "center",
+    textAlign: 'center',
   },
   backButton: {
     paddingVertical: Spacing.md,

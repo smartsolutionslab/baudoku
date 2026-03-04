@@ -1,20 +1,20 @@
-import { useState, useMemo } from "react";
-import { View, FlatList, TouchableOpacity, StyleSheet } from "react-native";
-import { useRouter, Stack } from "expo-router";
-import { FontAwesome } from "@expo/vector-icons";
-import { useProjects } from "@/hooks";
-import { ProjectCard } from "@/components/projects";
-import { EmptyState, FloatingActionButton, SearchBar } from "@/components/common";
-import { Colors, Spacing } from "@/styles/tokens";
+import { useState, useMemo } from 'react';
+import { View, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import { useRouter, Stack } from 'expo-router';
+import { FontAwesome } from '@expo/vector-icons';
+import { useProjects } from '@/hooks';
+import { ProjectCard } from '@/components/projects';
+import { EmptyState, FloatingActionButton, SearchBar } from '@/components/common';
+import { Colors, Spacing } from '@/styles/tokens';
 
 export default function ProjectsScreen() {
   const router = useRouter();
   const { data: projects, isLoading, refetch } = useProjects();
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
 
-  const openSearch = () => router.push("/(tabs)/projects/search");
-  const openDashboard = () => router.push("/(tabs)/projects/dashboard");
-  const openNewProject = () => router.push("/(tabs)/projects/new");
+  const openSearch = () => router.push('/(tabs)/projects/search');
+  const openDashboard = () => router.push('/(tabs)/projects/dashboard');
+  const openNewProject = () => router.push('/(tabs)/projects/new');
   const openProject = (id: string) => router.push(`/(tabs)/projects/${id}`);
 
   const filtered = useMemo(() => {
@@ -25,7 +25,7 @@ export default function ProjectsScreen() {
       ({ name, city, clientName }) =>
         name.toLowerCase().includes(q) ||
         city?.toLowerCase().includes(q) ||
-        clientName?.toLowerCase().includes(q)
+        clientName?.toLowerCase().includes(q),
     );
   }, [projects, search]);
 
@@ -35,17 +35,22 @@ export default function ProjectsScreen() {
         options={{
           headerRight: () => (
             <View style={styles.headerActions}>
-              <TouchableOpacity onPress={openSearch} >
+              <TouchableOpacity onPress={openSearch}>
                 <FontAwesome name="search" size={20} color={Colors.primary} />
               </TouchableOpacity>
-              <TouchableOpacity onPress={openDashboard} >
+              <TouchableOpacity onPress={openDashboard}>
                 <FontAwesome name="bar-chart" size={20} color={Colors.primary} />
               </TouchableOpacity>
             </View>
           ),
         }}
       />
-      <SearchBar value={search} onChangeText={setSearch} placeholder="Projekte suchen..." autoFocus={false} />
+      <SearchBar
+        value={search}
+        onChangeText={setSearch}
+        placeholder="Projekte suchen..."
+        autoFocus={false}
+      />
       {filtered.length === 0 && !isLoading ? (
         <EmptyState
           icon="building"
@@ -77,7 +82,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
   },
   headerActions: {
-    flexDirection: "row",
+    flexDirection: 'row',
     gap: Spacing.lg,
     marginRight: Spacing.sm,
   },

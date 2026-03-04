@@ -34,9 +34,5 @@ export {
   GPS_CORRECTION_SERVICE_LABELS,
   RTK_FIX_STATUS_LABELS,
 } from './gps-quality';
-export type {
-  GpsQualityGrade,
-  GpsQualityInput,
-  GpsQualityResult,
-} from './gps-quality';
+export type { GpsQualityGrade, GpsQualityInput, GpsQualityResult } from './gps-quality';
 export { uploadPhoto } from './api';

@@ -4,7 +4,11 @@ const ACCESS_TOKEN_KEY = 'baudoku_access_token';
 const REFRESH_TOKEN_KEY = 'baudoku_refresh_token';
 const ID_TOKEN_KEY = 'baudoku_id_token';
 
-export async function saveTokens(accessToken: string, refreshToken: string, idToken: string): Promise<void> {
+export async function saveTokens(
+  accessToken: string,
+  refreshToken: string,
+  idToken: string,
+): Promise<void> {
   await SecureStore.setItemAsync(ACCESS_TOKEN_KEY, accessToken);
   await SecureStore.setItemAsync(REFRESH_TOKEN_KEY, refreshToken);
   await SecureStore.setItemAsync(ID_TOKEN_KEY, idToken);

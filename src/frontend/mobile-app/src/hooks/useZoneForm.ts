@@ -17,7 +17,11 @@ export type UseZoneFormReturn = {
   handleSubmit: () => Promise<void>;
 };
 
-export function useZoneForm({ initialValues, defaultParentZoneId, onSubmit }: UseZoneFormOptions): UseZoneFormReturn {
+export function useZoneForm({
+  initialValues,
+  defaultParentZoneId,
+  onSubmit,
+}: UseZoneFormOptions): UseZoneFormReturn {
   const [form, setForm] = useState<Partial<ZoneFormData>>({
     type: 'building',
     parentZoneId: defaultParentZoneId ?? null,
@@ -34,7 +38,7 @@ export function useZoneForm({ initialValues, defaultParentZoneId, onSubmit }: Us
         return next;
       });
     },
-    [setErrors]
+    [setErrors],
   );
 
   const handleSubmit = useCallback(async () => {

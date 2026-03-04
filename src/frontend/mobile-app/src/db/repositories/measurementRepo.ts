@@ -6,7 +6,11 @@ import { createOutboxEntry } from './syncRepo';
 import type { Measurement, NewMeasurement } from './types';
 import type { MeasurementId, InstallationId } from '@baudoku/core';
 
-function evaluateResult(value: number, minThreshold: number | null, maxThreshold: number | null): 'passed' | 'failed' | 'warning' | null {
+function evaluateResult(
+  value: number,
+  minThreshold: number | null,
+  maxThreshold: number | null,
+): 'passed' | 'failed' | 'warning' | null {
   if (minThreshold === null && maxThreshold === null) return null;
   if (minThreshold !== null && value < minThreshold) return 'failed';
   if (maxThreshold !== null && value > maxThreshold) return 'failed';
@@ -14,10 +18,16 @@ function evaluateResult(value: number, minThreshold: number | null, maxThreshold
 }
 
 export async function getByInstallationId(installationId: InstallationId): Promise<Measurement[]> {
-  return db.select().from(measurements).where(eq(measurements.installationId, installationId)).all() as unknown as Measurement[];
+  return db
+    .select()
+    .from(measurements)
+    .where(eq(measurements.installationId, installationId))
+    .all() as unknown as Measurement[];
 }
 
-export async function create(data: Omit<NewMeasurement, 'id' | 'version' | 'result'>): Promise<Measurement> {
+export async function create(
+  data: Omit<NewMeasurement, 'id' | 'version' | 'result'>,
+): Promise<Measurement> {
   const result = evaluateResult(data.value, data.minThreshold ?? null, data.maxThreshold ?? null);
 
   const measurement: NewMeasurement = {
@@ -40,7 +50,7 @@ export async function remove(id: MeasurementId): Promise<void> {
 
 export async function getCountByResult(): Promise<Record<string, number>> {
   const rows = await db
-    .select({result: measurements.result, count: count() })
+    .select({ result: measurements.result, count: count() })
     .from(measurements)
     .groupBy(measurements.result)
     .all();

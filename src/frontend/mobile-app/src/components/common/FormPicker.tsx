@@ -1,11 +1,5 @@
 import { useState } from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  FlatList,
-  StyleSheet,
-} from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
 import { BottomSheet } from './BottomSheet';
 import { Colors, Spacing, FontSize, Radius } from '../../styles/tokens';
 
@@ -54,15 +48,12 @@ export function FormPicker({
       {error ? <Text style={styles.error}>{error}</Text> : null}
 
       <BottomSheet visible={visible} onClose={() => setVisible(false)} title={label}>
-        <FlatList 
+        <FlatList
           data={options}
           keyExtractor={(item) => item.value}
           renderItem={({ item }) => (
             <TouchableOpacity
-              style={[
-                styles.option,
-                item.value === value && styles.optionActive,
-              ]}
+              style={[styles.option, item.value === value && styles.optionActive]}
               onPress={() => {
                 onValueChange(item.value);
                 setVisible(false);

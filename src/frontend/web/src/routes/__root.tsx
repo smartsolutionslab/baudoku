@@ -18,11 +18,11 @@ export function RootLayout() {
   }
 
   return (
-    <div className='flex h-screen overflow-hidden bg-gray-50'>
+    <div className="flex h-screen overflow-hidden bg-gray-50">
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
-          className='fixed inset-0 z-30 bg-black/50 lg:hidden'
+          className="fixed inset-0 z-30 bg-black/50 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
@@ -34,20 +34,18 @@ export function RootLayout() {
         }`}
       >
         {/* Logo */}
-        <div className='flex h-16 items-center gap-2 border-b border-gray-200 px-6'>
-          <div className='flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-sm font-bold text-white'>
+        <div className="flex h-16 items-center gap-2 border-b border-gray-200 px-6">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-sm font-bold text-white">
             B
           </div>
-          <span className='text-lg font-semibold text-gray-900'>BauDoku</span>
+          <span className="text-lg font-semibold text-gray-900">BauDoku</span>
         </div>
 
         {/* Navigation */}
-        <nav className='flex-1 space-y-1 p-4'>
+        <nav className="flex-1 space-y-1 p-4">
           {navItems.map((item) => {
             const isActive =
-              item.to === '/'
-                ? location.pathname === '/'
-                : location.pathname.startsWith(item.to);
+              item.to === '/' ? location.pathname === '/' : location.pathname.startsWith(item.to);
             return (
               <Link
                 key={item.to}
@@ -74,20 +72,20 @@ export function RootLayout() {
       </aside>
 
       {/* Main content */}
-      <div className='flex flex-1 flex-col overflow-hidden'>
+      <div className="flex flex-1 flex-col overflow-hidden">
         {/* Topbar */}
-        <header className='flex h-16 items-center gap-4 border-b border-gray-200 bg-white px-4 lg:px-6'>
+        <header className="flex h-16 items-center gap-4 border-b border-gray-200 bg-white px-4 lg:px-6">
           <button
-            className='rounded-lg p-2 text-gray-500 hover:bg-gray-100 lg:hidden'
+            className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 lg:hidden"
             onClick={() => setSidebarOpen(true)}
           >
             <MenuIcon />
           </button>
-          <div className='flex-1' />
+          <div className="flex-1" />
         </header>
 
         {/* Page content */}
-        <main className='flex-1 overflow-y-auto p-4 lg:p-6'>
+        <main className="flex-1 overflow-y-auto p-4 lg:p-6">
           <Outlet />
         </main>
       </div>

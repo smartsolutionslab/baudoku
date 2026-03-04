@@ -6,7 +6,7 @@ type FilterChipsProps = {
 
 export function FilterChips({ options, selected, onChange }: FilterChipsProps) {
   return (
-    <div className='flex flex-wrap gap-2'>
+    <div className="flex flex-wrap gap-2">
       <button
         onClick={() => onChange(null)}
         className={`rounded-full px-3 py-1 text-sm font-medium transition-colors ${
@@ -20,9 +20,7 @@ export function FilterChips({ options, selected, onChange }: FilterChipsProps) {
       {options.map((opt) => (
         <button
           key={opt.value}
-          onClick={() =>
-            onChange(selected === opt.value ? null : opt.value)
-          }
+          onClick={() => onChange(selected === opt.value ? null : opt.value)}
           className={`rounded-full px-3 py-1 text-sm font-medium transition-colors ${
             selected === opt.value
               ? 'bg-blue-100 text-blue-700'

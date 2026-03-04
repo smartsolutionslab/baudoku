@@ -16,27 +16,32 @@ type ProjectFormProps = {
   submitLabel?: string;
 };
 
-export function ProjectForm({ onSubmit, submitting, initialValues, submitLabel }: ProjectFormProps) {
+export function ProjectForm({
+  onSubmit,
+  submitting,
+  initialValues,
+  submitLabel,
+}: ProjectFormProps) {
   const { form, errors, set, handleSubmit } = useProjectForm({ initialValues, onSubmit });
 
   return (
     <ScrollView
       style={styles.scroll}
       contentContainerStyle={styles.content}
-      keyboardShouldPersistTaps='handled'
+      keyboardShouldPersistTaps="handled"
     >
       <Text style={styles.sectionTitle}>Projekt</Text>
       <FormField
-        label='Name'
+        label="Name"
         required
         value={form.name ?? ''}
         onChangeText={(v) => set('name', v)}
         error={errors.name}
-        placeholder='Projektname'
-        testID='project-name-input'
+        placeholder="Projektname"
+        testID="project-name-input"
       />
       <FormPicker
-        label='Status'
+        label="Status"
         required
         options={statusOptions}
         value={form.status}
@@ -46,42 +51,42 @@ export function ProjectForm({ onSubmit, submitting, initialValues, submitLabel }
 
       <Text style={styles.sectionTitle}>Adresse</Text>
       <FormField
-        label='Straße'
+        label="Straße"
         value={form.street ?? ''}
         onChangeText={(v) => set('street', v)}
         error={errors.street}
-        placeholder='Musterstraße 1'
+        placeholder="Musterstraße 1"
       />
       <FormField
-        label='PLZ'
+        label="PLZ"
         value={form.zipCode ?? ''}
         onChangeText={(v) => set('zipCode', v)}
         error={errors.zipCode}
-        placeholder='12345'
-        keyboardType='numeric'
+        placeholder="12345"
+        keyboardType="numeric"
       />
       <FormField
-        label='Stadt'
+        label="Stadt"
         value={form.city ?? ''}
         onChangeText={(v) => set('city', v)}
         error={errors.city}
-        placeholder='Berlin'
+        placeholder="Berlin"
       />
 
       <Text style={styles.sectionTitle}>Auftraggeber</Text>
       <FormField
-        label='Name'
+        label="Name"
         value={form.clientName ?? ''}
         onChangeText={(v) => set('clientName', v)}
         error={errors.clientName}
-        placeholder='Firma / Person'
+        placeholder="Firma / Person"
       />
       <FormField
-        label='Kontakt'
+        label="Kontakt"
         value={form.clientContact ?? ''}
         onChangeText={(v) => set('clientContact', v)}
         error={errors.clientContact}
-        placeholder='Tel. oder E-Mail'
+        placeholder="Tel. oder E-Mail"
       />
 
       <Button
@@ -89,7 +94,7 @@ export function ProjectForm({ onSubmit, submitting, initialValues, submitLabel }
         onPress={() => void handleSubmit()}
         loading={submitting}
         style={styles.button}
-        testID='submit-button'
+        testID="submit-button"
       />
     </ScrollView>
   );

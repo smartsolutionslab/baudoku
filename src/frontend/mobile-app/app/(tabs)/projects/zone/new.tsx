@@ -1,11 +1,8 @@
-import { useLocalSearchParams, useRouter } from "expo-router";
-import {
-  useZonesByProject,
-  useCreateZone,
-} from "@/hooks";
-import { ZoneForm } from "@/components/projects";
-import type { ZoneFormData } from "@/validation/schemas";
-import { projectId as toProjectId, zoneId as toZoneId } from "@baudoku/core";
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useZonesByProject, useCreateZone } from '@/hooks';
+import { ZoneForm } from '@/components/projects';
+import type { ZoneFormData } from '@/validation/schemas';
+import { projectId as toProjectId, zoneId as toZoneId } from '@baudoku/core';
 
 export default function NewZoneScreen() {
   const { projectId: rawProjectId, parentZoneId: rawParentZoneId } = useLocalSearchParams<{

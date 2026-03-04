@@ -10,11 +10,10 @@ type InstallationCardProps = {
 };
 
 export function InstallationCard({ installation, onPress }: InstallationCardProps) {
-  const subtitle = [installation.manufacturer, installation.model]
-    .filter(Boolean)
-    .join(' — ');
+  const subtitle = [installation.manufacturer, installation.model].filter(Boolean).join(' — ');
 
-  const gpsQuality = installation.gpsAccuracy != null
+  const gpsQuality =
+    installation.gpsAccuracy != null
       ? calculateGpsQuality({
           horizontalAccuracy: installation.gpsAccuracy,
           hdop: installation.gpsHdop,

@@ -1,17 +1,17 @@
-import { View, Text, ScrollView, StyleSheet } from "react-native";
-import { useLocalSearchParams, useRouter, Stack } from "expo-router";
+import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import {
   useProject,
   useZonesByProject,
   useDeleteProject,
   useZoneTree,
   useConfirmDelete,
-} from "@/hooks";
-import { ZoneTree } from "@/components/projects";
-import { StatusBadge, EmptyState, FloatingActionButton, ActionBar } from "@/components/common";
-import { Colors, Spacing, FontSize, Radius } from "@/styles/tokens";
-import { formatDate } from "@/utils";
-import { projectId } from "@baudoku/core";
+} from '@/hooks';
+import { ZoneTree } from '@/components/projects';
+import { StatusBadge, EmptyState, FloatingActionButton, ActionBar } from '@/components/common';
+import { Colors, Spacing, FontSize, Radius } from '@/styles/tokens';
+import { formatDate } from '@/utils';
+import { projectId } from '@baudoku/core';
 
 export default function ProjectDetailScreen() {
   const { id: rawId } = useLocalSearchParams<{ id: string }>();
@@ -31,17 +31,16 @@ export default function ProjectDetailScreen() {
 
   const { name, status, street, zipCode, city, clientName, clientContact, createdAt } = project;
 
-  const address = [street, zipCode, city].filter(Boolean).join(", ");
+  const address = [street, zipCode, city].filter(Boolean).join(', ');
 
   const handleDelete = () => {
     confirmDelete({
-      title: "Projekt löschen",
-      message:
-        "Dieses Projekt und alle zugehörigen Daten wirklich löschen?",
+      title: 'Projekt löschen',
+      message: 'Dieses Projekt und alle zugehörigen Daten wirklich löschen?',
       onConfirm: async () => {
         try {
           await deleteProject.mutateAsync(id);
-          router.replace("/(tabs)/projects/");
+          router.replace('/(tabs)/projects/');
         } catch {
           // Global MutationCache.onError shows toast
         }
@@ -84,22 +83,9 @@ export default function ProjectDetailScreen() {
 
         <ActionBar
           actions={[
-            {
-              icon: "list",
-              label: "Installationen",
-              onPress: openInstallations,
-            },
-            {
-              icon: "pencil",
-              label: "Bearbeiten",
-              onPress: openEdit,
-            },
-            {
-              icon: "trash",
-              label: "Löschen",
-              onPress: handleDelete,
-              color: Colors.danger,
-            },
+            { icon: 'list', label: 'Installationen', onPress: openInstallations },
+            { icon: 'pencil', label: 'Bearbeiten', onPress: openEdit },
+            { icon: 'trash', label: 'Löschen', onPress: handleDelete, color: Colors.danger },
           ]}
         />
 
@@ -117,7 +103,9 @@ export default function ProjectDetailScreen() {
           <View style={styles.treeContainer}>
             <ZoneTree
               nodes={tree}
-              onZonePress={(zoneId) => router.push(`/(tabs)/projects/zone/${zoneId}?projectId=${id}`)}
+              onZonePress={(zoneId) =>
+                router.push(`/(tabs)/projects/zone/${zoneId}?projectId=${id}`)
+              }
             />
           </View>
         )}
@@ -144,9 +132,9 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
   },
   row: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   label: {
     fontSize: FontSize.body,
@@ -154,15 +142,15 @@ const styles = StyleSheet.create({
   },
   value: {
     fontSize: FontSize.body,
-    fontWeight: "500",
+    fontWeight: '500',
     color: Colors.textPrimary,
     flex: 1,
-    textAlign: "right",
+    textAlign: 'right',
     marginLeft: Spacing.lg,
   },
   sectionTitle: {
     fontSize: FontSize.headline,
-    fontWeight: "600",
+    fontWeight: '600',
     marginHorizontal: Spacing.lg,
     marginTop: Spacing.lg,
     marginBottom: Spacing.sm,

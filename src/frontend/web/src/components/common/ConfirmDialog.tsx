@@ -37,20 +37,17 @@ export function ConfirmDialog({
   return (
     <dialog
       ref={dialogRef}
-      className='rounded-xl border-0 bg-white p-0 shadow-xl backdrop:bg-black/50'
+      className="rounded-xl border-0 bg-white p-0 shadow-xl backdrop:bg-black/50"
       onClose={onCancel}
     >
-      <div className='w-80 p-6 sm:w-96'>
-        <h3 className='text-lg font-semibold text-gray-900'>{title}</h3>
-        <p className='mt-2 text-sm text-gray-500'>{message}</p>
-        <div className='mt-6 flex justify-end gap-3'>
-          <Button variant='secondary' onClick={onCancel}>
+      <div className="w-80 p-6 sm:w-96">
+        <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+        <p className="mt-2 text-sm text-gray-500">{message}</p>
+        <div className="mt-6 flex justify-end gap-3">
+          <Button variant="secondary" onClick={onCancel}>
             {cancelLabel}
           </Button>
-          <Button
-            variant={variant === 'danger' ? 'danger' : 'primary'}
-            onClick={onConfirm}
-          >
+          <Button variant={variant === 'danger' ? 'danger' : 'primary'} onClick={onConfirm}>
             {confirmLabel}
           </Button>
         </div>

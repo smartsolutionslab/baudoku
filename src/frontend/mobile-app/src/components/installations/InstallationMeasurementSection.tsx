@@ -27,23 +27,13 @@ export function InstallationMeasurementSection({
       <Text style={styles.cardTitle}>Messungen</Text>
       {showForm && (
         <View style={styles.formContainer}>
-          <MeasurementForm
-            onSubmit={onSubmit}
-            onCancel={onCancel}
-            submitting={submitting}
-          />
+          <MeasurementForm onSubmit={onSubmit} onCancel={onCancel} submitting={submitting} />
         </View>
       )}
       {measurements.length === 0 ? (
-        <EmptyState icon='bar-chart' title='Noch keine Messungen' />
+        <EmptyState icon="bar-chart" title="Noch keine Messungen" />
       ) : (
-        measurements.map((m) => (
-          <MeasurementCard
-            key={m.id}
-            measurement={m}
-            onDelete={onDelete}
-          />
-        ))
+        measurements.map((m) => <MeasurementCard key={m.id} measurement={m} onDelete={onDelete} />)
       )}
     </View>
   );

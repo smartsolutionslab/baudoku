@@ -2,17 +2,29 @@ import { useState } from 'react';
 import { Link, useParams } from '@tanstack/react-router';
 import { projectId as toProjectId, installationId as toInstallationId } from '@baudoku/core';
 import {
-  useInstallation, usePhotos, useMeasurements,
-  useUploadPhoto, useDeletePhoto,
-  useCreateMeasurement, useDeleteMeasurement,
+  useInstallation,
+  usePhotos,
+  useMeasurements,
+  useUploadPhoto,
+  useDeletePhoto,
+  useCreateMeasurement,
+  useDeleteMeasurement,
 } from '@/hooks';
 import { StatusBadge } from '@/components/common';
 import { InfoTab, PhotosTab, MeasurementsTab } from '@/components/installations';
 
 type Tab = 'info' | 'photos' | 'measurements';
 
+const TAB_DEFS: { key: Tab; label: string }[] = [
+  { key: 'info', label: 'Details' },
+  { key: 'photos', label: 'Fotos' },
+  { key: 'measurements', label: 'Messungen' },
+];
+
 export function InstallationDetailPage() {
-  const { projectId: rawProjectId, installationId: rawInstallationId } = useParams({ strict: false }) as {
+  const { projectId: rawProjectId, installationId: rawInstallationId } = useParams({
+    strict: false,
+  }) as {
     projectId: string;
     installationId: string;
   };
@@ -32,21 +44,21 @@ export function InstallationDetailPage() {
 
   if (isLoading) {
     return (
-      <div className='space-y-4'>
-        <div className='h-8 w-64 animate-pulse rounded bg-gray-200' />
-        <div className='h-48 animate-pulse rounded-xl bg-gray-100' />
+      <div className="space-y-4">
+        <div className="h-8 w-64 animate-pulse rounded bg-gray-200" />
+        <div className="h-48 animate-pulse rounded-xl bg-gray-100" />
       </div>
     );
   }
 
   if (!installation) {
     return (
-      <div className='py-12 text-center'>
-        <p className='text-gray-500'>Installation nicht gefunden.</p>
+      <div className="py-12 text-center">
+        <p className="text-gray-500">Installation nicht gefunden.</p>
         <Link
-          to='/projects/$projectId/installations'
+          to="/projects/$projectId/installations"
           params={{ projectId }}
-          className='mt-2 text-sm text-blue-600 hover:underline'
+          className="mt-2 text-sm text-blue-600 hover:underline"
         >
           Zurück zur Liste
         </Link>
@@ -54,31 +66,29 @@ export function InstallationDetailPage() {
     );
   }
 
-  const tabs: { key: Tab; label: string; count?: number }[] = [
-    { key: 'info', label: 'Details' },
-    { key: 'photos', label: 'Fotos', count: photos?.length },
-    { key: 'measurements', label: 'Messungen', count: measurements?.length },
-  ];
+  const countByTab: Record<Tab, number | undefined> = {
+    info: undefined,
+    photos: photos?.length,
+    measurements: measurements?.length,
+  };
 
   return (
     <div>
       {/* Header */}
       <Link
-        to='/projects/$projectId/installations'
+        to="/projects/$projectId/installations"
         params={{ projectId }}
-        className='text-sm text-gray-500 hover:text-gray-700'
+        className="text-sm text-gray-500 hover:text-gray-700"
       >
         &larr; Alle Installationen
       </Link>
-      <div className='mt-2 flex items-start justify-between'>
+      <div className="mt-2 flex items-start justify-between">
         <div>
-          <h1 className='text-2xl font-bold text-gray-900'>
-            {installation.type}
-          </h1>
-          <div className='mt-1 flex items-center gap-3'>
+          <h1 className="text-2xl font-bold text-gray-900">{installation.type}</h1>
+          <div className="mt-1 flex items-center gap-3">
             <StatusBadge status={installation.status} />
             {installation.manufacturer && (
-              <span className='text-sm text-gray-500'>
+              <span className="text-sm text-gray-500">
                 {installation.manufacturer}
                 {installation.model ? ` ${installation.model}` : ''}
               </span>
@@ -88,22 +98,22 @@ export function InstallationDetailPage() {
       </div>
 
       {/* Tabs */}
-      <div className='mt-6 border-b border-gray-200'>
-        <nav className='-mb-px flex gap-6'>
-          {tabs.map((tab) => (
+      <div className="mt-6 border-b border-gray-200">
+        <nav className="-mb-px flex gap-6">
+          {TAB_DEFS.map(({ key, label }) => (
             <button
-              key={tab.key}
-              onClick={() => setActiveTab(tab.key)}
+              key={key}
+              onClick={() => setActiveTab(key)}
               className={`border-b-2 pb-3 text-sm font-medium transition-colors ${
-                activeTab === tab.key
+                activeTab === key
                   ? 'border-blue-600 text-blue-600'
                   : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
               }`}
             >
-              {tab.label}
-              {tab.count != null && (
-                <span className='ml-1.5 rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600'>
-                  {tab.count}
+              {label}
+              {countByTab[key] != null && (
+                <span className="ml-1.5 rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
+                  {countByTab[key]}
                 </span>
               )}
             </button>
@@ -112,7 +122,7 @@ export function InstallationDetailPage() {
       </div>
 
       {/* Tab content */}
-      <div className='mt-6'>
+      <div className="mt-6">
         {activeTab === 'info' && <InfoTab installation={installation} />}
 
         {activeTab === 'photos' && (

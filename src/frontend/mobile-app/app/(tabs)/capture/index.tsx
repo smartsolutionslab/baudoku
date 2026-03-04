@@ -1,15 +1,12 @@
-import { useState } from "react";
-import { View, Text, FlatList, TouchableOpacity, StyleSheet } from "react-native";
-import { useRouter } from "expo-router";
-import { FontAwesome } from "@expo/vector-icons";
-import {
-  useProjects,
-  useZonesByProject,
-} from "@/hooks";
-import { ProjectCard } from "@/components/projects";
-import { EmptyState } from "@/components/common";
-import { Colors, Spacing, FontSize, Radius } from "@/styles/tokens";
-import type { ProjectId, ZoneId } from "@baudoku/core";
+import { useState } from 'react';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import { useRouter } from 'expo-router';
+import { FontAwesome } from '@expo/vector-icons';
+import { useProjects, useZonesByProject } from '@/hooks';
+import { ProjectCard } from '@/components/projects';
+import { EmptyState } from '@/components/common';
+import { Colors, Spacing, FontSize, Radius } from '@/styles/tokens';
+import type { ProjectId, ZoneId } from '@baudoku/core';
 
 type ZonePickerProps = {
   projectId: ProjectId;
@@ -47,9 +44,9 @@ export default function CaptureScreen() {
   const { data: allProjects } = useProjects();
   const [selectedProjectId, setSelectedProjectId] = useState<ProjectId | null>(null);
 
-  const projects = allProjects?.filter(({ status }) => status === "active") ?? [];
+  const projects = allProjects?.filter(({ status }) => status === 'active') ?? [];
 
-  const openScanner = () => router.push("/(tabs)/capture/scan");
+  const openScanner = () => router.push('/(tabs)/capture/scan');
 
   const handleZoneSelect = (zoneId: ZoneId) => {
     router.push(`/(tabs)/capture/new?projectId=${selectedProjectId}&zoneId=${zoneId}`);
@@ -58,23 +55,23 @@ export default function CaptureScreen() {
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Installation erfassen</Text>
-      <Text style={styles.subtitle}>
-        Wähle ein aktives Projekt und eine Zone.
-      </Text>
+      <Text style={styles.subtitle}>Wähle ein aktives Projekt und eine Zone.</Text>
 
       <TouchableOpacity style={styles.scanBtn} onPress={openScanner}>
         <FontAwesome name="qrcode" size={24} color={Colors.white} />
         <View style={styles.scanBtnContent}>
           <Text style={styles.scanBtnTitle}>QR-Code scannen</Text>
-          <Text style={styles.scanBtnSubtitle}>
-            Zone per QR-Code schnell auswählen
-          </Text>
+          <Text style={styles.scanBtnSubtitle}>Zone per QR-Code schnell auswählen</Text>
         </View>
         <FontAwesome name="chevron-right" size={16} color="rgba(255,255,255,0.7)" />
       </TouchableOpacity>
 
       {projects.length === 0 ? (
-        <EmptyState icon="building" title="Keine aktiven Projekte" subtitle="Erstelle zuerst ein Projekt im Projekte-Tab."/>
+        <EmptyState
+          icon="building"
+          title="Keine aktiven Projekte"
+          subtitle="Erstelle zuerst ein Projekt im Projekte-Tab."
+        />
       ) : (
         <FlatList
           data={projects}
@@ -86,7 +83,7 @@ export default function CaptureScreen() {
                 onPress={() => setSelectedProjectId(selectedProjectId === item.id ? null : item.id)}
               />
               {selectedProjectId === item.id && (
-                <ZonePicker projectId={item.id} onSelect={handleZoneSelect}/>
+                <ZonePicker projectId={item.id} onSelect={handleZoneSelect} />
               )}
             </View>
           )}
@@ -104,7 +101,7 @@ const styles = StyleSheet.create({
   },
   header: {
     fontSize: FontSize.title,
-    fontWeight: "700",
+    fontWeight: '700',
     marginHorizontal: Spacing.lg,
     marginTop: Spacing.lg,
   },
@@ -116,8 +113,8 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.lg,
   },
   scanBtn: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: Colors.primary,
     marginHorizontal: Spacing.lg,
     marginBottom: Spacing.lg,
@@ -131,10 +128,10 @@ const styles = StyleSheet.create({
   scanBtnTitle: {
     color: Colors.white,
     fontSize: FontSize.callout,
-    fontWeight: "700",
+    fontWeight: '700',
   },
   scanBtnSubtitle: {
-    color: "rgba(255,255,255,0.8)",
+    color: 'rgba(255,255,255,0.8)',
     fontSize: FontSize.caption,
     marginTop: 2,
   },
@@ -148,7 +145,7 @@ const styles = StyleSheet.create({
   },
   zoneTitle: {
     fontSize: FontSize.caption,
-    fontWeight: "600",
+    fontWeight: '600',
     color: Colors.textSecondary,
     marginBottom: Spacing.sm,
   },
@@ -157,19 +154,19 @@ const styles = StyleSheet.create({
     borderRadius: Radius.md,
     padding: Spacing.md,
     marginBottom: Spacing.sm,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   zoneName: {
     fontSize: FontSize.body,
-    fontWeight: "500",
+    fontWeight: '500',
     color: Colors.textPrimary,
   },
   zoneType: {
     fontSize: FontSize.caption,
     color: Colors.textTertiary,
-    textTransform: "capitalize",
+    textTransform: 'capitalize',
   },
   zoneEmpty: {
     marginLeft: Spacing.xl,
@@ -179,6 +176,6 @@ const styles = StyleSheet.create({
   zoneEmptyText: {
     fontSize: FontSize.caption,
     color: Colors.textTertiary,
-    fontStyle: "italic",
+    fontStyle: 'italic',
   },
 });

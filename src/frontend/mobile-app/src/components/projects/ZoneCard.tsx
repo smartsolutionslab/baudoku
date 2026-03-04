@@ -14,7 +14,11 @@ export function ZoneCard({ node, expanded, onPress, onToggle }: ZoneCardProps) {
   const hasChildren = node.children.length > 0;
 
   return (
-    <TouchableOpacity style={[styles.card, { marginLeft: node.level * 24 }]} onPress={onPress} activeOpacity={0.7}>
+    <TouchableOpacity
+      style={[styles.card, { marginLeft: node.level * 24 }]}
+      onPress={onPress}
+      activeOpacity={0.7}
+    >
       <View style={styles.row}>
         {hasChildren ? (
           <TouchableOpacity onPress={onToggle} style={styles.toggle}>
@@ -31,8 +35,7 @@ export function ZoneCard({ node, expanded, onPress, onToggle }: ZoneCardProps) {
             <StatusBadge status={node.zone.type} />
             {hasChildren && (
               <Text style={styles.count}>
-                {node.children.length}{' '}
-                {node.children.length === 1 ? 'Kind' : 'Kinder'}
+                {node.children.length} {node.children.length === 1 ? 'Kind' : 'Kinder'}
               </Text>
             )}
           </View>

@@ -18,7 +18,13 @@ type InstallationFormProps = {
   submitLabel?: string;
 };
 
-export function InstallationForm({ onSubmit, submitting, initialValues, initialGps, submitLabel }: InstallationFormProps) {
+export function InstallationForm({
+  onSubmit,
+  submitting,
+  initialValues,
+  initialGps,
+  submitLabel,
+}: InstallationFormProps) {
   const {
     form,
     errors,
@@ -36,18 +42,22 @@ export function InstallationForm({ onSubmit, submitting, initialValues, initialG
   const currentGps = gps.position ?? initialGps ?? null;
 
   return (
-    <ScrollView style={styles.scroll} contentContainerStyle={styles.content} keyboardShouldPersistTaps='handled'>
+    <ScrollView
+      style={styles.scroll}
+      contentContainerStyle={styles.content}
+      keyboardShouldPersistTaps="handled"
+    >
       <Text style={styles.sectionTitle}>Typ & Status</Text>
       <FormField
-        label='Typ'
+        label="Typ"
         required
         value={str('type')}
         onChangeText={(v) => set('type', v)}
         error={errors.type}
-        placeholder='z.B. Kabelschacht, Steckdose, Muffe'
+        placeholder="z.B. Kabelschacht, Steckdose, Muffe"
       />
       <FormPicker
-        label='Status'
+        label="Status"
         required
         options={INSTALLATION_STATUS_OPTIONS}
         value={str('status') || 'in_progress'}
@@ -55,104 +65,104 @@ export function InstallationForm({ onSubmit, submitting, initialValues, initialG
         error={errors.status}
       />
 
-      <CollapsibleSection title='Komponente' defaultOpen={hasComponentValues}>
+      <CollapsibleSection title="Komponente" defaultOpen={hasComponentValues}>
         <FormField
-          label='Hersteller'
+          label="Hersteller"
           value={str('manufacturer')}
           onChangeText={(v) => set('manufacturer', v)}
-          placeholder='Hersteller'
+          placeholder="Hersteller"
         />
         <FormField
-          label='Modell'
+          label="Modell"
           value={str('model')}
           onChangeText={(v) => set('model', v)}
-          placeholder='Modell'
+          placeholder="Modell"
         />
         <FormField
-          label='Seriennummer'
+          label="Seriennummer"
           value={str('serialNumber')}
           onChangeText={(v) => set('serialNumber', v)}
-          placeholder='Seriennummer'
+          placeholder="Seriennummer"
         />
       </CollapsibleSection>
 
-      <CollapsibleSection title='Kabel' defaultOpen={hasCableValues}>
+      <CollapsibleSection title="Kabel" defaultOpen={hasCableValues}>
         <FormField
-          label='Kabeltyp'
+          label="Kabeltyp"
           value={str('cableType')}
           onChangeText={(v) => set('cableType', v)}
-          placeholder='z.B. NYY-J 5x16'
+          placeholder="z.B. NYY-J 5x16"
         />
         <FormField
-          label='Querschnitt'
+          label="Querschnitt"
           value={str('crossSectionMm2')}
           onChangeText={(v) => set('crossSectionMm2', v)}
-          keyboardType='decimal-pad'
-          placeholder='16'
-          suffix='mm²'
+          keyboardType="decimal-pad"
+          placeholder="16"
+          suffix="mm²"
         />
         <FormField
-          label='Länge'
+          label="Länge"
           value={str('lengthM')}
           onChangeText={(v) => set('lengthM', v)}
-          keyboardType='decimal-pad'
-          placeholder='25'
-          suffix='m'
+          keyboardType="decimal-pad"
+          placeholder="25"
+          suffix="m"
         />
       </CollapsibleSection>
 
-      <CollapsibleSection title='Elektrik' defaultOpen={hasElectricalValues}>
+      <CollapsibleSection title="Elektrik" defaultOpen={hasElectricalValues}>
         <FormField
-          label='Stromkreis'
+          label="Stromkreis"
           value={str('circuitId')}
           onChangeText={(v) => set('circuitId', v)}
-          placeholder='SK-01'
+          placeholder="SK-01"
         />
         <FormField
-          label='Sicherungstyp'
+          label="Sicherungstyp"
           value={str('fuseType')}
           onChangeText={(v) => set('fuseType', v)}
-          placeholder='B16'
+          placeholder="B16"
         />
         <FormField
-          label='Nennstrom'
+          label="Nennstrom"
           value={str('fuseRatingA')}
           onChangeText={(v) => set('fuseRatingA', v)}
-          keyboardType='decimal-pad'
-          placeholder='16'
-          suffix='A'
+          keyboardType="decimal-pad"
+          placeholder="16"
+          suffix="A"
         />
         <FormField
-          label='Spannung'
+          label="Spannung"
           value={str('voltageV')}
           onChangeText={(v) => set('voltageV', v)}
-          keyboardType='numeric'
-          placeholder='230'
-          suffix='V'
+          keyboardType="numeric"
+          placeholder="230"
+          suffix="V"
         />
         <FormPicker
-          label='Phase'
+          label="Phase"
           options={phaseOptions}
           value={(form.phase as string) ?? null}
           onValueChange={(v) => set('phase', v)}
-          placeholder='Phase w\u00E4hlen...'
+          placeholder="Phase w\u00E4hlen..."
         />
       </CollapsibleSection>
 
       <Text style={styles.sectionTitle}>Weitere Angaben</Text>
       <FormField
-        label='Verlegetiefe'
+        label="Verlegetiefe"
         value={str('depthMm')}
         onChangeText={(v) => set('depthMm', v)}
-        keyboardType='numeric'
-        placeholder='600'
-        suffix='mm'
+        keyboardType="numeric"
+        placeholder="600"
+        suffix="mm"
       />
       <FormField
-        label='Notizen'
+        label="Notizen"
         value={str('notes')}
         onChangeText={(v) => set('notes', v)}
-        placeholder='Zus\u00E4tzliche Informationen...'
+        placeholder="Zus\u00E4tzliche Informationen..."
         multiline
         numberOfLines={3}
         style={{ minHeight: 80, textAlignVertical: 'top' }}

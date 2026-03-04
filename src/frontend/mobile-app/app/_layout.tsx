@@ -1,38 +1,38 @@
-import { useEffect, useState } from "react";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
-import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
-import * as SplashScreen from "expo-splash-screen";
-import { useColorScheme } from "react-native";
+import { useEffect, useState } from 'react';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { useFonts } from 'expo-font';
+import { Stack } from 'expo-router';
+import * as SplashScreen from 'expo-splash-screen';
+import { useColorScheme } from 'react-native';
 
-import { QueryProvider, AuthProvider, SyncProvider } from "@/providers";
-import { useMigrationsHelper } from "@/db/useMigrationsHelper";
-import { startConnectivityMonitor, stopConnectivityMonitor } from "@/sync/ConnectivityMonitor";
-import { useSettingsStore } from "@/store";
-import { OfflineBanner } from "@/components/sync";
-import { ToastContainer } from "@/components/core";
-import { View, Text, ActivityIndicator, StyleSheet } from "react-native";
-import { Colors, Spacing, FontSize } from "@/styles/tokens";
+import { QueryProvider, AuthProvider, SyncProvider } from '@/providers';
+import { useMigrationsHelper } from '@/db/useMigrationsHelper';
+import { startConnectivityMonitor, stopConnectivityMonitor } from '@/sync/ConnectivityMonitor';
+import { useSettingsStore } from '@/store';
+import { OfflineBanner } from '@/components/sync';
+import { ToastContainer } from '@/components/core';
+import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
+import { Colors, Spacing, FontSize } from '@/styles/tokens';
 
-export { ErrorBoundary } from "expo-router";
+export { ErrorBoundary } from 'expo-router';
 
 export const unstable_settings = {
-  initialRouteName: "(tabs)",
+  initialRouteName: '(tabs)',
 };
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({
-    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
+    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
     ...FontAwesome.font,
   });
   const [timedOut, setTimedOut] = useState(false);
 
   useEffect(() => {
     if (error) {
-      console.warn("Font loading error:", error.message);
+      console.warn('Font loading error:', error.message);
     }
   }, [error]);
 
@@ -47,7 +47,7 @@ export default function RootLayout() {
   useEffect(() => {
     const timer = setTimeout(() => {
       if (!loaded) {
-        console.warn("Font loading timed out after 10s, continuing without custom fonts");
+        console.warn('Font loading timed out after 10s, continuing without custom fonts');
         SplashScreen.hideAsync();
         setTimedOut(true);
       }
@@ -79,9 +79,7 @@ function RootLayoutNav() {
   if (migrationError) {
     return (
       <View style={styles.center}>
-        <Text style={styles.errorText}>
-          Datenbankfehler: {migrationError.message}
-        </Text>
+        <Text style={styles.errorText}>Datenbankfehler: {migrationError.message}</Text>
       </View>
     );
   }
@@ -96,7 +94,7 @@ function RootLayoutNav() {
   }
 
   return (
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <AuthProvider>
         <SyncProvider>
           <OfflineBanner />
@@ -115,14 +113,14 @@ function RootLayoutNav() {
 const styles = StyleSheet.create({
   center: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     padding: Spacing.xl,
   },
   errorText: {
     color: Colors.danger,
     fontSize: FontSize.callout,
-    textAlign: "center",
+    textAlign: 'center',
   },
   loadingText: {
     marginTop: Spacing.md,

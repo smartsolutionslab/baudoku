@@ -1,10 +1,4 @@
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  ActivityIndicator,
-  StyleSheet,
-} from 'react-native';
+import { View, Text, TouchableOpacity, ActivityIndicator, StyleSheet } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import type { GpsPosition } from '../../hooks';
 import { QualityIndicator } from './QualityIndicator';
@@ -19,11 +13,11 @@ type GpsButtonProps = {
   onClear?: () => void;
 };
 
-export function GpsButton({ position, capturing, error, onCapture, onClear}: GpsButtonProps) {
+export function GpsButton({ position, capturing, error, onCapture, onClear }: GpsButtonProps) {
   if (capturing) {
     return (
       <View style={styles.captureCard}>
-        <ActivityIndicator size='small' color={Colors.primary} />
+        <ActivityIndicator size="small" color={Colors.primary} />
         <Text style={styles.captureText}>GPS-Position wird erfasst...</Text>
       </View>
     );
@@ -36,35 +30,26 @@ export function GpsButton({ position, capturing, error, onCapture, onClear}: Gps
       <View style={[styles.successCard, { backgroundColor: quality.bgColor }]}>
         <View style={styles.successHeader}>
           <FontAwesome
-            name='map-marker'
+            name="map-marker"
             size={16}
             color={quality.color}
             style={styles.successIcon}
           />
-          <Text style={[styles.successTitle, { color: quality.color }]}>
-            GPS-Position erfasst
-          </Text>
+          <Text style={[styles.successTitle, { color: quality.color }]}>GPS-Position erfasst</Text>
           {position.isMocked && (
             <View style={styles.externalBadge}>
-              <FontAwesome name='bluetooth-b' size={12} color={Colors.primary} />
+              <FontAwesome name="bluetooth-b" size={12} color={Colors.primary} />
               <Text style={styles.externalBadgeText}>Extern</Text>
             </View>
           )}
           <View style={styles.headerActions}>
-            <TouchableOpacity
-              style={styles.recaptureButton}
-              onPress={onCapture}
-            >
-              <FontAwesome name='refresh' size={14} color={Colors.primary} />
+            <TouchableOpacity style={styles.recaptureButton} onPress={onCapture}>
+              <FontAwesome name="refresh" size={14} color={Colors.primary} />
               <Text style={styles.recaptureText}>Erneut</Text>
             </TouchableOpacity>
             {onClear && (
               <TouchableOpacity onPress={onClear} style={styles.clearButton}>
-                <FontAwesome
-                  name='close'
-                  size={16}
-                  color={Colors.textTertiary}
-                />
+                <FontAwesome name="close" size={16} color={Colors.textTertiary} />
               </TouchableOpacity>
             )}
           </View>
@@ -86,12 +71,7 @@ export function GpsButton({ position, capturing, error, onCapture, onClear}: Gps
   return (
     <View>
       <TouchableOpacity style={styles.button} onPress={onCapture}>
-        <FontAwesome
-          name='crosshairs'
-          size={16}
-          color={Colors.white}
-          style={styles.buttonIcon}
-        />
+        <FontAwesome name="crosshairs" size={16} color={Colors.white} style={styles.buttonIcon} />
         <Text style={styles.buttonText}>GPS-Position erfassen</Text>
       </TouchableOpacity>
       {error && <Text style={styles.errorText}>{error}</Text>}

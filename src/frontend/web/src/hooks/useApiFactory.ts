@@ -1,11 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiGet, apiPost, apiPut, apiDelete } from '@baudoku/core';
 
-export function useApiQuery<TData>(
-  queryKey: readonly unknown[],
-  url: string,
-  enabled?: boolean,
-) {
+export function useApiQuery<TData>(queryKey: readonly unknown[], url: string, enabled?: boolean) {
   return useQuery({
     queryKey,
     queryFn: () => apiGet<TData>(url),

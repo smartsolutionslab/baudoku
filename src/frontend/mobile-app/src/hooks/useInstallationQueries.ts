@@ -4,16 +4,25 @@ import type { ProjectId, ZoneId, InstallationId } from '@baudoku/core';
 import { useListQuery, useSyncMutation } from './useQueryFactory';
 
 export function useInstallationsByZone(zoneId: ZoneId) {
-  return useListQuery(['installations', 'zone', zoneId], () => installationRepo.getByZoneId(zoneId), !!zoneId);
+  return useListQuery(
+    ['installations', 'zone', zoneId],
+    () => installationRepo.getByZoneId(zoneId),
+    !!zoneId,
+  );
 }
 
 export function useInstallationsByProject(projectId: ProjectId) {
-  return useListQuery(['installations', 'project', projectId], () => installationRepo.getByProjectId(projectId), !!projectId);
+  return useListQuery(
+    ['installations', 'project', projectId],
+    () => installationRepo.getByProjectId(projectId),
+    !!projectId,
+  );
 }
 
 export function useCreateInstallation() {
   return useSyncMutation({
-    mutationFn: (data: Omit<NewInstallation, 'id' | 'createdAt' | 'updatedAt' | 'version'>) => installationRepo.create(data),
+    mutationFn: (data: Omit<NewInstallation, 'id' | 'createdAt' | 'updatedAt' | 'version'>) =>
+      installationRepo.create(data),
     errorMessage: 'Installation konnte nicht erstellt werden',
     invalidateKeys: [['installations']],
     onSuccessKeys: (variables) => [
@@ -25,9 +34,14 @@ export function useCreateInstallation() {
 
 export function useUpdateInstallation() {
   return useSyncMutation({
-    mutationFn: ({ id, data }: {
+    mutationFn: ({
+      id,
+      data,
+    }: {
       id: InstallationId;
-      data: Partial<Omit<NewInstallation, 'id' | 'createdAt' | 'updatedAt' | 'version' | 'projectId' | 'zoneId'>>;
+      data: Partial<
+        Omit<NewInstallation, 'id' | 'createdAt' | 'updatedAt' | 'version' | 'projectId' | 'zoneId'>
+      >;
     }) => installationRepo.update(id, data),
     errorMessage: 'Installation konnte nicht aktualisiert werden',
     invalidateKeys: [['installations'], ['installation']],

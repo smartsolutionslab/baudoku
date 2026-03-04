@@ -21,25 +21,40 @@ export type UseInstallationFormReturn = {
   hasElectricalValues: boolean;
 };
 
-export function useInstallationForm({ initialValues, onSubmit }: UseInstallationFormOptions): UseInstallationFormReturn {
+export function useInstallationForm({
+  initialValues,
+  onSubmit,
+}: UseInstallationFormOptions): UseInstallationFormReturn {
   const [form, setForm] = useState<Record<string, unknown>>({
     status: 'in_progress',
     ...initialValues,
   });
   const { errors, setErrors, validate } = useFormValidation(installationSchema);
 
-  const hasComponentValues = !!initialValues?.manufacturer || !!initialValues?.model || !!initialValues?.serialNumber;
-  const hasCableValues = !!initialValues?.cableType || initialValues?.crossSectionMm2 != null || initialValues?.lengthM != null;
-  const hasElectricalValues = !!initialValues?.circuitId || !!initialValues?.fuseType || initialValues?.fuseRatingA != null || initialValues?.voltageV != null || initialValues?.phase != null;
+  const hasComponentValues =
+    !!initialValues?.manufacturer || !!initialValues?.model || !!initialValues?.serialNumber;
+  const hasCableValues =
+    !!initialValues?.cableType ||
+    initialValues?.crossSectionMm2 != null ||
+    initialValues?.lengthM != null;
+  const hasElectricalValues =
+    !!initialValues?.circuitId ||
+    !!initialValues?.fuseType ||
+    initialValues?.fuseRatingA != null ||
+    initialValues?.voltageV != null ||
+    initialValues?.phase != null;
 
-  const set = useCallback((key: string, value: unknown) => {
-    setForm((prev) => ({ ...prev, [key]: value }));
-    setErrors((prev) => {
-      const next = { ...prev };
-      delete next[key];
-      return next;
-    });
-  }, [setErrors]);
+  const set = useCallback(
+    (key: string, value: unknown) => {
+      setForm((prev) => ({ ...prev, [key]: value }));
+      setErrors((prev) => {
+        const next = { ...prev };
+        delete next[key];
+        return next;
+      });
+    },
+    [setErrors],
+  );
 
   const str = (key: string) => {
     const val = form[key];
@@ -64,7 +79,7 @@ export function useInstallationForm({ initialValues, onSubmit }: UseInstallation
         Alert.alert('Fehler', 'Installation konnte nicht gespeichert werden.');
       }
     },
-    [form, onSubmit, validate]
+    [form, onSubmit, validate],
   );
 
   return {

@@ -50,7 +50,7 @@ export function useGpsCapture(): UseGpsCaptureReturn {
         setError(messages[err.code] ?? 'Unbekannter GPS-Fehler.');
         setCapturing(false);
       },
-      { enableHighAccuracy: true, timeout: 15_000, maximumAge: 0 }
+      { enableHighAccuracy: true, timeout: 15_000, maximumAge: 0 },
     );
   }, []);
 

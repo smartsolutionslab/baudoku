@@ -15,7 +15,11 @@ export type ProjectFormData = z.infer<typeof projectSchema>;
 export const zoneSchema = z.object({
   name: z.string().min(1, 'Name erforderlich').max(100),
   type: z.enum(['building', 'floor', 'room', 'trench']),
-  parentZoneId: z.string().nullable().optional().transform(v => v || null),
+  parentZoneId: z
+    .string()
+    .nullable()
+    .optional()
+    .transform((v) => v || null),
   sortOrder: z.coerce.number().int().min(0).optional(),
 });
 

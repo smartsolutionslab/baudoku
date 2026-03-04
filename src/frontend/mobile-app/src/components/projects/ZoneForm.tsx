@@ -10,6 +10,8 @@ import { ZONE_TYPE_LABELS } from '@baudoku/projects';
 import { optionsFromLabels } from '@baudoku/core';
 
 const typeOptions = optionsFromLabels(ZONE_TYPE_LABELS);
+const NONE_VALUE = '__none__';
+const NO_PARENT_OPTION = { label: '\u2014 Keine \u2014', value: NONE_VALUE };
 
 type ZoneFormProps = {
   zones?: Zone[];
@@ -20,30 +22,41 @@ type ZoneFormProps = {
   submitting?: boolean;
 };
 
-export function ZoneForm({ zones, defaultParentZoneId, initialValues, submitLabel, onSubmit, submitting }: ZoneFormProps) {
-  const { form, errors, set, handleSubmit } = useZoneForm({ initialValues, defaultParentZoneId, onSubmit });
+export function ZoneForm({
+  zones,
+  defaultParentZoneId,
+  initialValues,
+  submitLabel,
+  onSubmit,
+  submitting,
+}: ZoneFormProps) {
+  const { form, errors, set, handleSubmit } = useZoneForm({
+    initialValues,
+    defaultParentZoneId,
+    onSubmit,
+  });
 
   const parentOptions = [
-    { label: '\u2014 Keine \u2014', value: '__none__' },
-    ...(zones?.map((z) => ({ label: z.name, value: z.id })) ?? []),
+    NO_PARENT_OPTION,
+    ...(zones?.map(({ name, id }) => ({ label: name, value: id })) ?? []),
   ];
 
   return (
     <ScrollView
       style={styles.scroll}
       contentContainerStyle={styles.content}
-      keyboardShouldPersistTaps='handled'
+      keyboardShouldPersistTaps="handled"
     >
       <FormField
-        label='Name'
+        label="Name"
         required
         value={form.name ?? ''}
         onChangeText={(v) => set('name', v)}
         error={errors.name}
-        placeholder='z.B. Hauptgebäude, 1. OG, Raum 101'
+        placeholder="z.B. Hauptgebäude, 1. OG, Raum 101"
       />
       <FormPicker
-        label='Typ'
+        label="Typ"
         required
         options={typeOptions}
         value={form.type}
@@ -51,22 +64,18 @@ export function ZoneForm({ zones, defaultParentZoneId, initialValues, submitLabe
         error={errors.type}
       />
       <FormPicker
-        label='Übergeordnete Zone'
+        label="Übergeordnete Zone"
         options={parentOptions}
         value={form.parentZoneId ?? '__none__'}
-        onValueChange={(v) =>
-          set('parentZoneId', v === '__none__' ? null : v)
-        }
+        onValueChange={(v) => set('parentZoneId', v === NONE_VALUE ? null : v)}
       />
       <FormField
-        label='Sortierung'
+        label="Sortierung"
         value={form.sortOrder != null ? String(form.sortOrder) : ''}
-        onChangeText={(v) =>
-          set('sortOrder', v ? parseInt(v, 10) || 0 : undefined)
-        }
+        onChangeText={(v) => set('sortOrder', v ? parseInt(v, 10) || 0 : undefined)}
         error={errors.sortOrder}
-        keyboardType='numeric'
-        placeholder='0'
+        keyboardType="numeric"
+        placeholder="0"
       />
 
       <Button

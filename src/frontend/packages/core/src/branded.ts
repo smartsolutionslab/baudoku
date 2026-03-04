@@ -64,8 +64,7 @@ export function syncOutboxEntryId(value: string): SyncOutboxEntryId {
 
 export function projectName(value: string): ProjectName {
   if (!value?.trim()) throw new Error('ProjectName must not be empty');
-  if (value.length > 200)
-    throw new Error('ProjectName must be at most 200 characters');
+  if (value.length > 200) throw new Error('ProjectName must be at most 200 characters');
   return value as ProjectName;
 }
 
@@ -75,21 +74,18 @@ export function zoneName(value: string): ZoneName {
 }
 
 export function latitude(value: number): Latitude {
-  if (value < -90 || value > 90)
-    throw new Error('Latitude must be between -90 and 90');
+  if (value < -90 || value > 90) throw new Error('Latitude must be between -90 and 90');
   return value as Latitude;
 }
 
 export function longitude(value: number): Longitude {
-  if (value < -180 || value > 180)
-    throw new Error('Longitude must be between -180 and 180');
+  if (value < -180 || value > 180) throw new Error('Longitude must be between -180 and 180');
   return value as Longitude;
 }
 
 export function depthMm(value: number): DepthMm {
   if (value < 0) throw new Error('DepthMm must not be negative');
-  if (!Number.isInteger(value))
-    throw new Error('DepthMm must be an integer');
+  if (!Number.isInteger(value)) throw new Error('DepthMm must be an integer');
   return value as DepthMm;
 }
 

@@ -4,7 +4,11 @@ import type { InstallationId, PhotoId } from '@baudoku/core';
 import { useListQuery, useSyncMutation } from './useQueryFactory';
 
 export function usePhotosByInstallation(installationId: InstallationId) {
-  return useListQuery(['photos', installationId], () => photoRepo.getByInstallationId(installationId), !!installationId);
+  return useListQuery(
+    ['photos', installationId],
+    () => photoRepo.getByInstallationId(installationId),
+    !!installationId,
+  );
 }
 
 export function useAddPhoto() {
@@ -26,7 +30,8 @@ export function useDeletePhoto() {
 
 export function useUpdatePhotoAnnotation() {
   return useSyncMutation({
-    mutationFn: ({ id, annotation }: { id: PhotoId; annotation: string }) => photoRepo.updateAnnotation(id, annotation),
+    mutationFn: ({ id, annotation }: { id: PhotoId; annotation: string }) =>
+      photoRepo.updateAnnotation(id, annotation),
     errorMessage: 'Foto-Anmerkung konnte nicht aktualisiert werden',
     invalidateKeys: [['photos']],
   });

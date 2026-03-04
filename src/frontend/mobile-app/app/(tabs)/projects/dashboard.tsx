@@ -5,12 +5,19 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   StyleSheet,
-} from "react-native";
-import { useRouter, Stack } from "expo-router";
-import { FontAwesome } from "@expo/vector-icons";
-import { useDashboardStats } from "@/hooks";
-import { DashboardCard } from "@/components/common";
-import { Colors, Spacing, FontSize, Radius } from "@/styles/tokens";
+} from 'react-native';
+import { useRouter, Stack } from 'expo-router';
+import { FontAwesome } from '@expo/vector-icons';
+import { useDashboardStats } from '@/hooks';
+import { DashboardCard } from '@/components/common';
+import { Colors, Spacing, FontSize, Radius } from '@/styles/tokens';
+
+type QuickLink = {
+  key: string;
+  icon: React.ComponentProps<typeof FontAwesome>['name'];
+  label: string;
+  route: string;
+};
 
 export default function DashboardScreen() {
   const router = useRouter();
@@ -19,24 +26,42 @@ export default function DashboardScreen() {
   if (isLoading || !stats) {
     return (
       <View style={styles.loading}>
-        <Stack.Screen options={{ title: "Dashboard" }} />
+        <Stack.Screen options={{ title: 'Dashboard' }} />
         <ActivityIndicator size="large" color={Colors.primary} />
       </View>
     );
   }
 
-  const openProjects = () => router.push("/(tabs)/projects/");
-  const openSearch = () => router.push("/(tabs)/projects/search");
-  const openSync = () => router.push("/(tabs)/sync");
+  const QUICK_LINKS: QuickLink[] = [
+    { key: 'projects', icon: 'building', label: 'Alle Projekte', route: '/(tabs)/projects/' },
+    {
+      key: 'search',
+      icon: 'search',
+      label: 'Installationen suchen',
+      route: '/(tabs)/projects/search',
+    },
+    { key: 'sync', icon: 'refresh', label: 'Synchronisation', route: '/(tabs)/sync' },
+  ];
 
-  const { projectCount, installationCount, photoCount, unsyncedCount, measurementsByResult, installationsByStatus } = stats;
-  const { failed: failedCount = 0, passed: passedCount = 0, warning: warningCount = 0 } = measurementsByResult;
+  const {
+    projectCount,
+    installationCount,
+    photoCount,
+    unsyncedCount,
+    measurementsByResult,
+    installationsByStatus,
+  } = stats;
+  const {
+    failed: failedCount = 0,
+    passed: passedCount = 0,
+    warning: warningCount = 0,
+  } = measurementsByResult;
   const { in_progress: inProgressCount = 0, completed: completedCount = 0 } = installationsByStatus;
   const totalMeasurements = failedCount + passedCount + warningCount;
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <Stack.Screen options={{ title: "Dashboard" }} />
+      <Stack.Screen options={{ title: 'Dashboard' }} />
 
       <Text style={styles.sectionTitle}>Gesamt</Text>
       <View style={styles.row}>
@@ -86,29 +111,17 @@ export default function DashboardScreen() {
 
       <Text style={styles.sectionTitle}>Schnellzugriff</Text>
 
-      <TouchableOpacity style={styles.quickLink} onPress={openProjects} >
-        <FontAwesome name="building" size={18} color={Colors.primary} />
-        <Text style={styles.quickLinkText}>Alle Projekte</Text>
-        <FontAwesome name="chevron-right" size={14} color={Colors.textTertiary} />
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={styles.quickLink}
-        onPress={openSearch}
-      >
-        <FontAwesome name="search" size={18} color={Colors.primary} />
-        <Text style={styles.quickLinkText}>Installationen suchen</Text>
-        <FontAwesome name="chevron-right" size={14} color={Colors.textTertiary} />
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={styles.quickLink}
-        onPress={openSync}
-      >
-        <FontAwesome name="refresh" size={18} color={Colors.primary} />
-        <Text style={styles.quickLinkText}>Synchronisation</Text>
-        <FontAwesome name="chevron-right" size={14} color={Colors.textTertiary} />
-      </TouchableOpacity>
+      {QUICK_LINKS.map(({ key, icon, label, route }) => (
+        <TouchableOpacity
+          key={key}
+          style={styles.quickLink}
+          onPress={() => router.push(route as never)}
+        >
+          <FontAwesome name={icon} size={18} color={Colors.primary} />
+          <Text style={styles.quickLinkText}>{label}</Text>
+          <FontAwesome name="chevron-right" size={14} color={Colors.textTertiary} />
+        </TouchableOpacity>
+      ))}
     </ScrollView>
   );
 }
@@ -124,27 +137,27 @@ const styles = StyleSheet.create({
   },
   loading: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: Colors.background,
   },
   sectionTitle: {
     fontSize: FontSize.headline,
-    fontWeight: "600",
+    fontWeight: '600',
     color: Colors.textPrimary,
     marginTop: Spacing.lg,
     marginBottom: Spacing.md,
   },
   row: {
-    flexDirection: "row",
+    flexDirection: 'row',
     marginBottom: Spacing.md,
   },
   gap: {
     width: Spacing.md,
   },
   quickLink: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: Colors.card,
     borderRadius: Radius.md,
     padding: Spacing.lg,
@@ -154,7 +167,7 @@ const styles = StyleSheet.create({
   quickLinkText: {
     flex: 1,
     fontSize: FontSize.body,
-    fontWeight: "500",
+    fontWeight: '500',
     color: Colors.textPrimary,
   },
 });

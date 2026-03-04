@@ -11,7 +11,7 @@ export type UploadProgress = {
 };
 
 // Base64 encodes 3 bytes as 4 chars, so 1 MB binary = ceil(1MB * 4/3) base64 chars
-const CHUNK_SIZE_BASE64 = Math.ceil(CHUNK_SIZE_BYTES * 4 / 3);
+const CHUNK_SIZE_BASE64 = Math.ceil((CHUNK_SIZE_BYTES * 4) / 3);
 
 export async function uploadPhotoChunked(
   photoLocalId: PhotoId,
@@ -21,7 +21,7 @@ export async function uploadPhotoChunked(
   contentType: string,
   photoType: string,
   caption?: string,
-  onProgress?: (progress: UploadProgress) => void
+  onProgress?: (progress: UploadProgress) => void,
 ): Promise<PhotoId> {
   // Read entire file as base64 using new expo-file-system v19 API
   const file = new File(localPath);
@@ -29,7 +29,7 @@ export async function uploadPhotoChunked(
 
   const totalChunks = Math.ceil(base64.length / CHUNK_SIZE_BASE64);
   // Approximate original binary size from base64 length
-  const totalSize = Math.ceil(base64.length * 3 / 4);
+  const totalSize = Math.ceil((base64.length * 3) / 4);
 
   // Init session on server
   const { sessionId } = await initChunkedUpload(
@@ -39,7 +39,7 @@ export async function uploadPhotoChunked(
     totalSize,
     totalChunks,
     photoType,
-    caption
+    caption,
   );
 
   // Upload each chunk as binary via the syncApi uploadChunk function

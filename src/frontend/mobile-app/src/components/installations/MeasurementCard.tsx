@@ -30,7 +30,7 @@ export function MeasurementCard({ measurement, onDelete }: MeasurementCardProps)
           {result && <StatusBadge status={result} />}
           {onDelete && (
             <TouchableOpacity style={styles.deleteButton} onPress={() => onDelete(measurement)}>
-              <FontAwesome name='trash-o' size={16} color={Colors.danger} />
+              <FontAwesome name="trash-o" size={16} color={Colors.danger} />
             </TouchableOpacity>
           )}
         </View>

@@ -13,7 +13,8 @@ export function useProject(id: ProjectId) {
 
 export function useCreateProject() {
   return useSyncMutation({
-    mutationFn: (data: Omit<NewProject, 'id' | 'createdAt' | 'updatedAt' | 'version'>) => projectRepo.create(data),
+    mutationFn: (data: Omit<NewProject, 'id' | 'createdAt' | 'updatedAt' | 'version'>) =>
+      projectRepo.create(data),
     errorMessage: 'Projekt konnte nicht erstellt werden',
     invalidateKeys: [['projects']],
   });
@@ -21,7 +22,13 @@ export function useCreateProject() {
 
 export function useUpdateProject() {
   return useSyncMutation({
-    mutationFn: ({ id, data }: { id: ProjectId; data: Partial<Omit<NewProject, 'id' | 'createdAt' | 'updatedAt' | 'version' | 'createdBy'>> }) => projectRepo.update(id, data),
+    mutationFn: ({
+      id,
+      data,
+    }: {
+      id: ProjectId;
+      data: Partial<Omit<NewProject, 'id' | 'createdAt' | 'updatedAt' | 'version' | 'createdBy'>>;
+    }) => projectRepo.update(id, data),
     errorMessage: 'Projekt konnte nicht aktualisiert werden',
     invalidateKeys: [['projects']],
   });

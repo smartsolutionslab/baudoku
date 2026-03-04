@@ -45,7 +45,7 @@ export class SyncManager {
     }));
 
     try {
-      const result: ProcessSyncBatchResult = await syncApi.pushBatch(deviceId,  deltas);
+      const result: ProcessSyncBatchResult = await syncApi.pushBatch(deviceId, deltas);
 
       await syncRepo.markAsSynced(ids);
 
@@ -56,8 +56,7 @@ export class SyncManager {
       };
     } catch (error) {
       await syncRepo.markAsFailed(ids);
-      const message =
-        error instanceof Error ? error.message : 'Unbekannter Fehler';
+      const message = error instanceof Error ? error.message : 'Unbekannter Fehler';
       return { appliedCount: 0, conflictCount: 0, errors: [message] };
     }
   }
@@ -118,15 +117,14 @@ export class SyncManager {
           undefined,
           (progress) => {
             store.updateProgress(photo.id, progress.percentage);
-          }
+          },
         );
 
         await photoRepo.updateUploadStatus(photo.id, 'uploaded', remoteId);
         store.markCompleted(photo.id);
         uploaded++;
       } catch (error) {
-        const message =
-          error instanceof Error ? error.message : 'Foto-Upload fehlgeschlagen';
+        const message = error instanceof Error ? error.message : 'Foto-Upload fehlgeschlagen';
         await photoRepo.markUploadFailed(photo.id, message);
         store.markFailed(photo.id, message);
         errors.push(message);
@@ -152,11 +150,7 @@ export class SyncManager {
         pushed: pushResult.appliedCount + photoResult.uploaded,
         pulled: pullResult.pulled,
         conflicts: pushResult.conflictCount,
-        errors: [
-          ...pushResult.errors,
-          ...photoResult.errors,
-          ...pullResult.errors,
-        ],
+        errors: [...pushResult.errors, ...photoResult.errors, ...pullResult.errors],
       };
     } finally {
       this.syncing = false;

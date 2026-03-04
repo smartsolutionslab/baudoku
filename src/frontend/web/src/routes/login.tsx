@@ -35,17 +35,17 @@ export function LoginPage() {
   }, [isAuthenticated, navigate, login]);
 
   return (
-    <div className='flex h-screen items-center justify-center bg-gray-50'>
-      <div className='text-center'>
-        <div className='mb-4 flex justify-center'>
-          <div className='flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-600 text-2xl font-bold text-white'>
+    <div className="flex h-screen items-center justify-center bg-gray-50">
+      <div className="text-center">
+        <div className="mb-4 flex justify-center">
+          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-600 text-2xl font-bold text-white">
             B
           </div>
         </div>
-        <h1 className='text-xl font-semibold text-gray-900'>BauDoku</h1>
-        <p className='mt-2 text-sm text-gray-500'>Anmeldung wird verarbeitet...</p>
-        <div className='mt-4'>
-          <div className='mx-auto h-8 w-8 animate-spin rounded-full border-4 border-gray-200 border-t-blue-600' />
+        <h1 className="text-xl font-semibold text-gray-900">BauDoku</h1>
+        <p className="mt-2 text-sm text-gray-500">Anmeldung wird verarbeitet...</p>
+        <div className="mt-4">
+          <div className="mx-auto h-8 w-8 animate-spin rounded-full border-4 border-gray-200 border-t-blue-600" />
         </div>
       </div>
     </div>

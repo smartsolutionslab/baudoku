@@ -19,7 +19,7 @@ export function ActionBar({ actions }: ActionBarProps) {
     <View style={styles.container}>
       {actions.map(({ label, icon, onPress, color }) => (
         <TouchableOpacity key={label} style={styles.item} onPress={onPress} activeOpacity={0.7}>
-          <FontAwesome name={icon} size={20} color={color ?? Colors.primary}/>
+          <FontAwesome name={icon} size={20} color={color ?? Colors.primary} />
           <Text style={[styles.label, color ? { color } : undefined]}>{label}</Text>
         </TouchableOpacity>
       ))}

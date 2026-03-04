@@ -9,11 +9,7 @@ type ConflictDetailProps = {
   isResolving: boolean;
 };
 
-export function ConflictDetail({
-  conflict,
-  onResolve,
-  isResolving,
-}: ConflictDetailProps) {
+export function ConflictDetail({ conflict, onResolve, isResolving }: ConflictDetailProps) {
   const handleClientWins = () => {
     Alert.alert(
       'Eigene Version verwenden',
@@ -24,7 +20,7 @@ export function ConflictDetail({
           text: 'Ja, meine Version',
           onPress: () => onResolve('client_wins'),
         },
-      ]
+      ],
     );
   };
 
@@ -38,7 +34,7 @@ export function ConflictDetail({
           text: 'Ja, Server-Version',
           onPress: () => onResolve('server_wins'),
         },
-      ]
+      ],
     );
   };
 

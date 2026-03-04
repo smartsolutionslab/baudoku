@@ -17,19 +17,11 @@ type PhotoTypeSheetProps = {
   onClose: () => void;
 };
 
-export function PhotoTypeSheet({
-  visible,
-  onSelect,
-  onClose,
-}: PhotoTypeSheetProps) {
+export function PhotoTypeSheet({ visible, onSelect, onClose }: PhotoTypeSheetProps) {
   return (
-    <BottomSheet visible={visible} onClose={onClose} title='Foto-Typ wählen'>
+    <BottomSheet visible={visible} onClose={onClose} title="Foto-Typ wählen">
       {PHOTO_TYPES.map((pt) => (
-        <TouchableOpacity
-          key={pt.value}
-          style={styles.option}
-          onPress={() => onSelect(pt.value)}
-        >
+        <TouchableOpacity key={pt.value} style={styles.option} onPress={() => onSelect(pt.value)}>
           <Text style={styles.optionText}>{pt.label}</Text>
         </TouchableOpacity>
       ))}

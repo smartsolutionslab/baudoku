@@ -10,31 +10,16 @@ type PhotoSourceSheetProps = {
   onClose: () => void;
 };
 
-export function PhotoSourceSheet({
-  visible,
-  onCamera,
-  onGallery,
-  onClose,
-}: PhotoSourceSheetProps) {
+export function PhotoSourceSheet({ visible, onCamera, onGallery, onClose }: PhotoSourceSheetProps) {
   return (
-    <BottomSheet visible={visible} onClose={onClose} title='Foto hinzufügen'>
+    <BottomSheet visible={visible} onClose={onClose} title="Foto hinzufügen">
       <TouchableOpacity style={styles.option} onPress={onCamera}>
-        <FontAwesome
-          name='camera'
-          size={20}
-          color={Colors.primary}
-          style={styles.icon}
-        />
+        <FontAwesome name="camera" size={20} color={Colors.primary} style={styles.icon} />
         <Text style={styles.optionText}>Foto aufnehmen</Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.option} onPress={onGallery}>
-        <FontAwesome
-          name='image'
-          size={20}
-          color={Colors.primary}
-          style={styles.icon}
-        />
+        <FontAwesome name="image" size={20} color={Colors.primary} style={styles.icon} />
         <Text style={styles.optionText}>Aus Galerie wählen</Text>
       </TouchableOpacity>
 

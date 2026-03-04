@@ -19,17 +19,9 @@ export function InstallationInfoSection({ installation }: InstallationInfoSectio
           <Text style={styles.type}>{type}</Text>
           <StatusBadge status={status} />
         </View>
-        {subtitle ? (
-          <Text style={styles.subtitle}>{subtitle}</Text>
-        ) : null}
-        {serialNumber ? (
-          <Text style={styles.detail}>
-            SN: {serialNumber}
-          </Text>
-        ) : null}
-        {notes ? (
-          <Text style={styles.notes}>{notes}</Text>
-        ) : null}
+        {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
+        {serialNumber ? <Text style={styles.detail}>SN: {serialNumber}</Text> : null}
+        {notes ? <Text style={styles.notes}>{notes}</Text> : null}
       </View>
 
       <InstallationDetails installation={installation} />

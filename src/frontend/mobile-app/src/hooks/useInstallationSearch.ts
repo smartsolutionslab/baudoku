@@ -27,15 +27,12 @@ export function useInstallationSearch(): UseInstallationSearchReturn {
   const [searching, setSearching] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const doSearch = useCallback(
-    async (q: string, f: SearchFilters) => {
-      setSearching(true);
-      const data = await installationRepo.search(q, f);
-      setResults(data);
-      setSearching(false);
-    },
-    []
-  );
+  const doSearch = useCallback(async (q: string, f: SearchFilters) => {
+    setSearching(true);
+    const data = await installationRepo.search(q, f);
+    setResults(data);
+    setSearching(false);
+  }, []);
 
   useEffect(() => {
     if (timerRef.current) clearTimeout(timerRef.current);

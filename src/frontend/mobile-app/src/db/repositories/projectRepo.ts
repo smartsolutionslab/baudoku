@@ -11,10 +11,14 @@ export async function getAll(): Promise<Project[]> {
 }
 
 export async function getById(id: ProjectId): Promise<Project | undefined> {
-  return db.select().from(projects).where(eq(projects.id, id)).get() as unknown as Project | undefined;
+  return db.select().from(projects).where(eq(projects.id, id)).get() as unknown as
+    | Project
+    | undefined;
 }
 
-export async function create(data: Omit<NewProject, 'id' | 'createdAt' | 'updatedAt' | 'version'>): Promise<Project> {
+export async function create(
+  data: Omit<NewProject, 'id' | 'createdAt' | 'updatedAt' | 'version'>,
+): Promise<Project> {
   const now = new Date();
   const project: NewProject = {
     ...data,
@@ -30,7 +34,10 @@ export async function create(data: Omit<NewProject, 'id' | 'createdAt' | 'update
   return project as unknown as Project;
 }
 
-export async function update(id: ProjectId, data: Partial< Omit<NewProject, 'id' | 'createdAt' | 'updatedAt' | 'version' | 'createdBy'>>): Promise<Project | undefined> {
+export async function update(
+  id: ProjectId,
+  data: Partial<Omit<NewProject, 'id' | 'createdAt' | 'updatedAt' | 'version' | 'createdBy'>>,
+): Promise<Project | undefined> {
   const existing = await getById(id);
   if (!existing) return undefined;
 

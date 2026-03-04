@@ -16,16 +16,11 @@ function AuthenticatedRouter() {
 
   if (isLoading) {
     return (
-      <div className='flex h-screen items-center justify-center bg-gray-50'>
-        <div className='h-8 w-8 animate-spin rounded-full border-4 border-gray-200 border-t-blue-600' />
+      <div className="flex h-screen items-center justify-center bg-gray-50">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-200 border-t-blue-600" />
       </div>
     );
   }
 
-  return (
-    <RouterProvider
-      router={router}
-      context={{ auth: { isAuthenticated } }}
-    />
-  );
+  return <RouterProvider router={router} context={{ auth: { isAuthenticated } }} />;
 }

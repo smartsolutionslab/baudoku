@@ -6,10 +6,20 @@ type InfoTabProps = {
 
 export function InfoTab({ installation }: InfoTabProps) {
   const {
-    manufacturer, model, serialNumber,
-    cableType, crossSectionMm2, lengthM,
-    circuitId, fuseType, fuseRatingA, voltageV, phase,
-    depthMm, position, notes,
+    manufacturer,
+    model,
+    serialNumber,
+    cableType,
+    crossSectionMm2,
+    lengthM,
+    circuitId,
+    fuseType,
+    fuseRatingA,
+    voltageV,
+    phase,
+    depthMm,
+    position,
+    notes,
   } = installation;
 
   const sections = [
@@ -72,25 +82,18 @@ export function InfoTab({ installation }: InfoTabProps) {
   ];
 
   return (
-    <div className='space-y-6'>
+    <div className="space-y-6">
       {sections.map(({ title, fields }) => {
         const filledFields = fields.filter(({ value }) => value);
         if (filledFields.length === 0) return null;
         return (
-          <div
-            key={title}
-            className='rounded-xl border border-gray-200 bg-white p-5'
-          >
-            <h3 className='text-sm font-semibold text-gray-900'>
-              {title}
-            </h3>
-            <dl className='mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3'>
+          <div key={title} className="rounded-xl border border-gray-200 bg-white p-5">
+            <h3 className="text-sm font-semibold text-gray-900">{title}</h3>
+            <dl className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {filledFields.map(({ label, value }) => (
                 <div key={label}>
-                  <dt className='text-xs text-gray-400'>{label}</dt>
-                  <dd className='mt-0.5 text-sm text-gray-900'>
-                    {value}
-                  </dd>
+                  <dt className="text-xs text-gray-400">{label}</dt>
+                  <dd className="mt-0.5 text-sm text-gray-900">{value}</dd>
                 </div>
               ))}
             </dl>
@@ -99,11 +102,9 @@ export function InfoTab({ installation }: InfoTabProps) {
       })}
 
       {notes && (
-        <div className='rounded-xl border border-gray-200 bg-white p-5'>
-          <h3 className='text-sm font-semibold text-gray-900'>Notizen</h3>
-          <p className='mt-2 whitespace-pre-wrap text-sm text-gray-600'>
-            {notes}
-          </p>
+        <div className="rounded-xl border border-gray-200 bg-white p-5">
+          <h3 className="text-sm font-semibold text-gray-900">Notizen</h3>
+          <p className="mt-2 whitespace-pre-wrap text-sm text-gray-600">{notes}</p>
         </div>
       )}
     </div>

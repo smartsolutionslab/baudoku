@@ -20,8 +20,7 @@ export function useProjects(search?: string) {
       return apiGet<PagedResult<Project>>(`/api/projects?${params}`);
     },
     initialPageParam: 1,
-    getNextPageParam: (lastPage) =>
-      lastPage.hasNextPage ? lastPage.page + 1 : undefined,
+    getNextPageParam: (lastPage) => (lastPage.hasNextPage ? lastPage.page + 1 : undefined),
   });
 }
 
@@ -44,13 +43,22 @@ export function useDeleteProject() {
 // ─── Zones ──────────────────────────────────────────────────────
 
 export function useZones(projectId: ProjectId) {
-  return useApiQuery<Zone[]>(['projects', projectId, 'zones'], `/api/projects/${projectId}/zones`, !!projectId);
+  return useApiQuery<Zone[]>(
+    ['projects', projectId, 'zones'],
+    `/api/projects/${projectId}/zones`,
+    !!projectId,
+  );
 }
 
 export function useCreateZone(projectId: ProjectId) {
-  return useApiPost<Zone, ZoneFormData>(`/api/projects/${projectId}/zones`, [['projects', projectId, 'zones']]);
+  return useApiPost<Zone, ZoneFormData>(`/api/projects/${projectId}/zones`, [
+    ['projects', projectId, 'zones'],
+  ]);
 }
 
 export function useDeleteZone(projectId: ProjectId) {
-  return useApiDelete((zoneId) => `/api/projects/${projectId}/zones/${zoneId}`, [['projects', projectId, 'zones']]);
+  return useApiDelete(
+    (zoneId) => `/api/projects/${projectId}/zones/${zoneId}`,
+    [['projects', projectId, 'zones']],
+  );
 }

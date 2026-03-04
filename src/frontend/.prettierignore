@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.expo/
+web-build/
+android/
+ios/
+coverage/
+*.tsbuildinfo
+drizzle/*.sql
+drizzle/meta/
+drizzle/migrations.js
+expo-env.d.ts

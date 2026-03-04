@@ -1,10 +1,4 @@
-import {
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  StyleSheet,
-} from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import { Colors, Spacing, FontSize, Radius, FontFamily } from '../../styles/tokens';
 import type { ConflictDto } from '../../sync/syncApi';
 
@@ -53,9 +47,7 @@ export function ConflictList({ conflicts, onSelect }: ConflictListProps) {
     <FlatList
       data={conflicts}
       keyExtractor={({ id }) => id}
-      renderItem={({ item }) => (
-        <ConflictItem item={item} onPress={() => onSelect(item)} />
-      )}
+      renderItem={({ item }) => <ConflictItem item={item} onPress={() => onSelect(item)} />}
       contentContainerStyle={styles.list}
     />
   );

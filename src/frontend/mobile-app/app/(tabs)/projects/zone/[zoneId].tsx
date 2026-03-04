@@ -1,18 +1,24 @@
-import { useMemo, useState, useCallback } from "react";
-import { View, Text, FlatList, StyleSheet } from "react-native";
-import { useLocalSearchParams, useRouter, Stack } from "expo-router";
-import { useZonesByProject, useInstallationsByZone, useDeleteZone, useUpdateZone, useConfirmDelete } from "@/hooks";
-import { InstallationCard } from "@/components/installations";
-import { StatusBadge, EmptyState, FloatingActionButton, ActionBar } from "@/components/common";
-import { ZoneQrSheet } from "@/components/projects";
-import { encodeZoneQr } from "@/utils";
-import { Colors, Spacing, FontSize, Radius } from "@/styles/tokens";
-import type { Zone } from "@/db/repositories/types";
-import { projectId as toProjectId,  zoneId as toZoneId } from "@baudoku/core";
-import type { ZoneId } from "@baudoku/core";
+import { useMemo, useState, useCallback } from 'react';
+import { View, Text, FlatList, StyleSheet } from 'react-native';
+import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
+import {
+  useZonesByProject,
+  useInstallationsByZone,
+  useDeleteZone,
+  useUpdateZone,
+  useConfirmDelete,
+} from '@/hooks';
+import { InstallationCard } from '@/components/installations';
+import { StatusBadge, EmptyState, FloatingActionButton, ActionBar } from '@/components/common';
+import { ZoneQrSheet } from '@/components/projects';
+import { encodeZoneQr } from '@/utils';
+import { Colors, Spacing, FontSize, Radius } from '@/styles/tokens';
+import type { Zone } from '@/db/repositories/types';
+import { projectId as toProjectId, zoneId as toZoneId } from '@baudoku/core';
+import type { ZoneId } from '@baudoku/core';
 
 function buildBreadcrumb(zones: Zone[], id: ZoneId): string[] {
-  const byId = new Map(zones.map((z) => [z.id as string, z]));
+  const byId = new Map(zones.map((z) => [z.id as string, z] as const));
   const parts: string[] = [];
   let current = byId.get(id);
   while (current) {
@@ -23,7 +29,10 @@ function buildBreadcrumb(zones: Zone[], id: ZoneId): string[] {
 }
 
 export default function ZoneDetailScreen() {
-  const { zoneId: rawZoneId, projectId: rawProjectId } = useLocalSearchParams<{ zoneId: string; projectId: string; }>();
+  const { zoneId: rawZoneId, projectId: rawProjectId } = useLocalSearchParams<{
+    zoneId: string;
+    projectId: string;
+  }>();
   const zoneId = toZoneId(rawZoneId!);
   const projectId = toProjectId(rawProjectId!);
   const router = useRouter();
@@ -34,23 +43,22 @@ export default function ZoneDetailScreen() {
   const { confirmDelete } = useConfirmDelete();
   const [qrSheetVisible, setQrSheetVisible] = useState(false);
 
-  const openEditZone = () => router.push(`/(tabs)/projects/zone/edit?zoneId=${zoneId}&projectId=${projectId}`);
-  const openNewInstallation = () => router.push(`/(tabs)/capture/new?projectId=${projectId}&zoneId=${zoneId}`);
+  const openEditZone = () =>
+    router.push(`/(tabs)/projects/zone/edit?zoneId=${zoneId}&projectId=${projectId}`);
+  const openNewInstallation = () =>
+    router.push(`/(tabs)/capture/new?projectId=${projectId}&zoneId=${zoneId}`);
   const openInstallation = (id: string) => router.push(`/(tabs)/projects/installation/${id}`);
 
-  const zone = useMemo(
-    () => zones?.find((z) => z.id === zoneId),
-    [zones, zoneId]
-  );
+  const zone = useMemo(() => zones?.find((z) => z.id === zoneId), [zones, zoneId]);
 
   const breadcrumb = useMemo(
     () => (zones && zoneId ? buildBreadcrumb(zones, zoneId) : []),
-    [zones, zoneId]
+    [zones, zoneId],
   );
 
   const qrValue = useMemo(
-    () => (projectId && zoneId ? encodeZoneQr(projectId, zoneId) : ""),
-    [projectId, zoneId]
+    () => (projectId && zoneId ? encodeZoneQr(projectId, zoneId) : ''),
+    [projectId, zoneId],
   );
 
   const handleQrPress = useCallback(async () => {
@@ -66,8 +74,8 @@ export default function ZoneDetailScreen() {
 
   const handleDelete = () => {
     confirmDelete({
-      title: "Zone löschen",
-      message: "Diese Zone und alle zugehörigen Daten wirklich löschen?",
+      title: 'Zone löschen',
+      message: 'Diese Zone und alle zugehörigen Daten wirklich löschen?',
       onConfirm: async () => {
         try {
           await deleteZone.mutateAsync(zoneId);
@@ -94,25 +102,16 @@ export default function ZoneDetailScreen() {
         </View>
         {breadcrumb.length > 1 && (
           <Text style={styles.breadcrumb} numberOfLines={1}>
-            {breadcrumb.join(" > ")}
+            {breadcrumb.join(' > ')}
           </Text>
         )}
       </View>
 
       <ActionBar
         actions={[
-          { icon: "qrcode", label: "QR-Code", onPress: handleQrPress },
-          {
-            icon: "pencil",
-            label: "Bearbeiten",
-            onPress: openEditZone,
-          },
-          {
-            icon: "trash-o",
-            label: "Löschen",
-            onPress: handleDelete,
-            color: Colors.danger,
-          },
+          { icon: 'qrcode', label: 'QR-Code', onPress: handleQrPress },
+          { icon: 'pencil', label: 'Bearbeiten', onPress: openEditZone },
+          { icon: 'trash-o', label: 'Löschen', onPress: handleDelete, color: Colors.danger },
         ]}
       />
 
@@ -165,13 +164,13 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
   },
   headerRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   title: {
     fontSize: FontSize.headline,
-    fontWeight: "600",
+    fontWeight: '600',
     color: Colors.textPrimary,
     flex: 1,
     marginRight: Spacing.sm,
@@ -183,7 +182,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: FontSize.headline,
-    fontWeight: "600",
+    fontWeight: '600',
     marginHorizontal: Spacing.lg,
     marginTop: Spacing.lg,
     marginBottom: Spacing.sm,

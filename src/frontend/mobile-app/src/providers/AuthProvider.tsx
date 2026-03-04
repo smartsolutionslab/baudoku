@@ -1,6 +1,12 @@
 import React, { useEffect, useRef, useCallback } from 'react';
 import { useAuthStore } from '../store';
-import { loadTokens, saveTokens, refreshAccessToken, parseUserFromToken, performLogout } from '../auth';
+import {
+  loadTokens,
+  saveTokens,
+  refreshAccessToken,
+  parseUserFromToken,
+  performLogout,
+} from '../auth';
 import { setAuthToken, setBaseUrl, onUnauthorized, parseJwtPayload } from '@baudoku/core';
 import { API_BASE_URL } from '../config/environment';
 
@@ -59,7 +65,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
       }, refreshIn);
     },
-    [setTokens, setUser, handleLogout]
+    [setTokens, setUser, handleLogout],
   );
 
   useEffect(() => {

@@ -1,12 +1,6 @@
 import { eq } from 'drizzle-orm';
 import { db } from '../client';
-import {
-  projects,
-  zones,
-  installations,
-  photos,
-  measurements,
-} from '../schema';
+import { projects, zones, installations, photos, measurements } from '../schema';
 
 /**
  * Direct writes for pull-path (server deltas).
@@ -29,7 +23,11 @@ const tableMap: TableMap = {
   measurement: measurements,
 };
 
-export async function applyUpsert(entityType: string, entityId: string, payload: Record<string, unknown>): Promise<void> {
+export async function applyUpsert(
+  entityType: string,
+  entityId: string,
+  payload: Record<string, unknown>,
+): Promise<void> {
   const table = tableMap[entityType as keyof TableMap];
   if (!table) {
     console.warn(`Unknown entity type for direct write: ${entityType}`);

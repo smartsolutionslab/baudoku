@@ -11,7 +11,8 @@ export function InstallationNewPage() {
   const { data: zones } = useZones(projectId);
   const createInstallation = useCreateInstallation(projectId);
 
-  const handleCancel = () => navigate({ to: '/projects/$projectId/installations', params: { projectId } });
+  const handleCancel = () =>
+    navigate({ to: '/projects/$projectId/installations', params: { projectId } });
 
   const handleSubmit = async (
     data: InstallationFormData & { zoneId: string },
@@ -25,13 +26,11 @@ export function InstallationNewPage() {
   };
 
   return (
-    <div className='mx-auto max-w-3xl'>
-      <h1 className='text-2xl font-bold text-gray-900'>Neue Installation</h1>
-      <p className='mt-1 text-sm text-gray-500'>
-        Dokumentieren Sie eine neue Installation.
-      </p>
+    <div className="mx-auto max-w-3xl">
+      <h1 className="text-2xl font-bold text-gray-900">Neue Installation</h1>
+      <p className="mt-1 text-sm text-gray-500">Dokumentieren Sie eine neue Installation.</p>
 
-      <div className='mt-6'>
+      <div className="mt-6">
         <InstallationForm
           zones={zones ?? []}
           onSubmit={handleSubmit}

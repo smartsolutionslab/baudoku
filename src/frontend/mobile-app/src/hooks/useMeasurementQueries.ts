@@ -4,12 +4,17 @@ import type { InstallationId, MeasurementId } from '@baudoku/core';
 import { useListQuery, useSyncMutation } from './useQueryFactory';
 
 export function useMeasurementsByInstallation(installationId: InstallationId) {
-  return useListQuery(['measurements', installationId], () => measurementRepo.getByInstallationId(installationId), !!installationId);
+  return useListQuery(
+    ['measurements', installationId],
+    () => measurementRepo.getByInstallationId(installationId),
+    !!installationId,
+  );
 }
 
 export function useAddMeasurement() {
   return useSyncMutation({
-    mutationFn: (data: Omit<NewMeasurement, 'id' | 'version' | 'result'>) => measurementRepo.create(data),
+    mutationFn: (data: Omit<NewMeasurement, 'id' | 'version' | 'result'>) =>
+      measurementRepo.create(data),
     errorMessage: 'Messung konnte nicht hinzugefügt werden',
     invalidateKeys: [['measurements']],
     onSuccessKeys: (variables) => [['measurements', variables.installationId]],

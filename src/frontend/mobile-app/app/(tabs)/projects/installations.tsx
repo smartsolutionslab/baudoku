@@ -1,12 +1,12 @@
-import { useState, useMemo } from "react";
-import { View, Text, FlatList, TouchableOpacity, StyleSheet } from "react-native";
-import { useLocalSearchParams, useRouter, Stack } from "expo-router";
-import { useInstallationsByProject } from "@/hooks";
-import { StatusBadge, EmptyState, SearchBar, FilterChips } from "@/components/common";
-import { Colors, Spacing, FontSize, Radius } from "@/styles/tokens";
-import { INSTALLATION_TYPE_OPTIONS, INSTALLATION_STATUS_OPTIONS } from "@/constants";
-import type { Installation } from "@/db/repositories/types";
-import { projectId as toProjectId } from "@baudoku/core";
+import { useState, useMemo } from 'react';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
+import { useInstallationsByProject } from '@/hooks';
+import { StatusBadge, EmptyState, SearchBar, FilterChips } from '@/components/common';
+import { Colors, Spacing, FontSize, Radius } from '@/styles/tokens';
+import { INSTALLATION_TYPE_OPTIONS, INSTALLATION_STATUS_OPTIONS } from '@/constants';
+import type { Installation } from '@/db/repositories/types';
+import { projectId as toProjectId } from '@baudoku/core';
 
 export default function InstallationsListScreen() {
   const { projectId: rawProjectId } = useLocalSearchParams<{ projectId: string }>();
@@ -16,9 +16,9 @@ export default function InstallationsListScreen() {
 
   const openInstallation = (id: string) => router.push(`/(tabs)/projects/installation/${id}`);
 
-  const [searchQuery, setSearchQuery] = useState("");
-  const [typeFilter, setTypeFilter] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
+  const [typeFilter, setTypeFilter] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
 
   const filtered = useMemo(() => {
     if (!installations) return [];
@@ -38,23 +38,25 @@ export default function InstallationsListScreen() {
           type.toLowerCase().includes(q) ||
           manufacturer?.toLowerCase().includes(q) ||
           model?.toLowerCase().includes(q) ||
-          serialNumber?.toLowerCase().includes(q)
+          serialNumber?.toLowerCase().includes(q),
       );
     }
 
     return result;
   }, [installations, typeFilter, statusFilter, searchQuery]);
 
-  const renderItem = ({ item: { id, type, status, manufacturer, model, notes } }: { item: Installation }) => (
+  const renderItem = ({
+    item: { id, type, status, manufacturer, model, notes },
+  }: {
+    item: Installation;
+  }) => (
     <TouchableOpacity style={styles.itemCard} onPress={() => openInstallation(id)}>
       <View style={styles.itemHeader}>
         <Text style={styles.itemType}>{type}</Text>
         <StatusBadge status={status} />
       </View>
       {manufacturer || model ? (
-        <Text style={styles.itemSubtitle}>
-          {[manufacturer, model].filter(Boolean).join(" — ")}
-        </Text>
+        <Text style={styles.itemSubtitle}>{[manufacturer, model].filter(Boolean).join(' — ')}</Text>
       ) : null}
       {notes ? (
         <Text style={styles.itemNotes} numberOfLines={2}>
@@ -66,7 +68,7 @@ export default function InstallationsListScreen() {
 
   return (
     <View style={styles.container}>
-      <Stack.Screen options={{ title: "Alle Installationen" }} />
+      <Stack.Screen options={{ title: 'Alle Installationen' }} />
 
       {/* Search */}
       <SearchBar value={searchQuery} onChangeText={setSearchQuery} autoFocus={false} />
@@ -75,17 +77,17 @@ export default function InstallationsListScreen() {
       <FilterChips
         options={INSTALLATION_TYPE_OPTIONS}
         selected={typeFilter ? [typeFilter] : []}
-        onToggle={(v) => setTypeFilter(typeFilter === v ? "" : v)}
+        onToggle={(v) => setTypeFilter(typeFilter === v ? '' : v)}
       />
       <FilterChips
         options={INSTALLATION_STATUS_OPTIONS}
         selected={statusFilter ? [statusFilter] : []}
-        onToggle={(v) => setStatusFilter(statusFilter === v ? "" : v)}
+        onToggle={(v) => setStatusFilter(statusFilter === v ? '' : v)}
       />
 
       {/* Results count */}
       <Text style={styles.resultCount}>
-        {filtered.length} {filtered.length === 1 ? "Installation" : "Installationen"}
+        {filtered.length} {filtered.length === 1 ? 'Installation' : 'Installationen'}
       </Text>
 
       {/* List */}
@@ -95,12 +97,12 @@ export default function InstallationsListScreen() {
           title="Keine Installationen"
           subtitle={
             searchQuery || typeFilter || statusFilter
-              ? "Versuche andere Filterkriterien."
-              : "In diesem Projekt gibt es noch keine Installationen."
+              ? 'Versuche andere Filterkriterien.'
+              : 'In diesem Projekt gibt es noch keine Installationen.'
           }
         />
       ) : (
-        <FlatList 
+        <FlatList
           data={filtered}
           keyExtractor={(item) => item.id}
           renderItem={renderItem}
@@ -134,14 +136,14 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
   },
   itemHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: Spacing.xs,
   },
   itemType: {
     fontSize: FontSize.callout,
-    fontWeight: "600",
+    fontWeight: '600',
     color: Colors.textPrimary,
     flex: 1,
     marginRight: Spacing.sm,

@@ -15,11 +15,7 @@ type ProjectFormProps = {
 
 const statusOptions = optionsFromLabels(PROJECT_STATUS_LABELS);
 
-export function ProjectForm({
-  defaultValues,
-  onSubmit,
-  isSubmitting,
-}: ProjectFormProps) {
+export function ProjectForm({ defaultValues, onSubmit, isSubmitting }: ProjectFormProps) {
   const navigate = useNavigate();
 
   const handleCancel = () => navigate({ to: '/projects' });
@@ -37,22 +33,20 @@ export function ProjectForm({
   });
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className='space-y-6'>
-      <div className='rounded-xl border border-gray-200 bg-white p-6'>
-        <h2 className='text-base font-semibold text-gray-900'>
-          Projektdetails
-        </h2>
-        <div className='mt-4 grid gap-4 sm:grid-cols-2'>
-          <div className='sm:col-span-2'>
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <div className="rounded-xl border border-gray-200 bg-white p-6">
+        <h2 className="text-base font-semibold text-gray-900">Projektdetails</h2>
+        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+          <div className="sm:col-span-2">
             <FormField
-              label='Projektname *'
+              label="Projektname *"
               error={errors.name}
               register={register('name')}
-              placeholder='z.B. Neubau Bürogebäude'
+              placeholder="z.B. Neubau Bürogebäude"
             />
           </div>
           <FormSelect
-            label='Status'
+            label="Status"
             error={errors.status}
             register={register('status')}
             options={statusOptions}
@@ -60,59 +54,55 @@ export function ProjectForm({
         </div>
       </div>
 
-      <div className='rounded-xl border border-gray-200 bg-white p-6'>
-        <h2 className='text-base font-semibold text-gray-900'>Adresse</h2>
-        <div className='mt-4 grid gap-4 sm:grid-cols-2'>
-          <div className='sm:col-span-2'>
+      <div className="rounded-xl border border-gray-200 bg-white p-6">
+        <h2 className="text-base font-semibold text-gray-900">Adresse</h2>
+        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+          <div className="sm:col-span-2">
             <FormField
-              label='Straße'
+              label="Straße"
               error={errors.street}
               register={register('street')}
-              placeholder='Musterstraße 1'
+              placeholder="Musterstraße 1"
             />
           </div>
           <FormField
-            label='PLZ'
+            label="PLZ"
             error={errors.zipCode}
             register={register('zipCode')}
-            placeholder='12345'
+            placeholder="12345"
           />
           <FormField
-            label='Stadt'
+            label="Stadt"
             error={errors.city}
             register={register('city')}
-            placeholder='Berlin'
+            placeholder="Berlin"
           />
         </div>
       </div>
 
-      <div className='rounded-xl border border-gray-200 bg-white p-6'>
-        <h2 className='text-base font-semibold text-gray-900'>Auftraggeber</h2>
-        <div className='mt-4 grid gap-4 sm:grid-cols-2'>
+      <div className="rounded-xl border border-gray-200 bg-white p-6">
+        <h2 className="text-base font-semibold text-gray-900">Auftraggeber</h2>
+        <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <FormField
-            label='Name'
+            label="Name"
             error={errors.clientName}
             register={register('clientName')}
-            placeholder='Firma GmbH'
+            placeholder="Firma GmbH"
           />
           <FormField
-            label='Kontakt'
+            label="Kontakt"
             error={errors.clientContact}
             register={register('clientContact')}
-            placeholder='Max Mustermann'
+            placeholder="Max Mustermann"
           />
         </div>
       </div>
 
-      <div className='flex justify-end gap-3'>
-        <Button
-          type='button'
-          variant='secondary'
-          onClick={handleCancel}
-        >
+      <div className="flex justify-end gap-3">
+        <Button type="button" variant="secondary" onClick={handleCancel}>
           Abbrechen
         </Button>
-        <Button type='submit' disabled={isSubmitting}>
+        <Button type="submit" disabled={isSubmitting}>
           {isSubmitting ? 'Speichert...' : 'Projekt erstellen'}
         </Button>
       </div>

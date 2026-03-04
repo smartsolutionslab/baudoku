@@ -27,7 +27,10 @@ export async function create(data: Omit<NewZone, 'id' | 'version'>): Promise<Zon
   return zone as unknown as Zone;
 }
 
-export async function update(id: ZoneId, data: Partial<Omit<NewZone, 'id' | 'version' | 'projectId'>>): Promise<Zone | undefined> {
+export async function update(
+  id: ZoneId,
+  data: Partial<Omit<NewZone, 'id' | 'version' | 'projectId'>>,
+): Promise<Zone | undefined> {
   const existing = await getById(id);
   if (!existing) return undefined;
 

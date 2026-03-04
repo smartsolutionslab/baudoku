@@ -7,10 +7,7 @@ import type { GpsQualityGrade, GpsQualityInput } from '@baudoku/documentation';
 import { Colors } from '../styles/tokens';
 
 export type { GpsQualityGrade } from '@baudoku/documentation';
-export {
-  GPS_CORRECTION_SERVICE_LABELS,
-  RTK_FIX_STATUS_LABELS,
-} from '@baudoku/documentation';
+export { GPS_CORRECTION_SERVICE_LABELS, RTK_FIX_STATUS_LABELS } from '@baudoku/documentation';
 
 // Mobile uses full-length labels (shared package has abbreviated "Ext." forms)
 export const gpsSourceLabels: Record<string, string> = {

@@ -57,8 +57,7 @@ export function useGpsCapture(): UseGpsCaptureReturn {
       });
 
       const isMocked =
-        Platform.OS === 'android' &&
-        (location as unknown as { mocked?: boolean }).mocked === true;
+        Platform.OS === 'android' && (location as unknown as { mocked?: boolean }).mocked === true;
 
       if (isMocked && !allowMockLocation) {
         setError('Externes GPS ist in den Einstellungen deaktiviert.');
@@ -84,8 +83,7 @@ export function useGpsCapture(): UseGpsCaptureReturn {
       setCapturing(false);
       return gps;
     } catch (e) {
-      const msg =
-        e instanceof Error ? e.message : 'GPS-Position konnte nicht erfasst werden.';
+      const msg = e instanceof Error ? e.message : 'GPS-Position konnte nicht erfasst werden.';
       setError(msg);
       setCapturing(false);
       return null;

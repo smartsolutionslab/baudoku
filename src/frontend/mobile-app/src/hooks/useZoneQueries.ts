@@ -18,7 +18,13 @@ export function useCreateZone() {
 
 export function useUpdateZone() {
   return useSyncMutation({
-    mutationFn: ({ id, data }: { id: ZoneId; data: Partial<Omit<NewZone, 'id' | 'version' | 'projectId'>> }) => zoneRepo.update(id, data),
+    mutationFn: ({
+      id,
+      data,
+    }: {
+      id: ZoneId;
+      data: Partial<Omit<NewZone, 'id' | 'version' | 'projectId'>>;
+    }) => zoneRepo.update(id, data),
     errorMessage: 'Zone konnte nicht aktualisiert werden',
     invalidateKeys: [['zones']],
   });

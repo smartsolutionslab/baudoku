@@ -1,14 +1,14 @@
 module.exports = function (api) {
   api.cache(true);
   return {
-    presets: ["babel-preset-expo"],
+    presets: ['babel-preset-expo'],
     plugins: [
-      ["inline-import", { extensions: [".sql"] }],
+      ['inline-import', { extensions: ['.sql'] }],
       [
-        "module-resolver",
+        'module-resolver',
         {
           alias: {
-            "@": "./src",
+            '@': './src',
           },
         },
       ],

@@ -52,7 +52,7 @@ export function useInstallations(projectId: ProjectId) {
     queryKey: ['projects', projectId, 'installations'],
     queryFn: async () => {
       const result = await apiGet<PagedResult<Installation>>(
-        `/api/documentation/installations?projectId=${projectId}`
+        `/api/documentation/installations?projectId=${projectId}`,
       );
       return result.items;
     },
@@ -61,28 +61,46 @@ export function useInstallations(projectId: ProjectId) {
 }
 
 export function useInstallation(installationId: InstallationId) {
-  return useApiQuery<Installation>(['installations', installationId], `/api/documentation/installations/${installationId}`, !!installationId);
+  return useApiQuery<Installation>(
+    ['installations', installationId],
+    `/api/documentation/installations/${installationId}`,
+    !!installationId,
+  );
 }
 
 export function useCreateInstallation(projectId: ProjectId) {
   return useApiMutation<CreateInstallationInput, Installation>({
-    mutationFn: (data) => apiPost<Installation>('/api/documentation/installations', toBackendRequest(data, projectId)),
+    mutationFn: (data) =>
+      apiPost<Installation>('/api/documentation/installations', toBackendRequest(data, projectId)),
     invalidateKeys: [['projects', projectId, 'installations']],
   });
 }
 
 export function useUpdateInstallation(installationId: InstallationId, projectId: ProjectId) {
-  return useApiPut<Installation, InstallationFormData>(`/api/documentation/installations/${installationId}`, [['installations', installationId], ['projects', projectId, 'installations']]);
+  return useApiPut<Installation, InstallationFormData>(
+    `/api/documentation/installations/${installationId}`,
+    [
+      ['installations', installationId],
+      ['projects', projectId, 'installations'],
+    ],
+  );
 }
 
 export function useDeleteInstallation(projectId: ProjectId) {
-  return useApiDelete((id) => `/api/documentation/installations/${id}`, [['projects', projectId, 'installations']]);
+  return useApiDelete(
+    (id) => `/api/documentation/installations/${id}`,
+    [['projects', projectId, 'installations']],
+  );
 }
 
 // ─── Photos ─────────────────────────────────────────────────────
 
 export function usePhotos(installationId: InstallationId) {
-  return useApiQuery<Photo[]>(['installations', installationId, 'photos'], `/api/documentation/installations/${installationId}/photos`, !!installationId);
+  return useApiQuery<Photo[]>(
+    ['installations', installationId, 'photos'],
+    `/api/documentation/installations/${installationId}/photos`,
+    !!installationId,
+  );
 }
 
 export function useUploadPhoto(installationId: InstallationId) {
@@ -99,19 +117,33 @@ export function useUploadPhoto(installationId: InstallationId) {
 }
 
 export function useDeletePhoto(installationId: InstallationId) {
-  return useApiDelete((photoId) => `/api/documentation/installations/${installationId}/photos/${photoId}`, [['installations', installationId, 'photos']]);
+  return useApiDelete(
+    (photoId) => `/api/documentation/installations/${installationId}/photos/${photoId}`,
+    [['installations', installationId, 'photos']],
+  );
 }
 
 // ─── Measurements ───────────────────────────────────────────────
 
 export function useMeasurements(installationId: InstallationId) {
-  return useApiQuery<Measurement[]>(['installations', installationId, 'measurements'], `/api/documentation/installations/${installationId}/measurements`, !!installationId);
+  return useApiQuery<Measurement[]>(
+    ['installations', installationId, 'measurements'],
+    `/api/documentation/installations/${installationId}/measurements`,
+    !!installationId,
+  );
 }
 
 export function useCreateMeasurement(installationId: InstallationId) {
-  return useApiPost<Measurement, MeasurementFormData>(`/api/documentation/installations/${installationId}/measurements`, [['installations', installationId, 'measurements']]);
+  return useApiPost<Measurement, MeasurementFormData>(
+    `/api/documentation/installations/${installationId}/measurements`,
+    [['installations', installationId, 'measurements']],
+  );
 }
 
 export function useDeleteMeasurement(installationId: InstallationId) {
-  return useApiDelete((measurementId) => `/api/documentation/installations/${installationId}/measurements/${measurementId}`, [['installations', installationId, 'measurements']]);
+  return useApiDelete(
+    (measurementId) =>
+      `/api/documentation/installations/${installationId}/measurements/${measurementId}`,
+    [['installations', installationId, 'measurements']],
+  );
 }

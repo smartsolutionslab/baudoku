@@ -23,13 +23,9 @@ const SCREEN_WIDTH = Dimensions.get('window').width;
 const GAP = Spacing.sm;
 const IMAGE_SIZE = (SCREEN_WIDTH - Spacing.lg * 2 - Spacing.lg * 2 - GAP) / 2;
 
-export function PhotoGallery({
-  photos,
-  onPhotoPress,
-  onAddPhoto,
-}: PhotoGalleryProps) {
+export function PhotoGallery({ photos, onPhotoPress, onAddPhoto }: PhotoGalleryProps) {
   if (photos.length === 0 && !onAddPhoto) {
-    return <EmptyState icon='camera' title='Noch keine Fotos' />;
+    return <EmptyState icon="camera" title="Noch keine Fotos" />;
   }
 
   return (
@@ -41,30 +37,23 @@ export function PhotoGallery({
           onPress={() => onPhotoPress?.(photo)}
           activeOpacity={onPhotoPress ? 0.7 : 1}
         >
-          <Image
-            source={{ uri: photo.localPath }}
-            style={styles.image}
-            resizeMode='cover'
-          />
+          <Image source={{ uri: photo.localPath }} style={styles.image} resizeMode="cover" />
           <View style={styles.badge}>
-            <StatusBadge
-              status={photo.type}
-              label={PHOTO_TYPE_LABELS[photo.type] ?? photo.type}
-            />
+            <StatusBadge status={photo.type} label={PHOTO_TYPE_LABELS[photo.type] ?? photo.type} />
           </View>
           {photo.uploadStatus === 'uploading' && (
             <View style={styles.uploadOverlay}>
-              <ActivityIndicator size='small' color={Colors.card} />
+              <ActivityIndicator size="small" color={Colors.card} />
             </View>
           )}
           {photo.uploadStatus === 'failed' && (
             <View style={styles.uploadOverlay}>
-              <FontAwesome name='warning' size={18} color={Colors.danger} />
+              <FontAwesome name="warning" size={18} color={Colors.danger} />
             </View>
           )}
           {photo.uploadStatus === 'pending' && (
             <View style={styles.uploadOverlay}>
-              <FontAwesome name='clock-o' size={16} color={Colors.card} />
+              <FontAwesome name="clock-o" size={16} color={Colors.card} />
             </View>
           )}
         </TouchableOpacity>
@@ -76,7 +65,7 @@ export function PhotoGallery({
           onPress={onAddPhoto}
           activeOpacity={0.7}
         >
-          <FontAwesome name='camera' size={28} color={Colors.textTertiary} />
+          <FontAwesome name="camera" size={28} color={Colors.textTertiary} />
           <Text style={styles.addText}>Hinzufügen</Text>
         </TouchableOpacity>
       )}

@@ -9,9 +9,7 @@ type ProjectCardProps = {
 };
 
 export function ProjectCard({ project, onPress }: ProjectCardProps) {
-  const address = [project.street, project.zipCode, project.city]
-    .filter(Boolean)
-    .join(', ');
+  const address = [project.street, project.zipCode, project.city].filter(Boolean).join(', ');
 
   return (
     <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.7}>

@@ -1,10 +1,6 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
-import {
-  calculateGpsQuality,
-  gpsSourceLabels,
-  type GpsQualityResult,
-} from '../../utils';
+import { calculateGpsQuality, gpsSourceLabels, type GpsQualityResult } from '../../utils';
 import { Colors, Spacing, FontSize, FontFamily } from '../../styles/tokens';
 
 type QualityIndicatorProps = {
@@ -40,16 +36,14 @@ export function QualityIndicator({
       <View style={styles.topRow}>
         <GradeBadge quality={quality} />
         <Text style={styles.qualityLabel}>{quality.label}</Text>
-        <Text style={styles.accuracyText}>
-          {horizontalAccuracy.toFixed(1)} m
-        </Text>
+        <Text style={styles.accuracyText}>{horizontalAccuracy.toFixed(1)} m</Text>
       </View>
 
       <View style={styles.detailRow}>
         {satelliteCount != null && (
           <View style={styles.detailItem}>
             <FontAwesome
-              name='signal'
+              name="signal"
               size={11}
               color={Colors.textTertiary}
               style={styles.detailIcon}
@@ -60,14 +54,12 @@ export function QualityIndicator({
         {gpsSource && (
           <View style={styles.detailItem}>
             <FontAwesome
-              name='location-arrow'
+              name="location-arrow"
               size={11}
               color={Colors.textTertiary}
               style={styles.detailIcon}
             />
-            <Text style={styles.detailText}>
-              {gpsSourceLabels[gpsSource] ?? gpsSource}
-            </Text>
+            <Text style={styles.detailText}>{gpsSourceLabels[gpsSource] ?? gpsSource}</Text>
           </View>
         )}
         {hdop != null && (
@@ -80,14 +72,12 @@ export function QualityIndicator({
       {quality.grade === 'D' && (
         <View style={styles.warningBanner}>
           <FontAwesome
-            name='exclamation-triangle'
+            name="exclamation-triangle"
             size={12}
             color={Colors.danger}
             style={styles.warningIcon}
           />
-          <Text style={styles.warningText}>
-            Geringe GPS-Qualität — Position ggf. ungenau
-          </Text>
+          <Text style={styles.warningText}>Geringe GPS-Qualität — Position ggf. ungenau</Text>
         </View>
       )}
     </View>

@@ -1,4 +1,13 @@
-import type { ProjectId, ZoneId, InstallationId, PhotoId, MeasurementId, Latitude, Longitude, DepthMm } from '@baudoku/core';
+import type {
+  ProjectId,
+  ZoneId,
+  InstallationId,
+  PhotoId,
+  MeasurementId,
+  Latitude,
+  Longitude,
+  DepthMm,
+} from '@baudoku/core';
 
 export type GpsPosition = {
   latitude: Latitude;
@@ -51,26 +60,13 @@ export type Installation = {
   version: number;
 };
 
-export type InstallationStatus =
-  | 'planned'
-  | 'in_progress'
-  | 'completed'
-  | 'inspected';
+export type InstallationStatus = 'planned' | 'in_progress' | 'completed' | 'inspected';
 
 export type GpsSource = 'internal_gps' | 'external_dgnss' | 'external_rtk';
 
-export type GpsCorrectionService =
-  | 'none'
-  | 'sapos_eps'
-  | 'sapos_heps'
-  | 'sapos_gpps';
+export type GpsCorrectionService = 'none' | 'sapos_eps' | 'sapos_heps' | 'sapos_gpps';
 
-export type RtkFixStatus =
-  | 'no_fix'
-  | 'autonomous'
-  | 'dgps'
-  | 'rtk_float'
-  | 'rtk_fixed';
+export type RtkFixStatus = 'no_fix' | 'autonomous' | 'dgps' | 'rtk_float' | 'rtk_fixed';
 
 export type Phase = 'L1' | 'L2' | 'L3' | 'N' | 'PE';
 

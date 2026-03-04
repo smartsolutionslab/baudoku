@@ -29,11 +29,9 @@ function extractExif(exif: Record<string, unknown> | null | undefined): ExifData
   const data: ExifData = {};
 
   if (typeof exif.GPSLatitude === 'number') data.gpsLatitude = toLatitude(exif.GPSLatitude);
-  if (typeof exif.GPSLongitude === 'number')
-    data.gpsLongitude = toLongitude(exif.GPSLongitude);
+  if (typeof exif.GPSLongitude === 'number') data.gpsLongitude = toLongitude(exif.GPSLongitude);
 
-  if (typeof exif.DateTimeOriginal === 'string')
-    data.dateTime = exif.DateTimeOriginal;
+  if (typeof exif.DateTimeOriginal === 'string') data.dateTime = exif.DateTimeOriginal;
   else if (typeof exif.DateTime === 'string') data.dateTime = exif.DateTime;
 
   const model = exif.Model ?? exif.model;
@@ -50,9 +48,7 @@ function processResult(result: ImagePicker.ImagePickerResult): CapturedPhoto | n
   const asset = result.assets[0];
   const localPath = savePhoto(asset.uri);
 
-  const exif = extractExif(
-    asset.exif as Record<string, unknown> | null | undefined
-  );
+  const exif = extractExif(asset.exif as Record<string, unknown> | null | undefined);
 
   return {
     localPath,
@@ -75,20 +71,17 @@ export function usePhotoCapture(): UsePhotoCaptureReturn {
     return processResult(result);
   }, []);
 
-  const pickFromGallery = useCallback(
-    async (): Promise<CapturedPhoto | null> => {
-      const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (!permission.granted) return null;
+  const pickFromGallery = useCallback(async (): Promise<CapturedPhoto | null> => {
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permission.granted) return null;
 
-      const result = await ImagePicker.launchImageLibraryAsync({
-        quality: 0.8,
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        exif: true,
-      });
-      return processResult(result);
-    },
-    []
-  );
+    const result = await ImagePicker.launchImageLibraryAsync({
+      quality: 0.8,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      exif: true,
+    });
+    return processResult(result);
+  }, []);
 
   return { takePhoto, pickFromGallery };
 }

@@ -1,14 +1,14 @@
-import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
-import { useRouter } from "expo-router";
-import { CameraView, useCameraPermissions } from "expo-camera";
-import { FontAwesome } from "@expo/vector-icons";
-import { useQrScanner } from "@/hooks";
-import { ScanOverlay } from "@/components/capture/ScanOverlay";
-import { Button } from "@/components/core";
-import { Colors, Spacing, FontSize, Radius } from "@/styles/tokens";
-import * as zoneRepo from "@/db/repositories/zoneRepo";
-import * as projectRepo from "@/db/repositories/projectRepo";
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
+import { useRouter } from 'expo-router';
+import { CameraView, useCameraPermissions } from 'expo-camera';
+import { FontAwesome } from '@expo/vector-icons';
+import { useQrScanner } from '@/hooks';
+import { ScanOverlay } from '@/components/capture/ScanOverlay';
+import { Button } from '@/components/core';
+import { Colors, Spacing, FontSize, Radius } from '@/styles/tokens';
+import * as zoneRepo from '@/db/repositories/zoneRepo';
+import * as projectRepo from '@/db/repositories/projectRepo';
 
 export default function ScanScreen() {
   const router = useRouter();
@@ -16,10 +16,16 @@ export default function ScanScreen() {
   const { scanned, scanResult, error, onBarcodeScanned, resetScanner } = useQrScanner();
   const goBack = () => router.back();
   const openZone = () => {
-    if (scanResult) router.replace(`/(tabs)/projects/zone/${scanResult.zoneId}?projectId=${scanResult.projectId}`);
+    if (scanResult)
+      router.replace(
+        `/(tabs)/projects/zone/${scanResult.zoneId}?projectId=${scanResult.projectId}`,
+      );
   };
   const openNewInstallation = () => {
-    if (scanResult) router.replace(`/(tabs)/capture/new?projectId=${scanResult.projectId}&zoneId=${scanResult.zoneId}`);
+    if (scanResult)
+      router.replace(
+        `/(tabs)/capture/new?projectId=${scanResult.projectId}&zoneId=${scanResult.zoneId}`,
+      );
   };
 
   const [torch, setTorch] = useState(false);
@@ -31,9 +37,9 @@ export default function ScanScreen() {
       const { zoneId, projectId } = scanResult;
       (async () => {
         const zone = await zoneRepo.getById(zoneId);
-        setZoneName(zone?.name ?? "Unbekannte Zone");
+        setZoneName(zone?.name ?? 'Unbekannte Zone');
         const project = await projectRepo.getById(projectId);
-        setProjectName(project?.name ?? "Unbekanntes Projekt");
+        setProjectName(project?.name ?? 'Unbekanntes Projekt');
       })();
     }
   }, [scanResult]);
@@ -49,11 +55,18 @@ export default function ScanScreen() {
   if (!permission.granted) {
     return (
       <View style={styles.centered}>
-        <FontAwesome name="camera" size={48} color={Colors.textTertiary} style={{ marginBottom: Spacing.lg }} />
-        <Text style={styles.permissionText}>
-          Kamerazugriff wird für den QR-Scanner benötigt.
-        </Text>
-        <Button title="Berechtigung erteilen" onPress={requestPermission} style={{ marginBottom: Spacing.md, paddingHorizontal: Spacing.xl }} />
+        <FontAwesome
+          name="camera"
+          size={48}
+          color={Colors.textTertiary}
+          style={{ marginBottom: Spacing.lg }}
+        />
+        <Text style={styles.permissionText}>Kamerazugriff wird für den QR-Scanner benötigt.</Text>
+        <Button
+          title="Berechtigung erteilen"
+          onPress={requestPermission}
+          style={{ marginBottom: Spacing.md, paddingHorizontal: Spacing.xl }}
+        />
         <TouchableOpacity style={styles.backBtn} onPress={goBack}>
           <Text style={styles.backBtnText}>Zurück</Text>
         </TouchableOpacity>
@@ -67,7 +80,7 @@ export default function ScanScreen() {
         style={StyleSheet.absoluteFill}
         facing="back"
         enableTorch={torch}
-        barcodeScannerSettings={{ barcodeTypes: ["qr"] }}
+        barcodeScannerSettings={{ barcodeTypes: ['qr'] }}
         onBarcodeScanned={scanned ? undefined : onBarcodeScanned}
       />
       <ScanOverlay />
@@ -80,7 +93,7 @@ export default function ScanScreen() {
         <Text style={styles.topTitle}>QR-Scanner</Text>
         <TouchableOpacity onPress={() => setTorch((t) => !t)} style={styles.iconBtn}>
           <FontAwesome
-            name={torch ? "flash" : "flash"}
+            name={torch ? 'flash' : 'flash'}
             size={20}
             color={torch ? Colors.warning : Colors.white}
           />
@@ -105,15 +118,19 @@ export default function ScanScreen() {
               <Text style={styles.successZone}>{zoneName}</Text>
               <Text style={styles.successProject}>{projectName}</Text>
               <View style={styles.actionRow}>
-                <TouchableOpacity style={[styles.actionBtn, styles.actionBtnSecondary]} onPress={openZone} >
+                <TouchableOpacity
+                  style={[styles.actionBtn, styles.actionBtnSecondary]}
+                  onPress={openZone}
+                >
                   <FontAwesome name="folder-open" size={16} color={Colors.primary} />
                   <Text style={styles.actionBtnSecondaryText}>Zur Zone</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={[styles.actionBtn, styles.actionBtnPrimary]} onPress={openNewInstallation} >
+                <TouchableOpacity
+                  style={[styles.actionBtn, styles.actionBtnPrimary]}
+                  onPress={openNewInstallation}
+                >
                   <FontAwesome name="plus" size={16} color={Colors.white} />
-                  <Text style={styles.actionBtnPrimaryText}>
-                    Neue Installation
-                  </Text>
+                  <Text style={styles.actionBtnPrimaryText}>Neue Installation</Text>
                 </TouchableOpacity>
               </View>
               <TouchableOpacity style={styles.rescanLink} onPress={resetScanner}>
@@ -139,15 +156,15 @@ const styles = StyleSheet.create({
   },
   centered: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: Colors.background,
     padding: Spacing.xl,
   },
   permissionText: {
     fontSize: FontSize.body,
     color: Colors.textSecondary,
-    textAlign: "center",
+    textAlign: 'center',
     marginBottom: Spacing.lg,
   },
   backBtn: {
@@ -158,13 +175,13 @@ const styles = StyleSheet.create({
     fontSize: FontSize.body,
   },
   topBar: {
-    position: "absolute",
+    position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     paddingTop: 56,
     paddingHorizontal: Spacing.lg,
     paddingBottom: Spacing.md,
@@ -172,16 +189,16 @@ const styles = StyleSheet.create({
   topTitle: {
     color: Colors.white,
     fontSize: FontSize.headline,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   iconBtn: {
     width: 40,
     height: 40,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   resultContainer: {
-    position: "absolute",
+    position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
@@ -192,13 +209,13 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.card,
     borderRadius: Radius.lg,
     padding: Spacing.lg,
-    alignItems: "center",
+    alignItems: 'center',
     gap: Spacing.sm,
   },
   errorText: {
     fontSize: FontSize.body,
     color: Colors.danger,
-    textAlign: "center",
+    textAlign: 'center',
   },
   retryBtn: {
     backgroundColor: Colors.primary,
@@ -209,24 +226,24 @@ const styles = StyleSheet.create({
   },
   retryBtnText: {
     color: Colors.white,
-    fontWeight: "600",
+    fontWeight: '600',
     fontSize: FontSize.body,
   },
   successCard: {
     backgroundColor: Colors.card,
     borderRadius: Radius.lg,
     padding: Spacing.lg,
-    alignItems: "center",
+    alignItems: 'center',
     gap: Spacing.xs,
   },
   successTitle: {
     fontSize: FontSize.callout,
-    fontWeight: "600",
+    fontWeight: '600',
     color: Colors.success,
   },
   successZone: {
     fontSize: FontSize.headline,
-    fontWeight: "700",
+    fontWeight: '700',
     color: Colors.textPrimary,
   },
   successProject: {
@@ -235,12 +252,12 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
   },
   actionRow: {
-    flexDirection: "row",
+    flexDirection: 'row',
     gap: Spacing.sm,
   },
   actionBtn: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: Spacing.sm,
     paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.lg,
@@ -251,7 +268,7 @@ const styles = StyleSheet.create({
   },
   actionBtnPrimaryText: {
     color: Colors.white,
-    fontWeight: "600",
+    fontWeight: '600',
     fontSize: FontSize.body,
   },
   actionBtnSecondary: {
@@ -261,7 +278,7 @@ const styles = StyleSheet.create({
   },
   actionBtnSecondaryText: {
     color: Colors.primary,
-    fontWeight: "600",
+    fontWeight: '600',
     fontSize: FontSize.body,
   },
   rescanLink: {
@@ -275,7 +292,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.card,
     borderRadius: Radius.lg,
     padding: Spacing.lg,
-    alignItems: "center",
+    alignItems: 'center',
     gap: Spacing.sm,
   },
   loadingText: {
