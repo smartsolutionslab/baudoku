@@ -10,6 +10,10 @@ export function inputClassName(hasError?: boolean) {
   }`;
 }
 
+export const cardClassName = 'rounded-xl border border-gray-200 bg-white p-6';
+
+export const formActionsClassName = 'flex justify-end gap-3';
+
 export const buttonClassName = {
   primary:
     'inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-blue-700 transition-colors',

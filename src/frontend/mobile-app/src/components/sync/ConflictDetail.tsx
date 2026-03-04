@@ -10,33 +10,33 @@ type ConflictDetailProps = {
 };
 
 export function ConflictDetail({ conflict, onResolve, isResolving }: ConflictDetailProps) {
-  const handleClientWins = () => {
-    Alert.alert(
-      'Eigene Version verwenden',
-      'Soll Ihre lokale Version die Server-Version ersetzen?',
-      [
-        { text: 'Abbrechen', style: 'cancel' },
-        {
-          text: 'Ja, meine Version',
-          onPress: () => onResolve('client_wins'),
-        },
-      ],
-    );
+  const confirmResolve = (
+    title: string,
+    message: string,
+    confirmText: string,
+    strategy: string,
+  ) => {
+    Alert.alert(title, message, [
+      { text: 'Abbrechen', style: 'cancel' },
+      { text: confirmText, onPress: () => onResolve(strategy) },
+    ]);
   };
 
-  const handleServerWins = () => {
-    Alert.alert(
+  const handleClientWins = () =>
+    confirmResolve(
+      'Eigene Version verwenden',
+      'Soll Ihre lokale Version die Server-Version ersetzen?',
+      'Ja, meine Version',
+      'client_wins',
+    );
+
+  const handleServerWins = () =>
+    confirmResolve(
       'Server-Version verwenden',
       'Soll die Server-Version Ihre lokale Version ersetzen?',
-      [
-        { text: 'Abbrechen', style: 'cancel' },
-        {
-          text: 'Ja, Server-Version',
-          onPress: () => onResolve('server_wins'),
-        },
-      ],
+      'Ja, Server-Version',
+      'server_wins',
     );
-  };
 
   return (
     <ScrollView style={styles.container}>

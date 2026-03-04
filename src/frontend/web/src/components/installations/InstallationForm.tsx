@@ -12,6 +12,7 @@ import {
 import { formatZoneLabel, type Zone } from '@baudoku/projects';
 import { optionsFromLabels } from '@baudoku/core';
 import { Button } from '../common/Button';
+import { formActionsClassName } from '../common/formStyles';
 import { GpsPositionSelector } from './GpsPositionSelector';
 import type { GpsFormData } from './GpsPositionSelector';
 import { InstallationBasicsSection } from './InstallationBasicsSection';
@@ -95,7 +96,7 @@ export function InstallationForm({
 
       <InstallationNotesSection register={register} />
 
-      <div className="flex justify-end gap-3">
+      <div className={formActionsClassName}>
         <Button type="button" variant="secondary" onClick={onCancel}>
           Abbrechen
         </Button>

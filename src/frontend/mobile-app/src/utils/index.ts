@@ -4,6 +4,16 @@ export function requiredParam(value: string | undefined): string {
   return value;
 }
 
+/** Strip entries whose value is an empty (or whitespace-only) string before validation. */
+export function stripEmptyStrings(obj: Record<string, unknown>): Record<string, unknown> {
+  const result: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(obj)) {
+    if (typeof v === 'string' && v.trim() === '') continue;
+    result[k] = v;
+  }
+  return result;
+}
+
 export { getDeviceId } from './deviceId';
 export { formatDate, formatDateTime } from '@baudoku/core';
 export { toGpsPosition } from './gpsMapping';

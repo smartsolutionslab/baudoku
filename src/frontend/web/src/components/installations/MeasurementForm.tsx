@@ -11,6 +11,7 @@ import { FormField } from '../common/FormField';
 import { FormSelect } from '../common/FormSelect';
 import { FormTextarea } from '../common/FormTextarea';
 import { Button } from '../common/Button';
+import { formActionsClassName } from '../common/formStyles';
 
 type MeasurementFormProps = {
   onSubmit: (data: MeasurementFormData) => void | Promise<void>;
@@ -97,7 +98,7 @@ export function MeasurementForm({ onSubmit, onCancel, isSubmitting }: Measuremen
         </div>
       </div>
 
-      <div className="flex justify-end gap-3">
+      <div className={formActionsClassName}>
         <Button type="button" variant="secondary" onClick={onCancel}>
           Abbrechen
         </Button>

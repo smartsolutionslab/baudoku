@@ -10,4 +10,11 @@ export { FormSelect } from './FormSelect';
 export { FormTextarea } from './FormTextarea';
 export { SearchBar } from './SearchBar';
 export { StatusBadge } from './StatusBadge';
-export { inputClassName, buttonClassName } from './formStyles';
+export {
+  inputClassName,
+  buttonClassName,
+  labelClassName,
+  errorClassName,
+  cardClassName,
+  formActionsClassName,
+} from './formStyles';

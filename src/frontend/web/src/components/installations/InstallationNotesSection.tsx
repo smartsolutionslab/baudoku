@@ -3,7 +3,7 @@ import { FormTextarea } from '../common/FormTextarea';
 import { FormSection } from '../common/FormSection';
 
 type NotesProps = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- register must accept any form shape
   register: UseFormRegister<any>;
 };
 

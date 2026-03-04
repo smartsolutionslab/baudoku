@@ -23,3 +23,10 @@ export const PROJECT_STATUS_LABELS: Record<(typeof PROJECT_STATUSES)[number], st
   completed: 'Abgeschlossen',
   archived: 'Archiviert',
 };
+
+// Pre-computed options for dropdowns / pickers
+export const PROJECT_STATUS_OPTIONS = PROJECT_STATUSES.map((s) => ({
+  value: s,
+  label: PROJECT_STATUS_LABELS[s],
+}));
+export const ZONE_TYPE_OPTIONS = ZONE_TYPES.map((t) => ({ value: t, label: ZONE_TYPE_LABELS[t] }));
