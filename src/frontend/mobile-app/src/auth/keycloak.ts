@@ -29,7 +29,8 @@ export async function loginWithKeycloak(): Promise<AuthTokens> {
   const result = await request.promptAsync(discovery);
 
   if (result.type !== 'success' || !result.params.code) {
-    const message = result.type === 'cancel'
+    const message =
+      result.type === 'cancel'
         ? 'Anmeldung abgebrochen'
         : `Anmeldung fehlgeschlagen: ${result.type}`;
     throw new Error(message);
@@ -86,7 +87,10 @@ export async function logoutFromKeycloak(idToken: string): Promise<void> {
   if (!discovery.endSessionEndpoint) return;
 
   try {
-    await fetch(`${discovery.endSessionEndpoint}?id_token_hint=${idToken}&post_logout_redirect_uri=${encodeURIComponent(redirectUri)}`, { method: 'GET' });
+    await fetch(
+      `${discovery.endSessionEndpoint}?id_token_hint=${idToken}&post_logout_redirect_uri=${encodeURIComponent(redirectUri)}`,
+      { method: 'GET' },
+    );
   } catch {
     // Logout-Fehler ignorieren — Tokens werden lokal gelöscht
   }

@@ -1,4 +1,9 @@
-import { createRouter, createRootRouteWithContext, createRoute, redirect } from '@tanstack/react-router';
+import {
+  createRouter,
+  createRootRouteWithContext,
+  createRoute,
+  redirect,
+} from '@tanstack/react-router';
 import { RootLayout } from './routes/__root';
 import { DashboardPage } from './routes/index';
 import { LoginPage } from './routes/login';

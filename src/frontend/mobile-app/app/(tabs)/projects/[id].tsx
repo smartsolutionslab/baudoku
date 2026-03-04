@@ -1,6 +1,12 @@
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
-import { useProject, useZonesByProject, useDeleteProject, useZoneTree, useConfirmDelete } from '@/hooks';
+import {
+  useProject,
+  useZonesByProject,
+  useDeleteProject,
+  useZoneTree,
+  useConfirmDelete,
+} from '@/hooks';
 import { ZoneTree } from '@/components/projects';
 import { StatusBadge, EmptyState, FloatingActionButton, ActionBar } from '@/components/common';
 import { Colors, Spacing, FontSize, Radius } from '@/styles/tokens';

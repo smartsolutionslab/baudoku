@@ -10,7 +10,14 @@ type FormSelectProps = SelectHTMLAttributes<HTMLSelectElement> & {
   placeholder?: string;
 };
 
-export function FormSelect({label, error, register, options, placeholder, ...props}: FormSelectProps) {
+export function FormSelect({
+  label,
+  error,
+  register,
+  options,
+  placeholder,
+  ...props
+}: FormSelectProps) {
   return (
     <div>
       <label className={labelClassName}>{label}</label>

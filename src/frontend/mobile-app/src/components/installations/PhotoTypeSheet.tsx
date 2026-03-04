@@ -14,11 +14,7 @@ export function PhotoTypeSheet({ visible, onSelect, onClose }: PhotoTypeSheetPro
   return (
     <OptionSheet visible={visible} onClose={onClose} title="Foto-Typ wählen">
       {PHOTO_TYPES.map((pt) => (
-        <TouchableOpacity
-          key={pt}
-          style={optionSheetStyles.option}
-          onPress={() => onSelect(pt)}
-        >
+        <TouchableOpacity key={pt} style={optionSheetStyles.option} onPress={() => onSelect(pt)}>
           <Text style={optionSheetStyles.optionText}>{PHOTO_TYPE_LABELS[pt]}</Text>
         </TouchableOpacity>
       ))}

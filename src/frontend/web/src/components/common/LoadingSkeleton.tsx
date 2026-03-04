@@ -14,9 +14,7 @@ export function LoadingSkeleton({
       <div className="h-8 w-48 animate-pulse rounded bg-gray-200" />
       <div
         className={
-          layout === 'grid'
-            ? 'mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3'
-            : 'mt-6 space-y-3'
+          layout === 'grid' ? 'mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3' : 'mt-6 space-y-3'
         }
       >
         {Array.from({ length: count }).map((_, i) => (

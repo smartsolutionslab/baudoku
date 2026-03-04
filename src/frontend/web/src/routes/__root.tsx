@@ -8,7 +8,8 @@ const navItems = [
   { to: '/projects', label: 'Projekte', icon: FolderIcon },
 ] as const;
 
-const sidebarBase =  'fixed inset-y-0 left-0 z-40 flex w-64 flex-col bg-white border-r border-gray-200 transition-transform duration-200 lg:static lg:translate-x-0';
+const sidebarBase =
+  'fixed inset-y-0 left-0 z-40 flex w-64 flex-col bg-white border-r border-gray-200 transition-transform duration-200 lg:static lg:translate-x-0';
 
 export function RootLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -23,13 +24,14 @@ export function RootLayout() {
     <div className="flex h-screen overflow-hidden bg-gray-50">
       {/* Mobile overlay */}
       {sidebarOpen && (
-        <div className="fixed inset-0 z-30 bg-black/50 lg:hidden" onClick={() => setSidebarOpen(false)} />
+        <div
+          className="fixed inset-0 z-30 bg-black/50 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
       )}
 
       {/* Sidebar */}
-      <aside
-        className={`${sidebarBase} ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}
-      >
+      <aside className={`${sidebarBase} ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         {/* Logo */}
         <div className="flex h-16 items-center gap-2 border-b border-gray-200 px-6">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-sm font-bold text-white">

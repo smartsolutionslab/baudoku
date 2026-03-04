@@ -35,11 +35,7 @@ export function InstallationCableSection({ register, errors, phaseOptions }: Cab
         step="0.1"
         suffix="m"
       />
-      <FormField
-        label="Stromkreis-ID"
-        error={errors.circuitId}
-        register={register('circuitId')}
-      />
+      <FormField label="Stromkreis-ID" error={errors.circuitId} register={register('circuitId')} />
       <FormField label="Sicherungstyp" error={errors.fuseType} register={register('fuseType')} />
       <FormField
         label="Nennstrom"

@@ -49,7 +49,11 @@ export default function InstallationDetailScreen() {
   const { confirmDelete } = useConfirmDelete();
 
   const { value: showSourceSheet, open: openSourceSheet, close: closeSourceSheet } = useToggle();
-  const { value: showMeasurementForm, open: openMeasurementForm, close: closeMeasurementForm } = useToggle();
+  const {
+    value: showMeasurementForm,
+    open: openMeasurementForm,
+    close: closeMeasurementForm,
+  } = useToggle();
 
   const handleDeleteMeasurement = useCallback(
     (m: Measurement) => {
@@ -138,7 +142,7 @@ export default function InstallationDetailScreen() {
             void saveAnnotation({ id: photoId, annotation });
           }}
           showSourceSheet={showSourceSheet}
-          onShowSourceSheet={(show) => show ? openSourceSheet() : closeSourceSheet()}
+          onShowSourceSheet={(show) => (show ? openSourceSheet() : closeSourceSheet())}
         />
 
         <InstallationMeasurementSection

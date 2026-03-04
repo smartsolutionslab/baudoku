@@ -6,9 +6,10 @@ import type { PhotoId } from '@baudoku/core';
 import { XIcon } from '@/components/icons';
 
 function getPhotoUrl(photo: Photo, variant: 'full' | 'thumbnail' = 'full'): string | undefined {
-  const path = variant === 'full'
-    ? (photo.remotePath ?? photo.thumbnailPath)
-    : (photo.thumbnailPath ?? photo.remotePath);
+  const path =
+    variant === 'full'
+      ? (photo.remotePath ?? photo.thumbnailPath)
+      : (photo.thumbnailPath ?? photo.remotePath);
   return path ? `${getBaseUrl()}${path}` : undefined;
 }
 
@@ -46,7 +47,10 @@ export function PhotoGallery({ photos, onDelete }: PhotoGalleryProps) {
             {onDelete && (
               <button
                 aria-label="Foto löschen"
-                onClick={(e) => {e.stopPropagation(); onDelete(photo.id);}}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete(photo.id);
+                }}
                 className="absolute right-2 top-2 rounded-full bg-black/40 p-1 text-white opacity-0 hover:bg-red-600 group-hover:opacity-100 transition-opacity"
               >
                 <XIcon />

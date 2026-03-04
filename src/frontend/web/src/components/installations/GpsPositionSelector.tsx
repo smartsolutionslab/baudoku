@@ -25,7 +25,12 @@ export function GpsPositionSelector({ gps, onGpsChange, error }: GpsPositionSele
   const [manualGps, setManualGps] = useState(false);
   const [manualLat, setManualLat] = useState('');
   const [manualLng, setManualLng] = useState('');
-  const {    position: browserPosition,    capturing,    error: captureError,    capturePosition  } = useGpsCapture();
+  const {
+    position: browserPosition,
+    capturing,
+    error: captureError,
+    capturePosition,
+  } = useGpsCapture();
 
   useEffect(() => {
     if (browserPosition) {
@@ -128,11 +133,7 @@ export function GpsPositionSelector({ gps, onGpsChange, error }: GpsPositionSele
               disabled={capturing}
               className="inline-flex items-center gap-2"
             >
-              {capturing ? (
-                <LoadingSpinner size="sm" />
-              ) : (
-                <GpsIcon />
-              )}
+              {capturing ? <LoadingSpinner size="sm" /> : <GpsIcon />}
               Browser-GPS erfassen
             </Button>
             <Button type="button" variant="secondary" onClick={() => setManualGps(true)}>

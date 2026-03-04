@@ -2,7 +2,10 @@ import type { ProjectId } from '@baudoku/core';
 import type { InstallationFormData } from '@baudoku/documentation';
 import type { GpsFormData } from '@/components/installations/GpsPositionSelector';
 
-export type CreateInstallationInput = InstallationFormData & { zoneId: string; gps: GpsFormData | null };
+export type CreateInstallationInput = InstallationFormData & {
+  zoneId: string;
+  gps: GpsFormData | null;
+};
 
 export function toBackendRequest(data: CreateInstallationInput, projectId: ProjectId) {
   return {

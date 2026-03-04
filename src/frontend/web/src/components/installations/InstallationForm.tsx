@@ -87,7 +87,11 @@ export function InstallationForm({
 
       <InstallationComponentSection register={register} errors={fieldErrors} />
 
-      <InstallationCableSection register={register} errors={fieldErrors} phaseOptions={phaseOptions} />
+      <InstallationCableSection
+        register={register}
+        errors={fieldErrors}
+        phaseOptions={phaseOptions}
+      />
 
       <InstallationNotesSection register={register} />
 

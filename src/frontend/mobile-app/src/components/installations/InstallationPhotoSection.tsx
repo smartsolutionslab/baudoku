@@ -86,7 +86,10 @@ export function InstallationPhotoSection({
               return (
                 <View
                   key={status}
-                  style={[styles.uploadBadge, { backgroundColor: UPLOAD_STATUS_COLORS[status] ?? Colors.textTertiary }]}
+                  style={[
+                    styles.uploadBadge,
+                    { backgroundColor: UPLOAD_STATUS_COLORS[status] ?? Colors.textTertiary },
+                  ]}
                 >
                   <Text style={styles.uploadBadgeText}>
                     {count} {UPLOAD_STATUS_LABELS[status] ?? 'ausstehend'}

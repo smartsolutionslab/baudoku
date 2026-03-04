@@ -1,7 +1,14 @@
 import { useMemo, useCallback } from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
-import { useZonesByProject, useInstallationsByZone, useDeleteZone, useUpdateZone, useConfirmDelete, useToggle } from '@/hooks';
+import {
+  useZonesByProject,
+  useInstallationsByZone,
+  useDeleteZone,
+  useUpdateZone,
+  useConfirmDelete,
+  useToggle,
+} from '@/hooks';
 import { InstallationCard } from '@/components/installations';
 import { StatusBadge, EmptyState, FloatingActionButton, ActionBar } from '@/components/common';
 import { ZoneQrSheet } from '@/components/projects';
