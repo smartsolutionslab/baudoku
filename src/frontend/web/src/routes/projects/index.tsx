@@ -8,6 +8,7 @@ import {
   FilterChips,
   EmptyState,
   ConfirmDialog,
+  LoadingSkeleton,
   buttonClassName,
   Button,
 } from '@/components/common';
@@ -39,7 +40,7 @@ export function ProjectListPage() {
   }, [allProjects, statusFilter]);
 
   if (isLoading) {
-    return <LoadingSkeleton />;
+    return <LoadingSkeleton count={6} layout="grid" />;
   }
 
   return (
@@ -137,18 +138,3 @@ export function ProjectListPage() {
   );
 }
 
-function LoadingSkeleton() {
-  return (
-    <div>
-      <div className="h-8 w-48 animate-pulse rounded bg-gray-200" />
-      <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {Array.from({ length: 6 }).map((_, i) => (
-          <div
-            key={i}
-            className="h-32 animate-pulse rounded-xl border border-gray-200 bg-gray-100"
-          />
-        ))}
-      </div>
-    </div>
-  );
-}

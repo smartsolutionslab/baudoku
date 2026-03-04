@@ -4,6 +4,7 @@ import * as Location from 'expo-location';
 import type { Latitude, Longitude } from '@baudoku/core';
 import { latitude as toLatitude, longitude as toLongitude } from '@baudoku/core';
 import { useSettingsStore } from '../store';
+import { GPS_MESSAGES } from '../constants/strings';
 
 export type GpsSource = 'internal_gps' | 'external_dgnss' | 'external_rtk';
 export type GpsCorrService = 'none' | 'sapos_eps' | 'sapos_heps' | 'sapos_gpps';
@@ -47,7 +48,7 @@ export function useGpsCapture(): UseGpsCaptureReturn {
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-        setError('Standort-Berechtigung wurde verweigert.');
+        setError(GPS_MESSAGES.permissionDenied);
         setCapturing(false);
         return null;
       }
@@ -60,7 +61,7 @@ export function useGpsCapture(): UseGpsCaptureReturn {
         Platform.OS === 'android' && (location as unknown as { mocked?: boolean }).mocked === true;
 
       if (isMocked && !allowMockLocation) {
-        setError('Externes GPS ist in den Einstellungen deaktiviert.');
+        setError(GPS_MESSAGES.mockDisabled);
         setCapturing(false);
         return null;
       }
@@ -83,7 +84,7 @@ export function useGpsCapture(): UseGpsCaptureReturn {
       setCapturing(false);
       return gps;
     } catch (e) {
-      const msg = e instanceof Error ? e.message : 'GPS-Position konnte nicht erfasst werden.';
+      const msg = e instanceof Error ? e.message : GPS_MESSAGES.captureFailed;
       setError(msg);
       setCapturing(false);
       return null;

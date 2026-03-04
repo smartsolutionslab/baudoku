@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, type FieldError } from 'react-hook-form';
 import { z } from 'zod';
 import { typedZodResolver } from '@/hooks/useZodForm';
 import {
@@ -11,12 +11,13 @@ import {
 } from '@baudoku/documentation';
 import { ZONE_TYPE_LABELS, type Zone } from '@baudoku/projects';
 import { optionsFromLabels } from '@baudoku/core';
-import { FormField } from '../common/FormField';
-import { FormSection } from '../common/FormSection';
-import { FormSelect } from '../common/FormSelect';
 import { Button } from '../common/Button';
 import { GpsPositionSelector } from './GpsPositionSelector';
 import type { GpsFormData } from './GpsPositionSelector';
+import { InstallationBasicsSection } from './InstallationBasicsSection';
+import { InstallationComponentSection } from './InstallationComponentSection';
+import { InstallationCableSection } from './InstallationCableSection';
+import { InstallationNotesSection } from './InstallationNotesSection';
 export type { GpsFormData } from './GpsPositionSelector';
 
 type InstallationFormProps = {
@@ -31,9 +32,7 @@ type InstallationFormProps = {
 };
 
 const statusOptions = optionsFromLabels(INSTALLATION_STATUS_LABELS);
-
 const typeOptions = INSTALLATION_TYPES.map((t) => ({ value: t, label: t }));
-
 const phaseOptions = PHASES.map((p) => ({ value: p, label: p }));
 
 const installationWithZoneSchema = installationSchema.extend({
@@ -63,6 +62,8 @@ export function InstallationForm({
   });
 
   const [gps, setGps] = useState<GpsFormData | null>(null);
+  const fieldErrors = errors as Record<string, FieldError | undefined>;
+  const reg = register;
 
   const submitWithGps = (data: InstallationWithZoneFormData) => {
     onSubmit(data, gps);
@@ -75,117 +76,21 @@ export function InstallationForm({
 
   return (
     <form onSubmit={handleSubmit(submitWithGps)} className="space-y-6">
-      <FormSection title="Grunddaten">
-        <FormSelect
-          label="Typ *"
-          error={errors.type}
-          register={register('type')}
-          options={typeOptions}
-          placeholder="Typ auswählen"
-        />
-        <FormSelect
-          label="Status"
-          error={errors.status}
-          register={register('status')}
-          options={statusOptions}
-        />
-        <div className="sm:col-span-2">
-          <FormSelect
-            label="Zone *"
-            error={errors.zoneId}
-            register={register('zoneId')}
-            options={zoneOptions}
-            placeholder="Zone auswählen"
-          />
-        </div>
-      </FormSection>
+      <InstallationBasicsSection
+        register={reg}
+        errors={fieldErrors}
+        typeOptions={typeOptions}
+        statusOptions={statusOptions}
+        zoneOptions={zoneOptions}
+      />
 
       <GpsPositionSelector gps={gps} onGpsChange={setGps} />
 
-      <FormSection title="Komponente">
-        <FormField
-          label="Hersteller"
-          error={errors.manufacturer}
-          register={register('manufacturer')}
-        />
-        <FormField label="Modell" error={errors.model} register={register('model')} />
-        <FormField
-          label="Seriennummer"
-          error={errors.serialNumber}
-          register={register('serialNumber')}
-        />
-      </FormSection>
+      <InstallationComponentSection register={reg} errors={fieldErrors} />
 
-      <FormSection title="Kabel / Elektrisch" columns={3}>
-        <FormField
-          label="Kabeltyp"
-          error={errors.cableType}
-          register={register('cableType')}
-          placeholder="z.B. NYM-J"
-        />
-        <FormField
-          label="Querschnitt"
-          error={errors.crossSectionMm2}
-          register={register('crossSectionMm2')}
-          type="number"
-          step="0.1"
-          suffix="mm²"
-        />
-        <FormField
-          label="Länge"
-          error={errors.lengthM}
-          register={register('lengthM')}
-          type="number"
-          step="0.1"
-          suffix="m"
-        />
-        <FormField
-          label="Stromkreis-ID"
-          error={errors.circuitId}
-          register={register('circuitId')}
-        />
-        <FormField label="Sicherungstyp" error={errors.fuseType} register={register('fuseType')} />
-        <FormField
-          label="Nennstrom"
-          error={errors.fuseRatingA}
-          register={register('fuseRatingA')}
-          type="number"
-          suffix="A"
-        />
-        <FormField
-          label="Spannung"
-          error={errors.voltageV}
-          register={register('voltageV')}
-          type="number"
-          suffix="V"
-        />
-        <FormSelect
-          label="Phase"
-          error={errors.phase}
-          register={register('phase')}
-          options={phaseOptions}
-          placeholder="—"
-        />
-        <FormField
-          label="Tiefe"
-          error={errors.depthMm}
-          register={register('depthMm')}
-          type="number"
-          suffix="mm"
-        />
-      </FormSection>
+      <InstallationCableSection register={reg} errors={fieldErrors} phaseOptions={phaseOptions} />
 
-      <div className="rounded-xl border border-gray-200 bg-white p-6">
-        <h2 className="text-base font-semibold text-gray-900">Notizen</h2>
-        <div className="mt-4">
-          <textarea
-            {...register('notes')}
-            rows={3}
-            className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-            placeholder="Zusätzliche Bemerkungen..."
-          />
-        </div>
-      </div>
+      <InstallationNotesSection register={reg} />
 
       <div className="flex justify-end gap-3">
         <Button type="button" variant="secondary" onClick={onCancel}>

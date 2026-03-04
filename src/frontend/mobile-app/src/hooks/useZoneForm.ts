@@ -1,8 +1,7 @@
-import { useState, useCallback } from 'react';
-import { Alert } from 'react-native';
 import type { ZoneId } from '@baudoku/core';
 import { zoneSchema, type ZoneFormData } from '../validation/schemas';
-import { useFormValidation } from './useFormValidation';
+import { MUTATION_ERRORS } from '../constants/strings';
+import { useEntityForm } from './useEntityForm';
 
 export type UseZoneFormOptions = {
   initialValues?: Partial<ZoneFormData>;
@@ -22,33 +21,14 @@ export function useZoneForm({
   defaultParentZoneId,
   onSubmit,
 }: UseZoneFormOptions): UseZoneFormReturn {
-  const [form, setForm] = useState<Partial<ZoneFormData>>({
-    type: 'building',
-    parentZoneId: defaultParentZoneId ?? null,
-    ...initialValues,
-  });
-  const { errors, setErrors, validate } = useFormValidation(zoneSchema);
-
-  const set = useCallback(
-    <K extends keyof ZoneFormData>(key: K, value: ZoneFormData[K]) => {
-      setForm((prev) => ({ ...prev, [key]: value }));
-      setErrors((prev) => {
-        const { [key]: _, ...next } = prev;
-        return next;
-      });
+  return useEntityForm({
+    schema: zoneSchema,
+    initialValues: {
+      type: 'building',
+      parentZoneId: defaultParentZoneId ?? null,
+      ...initialValues,
     },
-    [setErrors],
-  );
-
-  const handleSubmit = useCallback(async () => {
-    const data = validate(form);
-    if (!data) return;
-    try {
-      await onSubmit(data);
-    } catch {
-      Alert.alert('Fehler', 'Zone konnte nicht gespeichert werden.');
-    }
-  }, [form, onSubmit, validate]);
-
-  return { form, errors, set, handleSubmit };
+    onSubmit,
+    errorMessage: MUTATION_ERRORS.zoneSave,
+  });
 }

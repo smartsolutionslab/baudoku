@@ -1,8 +1,9 @@
 import { z } from 'zod';
+import { INSTALLATION_STATUSES, PHASES } from './constants';
 
 export const installationSchema = z.object({
   type: z.string().min(1, 'Typ erforderlich'),
-  status: z.enum(['planned', 'in_progress', 'completed', 'inspected']),
+  status: z.enum(INSTALLATION_STATUSES),
   manufacturer: z.string().optional(),
   model: z.string().optional(),
   serialNumber: z.string().optional(),
@@ -13,7 +14,7 @@ export const installationSchema = z.object({
   fuseType: z.string().optional(),
   fuseRatingA: z.coerce.number().positive().optional(),
   voltageV: z.coerce.number().int().positive().optional(),
-  phase: z.enum(['L1', 'L2', 'L3', 'N', 'PE']).optional(),
+  phase: z.enum(PHASES).optional(),
   depthMm: z.coerce.number().int().positive().optional(),
   notes: z.string().optional(),
 });

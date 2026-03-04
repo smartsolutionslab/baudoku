@@ -4,6 +4,7 @@ import { FormField } from '../common';
 import { Button, Headline } from '../core';
 import { MEASUREMENT_TYPES, type MeasurementTypePreset } from '../../constants';
 import { measurementSchema, type MeasurementFormData } from '../../validation/schemas';
+import { ERROR_TITLE, MUTATION_ERRORS } from '../../constants/strings';
 import { Colors, Spacing, FontSize, Radius } from '../../styles/tokens';
 
 type MeasurementFormProps = {
@@ -67,7 +68,7 @@ export function MeasurementForm({ onSubmit, onCancel, submitting }: MeasurementF
     try {
       await onSubmit(result.data);
     } catch {
-      Alert.alert('Fehler', 'Messung konnte nicht gespeichert werden.');
+      Alert.alert(ERROR_TITLE, MUTATION_ERRORS.measurementSave);
     }
   }, [form, onSubmit]);
 

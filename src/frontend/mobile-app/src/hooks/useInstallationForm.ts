@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { Alert } from 'react-native';
 import { installationSchema, type InstallationFormData } from '../validation/schemas';
+import { ERROR_TITLE, MUTATION_ERRORS } from '../constants/strings';
 import { useFormValidation } from './useFormValidation';
 import type { GpsPosition } from './useGpsCapture';
 
@@ -75,7 +76,7 @@ export function useInstallationForm({
       try {
         await onSubmit(data, currentGps);
       } catch {
-        Alert.alert('Fehler', 'Installation konnte nicht gespeichert werden.');
+        Alert.alert(ERROR_TITLE, MUTATION_ERRORS.installationSave);
       }
     },
     [form, onSubmit, validate],

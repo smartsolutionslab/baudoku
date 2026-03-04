@@ -1,6 +1,7 @@
 import * as installationRepo from '../db/repositories/installationRepo';
 import type { NewInstallation } from '../db/repositories/types';
 import type { ProjectId, ZoneId, InstallationId } from '@baudoku/core';
+import { MUTATION_ERRORS } from '../constants/strings';
 import { useListQuery, useSyncMutation } from './useQueryFactory';
 
 export function useInstallationsByZone(zoneId: ZoneId) {
@@ -23,7 +24,7 @@ export function useCreateInstallation() {
   return useSyncMutation({
     mutationFn: (data: Omit<NewInstallation, 'id' | 'createdAt' | 'updatedAt' | 'version'>) =>
       installationRepo.create(data),
-    errorMessage: 'Installation konnte nicht erstellt werden',
+    errorMessage: MUTATION_ERRORS.installationCreate,
     invalidateKeys: [['installations']],
     onSuccessKeys: (variables) => [
       ['installations', 'zone', variables.zoneId],
@@ -43,7 +44,7 @@ export function useUpdateInstallation() {
         Omit<NewInstallation, 'id' | 'createdAt' | 'updatedAt' | 'version' | 'projectId' | 'zoneId'>
       >;
     }) => installationRepo.update(id, data),
-    errorMessage: 'Installation konnte nicht aktualisiert werden',
+    errorMessage: MUTATION_ERRORS.installationUpdate,
     invalidateKeys: [['installations'], ['installation']],
   });
 }
@@ -51,7 +52,7 @@ export function useUpdateInstallation() {
 export function useDeleteInstallation() {
   return useSyncMutation({
     mutationFn: (id: InstallationId) => installationRepo.remove(id),
-    errorMessage: 'Installation konnte nicht gelöscht werden',
+    errorMessage: MUTATION_ERRORS.installationDelete,
     invalidateKeys: [['installations']],
   });
 }

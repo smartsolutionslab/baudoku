@@ -1,6 +1,7 @@
 import * as measurementRepo from '../db/repositories/measurementRepo';
 import type { NewMeasurement } from '../db/repositories/types';
 import type { InstallationId, MeasurementId } from '@baudoku/core';
+import { MUTATION_ERRORS } from '../constants/strings';
 import { useListQuery, useSyncMutation } from './useQueryFactory';
 
 export function useMeasurementsByInstallation(installationId: InstallationId) {
@@ -15,7 +16,7 @@ export function useAddMeasurement() {
   return useSyncMutation({
     mutationFn: (data: Omit<NewMeasurement, 'id' | 'version' | 'result'>) =>
       measurementRepo.create(data),
-    errorMessage: 'Messung konnte nicht hinzugefügt werden',
+    errorMessage: MUTATION_ERRORS.measurementAdd,
     invalidateKeys: [['measurements']],
     onSuccessKeys: (variables) => [['measurements', variables.installationId]],
   });
@@ -24,7 +25,7 @@ export function useAddMeasurement() {
 export function useDeleteMeasurement() {
   return useSyncMutation({
     mutationFn: (id: MeasurementId) => measurementRepo.remove(id),
-    errorMessage: 'Messung konnte nicht gelöscht werden',
+    errorMessage: MUTATION_ERRORS.measurementDelete,
     invalidateKeys: [['measurements']],
   });
 }

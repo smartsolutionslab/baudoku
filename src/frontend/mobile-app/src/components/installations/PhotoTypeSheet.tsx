@@ -1,6 +1,5 @@
-import { Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { BottomSheet } from '../common';
-import { Colors, Spacing, FontSize, Radius } from '../../styles/tokens';
+import { Text, TouchableOpacity } from 'react-native';
+import { OptionSheet, optionSheetStyles } from '../common/OptionSheet';
 
 const PHOTO_TYPES = [
   { value: 'before', label: 'Vorher' },
@@ -19,40 +18,16 @@ type PhotoTypeSheetProps = {
 
 export function PhotoTypeSheet({ visible, onSelect, onClose }: PhotoTypeSheetProps) {
   return (
-    <BottomSheet visible={visible} onClose={onClose} title="Foto-Typ wählen">
+    <OptionSheet visible={visible} onClose={onClose} title="Foto-Typ wählen">
       {PHOTO_TYPES.map((pt) => (
-        <TouchableOpacity key={pt.value} style={styles.option} onPress={() => onSelect(pt.value)}>
-          <Text style={styles.optionText}>{pt.label}</Text>
+        <TouchableOpacity
+          key={pt.value}
+          style={optionSheetStyles.option}
+          onPress={() => onSelect(pt.value)}
+        >
+          <Text style={optionSheetStyles.optionText}>{pt.label}</Text>
         </TouchableOpacity>
       ))}
-
-      <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
-        <Text style={styles.cancelText}>Abbrechen</Text>
-      </TouchableOpacity>
-    </BottomSheet>
+    </OptionSheet>
   );
 }
-
-const styles = StyleSheet.create({
-  option: {
-    paddingVertical: Spacing.md,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: Colors.separator,
-  },
-  optionText: {
-    fontSize: FontSize.callout,
-    color: Colors.textPrimary,
-  },
-  cancelButton: {
-    alignItems: 'center',
-    paddingVertical: 14,
-    marginTop: Spacing.lg,
-    backgroundColor: Colors.background,
-    borderRadius: Radius.md,
-  },
-  cancelText: {
-    fontSize: FontSize.callout,
-    fontWeight: '600',
-    color: Colors.textTertiary,
-  },
-});

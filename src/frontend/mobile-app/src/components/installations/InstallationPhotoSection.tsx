@@ -10,36 +10,11 @@ import {
 } from '@/components/installations';
 import { usePhotoFlow } from '@/hooks/usePhotoFlow';
 import { Colors, Spacing, FontSize, Radius } from '@/styles/tokens';
+import { UPLOAD_STATUS_COLORS, UPLOAD_STATUS_LABELS } from '@/utils/uploadStatus';
 import type { Photo } from '@/db/repositories/types';
 import type { InstallationId, PhotoId, Latitude, Longitude } from '@baudoku/core';
 
 const UPLOAD_STATUSES = ['pending', 'uploading', 'uploaded', 'failed'] as const;
-
-function uploadStatusColor(status: string): string {
-  switch (status) {
-    case 'uploaded':
-      return Colors.success;
-    case 'uploading':
-      return Colors.primary;
-    case 'failed':
-      return Colors.danger;
-    default:
-      return Colors.textTertiary;
-  }
-}
-
-function uploadStatusLabel(status: string): string {
-  switch (status) {
-    case 'uploaded':
-      return 'hochgeladen';
-    case 'uploading':
-      return 'lädt hoch';
-    case 'failed':
-      return 'fehlgeschlagen';
-    default:
-      return 'ausstehend';
-  }
-}
 
 type InstallationPhotoSectionProps = {
   installationId: InstallationId;
@@ -111,10 +86,10 @@ export function InstallationPhotoSection({
               return (
                 <View
                   key={status}
-                  style={[styles.uploadBadge, { backgroundColor: uploadStatusColor(status) }]}
+                  style={[styles.uploadBadge, { backgroundColor: UPLOAD_STATUS_COLORS[status] ?? Colors.textTertiary }]}
                 >
                   <Text style={styles.uploadBadgeText}>
-                    {count} {uploadStatusLabel(status)}
+                    {count} {UPLOAD_STATUS_LABELS[status] ?? 'ausstehend'}
                   </Text>
                 </View>
               );

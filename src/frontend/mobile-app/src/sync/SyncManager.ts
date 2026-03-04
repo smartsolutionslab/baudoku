@@ -5,6 +5,7 @@ import { applyServerDelta } from './applyServerDelta';
 import { getDeviceId } from '../utils';
 import { uploadPhotoChunked } from './chunkedUpload';
 import { useUploadStore } from '../store';
+import { SYNC_MESSAGES } from '../constants/strings';
 import type { SyncDeltaDto, ProcessSyncBatchResult, ChangeSetResult } from './syncApi';
 
 export type SyncResult = {
@@ -56,7 +57,7 @@ export class SyncManager {
       };
     } catch (error) {
       await syncRepo.markAsFailed(ids);
-      const message = error instanceof Error ? error.message : 'Unbekannter Fehler';
+      const message = error instanceof Error ? error.message : SYNC_MESSAGES.unknownError;
       return { appliedCount: 0, conflictCount: 0, errors: [message] };
     }
   }
@@ -76,7 +77,7 @@ export class SyncManager {
 
       return { pulled: result.changes.length, errors: [] };
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unbekannter Fehler';
+      const message = error instanceof Error ? error.message : SYNC_MESSAGES.unknownError;
       return { pulled: 0, errors: [message] };
     }
   }
@@ -124,7 +125,7 @@ export class SyncManager {
         store.markCompleted(photo.id);
         uploaded++;
       } catch (error) {
-        const message = error instanceof Error ? error.message : 'Foto-Upload fehlgeschlagen';
+        const message = error instanceof Error ? error.message : SYNC_MESSAGES.photoUploadFailed;
         await photoRepo.markUploadFailed(photo.id, message);
         store.markFailed(photo.id, message);
         errors.push(message);

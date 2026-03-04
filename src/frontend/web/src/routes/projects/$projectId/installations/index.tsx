@@ -9,6 +9,7 @@ import {
   FilterChips,
   EmptyState,
   ConfirmDialog,
+  LoadingSkeleton,
   buttonClassName,
 } from '@/components/common';
 import { PlusIcon, TrashIcon } from '@/components/icons';
@@ -54,7 +55,7 @@ export function InstallationListPage() {
   }, [installations, search, statusFilter, zoneMap]);
 
   if (isLoading) {
-    return <LoadingSkeleton />;
+    return <LoadingSkeleton count={4} itemClassName="h-20" layout="list" />;
   }
 
   return (
@@ -170,18 +171,3 @@ export function InstallationListPage() {
   );
 }
 
-function LoadingSkeleton() {
-  return (
-    <div>
-      <div className="h-8 w-48 animate-pulse rounded bg-gray-200" />
-      <div className="mt-6 space-y-3">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <div
-            key={i}
-            className="h-20 animate-pulse rounded-xl border border-gray-200 bg-gray-100"
-          />
-        ))}
-      </div>
-    </div>
-  );
-}

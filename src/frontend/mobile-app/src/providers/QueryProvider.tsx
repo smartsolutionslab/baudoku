@@ -2,16 +2,17 @@ import React from 'react';
 import { QueryClient, QueryClientProvider, MutationCache, QueryCache } from '@tanstack/react-query';
 import { useToastStore } from '../store';
 import { ApiError } from '@baudoku/core';
+import { API_ERRORS } from '../constants/strings';
 
 function getErrorMessage(error: unknown): string | null {
   if (error instanceof ApiError) {
     if (error.status === 401) return null;
-    if (error.status === 409) return 'Konflikt: Daten wurden zwischenzeitlich geändert';
-    if (error.status === 422) return 'Validierungsfehler';
-    if (error.status >= 500) return 'Serverfehler — bitte später erneut versuchen';
+    if (error.status === 409) return API_ERRORS.conflict;
+    if (error.status === 422) return API_ERRORS.validation;
+    if (error.status >= 500) return API_ERRORS.server;
   }
   if (error instanceof Error) return error.message;
-  return 'Ein unbekannter Fehler ist aufgetreten';
+  return API_ERRORS.unknown;
 }
 
 const mutationCache = new MutationCache({
