@@ -20,6 +20,7 @@ COPY src/backend/BuildingBlocks/BauDoku.BuildingBlocks.Storage/BauDoku.BuildingB
 COPY src/backend/BuildingBlocks/BauDoku.ServiceDefaults/BauDoku.ServiceDefaults.csproj BuildingBlocks/BauDoku.ServiceDefaults/
 COPY src/backend/Services/Documentation/BauDoku.Documentation.Domain/BauDoku.Documentation.Domain.csproj Services/Documentation/BauDoku.Documentation.Domain/
 COPY src/backend/Services/Documentation/BauDoku.Documentation.Application/BauDoku.Documentation.Application.csproj Services/Documentation/BauDoku.Documentation.Application/
+COPY src/backend/Services/Documentation/BauDoku.Documentation.ReadModel/BauDoku.Documentation.ReadModel.csproj Services/Documentation/BauDoku.Documentation.ReadModel/
 COPY src/backend/Services/Documentation/BauDoku.Documentation.Infrastructure/BauDoku.Documentation.Infrastructure.csproj Services/Documentation/BauDoku.Documentation.Infrastructure/
 COPY src/backend/Services/Documentation/BauDoku.Documentation.Api/BauDoku.Documentation.Api.csproj Services/Documentation/BauDoku.Documentation.Api/
 

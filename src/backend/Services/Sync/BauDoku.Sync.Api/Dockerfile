@@ -19,6 +19,7 @@ COPY src/backend/BuildingBlocks/BauDoku.BuildingBlocks.Serialization/BauDoku.Bui
 COPY src/backend/BuildingBlocks/BauDoku.ServiceDefaults/BauDoku.ServiceDefaults.csproj BuildingBlocks/BauDoku.ServiceDefaults/
 COPY src/backend/Services/Sync/BauDoku.Sync.Domain/BauDoku.Sync.Domain.csproj Services/Sync/BauDoku.Sync.Domain/
 COPY src/backend/Services/Sync/BauDoku.Sync.Application/BauDoku.Sync.Application.csproj Services/Sync/BauDoku.Sync.Application/
+COPY src/backend/Services/Sync/BauDoku.Sync.ReadModel/BauDoku.Sync.ReadModel.csproj Services/Sync/BauDoku.Sync.ReadModel/
 COPY src/backend/Services/Sync/BauDoku.Sync.Infrastructure/BauDoku.Sync.Infrastructure.csproj Services/Sync/BauDoku.Sync.Infrastructure/
 COPY src/backend/Services/Sync/BauDoku.Sync.Api/BauDoku.Sync.Api.csproj Services/Sync/BauDoku.Sync.Api/
 
