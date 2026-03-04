@@ -12,7 +12,9 @@ COPY src/backend/Directory.Packages.props .
 # Copy project files for restore
 COPY src/backend/BuildingBlocks/BauDoku.BuildingBlocks.Domain/BauDoku.BuildingBlocks.Domain.csproj BuildingBlocks/BauDoku.BuildingBlocks.Domain/
 COPY src/backend/BuildingBlocks/BauDoku.BuildingBlocks.Application/BauDoku.BuildingBlocks.Application.csproj BuildingBlocks/BauDoku.BuildingBlocks.Application/
+COPY src/backend/BuildingBlocks/BauDoku.BuildingBlocks.Guards/BauDoku.BuildingBlocks.Guards.csproj BuildingBlocks/BauDoku.BuildingBlocks.Guards/
 COPY src/backend/BuildingBlocks/BauDoku.BuildingBlocks.Auth/BauDoku.BuildingBlocks.Auth.csproj BuildingBlocks/BauDoku.BuildingBlocks.Auth/
+COPY src/backend/BuildingBlocks/BauDoku.BuildingBlocks.Serialization/BauDoku.BuildingBlocks.Serialization.csproj BuildingBlocks/BauDoku.BuildingBlocks.Serialization/
 COPY src/backend/BuildingBlocks/BauDoku.ServiceDefaults/BauDoku.ServiceDefaults.csproj BuildingBlocks/BauDoku.ServiceDefaults/
 COPY src/backend/ApiGateway/BauDoku.ApiGateway/BauDoku.ApiGateway.csproj ApiGateway/BauDoku.ApiGateway/
 
