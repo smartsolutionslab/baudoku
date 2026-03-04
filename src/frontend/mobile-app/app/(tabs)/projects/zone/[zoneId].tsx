@@ -5,7 +5,7 @@ import { useZonesByProject, useInstallationsByZone, useDeleteZone, useUpdateZone
 import { InstallationCard } from '@/components/installations';
 import { StatusBadge, EmptyState, FloatingActionButton, ActionBar } from '@/components/common';
 import { ZoneQrSheet } from '@/components/projects';
-import { encodeZoneQr } from '@/utils';
+import { encodeZoneQr, requiredParam } from '@/utils';
 import { Colors, Spacing, FontSize, Radius } from '@/styles/tokens';
 import type { Zone } from '@/db/repositories/types';
 import { projectId as toProjectId, zoneId as toZoneId } from '@baudoku/core';
@@ -27,8 +27,8 @@ export default function ZoneDetailScreen() {
     zoneId: string;
     projectId: string;
   }>();
-  const zoneId = toZoneId(rawZoneId!);
-  const projectId = toProjectId(rawProjectId!);
+  const zoneId = toZoneId(requiredParam(rawZoneId));
+  const projectId = toProjectId(requiredParam(rawProjectId));
   const router = useRouter();
   const { data: zones } = useZonesByProject(projectId);
   const { data: installations, isLoading, refetch } = useInstallationsByZone(zoneId);

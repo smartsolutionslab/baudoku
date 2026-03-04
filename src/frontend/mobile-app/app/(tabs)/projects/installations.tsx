@@ -7,10 +7,11 @@ import { Colors, Spacing, FontSize, Radius } from '@/styles/tokens';
 import { INSTALLATION_TYPE_OPTIONS, INSTALLATION_STATUS_OPTIONS } from '@/constants';
 import type { Installation } from '@/db/repositories/types';
 import { projectId as toProjectId } from '@baudoku/core';
+import { requiredParam } from '@/utils';
 
 export default function InstallationsListScreen() {
   const { projectId: rawProjectId } = useLocalSearchParams<{ projectId: string }>();
-  const projectId = toProjectId(rawProjectId!);
+  const projectId = toProjectId(requiredParam(rawProjectId));
   const router = useRouter();
   const { data: installations } = useInstallationsByProject(projectId);
 

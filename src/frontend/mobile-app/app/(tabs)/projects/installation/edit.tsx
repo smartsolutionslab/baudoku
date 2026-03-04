@@ -5,11 +5,11 @@ import { useUpdateInstallation, type GpsPosition } from '@/hooks';
 import { InstallationForm } from '@/components/installations';
 import type { InstallationFormData } from '@/validation/schemas';
 import { installationId } from '@baudoku/core';
-import { toGpsPosition } from '@/utils';
+import { toGpsPosition, requiredParam } from '@/utils';
 
 export default function EditInstallationScreen() {
   const { id: rawId } = useLocalSearchParams<{ id: string }>();
-  const id = installationId(rawId!);
+  const id = installationId(requiredParam(rawId));
   const router = useRouter();
   const { data: installation } = useQuery({
     queryKey: ['installation', id],

@@ -1,6 +1,6 @@
 import type { SelectHTMLAttributes } from 'react';
 import type { FieldError, UseFormRegisterReturn } from 'react-hook-form';
-import { inputClassName } from './formStyles';
+import { inputClassName, labelClassName, errorClassName } from './formStyles';
 
 type FormSelectProps = SelectHTMLAttributes<HTMLSelectElement> & {
   label: string;
@@ -10,17 +10,10 @@ type FormSelectProps = SelectHTMLAttributes<HTMLSelectElement> & {
   placeholder?: string;
 };
 
-export function FormSelect({
-  label,
-  error,
-  register,
-  options,
-  placeholder,
-  ...props
-}: FormSelectProps) {
+export function FormSelect({label, error, register, options, placeholder, ...props}: FormSelectProps) {
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700">{label}</label>
+      <label className={labelClassName}>{label}</label>
       <select {...register} {...props} className={inputClassName(!!error)}>
         {placeholder && <option value="">{placeholder}</option>}
         {options.map((opt) => (
@@ -29,7 +22,7 @@ export function FormSelect({
           </option>
         ))}
       </select>
-      {error && <p className="mt-1 text-sm text-red-600">{error.message}</p>}
+      {error && <p className={errorClassName}>{error.message}</p>}
     </div>
   );
 }

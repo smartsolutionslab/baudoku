@@ -4,6 +4,7 @@ import { latitude as toLatitude, longitude as toLongitude } from '@baudoku/core'
 import type { Latitude, Longitude } from '@baudoku/core';
 import { Button } from '../common/Button';
 import { LoadingSpinner } from '../common/LoadingSpinner';
+import { inputClassName, labelClassName } from '../common/formStyles';
 import { GpsIcon } from '../icons';
 
 export type GpsFormData = {
@@ -87,25 +88,25 @@ export function GpsPositionSelector({ gps, onGpsChange, error }: GpsPositionSele
           <div className="space-y-3">
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
-                <label className="block text-sm font-medium text-gray-700">Breitengrad *</label>
+                <label className={labelClassName}>Breitengrad *</label>
                 <input
                   type="number"
                   step="any"
                   placeholder="z.B. 48.137154"
                   value={manualLat}
                   onChange={(e) => setManualLat(e.target.value)}
-                  className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className={inputClassName()}
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">Längengrad *</label>
+                <label className={labelClassName}>Längengrad *</label>
                 <input
                   type="number"
                   step="any"
                   placeholder="z.B. 11.576124"
                   value={manualLng}
                   onChange={(e) => setManualLng(e.target.value)}
-                  className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className={inputClassName()}
                 />
               </div>
             </div>

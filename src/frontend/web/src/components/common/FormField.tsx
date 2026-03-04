@@ -1,6 +1,6 @@
 import type { InputHTMLAttributes } from 'react';
 import type { FieldError, UseFormRegisterReturn } from 'react-hook-form';
-import { inputClassName } from './formStyles';
+import { inputClassName, labelClassName, errorClassName } from './formStyles';
 
 type FormFieldProps = InputHTMLAttributes<HTMLInputElement> & {
   label: string;
@@ -12,7 +12,7 @@ type FormFieldProps = InputHTMLAttributes<HTMLInputElement> & {
 export function FormField({ label, error, register, suffix, ...props }: FormFieldProps) {
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700">{label}</label>
+      <label className={labelClassName}>{label}</label>
       {suffix ? (
         <div className="relative mt-1">
           <input
@@ -31,7 +31,7 @@ export function FormField({ label, error, register, suffix, ...props }: FormFiel
       ) : (
         <input {...register} {...props} className={inputClassName(!!error)} />
       )}
-      {error && <p className="mt-1 text-sm text-red-600">{error.message}</p>}
+      {error && <p className={errorClassName}>{error.message}</p>}
     </div>
   );
 }

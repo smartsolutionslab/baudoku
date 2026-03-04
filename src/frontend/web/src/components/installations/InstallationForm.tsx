@@ -63,7 +63,6 @@ export function InstallationForm({
 
   const [gps, setGps] = useState<GpsFormData | null>(null);
   const fieldErrors = errors as Record<string, FieldError | undefined>;
-  const reg = register;
 
   const submitWithGps = (data: InstallationWithZoneFormData) => {
     onSubmit(data, gps);
@@ -77,7 +76,7 @@ export function InstallationForm({
   return (
     <form onSubmit={handleSubmit(submitWithGps)} className="space-y-6">
       <InstallationBasicsSection
-        register={reg}
+        register={register}
         errors={fieldErrors}
         typeOptions={typeOptions}
         statusOptions={statusOptions}
@@ -86,11 +85,11 @@ export function InstallationForm({
 
       <GpsPositionSelector gps={gps} onGpsChange={setGps} />
 
-      <InstallationComponentSection register={reg} errors={fieldErrors} />
+      <InstallationComponentSection register={register} errors={fieldErrors} />
 
-      <InstallationCableSection register={reg} errors={fieldErrors} phaseOptions={phaseOptions} />
+      <InstallationCableSection register={register} errors={fieldErrors} phaseOptions={phaseOptions} />
 
-      <InstallationNotesSection register={reg} />
+      <InstallationNotesSection register={register} />
 
       <div className="flex justify-end gap-3">
         <Button type="button" variant="secondary" onClick={onCancel}>

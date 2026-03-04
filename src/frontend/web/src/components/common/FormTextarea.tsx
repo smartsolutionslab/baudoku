@@ -1,6 +1,6 @@
 import type { TextareaHTMLAttributes } from 'react';
 import type { FieldError, UseFormRegisterReturn } from 'react-hook-form';
-import { inputClassName } from './formStyles';
+import { inputClassName, labelClassName, errorClassName } from './formStyles';
 
 type FormTextareaProps = TextareaHTMLAttributes<HTMLTextAreaElement> & {
   label: string;
@@ -11,9 +11,9 @@ type FormTextareaProps = TextareaHTMLAttributes<HTMLTextAreaElement> & {
 export function FormTextarea({ label, error, register, ...props }: FormTextareaProps) {
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700">{label}</label>
+      <label className={labelClassName}>{label}</label>
       <textarea {...register} {...props} className={inputClassName(!!error)} />
-      {error && <p className="mt-1 text-sm text-red-600">{error.message}</p>}
+      {error && <p className={errorClassName}>{error.message}</p>}
     </div>
   );
 }

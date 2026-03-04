@@ -1,9 +1,4 @@
-import {
-  createRouter,
-  createRootRouteWithContext,
-  createRoute,
-  redirect,
-} from '@tanstack/react-router';
+import { createRouter, createRootRouteWithContext, createRoute, redirect } from '@tanstack/react-router';
 import { RootLayout } from './routes/__root';
 import { DashboardPage } from './routes/index';
 import { LoginPage } from './routes/login';
@@ -125,7 +120,7 @@ const routeTree = rootRoute.addChildren([
 
 export const router = createRouter({
   routeTree,
-  context: { auth: undefined! },
+  context: { auth: { isAuthenticated: false } },
 });
 
 declare module '@tanstack/react-router' {

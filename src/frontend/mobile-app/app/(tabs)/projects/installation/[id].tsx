@@ -25,10 +25,11 @@ import { Colors } from '@/styles/tokens';
 import type { Measurement } from '@/db/repositories/types';
 import type { MeasurementFormData } from '@/validation/schemas';
 import { installationId } from '@baudoku/core';
+import { requiredParam } from '@/utils';
 
 export default function InstallationDetailScreen() {
   const { id: rawId } = useLocalSearchParams<{ id: string }>();
-  const id = installationId(rawId!);
+  const id = installationId(requiredParam(rawId));
   const router = useRouter();
 
   const { data: installation } = useQuery({
