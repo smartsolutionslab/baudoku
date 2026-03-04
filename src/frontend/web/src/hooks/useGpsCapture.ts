@@ -14,7 +14,6 @@ type UseGpsCaptureReturn = {
   capturing: boolean;
   error: string | null;
   capturePosition: () => void;
-  clearPosition: () => void;
 };
 
 export function useGpsCapture(): UseGpsCaptureReturn {
@@ -54,10 +53,5 @@ export function useGpsCapture(): UseGpsCaptureReturn {
     );
   }, []);
 
-  const clearPosition = useCallback(() => {
-    setPosition(null);
-    setError(null);
-  }, []);
-
-  return { position, capturing, error, capturePosition, clearPosition };
+  return { position, capturing, error, capturePosition };
 }

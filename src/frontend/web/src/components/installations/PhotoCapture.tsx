@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import { CameraIcon } from '@/components/icons';
 import { Button } from '@/components/common';
+import { inputClassName } from '@/components/common/formStyles';
 import { PHOTO_TYPE_LABELS } from '@baudoku/documentation';
 import type { PhotoType } from '@baudoku/documentation';
 import { optionsFromLabels } from '@baudoku/core';
@@ -33,7 +34,7 @@ export function PhotoCapture({ onCapture }: PhotoCaptureProps) {
           <select
             value={photoType}
             onChange={(e) => setPhotoType(e.target.value as PhotoType)}
-            className="mt-1 rounded-lg border border-gray-300 px-3 py-2 text-sm"
+            className={inputClassName()}
           >
             {typeOptions.map((opt) => (
               <option key={opt.value} value={opt.value}>
@@ -49,7 +50,7 @@ export function PhotoCapture({ onCapture }: PhotoCaptureProps) {
             value={caption}
             onChange={(e) => setCaption(e.target.value)}
             placeholder="Optional"
-            className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+            className={inputClassName()}
           />
         </div>
         <div className="flex gap-2">

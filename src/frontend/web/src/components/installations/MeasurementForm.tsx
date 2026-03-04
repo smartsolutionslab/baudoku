@@ -1,13 +1,15 @@
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { typedZodResolver } from '@/hooks/useZodForm';
 import {
   measurementSchema,
   type MeasurementFormData,
   MEASUREMENT_TYPES,
+  MEASUREMENT_TYPE_OPTIONS,
 } from '@baudoku/documentation';
 import { FormField } from '../common/FormField';
+import { FormSelect } from '../common/FormSelect';
 import { Button } from '../common/Button';
-import { inputClassName } from '../common/formStyles';
 
 type MeasurementFormProps = {
   onSubmit: (data: MeasurementFormData) => void | Promise<void>;
@@ -15,53 +17,43 @@ type MeasurementFormProps = {
   isSubmitting?: boolean;
 };
 
-const typeOptions = MEASUREMENT_TYPES.map((m) => ({
-  value: m.type,
-  label: `${m.type} (${m.unit})`,
-}));
+const typeOptions = MEASUREMENT_TYPE_OPTIONS;
 
 export function MeasurementForm({ onSubmit, onCancel, isSubmitting }: MeasurementFormProps) {
   const {
     register,
     handleSubmit,
     setValue,
+    watch,
     formState: { errors },
   } = useForm<MeasurementFormData>({
     resolver: typedZodResolver(measurementSchema),
   });
 
   // Auto-fill unit and thresholds when type changes
-  const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const preset = MEASUREMENT_TYPES.find((m) => m.type === e.target.value);
+  // eslint-disable-next-line react-hooks/incompatible-library
+  const watchType = watch('type');
+  useEffect(() => {
+    const preset = MEASUREMENT_TYPES.find((m) => m.type === watchType);
     if (preset) {
       setValue('unit', preset.unit);
       if (preset.minThreshold != null) setValue('minThreshold', preset.minThreshold);
       if (preset.maxThreshold != null) setValue('maxThreshold', preset.maxThreshold);
     }
-  };
+  }, [watchType, setValue]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div className="rounded-xl border border-gray-200 bg-white p-4">
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="sm:col-span-2">
-            <label className="block text-sm font-medium text-gray-700">Messtyp *</label>
-            <select
-              {...register('type')}
-              onChange={(e) => {
-                register('type').onChange(e);
-                handleTypeChange(e);
-              }}
-              className={inputClassName(!!errors.type)}
-            >
-              <option value="">Messtyp auswählen</option>
-              {typeOptions.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-            {errors.type && <p className="mt-1 text-sm text-red-600">{errors.type.message}</p>}
+            <FormSelect
+              label="Messtyp *"
+              error={errors.type}
+              register={register('type')}
+              options={typeOptions}
+              placeholder="Messtyp auswählen"
+            />
           </div>
           <FormField
             label="Messwert *"

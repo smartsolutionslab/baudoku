@@ -3,7 +3,7 @@ import { projectId as toProjectId } from '@baudoku/core';
 import type { ZoneId } from '@baudoku/core';
 import { useProject, useZones, useDeleteZone, useConfirmDelete } from '@/hooks';
 import { ZoneTree } from '@/components/projects';
-import { StatusBadge, ConfirmDialog, buttonClassName } from '@/components/common';
+import { StatusBadge, ConfirmDialog, buttonClassName, LoadingSkeleton } from '@/components/common';
 import { PlusIcon } from '@/components/icons';
 
 export function ProjectDetailPage() {
@@ -15,12 +15,7 @@ export function ProjectDetailPage() {
   const { requestDelete, confirmProps } = useConfirmDelete<ZoneId>((id) => deleteZone.mutate(id));
 
   if (projectLoading) {
-    return (
-      <div className="space-y-4">
-        <div className="h-8 w-64 animate-pulse rounded bg-gray-200" />
-        <div className="h-48 animate-pulse rounded-xl bg-gray-100" />
-      </div>
-    );
+    return <LoadingSkeleton count={1} itemClassName="h-48" layout="list" />;
   }
 
   if (!project) {

@@ -3,12 +3,10 @@ import { FormField, FormPicker, CollapsibleSection } from '../common';
 import { Button } from '../core';
 import { GpsButton } from './GpsButton';
 import { useGpsCapture, type GpsPosition, useInstallationForm } from '../../hooks';
-import { PHASES } from '@baudoku/documentation';
+import { PHASE_OPTIONS } from '@baudoku/documentation';
 import type { InstallationFormData } from '../../validation/schemas';
 import { Colors, Spacing, FontSize } from '../../styles/tokens';
 import { INSTALLATION_STATUS_OPTIONS } from '../../constants';
-
-const phaseOptions = PHASES.map((p) => ({ label: p, value: p }));
 
 type InstallationFormProps = {
   onSubmit: (data: InstallationFormData, gps: GpsPosition | null) => Promise<void>;
@@ -142,7 +140,7 @@ export function InstallationForm({
         />
         <FormPicker
           label="Phase"
-          options={phaseOptions}
+          options={PHASE_OPTIONS}
           value={(form.phase as string) ?? null}
           onValueChange={(v) => set('phase', v)}
           placeholder="Phase w\u00E4hlen..."

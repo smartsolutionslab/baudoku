@@ -15,7 +15,7 @@ export function toBackendRequest(data: CreateInstallationInput, projectId: Proje
           longitude: data.gps.longitude,
           altitude: data.gps.altitude,
           horizontalAccuracy: data.gps.accuracy,
-          gpsSource: data.gps.source === 'browser' ? 'internal_gps' : 'internal_gps',
+          gpsSource: 'internal_gps',
           correctionService: null,
           rtkFixStatus: null,
           satelliteCount: null,

@@ -6,10 +6,10 @@ import {
   installationSchema,
   type InstallationFormData,
   INSTALLATION_STATUS_LABELS,
-  INSTALLATION_TYPES,
-  PHASES,
+  INSTALLATION_TYPE_OPTIONS,
+  PHASE_OPTIONS,
 } from '@baudoku/documentation';
-import { ZONE_TYPE_LABELS, type Zone } from '@baudoku/projects';
+import { formatZoneLabel, type Zone } from '@baudoku/projects';
 import { optionsFromLabels } from '@baudoku/core';
 import { Button } from '../common/Button';
 import { GpsPositionSelector } from './GpsPositionSelector';
@@ -32,8 +32,8 @@ type InstallationFormProps = {
 };
 
 const statusOptions = optionsFromLabels(INSTALLATION_STATUS_LABELS);
-const typeOptions = INSTALLATION_TYPES.map((t) => ({ value: t, label: t }));
-const phaseOptions = PHASES.map((p) => ({ value: p, label: p }));
+const typeOptions = INSTALLATION_TYPE_OPTIONS;
+const phaseOptions = PHASE_OPTIONS;
 
 const installationWithZoneSchema = installationSchema.extend({
   zoneId: z.string().min(1, 'Zone erforderlich'),
@@ -71,7 +71,7 @@ export function InstallationForm({
 
   const zoneOptions = zones.map(({ id, name, type }) => ({
     value: id,
-    label: `${name} (${ZONE_TYPE_LABELS[type as keyof typeof ZONE_TYPE_LABELS] ?? type})`,
+    label: formatZoneLabel(name, type),
   }));
 
   return (

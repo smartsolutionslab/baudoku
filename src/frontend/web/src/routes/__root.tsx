@@ -8,8 +8,7 @@ const navItems = [
   { to: '/projects', label: 'Projekte', icon: FolderIcon },
 ] as const;
 
-const sidebarBase =
-  'fixed inset-y-0 left-0 z-40 flex w-64 flex-col bg-white border-r border-gray-200 transition-transform duration-200 lg:static lg:translate-x-0';
+const sidebarBase =  'fixed inset-y-0 left-0 z-40 flex w-64 flex-col bg-white border-r border-gray-200 transition-transform duration-200 lg:static lg:translate-x-0';
 
 export function RootLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -74,6 +73,7 @@ export function RootLayout() {
         {/* Topbar */}
         <header className="flex h-16 items-center gap-4 border-b border-gray-200 bg-white px-4 lg:px-6">
           <button
+            aria-label="Menü öffnen"
             className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 lg:hidden"
             onClick={() => setSidebarOpen(true)}
           >

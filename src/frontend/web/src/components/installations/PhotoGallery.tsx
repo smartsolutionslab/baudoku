@@ -44,10 +44,8 @@ export function PhotoGallery({ photos, onDelete }: PhotoGalleryProps) {
             </div>
             {onDelete && (
               <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onDelete(photo.id);
-                }}
+                aria-label="Foto löschen"
+                onClick={(e) => {e.stopPropagation(); onDelete(photo.id);}}
                 className="absolute right-2 top-2 rounded-full bg-black/40 p-1 text-white opacity-0 hover:bg-red-600 group-hover:opacity-100 transition-opacity"
               >
                 <XIcon />
@@ -64,6 +62,7 @@ export function PhotoGallery({ photos, onDelete }: PhotoGalleryProps) {
           onClick={() => setViewPhoto(null)}
         >
           <button
+            aria-label="Lightbox schließen"
             className="absolute right-4 top-4 rounded-full bg-black/40 p-2 text-white hover:bg-black/60"
             onClick={() => setViewPhoto(null)}
           >

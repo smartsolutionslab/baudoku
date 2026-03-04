@@ -10,7 +10,7 @@ import {
   useCreateMeasurement,
   useDeleteMeasurement,
 } from '@/hooks';
-import { StatusBadge } from '@/components/common';
+import { StatusBadge, LoadingSkeleton } from '@/components/common';
 import { InfoTab, PhotosTab, MeasurementsTab } from '@/components/installations';
 
 type Tab = 'info' | 'photos' | 'measurements';
@@ -43,12 +43,7 @@ export function InstallationDetailPage() {
   const [activeTab, setActiveTab] = useState<Tab>('info');
 
   if (isLoading) {
-    return (
-      <div className="space-y-4">
-        <div className="h-8 w-64 animate-pulse rounded bg-gray-200" />
-        <div className="h-48 animate-pulse rounded-xl bg-gray-100" />
-      </div>
-    );
+    return <LoadingSkeleton count={1} itemClassName="h-48" layout="list" />;
   }
 
   if (!installation) {

@@ -1,5 +1,5 @@
 import { useForm } from 'react-hook-form';
-import { zoneSchema, type ZoneFormData, ZONE_TYPE_LABELS, type Zone } from '@baudoku/projects';
+import { zoneSchema, type ZoneFormData, ZONE_TYPE_LABELS, formatZoneLabel, type Zone } from '@baudoku/projects';
 import { typedZodResolver } from '@/hooks/useZodForm';
 import { optionsFromLabels } from '@baudoku/core';
 import { FormField } from '../common/FormField';
@@ -17,13 +17,7 @@ type ZoneFormProps = {
 const typeOptions = optionsFromLabels(ZONE_TYPE_LABELS);
 const NO_PARENT_OPTION = { value: '', label: 'Keine (Oberste Ebene)' };
 
-export function ZoneForm({
-  zones,
-  defaultValues,
-  onSubmit,
-  onCancel,
-  isSubmitting,
-}: ZoneFormProps) {
+export function ZoneForm({ zones, defaultValues, onSubmit, onCancel, isSubmitting}: ZoneFormProps) {
   const {
     register,
     handleSubmit,
@@ -41,7 +35,7 @@ export function ZoneForm({
     NO_PARENT_OPTION,
     ...zones.map(({ id, name, type }) => ({
       value: id,
-      label: `${name} (${ZONE_TYPE_LABELS[type as keyof typeof ZONE_TYPE_LABELS] ?? type})`,
+      label: formatZoneLabel(name, type),
     })),
   ];
 

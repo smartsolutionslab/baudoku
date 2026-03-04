@@ -11,11 +11,14 @@ export type UseInstallationFormOptions = {
   onSubmit: (data: InstallationFormData, gps: GpsPosition | null) => Promise<void>;
 };
 
+/** Form keys for type-safe field access */
+type FormKey = keyof InstallationFormData;
+
 export type UseInstallationFormReturn = {
   form: Record<string, unknown>;
   errors: Record<string, string>;
-  set: (key: string, value: unknown) => void;
-  str: (key: string) => string;
+  set: (key: FormKey, value: unknown) => void;
+  str: (key: FormKey) => string;
   handleSubmit: (currentGps: GpsPosition | null) => Promise<void>;
   hasComponentValues: boolean;
   hasCableValues: boolean;
@@ -46,7 +49,7 @@ export function useInstallationForm({
     initialValues?.phase != null;
 
   const set = useCallback(
-    (key: string, value: unknown) => {
+    (key: FormKey, value: unknown) => {
       setForm((prev) => ({ ...prev, [key]: value }));
       setErrors((prev) => {
         const { [key]: _, ...next } = prev;
@@ -56,7 +59,7 @@ export function useInstallationForm({
     [setErrors],
   );
 
-  const str = (key: string) => {
+  const str = (key: FormKey) => {
     const val = form[key];
     if (val == null) return '';
     return String(val);

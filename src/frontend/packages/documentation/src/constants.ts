@@ -111,3 +111,12 @@ export const MEASUREMENT_RESULT_LABELS: Record<string, string> = {
 // ─── Measurement Units ──────────────────────────────────────────
 
 export const MEASUREMENT_UNITS = ['Ω', 'MΩ', 'V', 'ms', '%', 'A'] as const;
+
+// ─── Pre-computed Options ────────────────────────────────────────
+
+export const INSTALLATION_TYPE_OPTIONS = INSTALLATION_TYPES.map((t) => ({ value: t, label: t }));
+export const PHASE_OPTIONS = PHASES.map((p) => ({ value: p, label: p }));
+export const MEASUREMENT_TYPE_OPTIONS = MEASUREMENT_TYPES.map((m) => ({
+  value: m.type,
+  label: `${m.type} (${m.unit})`,
+}));
