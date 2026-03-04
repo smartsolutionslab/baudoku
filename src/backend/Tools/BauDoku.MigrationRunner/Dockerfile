@@ -20,12 +20,15 @@ COPY src/backend/BuildingBlocks/BauDoku.BuildingBlocks.Storage/BauDoku.BuildingB
 COPY src/backend/BuildingBlocks/BauDoku.ServiceDefaults/BauDoku.ServiceDefaults.csproj BuildingBlocks/BauDoku.ServiceDefaults/
 COPY src/backend/Services/Projects/BauDoku.Projects.Domain/BauDoku.Projects.Domain.csproj Services/Projects/BauDoku.Projects.Domain/
 COPY src/backend/Services/Projects/BauDoku.Projects.Application/BauDoku.Projects.Application.csproj Services/Projects/BauDoku.Projects.Application/
+COPY src/backend/Services/Projects/BauDoku.Projects.ReadModel/BauDoku.Projects.ReadModel.csproj Services/Projects/BauDoku.Projects.ReadModel/
 COPY src/backend/Services/Projects/BauDoku.Projects.Infrastructure/BauDoku.Projects.Infrastructure.csproj Services/Projects/BauDoku.Projects.Infrastructure/
 COPY src/backend/Services/Documentation/BauDoku.Documentation.Domain/BauDoku.Documentation.Domain.csproj Services/Documentation/BauDoku.Documentation.Domain/
 COPY src/backend/Services/Documentation/BauDoku.Documentation.Application/BauDoku.Documentation.Application.csproj Services/Documentation/BauDoku.Documentation.Application/
+COPY src/backend/Services/Documentation/BauDoku.Documentation.ReadModel/BauDoku.Documentation.ReadModel.csproj Services/Documentation/BauDoku.Documentation.ReadModel/
 COPY src/backend/Services/Documentation/BauDoku.Documentation.Infrastructure/BauDoku.Documentation.Infrastructure.csproj Services/Documentation/BauDoku.Documentation.Infrastructure/
 COPY src/backend/Services/Sync/BauDoku.Sync.Domain/BauDoku.Sync.Domain.csproj Services/Sync/BauDoku.Sync.Domain/
 COPY src/backend/Services/Sync/BauDoku.Sync.Application/BauDoku.Sync.Application.csproj Services/Sync/BauDoku.Sync.Application/
+COPY src/backend/Services/Sync/BauDoku.Sync.ReadModel/BauDoku.Sync.ReadModel.csproj Services/Sync/BauDoku.Sync.ReadModel/
 COPY src/backend/Services/Sync/BauDoku.Sync.Infrastructure/BauDoku.Sync.Infrastructure.csproj Services/Sync/BauDoku.Sync.Infrastructure/
 COPY src/backend/Tools/BauDoku.MigrationRunner/BauDoku.MigrationRunner.csproj Tools/BauDoku.MigrationRunner/
 
