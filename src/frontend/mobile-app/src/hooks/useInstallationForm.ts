@@ -7,7 +7,6 @@ import type { GpsPosition } from './useGpsCapture';
 
 export type UseInstallationFormOptions = {
   initialValues?: Partial<InstallationFormData>;
-  initialGps?: GpsPosition | null;
   onSubmit: (data: InstallationFormData, gps: GpsPosition | null) => Promise<void>;
 };
 

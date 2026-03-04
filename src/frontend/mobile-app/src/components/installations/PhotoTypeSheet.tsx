@@ -1,6 +1,6 @@
 import { Text, TouchableOpacity } from 'react-native';
 import { PHOTO_TYPES, PHOTO_TYPE_LABELS } from '@baudoku/documentation';
-import { OptionSheet, optionSheetStyles } from '../common/OptionSheet';
+import { OptionSheet, optionSheetStyles } from '../common';
 
 export type PhotoType = (typeof PHOTO_TYPES)[number];
 

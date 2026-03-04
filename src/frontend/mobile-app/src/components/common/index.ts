@@ -8,6 +8,7 @@ export { FilterChips } from './FilterChips';
 export { FloatingActionButton } from './FloatingActionButton';
 export { FormField } from './FormField';
 export { FormPicker } from './FormPicker';
+export { OptionSheet, optionSheetStyles } from './OptionSheet';
 export { ScreenErrorFallback } from './ScreenErrorFallback';
 export { SearchBar } from './SearchBar';
 export { StatusBadge, statusLabels } from './StatusBadge';
