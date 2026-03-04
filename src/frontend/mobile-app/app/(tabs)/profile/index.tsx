@@ -1,11 +1,4 @@
-import {
-  View,
-  Text,
-  ScrollView,
-  StyleSheet,
-  Switch,
-  Platform,
-} from "react-native";
+import { View, Text, ScrollView, StyleSheet, Switch, Platform } from "react-native";
 import { useRouter } from "expo-router";
 import { useProjects, useSyncStatus } from "@/hooks";
 import { Button } from "@/components/core";
@@ -21,6 +14,8 @@ export default function ProfileScreen() {
   const { allowMockLocation, setAllowMockLocation } = useSettingsStore();
 
   const projectCount = projects?.length ?? 0;
+
+  const openLogin = () => router.push("/(tabs)/profile/login");
 
   const handleLogout = async () => {
     await performLogout();
@@ -58,7 +53,7 @@ export default function ProfileScreen() {
         ) : (
           <>
             <Text style={styles.notLoggedInText}>Nicht angemeldet</Text>
-            <Button title="Anmelden" onPress={() => router.push("/(tabs)/profile/login")} />
+            <Button title="Anmelden" onPress={openLogin} />
           </>
         )}
       </View>
@@ -117,16 +112,18 @@ export default function ProfileScreen() {
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Synchronisation</Text>
         <Row label="Ausstehend" value={`${unsyncedCount} Änderungen`} />
-        <Row
-          label="Letzte Sync"
-          value={lastSyncTimestamp ?? "Noch nicht synchronisiert"}
-        />
+        <Row label="Letzte Sync" value={lastSyncTimestamp ?? "Noch nicht synchronisiert"} />
       </View>
     </ScrollView>
   );
 }
 
-function Row({ label, value }: { label: string; value: string }) {
+type RowProps = {
+  label: string;
+  value: string;
+};
+
+function Row({ label, value }: RowProps) {
   return (
     <View style={styles.row}>
       <Text style={styles.label}>{label}</Text>

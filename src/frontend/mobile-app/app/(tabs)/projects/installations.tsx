@@ -1,11 +1,5 @@
 import { useState, useMemo } from "react";
-import {
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  StyleSheet,
-} from "react-native";
+import { View, Text, FlatList, TouchableOpacity, StyleSheet } from "react-native";
 import { useLocalSearchParams, useRouter, Stack } from "expo-router";
 import { useInstallationsByProject } from "@/hooks";
 import { StatusBadge, EmptyState, SearchBar, FilterChips } from "@/components/common";
@@ -20,6 +14,8 @@ export default function InstallationsListScreen() {
   const router = useRouter();
   const { data: installations } = useInstallationsByProject(projectId);
 
+  const openInstallation = (id: string) => router.push(`/(tabs)/projects/installation/${id}`);
+
   const [searchQuery, setSearchQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
@@ -29,45 +25,40 @@ export default function InstallationsListScreen() {
     let result = installations;
 
     if (typeFilter) {
-      result = result.filter((i) => i.type === typeFilter);
+      result = result.filter(({ type }) => type === typeFilter);
     }
     if (statusFilter) {
-      result = result.filter((i) => i.status === statusFilter);
+      result = result.filter(({ status }) => status === statusFilter);
     }
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
       result = result.filter(
-        (i) =>
-          i.notes?.toLowerCase().includes(q) ||
-          i.type.toLowerCase().includes(q) ||
-          i.manufacturer?.toLowerCase().includes(q) ||
-          i.model?.toLowerCase().includes(q) ||
-          i.serialNumber?.toLowerCase().includes(q)
+        ({ notes, type, manufacturer, model, serialNumber }) =>
+          notes?.toLowerCase().includes(q) ||
+          type.toLowerCase().includes(q) ||
+          manufacturer?.toLowerCase().includes(q) ||
+          model?.toLowerCase().includes(q) ||
+          serialNumber?.toLowerCase().includes(q)
       );
     }
 
     return result;
   }, [installations, typeFilter, statusFilter, searchQuery]);
 
-  const renderItem = ({ item }: { item: Installation }) => (
-    <TouchableOpacity
-      style={styles.itemCard}
-      onPress={() =>
-        router.push(`/(tabs)/projects/installation/${item.id}`)
-      }
-    >
+  const renderItem = ({ item: { id, type, status, manufacturer, model, notes } }: { item: Installation }) => (
+    <TouchableOpacity style={styles.itemCard} onPress={() => openInstallation(id)}>
       <View style={styles.itemHeader}>
-        <Text style={styles.itemType}>{item.type}</Text>
-        <StatusBadge status={item.status} />
+        <Text style={styles.itemType}>{type}</Text>
+        <StatusBadge status={status} />
       </View>
-      {item.manufacturer || item.model ? (
+      {manufacturer || model ? (
         <Text style={styles.itemSubtitle}>
-          {[item.manufacturer, item.model].filter(Boolean).join(" — ")}
+          {[manufacturer, model].filter(Boolean).join(" — ")}
         </Text>
       ) : null}
-      {item.notes ? (
+      {notes ? (
         <Text style={styles.itemNotes} numberOfLines={2}>
-          {item.notes}
+          {notes}
         </Text>
       ) : null}
     </TouchableOpacity>
@@ -109,7 +100,7 @@ export default function InstallationsListScreen() {
           }
         />
       ) : (
-        <FlatList
+        <FlatList 
           data={filtered}
           keyExtractor={(item) => item.id}
           renderItem={renderItem}

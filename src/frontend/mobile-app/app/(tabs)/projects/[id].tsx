@@ -23,11 +23,15 @@ export default function ProjectDetailScreen() {
   const deleteProject = useDeleteProject();
   const { confirmDelete } = useConfirmDelete();
 
+  const openInstallations = () => router.push(`/(tabs)/projects/installations?projectId=${id}`);
+  const openEdit = () => router.push(`/(tabs)/projects/edit?id=${id}`);
+  const openNewZone = () => router.push(`/(tabs)/projects/zone/new?projectId=${id}`);
+
   if (!project) return null;
 
-  const address = [project.street, project.zipCode, project.city]
-    .filter(Boolean)
-    .join(", ");
+  const { name, status, street, zipCode, city, clientName, clientContact, createdAt } = project;
+
+  const address = [street, zipCode, city].filter(Boolean).join(", ");
 
   const handleDelete = () => {
     confirmDelete({
@@ -47,12 +51,12 @@ export default function ProjectDetailScreen() {
 
   return (
     <View style={styles.container}>
-      <Stack.Screen options={{ title: project.name }} />
+      <Stack.Screen options={{ title: name }} />
       <ScrollView contentContainerStyle={styles.scroll}>
         <View style={styles.card}>
           <View style={styles.row}>
             <Text style={styles.label}>Status</Text>
-            <StatusBadge status={project.status} />
+            <StatusBadge status={status} />
           </View>
           {address ? (
             <View style={styles.row}>
@@ -60,21 +64,21 @@ export default function ProjectDetailScreen() {
               <Text style={styles.value}>{address}</Text>
             </View>
           ) : null}
-          {project.clientName ? (
+          {clientName ? (
             <View style={styles.row}>
               <Text style={styles.label}>Auftraggeber</Text>
-              <Text style={styles.value}>{project.clientName}</Text>
+              <Text style={styles.value}>{clientName}</Text>
             </View>
           ) : null}
-          {project.clientContact ? (
+          {clientContact ? (
             <View style={styles.row}>
               <Text style={styles.label}>Kontakt</Text>
-              <Text style={styles.value}>{project.clientContact}</Text>
+              <Text style={styles.value}>{clientContact}</Text>
             </View>
           ) : null}
           <View style={styles.row}>
             <Text style={styles.label}>Erstellt am</Text>
-            <Text style={styles.value}>{formatDate(project.createdAt)}</Text>
+            <Text style={styles.value}>{formatDate(createdAt)}</Text>
           </View>
         </View>
 
@@ -83,16 +87,12 @@ export default function ProjectDetailScreen() {
             {
               icon: "list",
               label: "Installationen",
-              onPress: () =>
-                router.push(
-                  `/(tabs)/projects/installations?projectId=${id}`
-                ),
+              onPress: openInstallations,
             },
             {
               icon: "pencil",
               label: "Bearbeiten",
-              onPress: () =>
-                router.push(`/(tabs)/projects/edit?id=${id}`),
+              onPress: openEdit,
             },
             {
               icon: "trash",
@@ -111,29 +111,19 @@ export default function ProjectDetailScreen() {
             title="Noch keine Zonen"
             subtitle="Erstelle Gebäude, Stockwerke oder Gräben."
             actionLabel="Neue Zone"
-            onAction={() =>
-              router.push(`/(tabs)/projects/zone/new?projectId=${id}`)
-            }
+            onAction={openNewZone}
           />
         ) : (
           <View style={styles.treeContainer}>
             <ZoneTree
               nodes={tree}
-              onZonePress={(zoneId) =>
-                router.push(
-                  `/(tabs)/projects/zone/${zoneId}?projectId=${id}`
-                )
-              }
+              onZonePress={(zoneId) => router.push(`/(tabs)/projects/zone/${zoneId}?projectId=${id}`)}
             />
           </View>
         )}
       </ScrollView>
 
-      <FloatingActionButton
-        onPress={() =>
-          router.push(`/(tabs)/projects/zone/new?projectId=${id}`)
-        }
-      />
+      <FloatingActionButton onPress={openNewZone} />
     </View>
   );
 }

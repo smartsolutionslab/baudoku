@@ -29,22 +29,27 @@ function operationLabel(op: string): string {
   }
 }
 
-function OutboxItem({ item }: { item: SyncOutboxEntry }) {
+type OutboxItemProps = {
+  item: SyncOutboxEntry;
+};
+
+function OutboxItem({ item }: OutboxItemProps) {
+  const { entityType, status, operation, timestamp, retryCount } = item;
   return (
     <View style={itemStyles.container}>
       <View style={itemStyles.header}>
-        <Text style={itemStyles.entityType}>{item.entityType}</Text>
-        <StatusBadge status={item.status} />
+        <Text style={itemStyles.entityType}>{entityType}</Text>
+        <StatusBadge status={status} />
       </View>
       <Text style={itemStyles.operation}>
-        {operationLabel(item.operation)}
+        {operationLabel(operation)}
       </Text>
       <Text style={itemStyles.timestamp}>
-        {formatDateTime(item.timestamp)}
+        {formatDateTime(timestamp)}
       </Text>
-      {item.retryCount != null && item.retryCount > 0 && (
+      {retryCount != null && retryCount > 0 && (
         <Text style={itemStyles.retry}>
-          Versuche: {item.retryCount}
+          Versuche: {retryCount}
         </Text>
       )}
     </View>
@@ -56,6 +61,8 @@ export default function SyncScreen() {
   const { isOnline, unsyncedCount, lastSyncTimestamp } = useSyncStatus();
   const { pendingEntries, loadPendingEntries, conflicts } = useSyncStore();
   const { sync, isSyncing, syncError } = useSyncManager();
+
+  const openConflicts = () => router.push("/(tabs)/sync/conflicts");
 
   useEffect(() => {
     loadPendingEntries();
@@ -109,7 +116,7 @@ export default function SyncScreen() {
       {conflicts.length > 0 && (
         <TouchableOpacity
           style={styles.conflictCard}
-          onPress={() => router.push("/(tabs)/sync/conflicts")}
+          onPress={openConflicts}
         >
           <View style={styles.conflictBadge}>
             <Text style={styles.conflictBadgeText}>{conflicts.length}</Text>

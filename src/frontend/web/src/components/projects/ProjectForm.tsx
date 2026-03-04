@@ -21,6 +21,9 @@ export function ProjectForm({
   isSubmitting,
 }: ProjectFormProps) {
   const navigate = useNavigate();
+
+  const handleCancel = () => navigate({ to: '/projects' });
+
   const {
     register,
     handleSubmit,
@@ -105,7 +108,7 @@ export function ProjectForm({
         <Button
           type='button'
           variant='secondary'
-          onClick={() => navigate({ to: '/projects' })}
+          onClick={handleCancel}
         >
           Abbrechen
         </Button>

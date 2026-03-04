@@ -12,15 +12,20 @@ export default function ProjectsScreen() {
   const { data: projects, isLoading, refetch } = useProjects();
   const [search, setSearch] = useState("");
 
+  const openSearch = () => router.push("/(tabs)/projects/search");
+  const openDashboard = () => router.push("/(tabs)/projects/dashboard");
+  const openNewProject = () => router.push("/(tabs)/projects/new");
+  const openProject = (id: string) => router.push(`/(tabs)/projects/${id}`);
+
   const filtered = useMemo(() => {
     if (!projects) return [];
     if (!search.trim()) return projects;
     const q = search.toLowerCase();
     return projects.filter(
-      (p) =>
-        p.name.toLowerCase().includes(q) ||
-        p.city?.toLowerCase().includes(q) ||
-        p.clientName?.toLowerCase().includes(q)
+      ({ name, city, clientName }) =>
+        name.toLowerCase().includes(q) ||
+        city?.toLowerCase().includes(q) ||
+        clientName?.toLowerCase().includes(q)
     );
   }, [projects, search]);
 
@@ -30,53 +35,38 @@ export default function ProjectsScreen() {
         options={{
           headerRight: () => (
             <View style={styles.headerActions}>
-              <TouchableOpacity
-                onPress={() => router.push("/(tabs)/projects/search")}
-              >
+              <TouchableOpacity onPress={openSearch} >
                 <FontAwesome name="search" size={20} color={Colors.primary} />
               </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => router.push("/(tabs)/projects/dashboard")}
-              >
+              <TouchableOpacity onPress={openDashboard} >
                 <FontAwesome name="bar-chart" size={20} color={Colors.primary} />
               </TouchableOpacity>
             </View>
           ),
         }}
       />
-      <SearchBar
-        value={search}
-        onChangeText={setSearch}
-        placeholder="Projekte suchen..."
-        autoFocus={false}
-      />
+      <SearchBar value={search} onChangeText={setSearch} placeholder="Projekte suchen..." autoFocus={false} />
       {filtered.length === 0 && !isLoading ? (
         <EmptyState
           icon="building"
           title="Noch keine Projekte"
           subtitle="Erstelle dein erstes Projekt, um loszulegen."
           actionLabel="Projekt anlegen"
-          onAction={() => router.push("/(tabs)/projects/new")}
+          onAction={openNewProject}
         />
       ) : (
         <FlatList
           data={filtered}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <ProjectCard
-              project={item}
-              onPress={() => router.push(`/(tabs)/projects/${item.id}`)}
-            />
+            <ProjectCard project={item} onPress={() => openProject(item.id)} />
           )}
           contentContainerStyle={styles.list}
           refreshing={isLoading}
           onRefresh={() => void refetch()}
         />
       )}
-      <FloatingActionButton
-        onPress={() => router.push("/(tabs)/projects/new")}
-        testID="fab-button"
-      />
+      <FloatingActionButton onPress={openNewProject} testID="fab-button" />
     </View>
   );
 }

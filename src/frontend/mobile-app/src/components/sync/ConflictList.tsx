@@ -13,28 +13,28 @@ type ConflictListProps = {
   onSelect: (conflict: ConflictDto) => void;
 };
 
-function ConflictItem({
-  item,
-  onPress,
-}: {
+type ConflictItemProps = {
   item: ConflictDto;
   onPress: () => void;
-}) {
+};
+
+function ConflictItem({ item, onPress }: ConflictItemProps) {
+  const { entityType, status, entityId, clientVersion, serverVersion } = item;
   return (
     <TouchableOpacity style={styles.item} onPress={onPress}>
       <View style={styles.itemHeader}>
         <View style={styles.typeBadge}>
-          <Text style={styles.typeBadgeText}>{item.entityType}</Text>
+          <Text style={styles.typeBadgeText}>{entityType}</Text>
         </View>
         <View style={styles.statusBadge}>
-          <Text style={styles.statusBadgeText}>{item.status}</Text>
+          <Text style={styles.statusBadgeText}>{status}</Text>
         </View>
       </View>
       <Text style={styles.entityId} numberOfLines={1}>
-        {item.entityId}
+        {entityId}
       </Text>
       <Text style={styles.versions}>
-        Client v{item.clientVersion} / Server v{item.serverVersion}
+        Client v{clientVersion} / Server v{serverVersion}
       </Text>
     </TouchableOpacity>
   );
@@ -52,7 +52,7 @@ export function ConflictList({ conflicts, onSelect }: ConflictListProps) {
   return (
     <FlatList
       data={conflicts}
-      keyExtractor={(item) => item.id}
+      keyExtractor={({ id }) => id}
       renderItem={({ item }) => (
         <ConflictItem item={item} onPress={() => onSelect(item)} />
       )}

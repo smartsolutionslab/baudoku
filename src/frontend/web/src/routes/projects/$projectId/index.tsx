@@ -1,10 +1,9 @@
 import { Link, useParams } from '@tanstack/react-router';
-import { useState } from 'react';
 import { projectId as toProjectId } from '@baudoku/core';
 import type { ZoneId } from '@baudoku/core';
-import { useProject, useZones, useDeleteZone, useUpdateProject } from '@/hooks';
+import { useProject, useZones, useDeleteZone, useConfirmDelete } from '@/hooks';
 import { ZoneTree } from '@/components/projects';
-import { StatusBadge, ConfirmDialog } from '@/components/common';
+import { StatusBadge, ConfirmDialog, buttonClassName } from '@/components/common';
 import { PlusIcon } from '@/components/icons';
 
 export function ProjectDetailPage() {
@@ -13,7 +12,7 @@ export function ProjectDetailPage() {
   const { data: project, isLoading: projectLoading } = useProject(projectId);
   const { data: zones, isLoading: zonesLoading } = useZones(projectId);
   const deleteZone = useDeleteZone(projectId);
-  const [deleteZoneId, setDeleteZoneId] = useState<ZoneId | null>(null);
+  const { requestDelete, confirmProps } = useConfirmDelete<ZoneId>((id) => deleteZone.mutate(id));
 
   if (projectLoading) {
     return (
@@ -35,6 +34,8 @@ export function ProjectDetailPage() {
     );
   }
 
+  const { name, status, street, zipCode, city, clientName, clientContact } = project;
+
   return (
     <div>
       {/* Header */}
@@ -47,13 +48,13 @@ export function ProjectDetailPage() {
             &larr; Alle Projekte
           </Link>
           <h1 className='mt-2 text-2xl font-bold text-gray-900'>
-            {project.name}
+            {name}
           </h1>
           <div className='mt-2 flex items-center gap-3'>
-            <StatusBadge status={project.status} />
-            {project.city && (
+            <StatusBadge status={status} />
+            {city && (
               <span className='text-sm text-gray-500'>
-                {[project.street, project.zipCode, project.city]
+                {[street, zipCode, city]
                   .filter(Boolean)
                   .join(', ')}
               </span>
@@ -63,19 +64,19 @@ export function ProjectDetailPage() {
         <Link
           to='/projects/$projectId/installations'
           params={{ projectId }}
-          className='inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-blue-700'
+          className={buttonClassName.primary}
         >
           Installationen
         </Link>
       </div>
 
       {/* Project info */}
-      {project.clientName && (
+      {clientName && (
         <div className='mt-6 rounded-xl border border-gray-200 bg-white p-5'>
           <h2 className='text-sm font-semibold text-gray-900'>Auftraggeber</h2>
-          <p className='mt-1 text-sm text-gray-600'>{project.clientName}</p>
-          {project.clientContact && (
-            <p className='text-sm text-gray-500'>{project.clientContact}</p>
+          <p className='mt-1 text-sm text-gray-600'>{clientName}</p>
+          {clientContact && (
+            <p className='text-sm text-gray-500'>{clientContact}</p>
           )}
         </div>
       )}
@@ -87,7 +88,7 @@ export function ProjectDetailPage() {
           <Link
             to='/projects/$projectId/zones/new'
             params={{ projectId }}
-            className='inline-flex items-center gap-1 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50'
+            className={buttonClassName.secondary}
           >
             <PlusIcon />
             Zone hinzufügen
@@ -104,27 +105,19 @@ export function ProjectDetailPage() {
             <ZoneTree
               zones={zones ?? []}
               projectId={projectId}
-              onDelete={(id) => setDeleteZoneId(id)}
+              onDelete={(id) => requestDelete(id)}
             />
           )}
         </div>
       </div>
 
       <ConfirmDialog
-        open={deleteZoneId !== null}
+        {...confirmProps}
         title='Zone löschen'
         message='Möchten Sie diese Zone wirklich löschen?'
         confirmLabel='Löschen'
         variant='danger'
-        onConfirm={() => {
-          if (deleteZoneId) {
-            deleteZone.mutate(deleteZoneId);
-            setDeleteZoneId(null);
-          }
-        }}
-        onCancel={() => setDeleteZoneId(null)}
       />
     </div>
   );
 }
-

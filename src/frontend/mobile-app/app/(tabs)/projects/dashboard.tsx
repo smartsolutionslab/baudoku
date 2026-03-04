@@ -25,10 +25,14 @@ export default function DashboardScreen() {
     );
   }
 
-  const failedCount = stats.measurementsByResult.failed ?? 0;
-  const passedCount = stats.measurementsByResult.passed ?? 0;
-  const totalMeasurements = failedCount + passedCount + (stats.measurementsByResult.warning ?? 0);
-  const inProgressCount = stats.installationsByStatus.in_progress ?? 0;
+  const openProjects = () => router.push("/(tabs)/projects/");
+  const openSearch = () => router.push("/(tabs)/projects/search");
+  const openSync = () => router.push("/(tabs)/sync");
+
+  const { projectCount, installationCount, photoCount, unsyncedCount, measurementsByResult, installationsByStatus } = stats;
+  const { failed: failedCount = 0, passed: passedCount = 0, warning: warningCount = 0 } = measurementsByResult;
+  const { in_progress: inProgressCount = 0, completed: completedCount = 0 } = installationsByStatus;
+  const totalMeasurements = failedCount + passedCount + warningCount;
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
@@ -36,42 +40,22 @@ export default function DashboardScreen() {
 
       <Text style={styles.sectionTitle}>Gesamt</Text>
       <View style={styles.row}>
-        <DashboardCard
-          title="Projekte"
-          value={stats.projectCount}
-        />
+        <DashboardCard title="Projekte" value={projectCount} />
         <View style={styles.gap} />
-        <DashboardCard
-          title="Installationen"
-          value={stats.installationCount}
-        />
+        <DashboardCard title="Installationen" value={installationCount} />
       </View>
 
       <View style={styles.row}>
-        <DashboardCard
-          title="Fotos"
-          value={stats.photoCount}
-        />
+        <DashboardCard title="Fotos" value={photoCount} />
         <View style={styles.gap} />
-        <DashboardCard
-          title="Messungen"
-          value={totalMeasurements}
-        />
+        <DashboardCard title="Messungen" value={totalMeasurements} />
       </View>
 
       <Text style={styles.sectionTitle}>Status</Text>
       <View style={styles.row}>
-        <DashboardCard
-          title="In Arbeit"
-          value={inProgressCount}
-          color={Colors.warning}
-        />
+        <DashboardCard title="In Arbeit" value={inProgressCount} color={Colors.warning} />
         <View style={styles.gap} />
-        <DashboardCard
-          title="Fertig"
-          value={stats.installationsByStatus.completed ?? 0}
-          color={Colors.success}
-        />
+        <DashboardCard title="Fertig" value={completedCount} color={Colors.success} />
       </View>
 
       <View style={styles.row}>
@@ -93,8 +77,8 @@ export default function DashboardScreen() {
       <View style={styles.row}>
         <DashboardCard
           title="Nicht synchronisiert"
-          value={stats.unsyncedCount}
-          color={stats.unsyncedCount > 0 ? Colors.warning : Colors.success}
+          value={unsyncedCount}
+          color={unsyncedCount > 0 ? Colors.warning : Colors.success}
         />
         <View style={styles.gap} />
         <View style={{ flex: 1 }} />
@@ -102,10 +86,7 @@ export default function DashboardScreen() {
 
       <Text style={styles.sectionTitle}>Schnellzugriff</Text>
 
-      <TouchableOpacity
-        style={styles.quickLink}
-        onPress={() => router.push("/(tabs)/projects/")}
-      >
+      <TouchableOpacity style={styles.quickLink} onPress={openProjects} >
         <FontAwesome name="building" size={18} color={Colors.primary} />
         <Text style={styles.quickLinkText}>Alle Projekte</Text>
         <FontAwesome name="chevron-right" size={14} color={Colors.textTertiary} />
@@ -113,7 +94,7 @@ export default function DashboardScreen() {
 
       <TouchableOpacity
         style={styles.quickLink}
-        onPress={() => router.push("/(tabs)/projects/search")}
+        onPress={openSearch}
       >
         <FontAwesome name="search" size={18} color={Colors.primary} />
         <Text style={styles.quickLinkText}>Installationen suchen</Text>
@@ -122,7 +103,7 @@ export default function DashboardScreen() {
 
       <TouchableOpacity
         style={styles.quickLink}
-        onPress={() => router.push("/(tabs)/sync")}
+        onPress={openSync}
       >
         <FontAwesome name="refresh" size={18} color={Colors.primary} />
         <Text style={styles.quickLinkText}>Synchronisation</Text>

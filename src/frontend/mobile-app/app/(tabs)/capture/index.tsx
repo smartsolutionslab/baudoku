@@ -11,13 +11,12 @@ import { EmptyState } from "@/components/common";
 import { Colors, Spacing, FontSize, Radius } from "@/styles/tokens";
 import type { ProjectId, ZoneId } from "@baudoku/core";
 
-function ZonePicker({
-  projectId,
-  onSelect,
-}: {
+type ZonePickerProps = {
   projectId: ProjectId;
   onSelect: (zoneId: ZoneId) => void;
-}) {
+};
+
+function ZonePicker({ projectId, onSelect }: ZonePickerProps) {
   const { data: zones } = useZonesByProject(projectId);
 
   if (!zones || zones.length === 0) {
@@ -33,14 +32,10 @@ function ZonePicker({
   return (
     <View style={styles.zoneList}>
       <Text style={styles.zoneTitle}>Zone wählen:</Text>
-      {zones.map((zone) => (
-        <TouchableOpacity
-          key={zone.id}
-          style={styles.zoneItem}
-          onPress={() => onSelect(zone.id)}
-        >
-          <Text style={styles.zoneName}>{zone.name}</Text>
-          <Text style={styles.zoneType}>{zone.type}</Text>
+      {zones.map(({ id, name, type }) => (
+        <TouchableOpacity key={id} style={styles.zoneItem} onPress={() => onSelect(id)}>
+          <Text style={styles.zoneName}>{name}</Text>
+          <Text style={styles.zoneType}>{type}</Text>
         </TouchableOpacity>
       ))}
     </View>
@@ -50,16 +45,14 @@ function ZonePicker({
 export default function CaptureScreen() {
   const router = useRouter();
   const { data: allProjects } = useProjects();
-  const [selectedProjectId, setSelectedProjectId] = useState<ProjectId | null>(
-    null
-  );
+  const [selectedProjectId, setSelectedProjectId] = useState<ProjectId | null>(null);
 
-  const projects = allProjects?.filter((p) => p.status === "active") ?? [];
+  const projects = allProjects?.filter(({ status }) => status === "active") ?? [];
+
+  const openScanner = () => router.push("/(tabs)/capture/scan");
 
   const handleZoneSelect = (zoneId: ZoneId) => {
-    router.push(
-      `/(tabs)/capture/new?projectId=${selectedProjectId}&zoneId=${zoneId}`
-    );
+    router.push(`/(tabs)/capture/new?projectId=${selectedProjectId}&zoneId=${zoneId}`);
   };
 
   return (
@@ -69,10 +62,7 @@ export default function CaptureScreen() {
         Wähle ein aktives Projekt und eine Zone.
       </Text>
 
-      <TouchableOpacity
-        style={styles.scanBtn}
-        onPress={() => router.push("/(tabs)/capture/scan")}
-      >
+      <TouchableOpacity style={styles.scanBtn} onPress={openScanner}>
         <FontAwesome name="qrcode" size={24} color={Colors.white} />
         <View style={styles.scanBtnContent}>
           <Text style={styles.scanBtnTitle}>QR-Code scannen</Text>
@@ -84,11 +74,7 @@ export default function CaptureScreen() {
       </TouchableOpacity>
 
       {projects.length === 0 ? (
-        <EmptyState
-          icon="building"
-          title="Keine aktiven Projekte"
-          subtitle="Erstelle zuerst ein Projekt im Projekte-Tab."
-        />
+        <EmptyState icon="building" title="Keine aktiven Projekte" subtitle="Erstelle zuerst ein Projekt im Projekte-Tab."/>
       ) : (
         <FlatList
           data={projects}
@@ -97,17 +83,10 @@ export default function CaptureScreen() {
             <View>
               <ProjectCard
                 project={item}
-                onPress={() =>
-                  setSelectedProjectId(
-                    selectedProjectId === item.id ? null : item.id
-                  )
-                }
+                onPress={() => setSelectedProjectId(selectedProjectId === item.id ? null : item.id)}
               />
               {selectedProjectId === item.id && (
-                <ZonePicker
-                  projectId={item.id}
-                  onSelect={handleZoneSelect}
-                />
+                <ZonePicker projectId={item.id} onSelect={handleZoneSelect}/>
               )}
             </View>
           )}

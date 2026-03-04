@@ -1,8 +1,8 @@
 import { useState, useDeferredValue, useMemo } from 'react';
 import { Link } from '@tanstack/react-router';
 import type { ProjectId } from '@baudoku/core';
-import { useProjects, useDeleteProject } from '@/hooks';
-import { StatusBadge, SearchBar, FilterChips, EmptyState, ConfirmDialog } from '@/components/common';
+import { useProjects, useDeleteProject, useConfirmDelete } from '@/hooks';
+import { StatusBadge, SearchBar, FilterChips, EmptyState, ConfirmDialog, buttonClassName, Button } from '@/components/common';
 import { PlusIcon, TrashIcon } from '@/components/icons';
 import { PROJECT_STATUS_LABELS } from '@baudoku/projects';
 import { optionsFromLabels } from '@baudoku/core';
@@ -21,7 +21,7 @@ export function ProjectListPage() {
   } = useProjects(deferredSearch || undefined);
   const deleteProject = useDeleteProject();
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
-  const [deleteId, setDeleteId] = useState<ProjectId | null>(null);
+  const { requestDelete, confirmProps } = useConfirmDelete<ProjectId>((id) => deleteProject.mutate(id));
 
   const allProjects = useMemo(
     () => data?.pages.flatMap((p) => p.items) ?? [],
@@ -32,7 +32,7 @@ export function ProjectListPage() {
 
   const filtered = useMemo(() => {
     if (!statusFilter) return allProjects;
-    return allProjects.filter((p) => p.status === statusFilter);
+    return allProjects.filter(({ status }) => status === statusFilter);
   }, [allProjects, statusFilter]);
 
   if (isLoading) {
@@ -50,7 +50,7 @@ export function ProjectListPage() {
         </div>
         <Link
           to='/projects/new'
-          className='inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-blue-700 transition-colors'
+          className={buttonClassName.primary}
         >
           <PlusIcon />
           Neues Projekt
@@ -83,7 +83,7 @@ export function ProjectListPage() {
               !search && !statusFilter ? (
                 <Link
                   to='/projects/new'
-                  className='inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700'
+                  className={buttonClassName.primary}
                 >
                   <PlusIcon />
                   Projekt erstellen
@@ -95,38 +95,38 @@ export function ProjectListPage() {
       ) : (
         <>
           <div className='mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
-            {filtered.map((project) => (
+            {filtered.map(({ id, name, status, street, zipCode, city, clientName }) => (
               <div
-                key={project.id}
+                key={id}
                 className='group relative rounded-xl border border-gray-200 bg-white p-5 hover:border-blue-300 hover:shadow-sm transition-all'
               >
                 <Link
                   to='/projects/$projectId'
-                  params={{ projectId: project.id }}
+                  params={{ projectId: id }}
                   className='block'
                 >
                   <h3 className='font-semibold text-gray-900 group-hover:text-blue-700'>
-                    {project.name}
+                    {name}
                   </h3>
-                  {(project.street || project.city) && (
+                  {(street || city) && (
                     <p className='mt-1 text-sm text-gray-500'>
-                      {[project.street, project.zipCode, project.city]
+                      {[street, zipCode, city]
                         .filter(Boolean)
                         .join(', ')}
                     </p>
                   )}
-                  {project.clientName && (
+                  {clientName && (
                     <p className='mt-1 text-sm text-gray-400'>
-                      {project.clientName}
+                      {clientName}
                     </p>
                   )}
-                  <StatusBadge status={project.status} className='mt-3' />
+                  <StatusBadge status={status} className='mt-3' />
                 </Link>
 
                 <button
                   onClick={(e) => {
                     e.preventDefault();
-                    setDeleteId(project.id);
+                    requestDelete(id);
                   }}
                   className='absolute right-3 top-3 rounded p-1 text-gray-300 opacity-0 hover:text-red-500 group-hover:opacity-100 transition-opacity'
                   title='Löschen'
@@ -139,31 +139,24 @@ export function ProjectListPage() {
 
           {hasNextPage && (
             <div className='mt-6 flex justify-center'>
-              <button
+              <Button
+                variant='secondary'
                 onClick={() => fetchNextPage()}
                 disabled={isFetchingNextPage}
-                className='inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 transition-colors'
               >
                 {isFetchingNextPage ? 'Laden...' : 'Mehr laden'}
-              </button>
+              </Button>
             </div>
           )}
         </>
       )}
 
       <ConfirmDialog
-        open={deleteId !== null}
+        {...confirmProps}
         title='Projekt löschen'
         message='Möchten Sie dieses Projekt wirklich löschen? Alle zugehörigen Daten werden unwiderruflich entfernt.'
         confirmLabel='Löschen'
         variant='danger'
-        onConfirm={() => {
-          if (deleteId) {
-            deleteProject.mutate(deleteId);
-            setDeleteId(null);
-          }
-        }}
-        onCancel={() => setDeleteId(null)}
       />
     </div>
   );

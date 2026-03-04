@@ -11,12 +11,12 @@ type MeasurementCardProps = {
 };
 
 export function MeasurementCard({ measurement, onDelete }: MeasurementCardProps) {
-  const m = measurement;
+  const { type, result, value, unit, notes, minThreshold, maxThreshold } = measurement;
   const thresholds =
-    m.minThreshold != null || m.maxThreshold != null
+    minThreshold != null || maxThreshold != null
       ? [
-          m.minThreshold != null ? `Min: ${m.minThreshold}` : null,
-          m.maxThreshold != null ? `Max: ${m.maxThreshold}` : null,
+          minThreshold != null ? `Min: ${minThreshold}` : null,
+          maxThreshold != null ? `Max: ${maxThreshold}` : null,
         ]
           .filter(Boolean)
           .join(' / ')
@@ -25,21 +25,21 @@ export function MeasurementCard({ measurement, onDelete }: MeasurementCardProps)
   return (
     <Card style={styles.card}>
       <View style={styles.header}>
-        <Body style={styles.type}>{m.type}</Body>
+        <Body style={styles.type}>{type}</Body>
         <View style={styles.headerRight}>
-          {m.result && <StatusBadge status={m.result} />}
+          {result && <StatusBadge status={result} />}
           {onDelete && (
-            <TouchableOpacity style={styles.deleteButton} onPress={() => onDelete(m)}>
+            <TouchableOpacity style={styles.deleteButton} onPress={() => onDelete(measurement)}>
               <FontAwesome name='trash-o' size={16} color={Colors.danger} />
             </TouchableOpacity>
           )}
         </View>
       </View>
       <Text style={styles.value}>
-        {m.value} {m.unit}
+        {value} {unit}
       </Text>
       {thresholds && <Caption style={styles.threshold}>{thresholds}</Caption>}
-      {m.notes ? <Caption style={styles.notes}>{m.notes}</Caption> : null}
+      {notes ? <Caption style={styles.notes}>{notes}</Caption> : null}
     </Card>
   );
 }

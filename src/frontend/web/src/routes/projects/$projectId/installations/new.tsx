@@ -11,6 +11,8 @@ export function InstallationNewPage() {
   const { data: zones } = useZones(projectId);
   const createInstallation = useCreateInstallation(projectId);
 
+  const handleCancel = () => navigate({ to: '/projects/$projectId/installations', params: { projectId } });
+
   const handleSubmit = async (
     data: InstallationFormData & { zoneId: string },
     gps: GpsFormData | null,
@@ -33,12 +35,7 @@ export function InstallationNewPage() {
         <InstallationForm
           zones={zones ?? []}
           onSubmit={handleSubmit}
-          onCancel={() =>
-            navigate({
-              to: '/projects/$projectId/installations',
-              params: { projectId },
-            })
-          }
+          onCancel={handleCancel}
           isSubmitting={createInstallation.isPending}
         />
       </div>

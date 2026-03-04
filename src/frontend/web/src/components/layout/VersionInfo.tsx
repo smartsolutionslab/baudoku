@@ -11,15 +11,13 @@ type SystemInfo = {
   services: ServiceInfo[];
 };
 
-function ServiceRow({
-  label,
-  version,
-  status,
-}: {
+type ServiceRowProps = {
   label: string;
   version: string;
   status: string;
-}) {
+};
+
+function ServiceRow({ label, version, status }: ServiceRowProps) {
   return (
     <div className='flex items-center justify-between'>
       <span>{label}</span>
@@ -67,12 +65,12 @@ export function VersionInfo() {
                 version={systemInfo.gateway.version}
                 status='ok'
               />
-              {systemInfo.services.map((s) => (
+              {systemInfo.services.map(({ service, version, status = 'ok' }) => (
                 <ServiceRow
-                  key={s.service}
-                  label={s.service.replace('BauDoku.', '').replace('.Api', '')}
-                  version={s.version}
-                  status={s.status ?? 'ok'}
+                  key={service}
+                  label={service.replace('BauDoku.', '').replace('.Api', '')}
+                  version={version}
+                  status={status}
                 />
               ))}
             </>

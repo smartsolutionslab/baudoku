@@ -1,10 +1,5 @@
 import { useState } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-} from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import { Button } from "@/components/core";
 import { Colors, Spacing, FontSize, Radius } from "@/styles/tokens";
@@ -17,6 +12,8 @@ export default function LoginScreen() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const goBack = () => router.back();
+
   const { setTokens, setUser } = useAuthStore();
 
   const handleLogin = async () => {
@@ -24,20 +21,19 @@ export default function LoginScreen() {
     setError(null);
 
     try {
-      const tokens = await loginWithKeycloak();
+      const { accessToken, refreshToken, idToken } = await loginWithKeycloak();
 
-      await saveTokens(tokens.accessToken, tokens.refreshToken, tokens.idToken);
+      await saveTokens(accessToken, refreshToken, idToken);
 
-      setTokens(tokens.accessToken, tokens.refreshToken, tokens.idToken);
-      setAuthToken(tokens.accessToken);
+      setTokens(accessToken, refreshToken, idToken);
+      setAuthToken(accessToken);
 
-      const user = parseUserFromToken(tokens.idToken);
+      const user = parseUserFromToken(idToken);
       setUser(user);
 
       router.back();
     } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Unbekannter Fehler bei der Anmeldung";
+      const message = err instanceof Error ? err.message : "Unbekannter Fehler bei der Anmeldung";
       setError(message);
     } finally {
       setLoading(false);
@@ -59,18 +55,8 @@ export default function LoginScreen() {
           </View>
         )}
 
-        <Button
-          title="Mit Keycloak anmelden"
-          onPress={handleLogin}
-          loading={loading}
-          style={{ marginBottom: Spacing.md }}
-        />
-
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => router.back()}
-          activeOpacity={0.7}
-        >
+        <Button title="Mit Keycloak anmelden" onPress={handleLogin} loading={loading} style={{ marginBottom: Spacing.md }} />
+        <TouchableOpacity style={styles.backButton} onPress={goBack} activeOpacity={0.7} >
           <Text style={styles.backButtonText}>Zurück</Text>
         </TouchableOpacity>
       </View>

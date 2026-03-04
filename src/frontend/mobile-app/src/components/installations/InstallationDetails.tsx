@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet } from 'react-native';
 import type { Installation } from '../../db/repositories/types';
 import { QualityIndicator } from './QualityIndicator';
+import { DetailRow } from '../common/DetailRow';
 import { gpsSourceLabels, corrServiceLabels, rtkLabels } from '../../utils';
 import { Colors, Spacing, FontSize, Radius } from '../../styles/tokens';
 
@@ -8,22 +9,19 @@ type InstallationDetailsProps = {
   installation: Installation;
 };
 
-function Row({ label, value }: { label: string; value?: string | number | null }) {
-  if (value == null || value === '') return null;
-  return (
-    <View style={styles.row}>
-      <Text style={styles.label}>{label}</Text>
-      <Text style={styles.value}>{String(value)}</Text>
-    </View>
-  );
-}
-
 export function InstallationDetails({ installation }: InstallationDetailsProps) {
-  const i = installation;
-  const hasGps = i.gpsLat != null && i.gpsLng != null;
-  const hasCable = i.cableType || i.crossSectionMm2 || i.lengthM;
-  const hasElectrical = i.circuitId || i.fuseType || i.fuseRatingA || i.voltageV || i.phase;
-  const hasTech = hasGps || hasCable || hasElectrical || i.depthMm;
+  const {
+    gpsLat, gpsLng, gpsAccuracy, gpsHdop, gpsSatCount,
+    gpsCorrService, gpsSource, gpsRtkStatus, gpsCorrAge,
+    cableType, crossSectionMm2, lengthM,
+    circuitId, fuseType, fuseRatingA, voltageV, phase,
+    depthMm,
+  } = installation;
+
+  const hasGps = gpsLat != null && gpsLng != null;
+  const hasCable = cableType || crossSectionMm2 || lengthM;
+  const hasElectrical = circuitId || fuseType || fuseRatingA || voltageV || phase;
+  const hasTech = hasGps || hasCable || hasElectrical || depthMm;
 
   if (!hasTech) return null;
 
@@ -34,53 +32,53 @@ export function InstallationDetails({ installation }: InstallationDetailsProps) 
       {hasGps && (
         <>
           <Text style={styles.subTitle}>GPS / GNSS</Text>
-          {i.gpsAccuracy != null && (
+          {gpsAccuracy != null && (
             <View style={styles.qualityRow}>
               <QualityIndicator
-                horizontalAccuracy={i.gpsAccuracy}
-                hdop={i.gpsHdop}
-                satelliteCount={i.gpsSatCount}
-                correctionService={i.gpsCorrService}
-                gpsSource={i.gpsSource}
+                horizontalAccuracy={gpsAccuracy}
+                hdop={gpsHdop}
+                satelliteCount={gpsSatCount}
+                correctionService={gpsCorrService}
+                gpsSource={gpsSource}
               />
             </View>
           )}
-          <Row label='Breitengrad' value={i.gpsLat?.toFixed(6)} />
-          <Row label='Längengrad' value={i.gpsLng?.toFixed(6)} />
-          <Row label='Genauigkeit' value={i.gpsAccuracy != null ? `${i.gpsAccuracy.toFixed(2)} m` : null} />
-          <Row label='Quelle' value={i.gpsSource ? gpsSourceLabels[i.gpsSource] ?? i.gpsSource : null} />
-          <Row label='Korrekturdienst' value={i.gpsCorrService ? corrServiceLabels[i.gpsCorrService] ?? i.gpsCorrService : null} />
-          <Row label='RTK-Status' value={i.gpsRtkStatus ? rtkLabels[i.gpsRtkStatus] ?? i.gpsRtkStatus : null} />
-          <Row label='Satelliten' value={i.gpsSatCount != null ? String(i.gpsSatCount) : null} />
-          <Row label='HDOP' value={i.gpsHdop != null ? i.gpsHdop.toFixed(1) : null} />
-          <Row label='Korrekturalter' value={i.gpsCorrAge != null ? `${i.gpsCorrAge.toFixed(1)} s` : null} />
+          <DetailRow label='Breitengrad' value={gpsLat?.toFixed(6)} />
+          <DetailRow label='Längengrad' value={gpsLng?.toFixed(6)} />
+          <DetailRow label='Genauigkeit' value={gpsAccuracy != null ? `${gpsAccuracy.toFixed(2)} m` : null} />
+          <DetailRow label='Quelle' value={gpsSource ? gpsSourceLabels[gpsSource] ?? gpsSource : null} />
+          <DetailRow label='Korrekturdienst' value={gpsCorrService ? corrServiceLabels[gpsCorrService] ?? gpsCorrService : null} />
+          <DetailRow label='RTK-Status' value={gpsRtkStatus ? rtkLabels[gpsRtkStatus] ?? gpsRtkStatus : null} />
+          <DetailRow label='Satelliten' value={gpsSatCount != null ? String(gpsSatCount) : null} />
+          <DetailRow label='HDOP' value={gpsHdop != null ? gpsHdop.toFixed(1) : null} />
+          <DetailRow label='Korrekturalter' value={gpsCorrAge != null ? `${gpsCorrAge.toFixed(1)} s` : null} />
         </>
       )}
 
       {hasCable && (
         <>
           <Text style={styles.subTitle}>Kabel</Text>
-          <Row label='Typ' value={i.cableType} />
-          <Row label='Querschnitt' value={i.crossSectionMm2 != null ? `${i.crossSectionMm2} mm²` : null} />
-          <Row label='Länge' value={i.lengthM != null ? `${i.lengthM} m` : null} />
+          <DetailRow label='Typ' value={cableType} />
+          <DetailRow label='Querschnitt' value={crossSectionMm2 != null ? `${crossSectionMm2} mm²` : null} />
+          <DetailRow label='Länge' value={lengthM != null ? `${lengthM} m` : null} />
         </>
       )}
 
       {hasElectrical && (
         <>
           <Text style={styles.subTitle}>Elektrik</Text>
-          <Row label='Stromkreis' value={i.circuitId} />
-          <Row label='Sicherung' value={i.fuseType} />
-          <Row label='Nennstrom' value={i.fuseRatingA != null ? `${i.fuseRatingA} A` : null} />
-          <Row label='Spannung' value={i.voltageV != null ? `${i.voltageV} V` : null} />
-          <Row label='Phase' value={i.phase} />
+          <DetailRow label='Stromkreis' value={circuitId} />
+          <DetailRow label='Sicherung' value={fuseType} />
+          <DetailRow label='Nennstrom' value={fuseRatingA != null ? `${fuseRatingA} A` : null} />
+          <DetailRow label='Spannung' value={voltageV != null ? `${voltageV} V` : null} />
+          <DetailRow label='Phase' value={phase} />
         </>
       )}
 
-      {i.depthMm != null && (
+      {depthMm != null && (
         <>
           <Text style={styles.subTitle}>Verlegetiefe</Text>
-          <Row label='Tiefe' value={`${i.depthMm} mm`} />
+          <DetailRow label='Tiefe' value={`${depthMm} mm`} />
         </>
       )}
     </View>
@@ -109,22 +107,5 @@ const styles = StyleSheet.create({
   },
   qualityRow: {
     marginBottom: Spacing.sm,
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: Spacing.xs,
-  },
-  label: {
-    fontSize: FontSize.body,
-    color: Colors.textTertiary,
-  },
-  value: {
-    fontSize: FontSize.body,
-    fontWeight: '500',
-    color: Colors.textPrimary,
-    flex: 1,
-    textAlign: 'right',
-    marginLeft: Spacing.lg,
   },
 });

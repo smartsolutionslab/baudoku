@@ -8,24 +8,15 @@ import { INSTALLATION_STATUS_OPTIONS } from "@/constants";
 
 export default function SearchScreen() {
   const router = useRouter();
-  const { query, setQuery, filters, toggleStatus, results, searching } =
-    useInstallationSearch();
+  const { query, setQuery, filters, toggleStatus, results, searching } = useInstallationSearch();
+  
+  const openInstallation = (id: string) => router.push(`/(tabs)/projects/installation/${id}`);
 
   return (
     <View style={styles.container}>
       <Stack.Screen options={{ title: "Installationen suchen" }} />
-
-      <SearchBar
-        value={query}
-        onChangeText={setQuery}
-        placeholder="Typ, Hersteller, Modell..."
-      />
-
-      <FilterChips
-        options={INSTALLATION_STATUS_OPTIONS}
-        selected={filters.status ?? []}
-        onToggle={toggleStatus}
-      />
+      <SearchBar value={query} onChangeText={setQuery} placeholder="Typ, Hersteller, Modell..." />
+      <FilterChips options={INSTALLATION_STATUS_OPTIONS} selected={filters.status ?? []} onToggle={toggleStatus} />
 
       {results.length === 0 && !searching ? (
         <EmptyState
@@ -38,21 +29,13 @@ export default function SearchScreen() {
           }
         />
       ) : (
-        <FlatList
-          data={results}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <View>
-              <InstallationCard
-                installation={item}
-                onPress={() =>
-                  router.push(`/(tabs)/projects/installation/${item.id}`)
-                }
-              />
-              <Text style={styles.context}>
-                {item.projectName} / {item.zoneName}
-              </Text>
-            </View>
+        <FlatList data={results} keyExtractor={(item) => item.id} renderItem={({ item }) => (
+          <View>
+            <InstallationCard installation={item} onPress={() => openInstallation(item.id)} />
+            <Text style={styles.context}>
+              {item.projectName} / {item.zoneName}
+            </Text>
+          </View>
           )}
           contentContainerStyle={styles.list}
         />

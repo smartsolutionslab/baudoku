@@ -1,11 +1,5 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  ActivityIndicator,
-} from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
 import { useRouter } from "expo-router";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { FontAwesome } from "@expo/vector-icons";
@@ -19,18 +13,26 @@ import * as projectRepo from "@/db/repositories/projectRepo";
 export default function ScanScreen() {
   const router = useRouter();
   const [permission, requestPermission] = useCameraPermissions();
-  const { scanned, scanResult, error, onBarcodeScanned, resetScanner } =
-    useQrScanner();
+  const { scanned, scanResult, error, onBarcodeScanned, resetScanner } = useQrScanner();
+  const goBack = () => router.back();
+  const openZone = () => {
+    if (scanResult) router.replace(`/(tabs)/projects/zone/${scanResult.zoneId}?projectId=${scanResult.projectId}`);
+  };
+  const openNewInstallation = () => {
+    if (scanResult) router.replace(`/(tabs)/capture/new?projectId=${scanResult.projectId}&zoneId=${scanResult.zoneId}`);
+  };
+
   const [torch, setTorch] = useState(false);
   const [zoneName, setZoneName] = useState<string | null>(null);
   const [projectName, setProjectName] = useState<string | null>(null);
 
   React.useEffect(() => {
     if (scanResult) {
+      const { zoneId, projectId } = scanResult;
       (async () => {
-        const zone = await zoneRepo.getById(scanResult.zoneId);
+        const zone = await zoneRepo.getById(zoneId);
         setZoneName(zone?.name ?? "Unbekannte Zone");
-        const project = await projectRepo.getById(scanResult.projectId);
+        const project = await projectRepo.getById(projectId);
         setProjectName(project?.name ?? "Unbekanntes Projekt");
       })();
     }
@@ -47,24 +49,12 @@ export default function ScanScreen() {
   if (!permission.granted) {
     return (
       <View style={styles.centered}>
-        <FontAwesome
-          name="camera"
-          size={48}
-          color={Colors.textTertiary}
-          style={{ marginBottom: Spacing.lg }}
-        />
+        <FontAwesome name="camera" size={48} color={Colors.textTertiary} style={{ marginBottom: Spacing.lg }} />
         <Text style={styles.permissionText}>
           Kamerazugriff wird für den QR-Scanner benötigt.
         </Text>
-        <Button
-          title="Berechtigung erteilen"
-          onPress={requestPermission}
-          style={{ marginBottom: Spacing.md, paddingHorizontal: Spacing.xl }}
-        />
-        <TouchableOpacity
-          style={styles.backBtn}
-          onPress={() => router.back()}
-        >
+        <Button title="Berechtigung erteilen" onPress={requestPermission} style={{ marginBottom: Spacing.md, paddingHorizontal: Spacing.xl }} />
+        <TouchableOpacity style={styles.backBtn} onPress={goBack}>
           <Text style={styles.backBtnText}>Zurück</Text>
         </TouchableOpacity>
       </View>
@@ -84,14 +74,11 @@ export default function ScanScreen() {
 
       {/* Top bar */}
       <View style={styles.topBar}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.iconBtn}>
+        <TouchableOpacity onPress={goBack} style={styles.iconBtn}>
           <FontAwesome name="arrow-left" size={20} color={Colors.white} />
         </TouchableOpacity>
         <Text style={styles.topTitle}>QR-Scanner</Text>
-        <TouchableOpacity
-          onPress={() => setTorch((t) => !t)}
-          style={styles.iconBtn}
-        >
+        <TouchableOpacity onPress={() => setTorch((t) => !t)} style={styles.iconBtn}>
           <FontAwesome
             name={torch ? "flash" : "flash"}
             size={20}
@@ -118,35 +105,18 @@ export default function ScanScreen() {
               <Text style={styles.successZone}>{zoneName}</Text>
               <Text style={styles.successProject}>{projectName}</Text>
               <View style={styles.actionRow}>
-                <TouchableOpacity
-                  style={[styles.actionBtn, styles.actionBtnSecondary]}
-                  onPress={() => {
-                    router.replace(
-                      `/(tabs)/projects/zone/${scanResult.zoneId}?projectId=${scanResult.projectId}`
-                    );
-                  }}
-                >
+                <TouchableOpacity style={[styles.actionBtn, styles.actionBtnSecondary]} onPress={openZone} >
                   <FontAwesome name="folder-open" size={16} color={Colors.primary} />
                   <Text style={styles.actionBtnSecondaryText}>Zur Zone</Text>
                 </TouchableOpacity>
-                <TouchableOpacity
-                  style={[styles.actionBtn, styles.actionBtnPrimary]}
-                  onPress={() => {
-                    router.replace(
-                      `/(tabs)/capture/new?projectId=${scanResult.projectId}&zoneId=${scanResult.zoneId}`
-                    );
-                  }}
-                >
+                <TouchableOpacity style={[styles.actionBtn, styles.actionBtnPrimary]} onPress={openNewInstallation} >
                   <FontAwesome name="plus" size={16} color={Colors.white} />
                   <Text style={styles.actionBtnPrimaryText}>
                     Neue Installation
                   </Text>
                 </TouchableOpacity>
               </View>
-              <TouchableOpacity
-                style={styles.rescanLink}
-                onPress={resetScanner}
-              >
+              <TouchableOpacity style={styles.rescanLink} onPress={resetScanner}>
                 <Text style={styles.rescanText}>Erneut scannen</Text>
               </TouchableOpacity>
             </View>

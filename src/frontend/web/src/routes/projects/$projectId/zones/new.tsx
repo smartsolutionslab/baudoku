@@ -11,6 +11,8 @@ export function ZoneNewPage() {
   const { data: zones } = useZones(projectId);
   const createZone = useCreateZone(projectId);
 
+  const handleCancel = () => navigate({ to: '/projects/$projectId', params: { projectId } });
+
   const handleSubmit = async (data: ZoneFormData) => {
     await createZone.mutateAsync(data);
     navigate({
@@ -30,12 +32,7 @@ export function ZoneNewPage() {
         <ZoneForm
           zones={zones ?? []}
           onSubmit={handleSubmit}
-          onCancel={() =>
-            navigate({
-              to: '/projects/$projectId',
-              params: { projectId },
-            })
-          }
+          onCancel={handleCancel}
           isSubmitting={createZone.isPending}
         />
       </div>

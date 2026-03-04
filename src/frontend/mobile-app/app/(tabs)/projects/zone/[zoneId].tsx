@@ -1,23 +1,14 @@
 import { useMemo, useState, useCallback } from "react";
 import { View, Text, FlatList, StyleSheet } from "react-native";
 import { useLocalSearchParams, useRouter, Stack } from "expo-router";
-import {
-  useZonesByProject,
-  useInstallationsByZone,
-  useDeleteZone,
-  useUpdateZone,
-  useConfirmDelete,
-} from "@/hooks";
+import { useZonesByProject, useInstallationsByZone, useDeleteZone, useUpdateZone, useConfirmDelete } from "@/hooks";
 import { InstallationCard } from "@/components/installations";
 import { StatusBadge, EmptyState, FloatingActionButton, ActionBar } from "@/components/common";
 import { ZoneQrSheet } from "@/components/projects";
 import { encodeZoneQr } from "@/utils";
 import { Colors, Spacing, FontSize, Radius } from "@/styles/tokens";
 import type { Zone } from "@/db/repositories/types";
-import {
-  projectId as toProjectId,
-  zoneId as toZoneId,
-} from "@baudoku/core";
+import { projectId as toProjectId,  zoneId as toZoneId } from "@baudoku/core";
 import type { ZoneId } from "@baudoku/core";
 
 function buildBreadcrumb(zones: Zone[], id: ZoneId): string[] {
@@ -32,20 +23,20 @@ function buildBreadcrumb(zones: Zone[], id: ZoneId): string[] {
 }
 
 export default function ZoneDetailScreen() {
-  const { zoneId: rawZoneId, projectId: rawProjectId } = useLocalSearchParams<{
-    zoneId: string;
-    projectId: string;
-  }>();
+  const { zoneId: rawZoneId, projectId: rawProjectId } = useLocalSearchParams<{ zoneId: string; projectId: string; }>();
   const zoneId = toZoneId(rawZoneId!);
   const projectId = toProjectId(rawProjectId!);
   const router = useRouter();
   const { data: zones } = useZonesByProject(projectId);
-  const { data: installations, isLoading, refetch } =
-    useInstallationsByZone(zoneId);
+  const { data: installations, isLoading, refetch } = useInstallationsByZone(zoneId);
   const deleteZone = useDeleteZone();
   const updateZone = useUpdateZone();
   const { confirmDelete } = useConfirmDelete();
   const [qrSheetVisible, setQrSheetVisible] = useState(false);
+
+  const openEditZone = () => router.push(`/(tabs)/projects/zone/edit?zoneId=${zoneId}&projectId=${projectId}`);
+  const openNewInstallation = () => router.push(`/(tabs)/capture/new?projectId=${projectId}&zoneId=${zoneId}`);
+  const openInstallation = (id: string) => router.push(`/(tabs)/projects/installation/${id}`);
 
   const zone = useMemo(
     () => zones?.find((z) => z.id === zoneId),
@@ -65,10 +56,7 @@ export default function ZoneDetailScreen() {
   const handleQrPress = useCallback(async () => {
     try {
       if (zone && !zone.qrCode) {
-        await updateZone.mutateAsync({
-          id: zoneId,
-          data: { qrCode: qrValue },
-        });
+        await updateZone.mutateAsync({ id: zoneId, data: { qrCode: qrValue } });
       }
       setQrSheetVisible(true);
     } catch {
@@ -93,14 +81,16 @@ export default function ZoneDetailScreen() {
 
   if (!zone) return null;
 
+  const { name, type } = zone;
+
   return (
     <View style={styles.container}>
-      <Stack.Screen options={{ title: zone.name }} />
+      <Stack.Screen options={{ title: name }} />
 
       <View style={styles.header}>
         <View style={styles.headerRow}>
-          <Text style={styles.title}>{zone.name}</Text>
-          <StatusBadge status={zone.type} />
+          <Text style={styles.title}>{name}</Text>
+          <StatusBadge status={type} />
         </View>
         {breadcrumb.length > 1 && (
           <Text style={styles.breadcrumb} numberOfLines={1}>
@@ -115,10 +105,7 @@ export default function ZoneDetailScreen() {
           {
             icon: "pencil",
             label: "Bearbeiten",
-            onPress: () =>
-              router.push(
-                `/(tabs)/projects/zone/edit?zoneId=${zoneId}&projectId=${projectId}`
-              ),
+            onPress: openEditZone,
           },
           {
             icon: "trash-o",
@@ -137,23 +124,14 @@ export default function ZoneDetailScreen() {
           title="Noch keine Installationen"
           subtitle="Erfasse die erste Installation in dieser Zone."
           actionLabel="Installation erfassen"
-          onAction={() =>
-            router.push(
-              `/(tabs)/capture/new?projectId=${projectId}&zoneId=${zoneId}`
-            )
-          }
+          onAction={openNewInstallation}
         />
       ) : (
         <FlatList
           data={installations}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <InstallationCard
-              installation={item}
-              onPress={() =>
-                router.push(`/(tabs)/projects/installation/${item.id}`)
-              }
-            />
+            <InstallationCard installation={item} onPress={() => openInstallation(item.id)} />
           )}
           contentContainerStyle={styles.list}
           refreshing={isLoading}
@@ -161,20 +139,14 @@ export default function ZoneDetailScreen() {
         />
       )}
 
-      <FloatingActionButton
-        onPress={() =>
-          router.push(
-            `/(tabs)/capture/new?projectId=${projectId}&zoneId=${zoneId}`
-          )
-        }
-      />
+      <FloatingActionButton onPress={openNewInstallation} />
 
       <ZoneQrSheet
         visible={qrSheetVisible}
         onClose={() => setQrSheetVisible(false)}
         qrValue={qrValue}
-        zoneName={zone.name}
-        zoneType={zone.type}
+        zoneName={name}
+        zoneType={type}
       />
     </View>
   );
