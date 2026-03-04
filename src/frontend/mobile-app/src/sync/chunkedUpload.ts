@@ -1,4 +1,5 @@
 import { File } from 'expo-file-system';
+import type { PhotoId, InstallationId } from '@baudoku/core';
 import { initChunkedUpload, uploadChunk, completeChunkedUpload } from './syncApi';
 
 export const CHUNK_SIZE_BYTES = 1_048_576; // 1 MB
@@ -13,15 +14,15 @@ export type UploadProgress = {
 const CHUNK_SIZE_BASE64 = Math.ceil(CHUNK_SIZE_BYTES * 4 / 3);
 
 export async function uploadPhotoChunked(
-  photoLocalId: string,
-  installationId: string,
+  photoLocalId: PhotoId,
+  installationId: InstallationId,
   localPath: string,
   fileName: string,
   contentType: string,
   photoType: string,
   caption?: string,
   onProgress?: (progress: UploadProgress) => void
-): Promise<string> {
+): Promise<PhotoId> {
   // Read entire file as base64 using new expo-file-system v19 API
   const file = new File(localPath);
   const base64 = await file.base64();

@@ -13,7 +13,7 @@ import { usePhotoCapture, type CapturedPhoto, useConfirmDelete } from '@/hooks';
 import { deletePhotoFile } from '@/utils';
 import { Colors, Spacing, FontSize, Radius } from '@/styles/tokens';
 import type { Photo } from '@/db/repositories/types';
-import type { InstallationId, PhotoId } from '@/types/branded';
+import type { InstallationId, PhotoId, Latitude, Longitude } from '@baudoku/core';
 
 function uploadStatusColor(status: string): string {
   switch (status) {
@@ -41,8 +41,8 @@ type InstallationPhotoSectionProps = {
     localPath: string;
     type: PhotoType;
     caption: string | null;
-    exifLatitude: number | null;
-    exifLongitude: number | null;
+    exifLatitude: Latitude | null;
+    exifLongitude: Longitude | null;
     exifDateTime: string | null;
     exifCameraModel: string | null;
     takenAt: Date;

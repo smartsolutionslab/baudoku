@@ -11,7 +11,7 @@ import { ZoneTree } from "@/components/projects";
 import { StatusBadge, EmptyState, FloatingActionButton, ActionBar } from "@/components/common";
 import { Colors, Spacing, FontSize, Radius } from "@/styles/tokens";
 import { formatDate } from "@/utils";
-import { projectId } from "@/types/branded";
+import { projectId } from "@baudoku/core";
 
 export default function ProjectDetailScreen() {
   const { id: rawId } = useLocalSearchParams<{ id: string }>();

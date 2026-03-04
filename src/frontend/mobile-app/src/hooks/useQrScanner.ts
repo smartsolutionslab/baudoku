@@ -1,7 +1,7 @@
 import { useState, useCallback, useRef } from 'react';
 import { decodeZoneQr } from '../utils';
 import type { BarcodeScanningResult } from 'expo-camera';
-import type { ProjectId, ZoneId } from '../types/branded';
+import type { ProjectId, ZoneId } from '@baudoku/core';
 
 export type QrScanResult = {
   type: 'zone';
@@ -43,8 +43,8 @@ export function useQrScanner(): UseQrScannerReturn {
 
       setScanResult({
         type: 'zone',
-        projectId: decoded.projectId as ProjectId,
-        zoneId: decoded.zoneId as ZoneId,
+        projectId: decoded.projectId,
+        zoneId: decoded.zoneId,
       });
       setScanned(true);
       setError(null);

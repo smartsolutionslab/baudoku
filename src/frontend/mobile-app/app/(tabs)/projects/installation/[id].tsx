@@ -23,7 +23,7 @@ import {
 import { Colors, Spacing } from "@/styles/tokens";
 import type { Measurement } from "@/db/repositories/types";
 import type { MeasurementFormData } from "@/validation/schemas";
-import { installationId } from "@/types/branded";
+import { installationId } from "@baudoku/core";
 
 export default function InstallationDetailScreen() {
   const { id: rawId } = useLocalSearchParams<{ id: string }>();

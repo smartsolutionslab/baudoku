@@ -1,13 +1,14 @@
 import { useMemo } from 'react';
 import { Link } from '@tanstack/react-router';
+import type { ProjectId, ZoneId } from '@baudoku/core';
 import { buildZoneTree, flattenTree, ZONE_TYPE_LABELS } from '@baudoku/projects';
 import type { Zone, ZoneNode } from '@baudoku/projects';
 import { PlusIcon, TrashIcon, CornerIcon, ListIcon } from '@/components/icons';
 
 interface ZoneTreeProps {
   zones: Zone[];
-  projectId: string;
-  onDelete?: (zoneId: string) => void;
+  projectId: ProjectId;
+  onDelete?: (zoneId: ZoneId) => void;
 }
 
 export function ZoneTree({ zones, projectId, onDelete }: ZoneTreeProps) {
@@ -50,8 +51,8 @@ function ZoneRow({
   onDelete,
 }: {
   node: ZoneNode;
-  projectId: string;
-  onDelete?: (zoneId: string) => void;
+  projectId: ProjectId;
+  onDelete?: (zoneId: ZoneId) => void;
 }) {
   const { zone, level } = node;
 

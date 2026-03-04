@@ -1,5 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Link, useParams, useSearch } from '@tanstack/react-router';
+import { projectId as toProjectId } from '@baudoku/core';
+import type { InstallationId, ZoneId } from '@baudoku/core';
 import { useInstallations, useDeleteInstallation, useZones } from '@/hooks';
 import { StatusBadge, SearchBar, FilterChips, EmptyState, ConfirmDialog } from '@/components/common';
 import { PlusIcon, TrashIcon } from '@/components/icons';
@@ -9,17 +11,18 @@ import { optionsFromLabels } from '@baudoku/core';
 const statusOptions = optionsFromLabels(INSTALLATION_STATUS_LABELS);
 
 export function InstallationListPage() {
-  const { projectId } = useParams({ strict: false }) as { projectId: string };
+  const { projectId: rawProjectId } = useParams({ strict: false }) as { projectId: string };
+  const projectId = toProjectId(rawProjectId);
   const { data: installations, isLoading } = useInstallations(projectId);
   const { data: zones } = useZones(projectId);
   const deleteInstallation = useDeleteInstallation(projectId);
 
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
-  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [deleteId, setDeleteId] = useState<InstallationId | null>(null);
 
   const zoneMap = useMemo(() => {
-    const map = new Map<string, string>();
+    const map = new Map<ZoneId, string>();
     zones?.forEach((z) => map.set(z.id, z.name));
     return map;
   }, [zones]);

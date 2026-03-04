@@ -1,8 +1,10 @@
 import { useState, useCallback } from 'react';
+import type { Latitude, Longitude } from '@baudoku/core';
+import { latitude as toLatitude, longitude as toLongitude } from '@baudoku/core';
 
 type GpsPosition = {
-  latitude: number;
-  longitude: number;
+  latitude: Latitude;
+  longitude: Longitude;
   altitude: number | null;
   accuracy: number;
 };
@@ -32,8 +34,8 @@ export function useGpsCapture(): UseGpsCaptureReturn {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         setPosition({
-          latitude: pos.coords.latitude,
-          longitude: pos.coords.longitude,
+          latitude: toLatitude(pos.coords.latitude),
+          longitude: toLongitude(pos.coords.longitude),
           altitude: pos.coords.altitude,
           accuracy: pos.coords.accuracy,
         });

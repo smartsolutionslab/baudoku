@@ -1,6 +1,6 @@
 import * as installationRepo from '../db/repositories/installationRepo';
 import type { NewInstallation } from '../db/repositories/types';
-import type { ProjectId, ZoneId, InstallationId } from '../types/branded';
+import type { ProjectId, ZoneId, InstallationId } from '@baudoku/core';
 import { useListQuery, useSyncMutation } from './useQueryFactory';
 
 export function useInstallationsByZone(zoneId: ZoneId) {

@@ -2,7 +2,7 @@ import { useLocalSearchParams, useRouter, Stack } from "expo-router";
 import { useProject, useUpdateProject } from "@/hooks";
 import { ProjectForm } from "@/components/projects";
 import type { ProjectFormData } from "@/validation/schemas";
-import { projectId } from "@/types/branded";
+import { projectId } from "@baudoku/core";
 
 export default function EditProjectScreen() {
   const { id: rawId } = useLocalSearchParams<{ id: string }>();

@@ -1,11 +1,12 @@
 import { PhotoGallery } from './PhotoGallery';
 import { PhotoCapture } from './PhotoCapture';
+import type { PhotoId } from '@baudoku/core';
 import type { Photo } from '@baudoku/documentation';
 
 type PhotosTabProps = {
   photos: Photo[];
   onUpload: (file: File, type: string, caption?: string) => void;
-  onDelete: (id: string) => void;
+  onDelete: (id: PhotoId) => void;
 };
 
 export function PhotosTab({ photos, onUpload, onDelete }: PhotosTabProps) {

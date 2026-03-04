@@ -1,6 +1,6 @@
 import * as measurementRepo from '../db/repositories/measurementRepo';
 import type { NewMeasurement } from '../db/repositories/types';
-import type { InstallationId, MeasurementId } from '../types/branded';
+import type { InstallationId, MeasurementId } from '@baudoku/core';
 import { useListQuery, useSyncMutation } from './useQueryFactory';
 
 export function useMeasurementsByInstallation(installationId: InstallationId) {

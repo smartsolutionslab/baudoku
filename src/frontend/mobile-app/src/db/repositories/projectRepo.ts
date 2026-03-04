@@ -4,7 +4,7 @@ import { projects } from '../schema';
 import { generateId } from '../../utils';
 import { createOutboxEntry } from './syncRepo';
 import type { Project, NewProject } from './types';
-import type { ProjectId } from '../../types/branded';
+import type { ProjectId } from '@baudoku/core';
 
 export async function getAll(): Promise<Project[]> {
   return db.select().from(projects).all() as unknown as Project[];

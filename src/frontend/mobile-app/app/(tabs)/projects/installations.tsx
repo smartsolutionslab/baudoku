@@ -12,7 +12,7 @@ import { StatusBadge, EmptyState, SearchBar, FilterChips } from "@/components/co
 import { Colors, Spacing, FontSize, Radius } from "@/styles/tokens";
 import { INSTALLATION_TYPE_OPTIONS, INSTALLATION_STATUS_OPTIONS } from "@/constants";
 import type { Installation } from "@/db/repositories/types";
-import { projectId as toProjectId } from "@/types/branded";
+import { projectId as toProjectId } from "@baudoku/core";
 
 export default function InstallationsListScreen() {
   const { projectId: rawProjectId } = useLocalSearchParams<{ projectId: string }>();

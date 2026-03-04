@@ -5,6 +5,7 @@ import { useZoneForm } from '../../hooks';
 import type { ZoneFormData } from '../../validation/schemas';
 import { Colors, Spacing } from '../../styles/tokens';
 import type { Zone } from '../../db/repositories/types';
+import type { ZoneId } from '@baudoku/core';
 import { ZONE_TYPE_LABELS } from '@baudoku/projects';
 import { optionsFromLabels } from '@baudoku/core';
 
@@ -12,7 +13,7 @@ const typeOptions = optionsFromLabels(ZONE_TYPE_LABELS);
 
 type ZoneFormProps = {
   zones?: Zone[];
-  defaultParentZoneId?: string | null;
+  defaultParentZoneId?: ZoneId | null;
   initialValues?: Partial<ZoneFormData>;
   submitLabel?: string;
   onSubmit: (data: ZoneFormData) => Promise<void>;

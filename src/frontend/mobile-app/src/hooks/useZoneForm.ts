@@ -1,11 +1,12 @@
 import { useState, useCallback } from 'react';
 import { Alert } from 'react-native';
+import type { ZoneId } from '@baudoku/core';
 import { zoneSchema, type ZoneFormData } from '../validation/schemas';
 import { useFormValidation } from './useFormValidation';
 
 export type UseZoneFormOptions = {
   initialValues?: Partial<ZoneFormData>;
-  defaultParentZoneId?: string | null;
+  defaultParentZoneId?: ZoneId | null;
   onSubmit: (data: ZoneFormData) => Promise<void>;
 };
 

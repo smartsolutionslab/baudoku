@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import type { Photo } from '../../db/repositories/types';
-import type { PhotoId } from '../../types/branded';
+import type { PhotoId } from '@baudoku/core';
 import { StatusBadge } from '../common';
 import { Colors, Spacing, FontSize, Radius } from '../../styles/tokens';
 import { formatDateTime } from '../../utils';

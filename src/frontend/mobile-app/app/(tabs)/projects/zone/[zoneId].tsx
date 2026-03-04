@@ -17,8 +17,8 @@ import type { Zone } from "@/db/repositories/types";
 import {
   projectId as toProjectId,
   zoneId as toZoneId,
-} from "@/types/branded";
-import type { ZoneId } from "@/types/branded";
+} from "@baudoku/core";
+import type { ZoneId } from "@baudoku/core";
 
 function buildBreadcrumb(zones: Zone[], id: ZoneId): string[] {
   const byId = new Map(zones.map((z) => [z.id as string, z]));

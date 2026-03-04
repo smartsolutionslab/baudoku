@@ -4,7 +4,7 @@ import * as installationRepo from "@/db/repositories/installationRepo";
 import { useUpdateInstallation, type GpsPosition, type GpsSource, type GpsCorrService, type GpsRtkStatus } from "@/hooks";
 import { InstallationForm } from "@/components/installations";
 import type { InstallationFormData } from "@/validation/schemas";
-import { installationId } from "@/types/branded";
+import { installationId } from "@baudoku/core";
 
 export default function EditInstallationScreen() {
   const { id: rawId } = useLocalSearchParams<{ id: string }>();

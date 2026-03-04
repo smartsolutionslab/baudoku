@@ -5,14 +5,15 @@ import {
 } from "@/hooks";
 import { ZoneForm } from "@/components/projects";
 import type { ZoneFormData } from "@/validation/schemas";
-import { projectId as toProjectId } from "@/types/branded";
+import { projectId as toProjectId, zoneId as toZoneId } from "@baudoku/core";
 
 export default function NewZoneScreen() {
-  const { projectId: rawProjectId, parentZoneId } = useLocalSearchParams<{
+  const { projectId: rawProjectId, parentZoneId: rawParentZoneId } = useLocalSearchParams<{
     projectId: string;
     parentZoneId?: string;
   }>();
   const projectId = toProjectId(rawProjectId!);
+  const parentZoneId = rawParentZoneId ? toZoneId(rawParentZoneId) : undefined;
   const router = useRouter();
   const { data: zones } = useZonesByProject(projectId);
   const createZone = useCreateZone();

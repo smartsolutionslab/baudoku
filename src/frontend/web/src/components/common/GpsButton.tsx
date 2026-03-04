@@ -1,9 +1,10 @@
 import { useEffect } from 'react';
+import type { Latitude, Longitude } from '@baudoku/core';
 import { useGpsCapture } from '../../hooks/useGpsCapture';
 import { Button } from './Button';
 
 type GpsButtonProps = {
-  onCapture: (position: { latitude: number; longitude: number; altitude: number | null; accuracy: number }) => void;
+  onCapture: (position: { latitude: Latitude; longitude: Longitude; altitude: number | null; accuracy: number }) => void;
 };
 
 export function GpsButton({ onCapture }: GpsButtonProps) {

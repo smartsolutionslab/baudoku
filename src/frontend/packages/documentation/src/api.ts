@@ -1,8 +1,8 @@
 import { apiUpload } from '@baudoku/core';
-import type { PhotoUploadResult } from '@baudoku/core';
+import type { PhotoUploadResult, InstallationId } from '@baudoku/core';
 
 export async function uploadPhoto(
-  installationId: string,
+  installationId: InstallationId,
   file: File,
   caption?: string
 ): Promise<PhotoUploadResult> {

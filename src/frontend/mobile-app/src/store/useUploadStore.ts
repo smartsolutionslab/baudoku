@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { PhotoId } from '../types/branded';
+import type { PhotoId } from '@baudoku/core';
 
 export type UploadStatus = 'queued' | 'uploading' | 'completed' | 'failed';
 

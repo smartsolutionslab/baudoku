@@ -4,7 +4,7 @@ import { measurements } from '../schema';
 import { generateId } from '../../utils';
 import { createOutboxEntry } from './syncRepo';
 import type { Measurement, NewMeasurement } from './types';
-import type { MeasurementId, InstallationId } from '../../types/branded';
+import type { MeasurementId, InstallationId } from '@baudoku/core';
 
 function evaluateResult(value: number, minThreshold: number | null, maxThreshold: number | null): 'passed' | 'failed' | 'warning' | null {
   if (minThreshold === null && maxThreshold === null) return null;

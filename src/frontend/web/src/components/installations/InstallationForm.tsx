@@ -11,14 +11,15 @@ import {
   PHASES,
 } from '@baudoku/documentation';
 import { ZONE_TYPE_LABELS, type Zone } from '@baudoku/projects';
-import { optionsFromLabels } from '@baudoku/core';
+import { optionsFromLabels, latitude as toLatitude, longitude as toLongitude } from '@baudoku/core';
+import type { Latitude, Longitude } from '@baudoku/core';
 import { FormField } from '../common/FormField';
 import { FormSelect } from '../common/FormSelect';
 import { Button } from '../common/Button';
 
 export type GpsFormData = {
-  latitude: number;
-  longitude: number;
+  latitude: Latitude;
+  longitude: Longitude;
   altitude: number | null;
   accuracy: number;
   source: 'browser' | 'manual';
@@ -89,7 +90,7 @@ export function InstallationForm({
     const lat = parseFloat(manualLat);
     const lng = parseFloat(manualLng);
     if (isNaN(lat) || isNaN(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) return;
-    setGps({ latitude: lat, longitude: lng, altitude: null, accuracy: 0, source: 'manual' });
+    setGps({ latitude: toLatitude(lat), longitude: toLongitude(lng), altitude: null, accuracy: 0, source: 'manual' });
   };
 
   const submitWithGps = (data: InstallationWithZoneFormData) => {

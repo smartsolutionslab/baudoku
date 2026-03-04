@@ -1,6 +1,6 @@
 import * as photoRepo from '../db/repositories/photoRepo';
 import type { NewPhoto } from '../db/repositories/types';
-import type { InstallationId, PhotoId } from '../types/branded';
+import type { InstallationId, PhotoId } from '@baudoku/core';
 import { useListQuery, useSyncMutation } from './useQueryFactory';
 
 export function usePhotosByInstallation(installationId: InstallationId) {

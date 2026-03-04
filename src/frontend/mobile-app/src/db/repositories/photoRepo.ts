@@ -4,7 +4,7 @@ import { photos } from '../schema';
 import { generateId } from '../../utils';
 import { createOutboxEntry } from './syncRepo';
 import type { Photo, NewPhoto } from './types';
-import type { PhotoId, InstallationId } from '../../types/branded';
+import type { PhotoId, InstallationId } from '@baudoku/core';
 
 export async function getByInstallationId(installationId: InstallationId): Promise<Photo[]> {
   return db.select().from(photos).where(eq(photos.installationId, installationId)).all() as unknown as Photo[];

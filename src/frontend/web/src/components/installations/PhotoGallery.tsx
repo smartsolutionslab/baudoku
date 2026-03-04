@@ -2,11 +2,12 @@ import { useState } from 'react';
 import type { Photo } from '@baudoku/documentation';
 import { PHOTO_TYPE_LABELS } from '@baudoku/documentation';
 import { getBaseUrl } from '@baudoku/core';
+import type { PhotoId } from '@baudoku/core';
 import { XIcon } from '@/components/icons';
 
 type PhotoGalleryProps = {
   photos: Photo[];
-  onDelete?: (photoId: string) => void;
+  onDelete?: (photoId: PhotoId) => void;
 };
 
 export function PhotoGallery({ photos, onDelete }: PhotoGalleryProps) {

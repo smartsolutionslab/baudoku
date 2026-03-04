@@ -9,7 +9,7 @@ import {
 import { ProjectCard } from "@/components/projects";
 import { EmptyState } from "@/components/common";
 import { Colors, Spacing, FontSize, Radius } from "@/styles/tokens";
-import type { ProjectId, ZoneId } from "@/types/branded";
+import type { ProjectId, ZoneId } from "@baudoku/core";
 
 function ZonePicker({
   projectId,

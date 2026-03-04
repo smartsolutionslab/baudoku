@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, useParams } from '@tanstack/react-router';
+import { projectId as toProjectId, installationId as toInstallationId } from '@baudoku/core';
 import {
   useInstallation, usePhotos, useMeasurements,
   useUploadPhoto, useDeletePhoto,
@@ -11,10 +12,12 @@ import { InfoTab, PhotosTab, MeasurementsTab } from '@/components/installations'
 type Tab = 'info' | 'photos' | 'measurements';
 
 export function InstallationDetailPage() {
-  const { projectId, installationId } = useParams({ strict: false }) as {
+  const { projectId: rawProjectId, installationId: rawInstallationId } = useParams({ strict: false }) as {
     projectId: string;
     installationId: string;
   };
+  const projectId = toProjectId(rawProjectId);
+  const installationId = toInstallationId(rawInstallationId);
 
   const { data: installation, isLoading } = useInstallation(installationId);
   const { data: photos } = usePhotos(installationId);

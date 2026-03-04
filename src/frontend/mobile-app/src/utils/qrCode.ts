@@ -1,4 +1,5 @@
-import type { ProjectId, ZoneId } from '../types/branded';
+import type { ProjectId, ZoneId } from '@baudoku/core';
+import { projectId as toProjectId, zoneId as toZoneId } from '@baudoku/core';
 
 const QR_PREFIX = 'baudoku://zone/';
 
@@ -21,5 +22,5 @@ export function decodeZoneQr(data: string): DecodedZoneQr | null {
   const [projectId, zoneId] = parts;
   if (!projectId || !zoneId) return null;
 
-  return { projectId: projectId as ProjectId, zoneId: zoneId as ZoneId };
+  return { projectId: toProjectId(projectId), zoneId: toZoneId(zoneId) };
 }

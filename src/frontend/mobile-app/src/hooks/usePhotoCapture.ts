@@ -1,10 +1,12 @@
 import * as ImagePicker from 'expo-image-picker';
 import { useCallback } from 'react';
+import type { Latitude, Longitude } from '@baudoku/core';
+import { latitude as toLatitude, longitude as toLongitude } from '@baudoku/core';
 import { savePhoto } from '../utils';
 
 export type ExifData = {
-  gpsLatitude?: number;
-  gpsLongitude?: number;
+  gpsLatitude?: Latitude;
+  gpsLongitude?: Longitude;
   dateTime?: string;
   cameraModel?: string;
 };
@@ -26,9 +28,9 @@ function extractExif(exif: Record<string, unknown> | null | undefined): ExifData
 
   const data: ExifData = {};
 
-  if (typeof exif.GPSLatitude === 'number') data.gpsLatitude = exif.GPSLatitude;
+  if (typeof exif.GPSLatitude === 'number') data.gpsLatitude = toLatitude(exif.GPSLatitude);
   if (typeof exif.GPSLongitude === 'number')
-    data.gpsLongitude = exif.GPSLongitude;
+    data.gpsLongitude = toLongitude(exif.GPSLongitude);
 
   if (typeof exif.DateTimeOriginal === 'string')
     data.dateTime = exif.DateTimeOriginal;

@@ -1,6 +1,6 @@
 import * as zoneRepo from '../db/repositories/zoneRepo';
 import type { NewZone } from '../db/repositories/types';
-import type { ProjectId, ZoneId } from '../types/branded';
+import type { ProjectId, ZoneId } from '@baudoku/core';
 import { useListQuery, useSyncMutation } from './useQueryFactory';
 
 export function useZonesByProject(projectId: ProjectId) {

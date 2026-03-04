@@ -4,7 +4,7 @@ import { zones } from '../schema';
 import { generateId } from '../../utils';
 import { createOutboxEntry } from './syncRepo';
 import type { Zone, NewZone } from './types';
-import type { ProjectId, ZoneId } from '../../types/branded';
+import type { ProjectId, ZoneId } from '@baudoku/core';
 
 export async function getByProjectId(projectId: ProjectId): Promise<Zone[]> {
   return db.select().from(zones).where(eq(zones.projectId, projectId)).all() as unknown as Zone[];

@@ -1,16 +1,19 @@
 import { Link, useParams } from '@tanstack/react-router';
 import { useState } from 'react';
+import { projectId as toProjectId } from '@baudoku/core';
+import type { ZoneId } from '@baudoku/core';
 import { useProject, useZones, useDeleteZone, useUpdateProject } from '@/hooks';
 import { ZoneTree } from '@/components/projects';
 import { StatusBadge, ConfirmDialog } from '@/components/common';
 import { PlusIcon } from '@/components/icons';
 
 export function ProjectDetailPage() {
-  const { projectId } = useParams({ strict: false }) as { projectId: string };
+  const { projectId: rawProjectId } = useParams({ strict: false }) as { projectId: string };
+  const projectId = toProjectId(rawProjectId);
   const { data: project, isLoading: projectLoading } = useProject(projectId);
   const { data: zones, isLoading: zonesLoading } = useZones(projectId);
   const deleteZone = useDeleteZone(projectId);
-  const [deleteZoneId, setDeleteZoneId] = useState<string | null>(null);
+  const [deleteZoneId, setDeleteZoneId] = useState<ZoneId | null>(null);
 
   if (projectLoading) {
     return (

@@ -1,6 +1,6 @@
 import * as projectRepo from '../db/repositories/projectRepo';
 import type { NewProject } from '../db/repositories/types';
-import type { ProjectId } from '../types/branded';
+import type { ProjectId } from '@baudoku/core';
 import { useListQuery, useSyncMutation } from './useQueryFactory';
 
 export function useProjects() {

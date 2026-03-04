@@ -1,5 +1,6 @@
 import { useState, useDeferredValue, useMemo } from 'react';
 import { Link } from '@tanstack/react-router';
+import type { ProjectId } from '@baudoku/core';
 import { useProjects, useDeleteProject } from '@/hooks';
 import { StatusBadge, SearchBar, FilterChips, EmptyState, ConfirmDialog } from '@/components/common';
 import { PlusIcon, TrashIcon } from '@/components/icons';
@@ -20,7 +21,7 @@ export function ProjectListPage() {
   } = useProjects(deferredSearch || undefined);
   const deleteProject = useDeleteProject();
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
-  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [deleteId, setDeleteId] = useState<ProjectId | null>(null);
 
   const allProjects = useMemo(
     () => data?.pages.flatMap((p) => p.items) ?? [],

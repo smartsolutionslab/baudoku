@@ -3,12 +3,13 @@ import { MeasurementCard } from './MeasurementCard';
 import { MeasurementForm } from './MeasurementForm';
 import { PlusIcon } from '@/components/icons';
 import { Button } from '@/components/common/Button';
+import type { MeasurementId } from '@baudoku/core';
 import type { Measurement, MeasurementFormData } from '@baudoku/documentation';
 
 type MeasurementsTabProps = {
   measurements: Measurement[];
   onCreateMeasurement: (data: MeasurementFormData) => Promise<void>;
-  onDeleteMeasurement: (id: string) => void;
+  onDeleteMeasurement: (id: MeasurementId) => void;
   isCreating: boolean;
 };
 

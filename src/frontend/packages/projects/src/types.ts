@@ -1,11 +1,13 @@
+import type { ProjectId, ZoneId, Latitude, Longitude } from '@baudoku/core';
+
 export type Project = {
-  id: string;
+  id: ProjectId;
   name: string;
   street: string | null;
   city: string | null;
   zipCode: string | null;
-  gpsLat: number | null;
-  gpsLng: number | null;
+  gpsLat: Latitude | null;
+  gpsLng: Longitude | null;
   clientName: string | null;
   clientContact: string | null;
   status: ProjectStatus;
@@ -18,9 +20,9 @@ export type Project = {
 export type ProjectStatus = 'active' | 'completed' | 'archived';
 
 export type Zone = {
-  id: string;
-  projectId: string;
-  parentZoneId: string | null;
+  id: ZoneId;
+  projectId: ProjectId;
+  parentZoneId: ZoneId | null;
   name: string;
   type: ZoneType;
   qrCode: string | null;

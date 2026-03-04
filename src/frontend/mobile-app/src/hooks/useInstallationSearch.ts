@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import * as installationRepo from '../db/repositories/installationRepo';
 import type { SearchResult } from '../db/repositories/installationRepo';
-import type { ProjectId } from '../types/branded';
+import type { ProjectId } from '@baudoku/core';
 
 type SearchFilters = {
   status?: string[];

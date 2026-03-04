@@ -11,7 +11,7 @@ import type { ZoneFormData } from "@/validation/schemas";
 import {
   projectId as toProjectId,
   zoneId as toZoneId,
-} from "@/types/branded";
+} from "@baudoku/core";
 
 export default function ZoneEditScreen() {
   const { zoneId: rawZoneId, projectId: rawProjectId } = useLocalSearchParams<{

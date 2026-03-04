@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import { View } from 'react-native';
 import { ZoneCard } from './ZoneCard';
 import type { ZoneNode } from '../../hooks';
-import { zoneId, type ZoneId } from '../../types/branded';
+import { zoneId, type ZoneId } from '@baudoku/core';
 
 type ZoneTreeProps = {
   nodes: ZoneNode[];
@@ -10,9 +10,9 @@ type ZoneTreeProps = {
 };
 
 export function ZoneTree({ nodes, onZonePress }: ZoneTreeProps) {
-  const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
+  const [collapsed, setCollapsed] = useState<Set<ZoneId>>(new Set());
 
-  const toggle = useCallback((id: string) => {
+  const toggle = useCallback((id: ZoneId) => {
     setCollapsed((prev) => {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id);
