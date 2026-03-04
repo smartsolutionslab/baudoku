@@ -6,10 +6,9 @@ import type { ZoneFormData } from '../../validation/schemas';
 import { Colors, Spacing } from '../../styles/tokens';
 import type { Zone } from '../../db/repositories/types';
 import type { ZoneId } from '@baudoku/core';
-import { ZONE_TYPE_LABELS } from '@baudoku/projects';
-import { optionsFromLabels } from '@baudoku/core';
+import { ZONE_TYPE_OPTIONS } from '@baudoku/projects';
 
-const typeOptions = optionsFromLabels(ZONE_TYPE_LABELS);
+const typeOptions = ZONE_TYPE_OPTIONS;
 const NONE_VALUE = '__none__';
 const NO_PARENT_OPTION = { label: '\u2014 Keine \u2014', value: NONE_VALUE };
 

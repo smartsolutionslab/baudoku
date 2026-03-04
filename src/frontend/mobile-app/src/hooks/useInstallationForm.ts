@@ -4,6 +4,7 @@ import { installationSchema, type InstallationFormData } from '../validation/sch
 import { ERROR_TITLE, MUTATION_ERRORS } from '../constants/strings';
 import { useFormValidation } from './useFormValidation';
 import type { GpsPosition } from './useGpsCapture';
+import { stripEmptyStrings } from '../utils';
 
 export type UseInstallationFormOptions = {
   initialValues?: Partial<InstallationFormData>;
@@ -66,14 +67,7 @@ export function useInstallationForm({
 
   const handleSubmit = useCallback(
     async (currentGps: GpsPosition | null) => {
-      // Strip empty strings before validation
-      const cleaned: Record<string, unknown> = {};
-      for (const [k, v] of Object.entries(form)) {
-        if (typeof v === 'string' && v.trim() === '') continue;
-        cleaned[k] = v;
-      }
-
-      const data = validate(cleaned);
+      const data = validate(stripEmptyStrings(form));
       if (!data) return;
       try {
         await onSubmit(data, currentGps);

@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { cardClassName } from './formStyles';
 
 type FormSectionProps = {
   title: string;
@@ -8,7 +9,7 @@ type FormSectionProps = {
 
 export function FormSection({ title, columns = 2, children }: FormSectionProps) {
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-6">
+    <div className={cardClassName}>
       <h2 className="text-base font-semibold text-gray-900">{title}</h2>
       <div className={`mt-4 grid gap-4 ${columns === 3 ? 'sm:grid-cols-3' : 'sm:grid-cols-2'}`}>
         {children}

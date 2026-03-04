@@ -47,21 +47,6 @@ export function installationId(value: string): InstallationId {
   return value as InstallationId;
 }
 
-export function photoId(value: string): PhotoId {
-  if (!value) throw new Error('PhotoId must not be empty');
-  return value as PhotoId;
-}
-
-export function measurementId(value: string): MeasurementId {
-  if (!value) throw new Error('MeasurementId must not be empty');
-  return value as MeasurementId;
-}
-
-export function syncOutboxEntryId(value: string): SyncOutboxEntryId {
-  if (!value) throw new Error('SyncOutboxEntryId must not be empty');
-  return value as SyncOutboxEntryId;
-}
-
 export function projectName(value: string): ProjectName {
   if (!value?.trim()) throw new Error('ProjectName must not be empty');
   if (value.length > 200) throw new Error('ProjectName must be at most 200 characters');

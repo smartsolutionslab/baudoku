@@ -3,7 +3,7 @@ import { FormSelect } from '../common/FormSelect';
 import { FormSection } from '../common/FormSection';
 
 type BasicsProps = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- register must accept any form shape
   register: UseFormRegister<any>;
   errors: Record<string, FieldError | undefined>;
   typeOptions: { value: string; label: string }[];

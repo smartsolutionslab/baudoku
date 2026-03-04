@@ -2,12 +2,11 @@ import { Text, ScrollView, StyleSheet } from 'react-native';
 import { FormField, FormPicker } from '../common';
 import { Button } from '../core';
 import { useProjectForm } from '../../hooks';
-import { PROJECT_STATUS_LABELS } from '@baudoku/projects';
-import { optionsFromLabels } from '@baudoku/core';
+import { PROJECT_STATUS_OPTIONS } from '@baudoku/projects';
 import type { ProjectFormData } from '../../validation/schemas';
 import { Colors, Spacing, FontSize } from '../../styles/tokens';
 
-const statusOptions = optionsFromLabels(PROJECT_STATUS_LABELS);
+const statusOptions = PROJECT_STATUS_OPTIONS;
 
 type ProjectFormProps = {
   onSubmit: (data: ProjectFormData) => Promise<void>;

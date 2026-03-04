@@ -13,10 +13,9 @@ import {
   Button,
 } from '@/components/common';
 import { PlusIcon, TrashIcon } from '@/components/icons';
-import { PROJECT_STATUS_LABELS } from '@baudoku/projects';
-import { optionsFromLabels } from '@baudoku/core';
+import { PROJECT_STATUS_OPTIONS } from '@baudoku/projects';
 
-const statusOptions = optionsFromLabels(PROJECT_STATUS_LABELS);
+const statusOptions = PROJECT_STATUS_OPTIONS;
 
 export function ProjectListPage() {
   const [search, setSearch] = useState('');

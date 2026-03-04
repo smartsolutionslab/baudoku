@@ -4,7 +4,7 @@ import { latitude as toLatitude, longitude as toLongitude } from '@baudoku/core'
 import type { Latitude, Longitude } from '@baudoku/core';
 import { Button } from '../common/Button';
 import { LoadingSpinner } from '../common/LoadingSpinner';
-import { inputClassName, labelClassName } from '../common/formStyles';
+import { cardClassName, inputClassName, labelClassName } from '../common/formStyles';
 import { GpsIcon } from '../icons';
 
 export type GpsFormData = {
@@ -62,7 +62,7 @@ export function GpsPositionSelector({ gps, onGpsChange, error }: GpsPositionSele
   const displayError = error || captureError;
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-6">
+    <div className={cardClassName}>
       <h2 className="text-base font-semibold text-gray-900">Position</h2>
       <div className="mt-4">
         {gps ? (

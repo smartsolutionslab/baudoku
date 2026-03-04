@@ -6,6 +6,7 @@ import { MEASUREMENT_TYPES, type MeasurementTypePreset } from '../../constants';
 import { measurementSchema, type MeasurementFormData } from '../../validation/schemas';
 import { ERROR_TITLE, MUTATION_ERRORS } from '../../constants/strings';
 import { Colors, Spacing, FontSize, Radius } from '../../styles/tokens';
+import { stripEmptyStrings } from '../../utils';
 
 type MeasurementFormProps = {
   onSubmit: (data: MeasurementFormData) => Promise<void>;
@@ -47,13 +48,7 @@ export function MeasurementForm({ onSubmit, onCancel, submitting }: MeasurementF
     : MEASUREMENT_TYPES;
 
   const handleSubmit = useCallback(async () => {
-    const cleaned: Record<string, unknown> = {};
-    for (const [k, v] of Object.entries(form)) {
-      if (v.trim() === '') continue;
-      cleaned[k] = v;
-    }
-
-    const result = measurementSchema.safeParse(cleaned);
+    const result = measurementSchema.safeParse(stripEmptyStrings(form));
     if (!result.success) {
       const fieldErrors: Record<string, string> = {};
       for (const issue of result.error.issues) {

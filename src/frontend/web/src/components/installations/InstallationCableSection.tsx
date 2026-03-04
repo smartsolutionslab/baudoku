@@ -4,7 +4,7 @@ import { FormSelect } from '../common/FormSelect';
 import { FormSection } from '../common/FormSection';
 
 type CableProps = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- register must accept any form shape
   register: UseFormRegister<any>;
   errors: Record<string, FieldError | undefined>;
   phaseOptions: { value: string; label: string }[];

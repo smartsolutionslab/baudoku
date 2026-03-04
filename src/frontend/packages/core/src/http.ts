@@ -19,17 +19,21 @@ function getHeaders(contentType?: string): Record<string, string> {
   return headers;
 }
 
+async function throwIfNotOk(response: Response): Promise<void> {
+  if (!response.ok) {
+    if (response.status === 401) _handleUnauthorized();
+    const body = await response.text().catch(() => '');
+    throw new ApiError(response.status, response.statusText, body);
+  }
+}
+
 export async function apiGet<T>(path: string): Promise<T> {
   const response = await fetch(`${getBaseUrl()}${path}`, {
     method: 'GET',
     headers: getHeaders('application/json'),
   });
 
-  if (!response.ok) {
-    if (response.status === 401) _handleUnauthorized();
-    const body = await response.text().catch(() => '');
-    throw new ApiError(response.status, response.statusText, body);
-  }
+  await throwIfNotOk(response);
 
   return response.json() as Promise<T>;
 }
@@ -41,11 +45,7 @@ export async function apiPost<T>(path: string, body: unknown): Promise<T> {
     body: JSON.stringify(body),
   });
 
-  if (!response.ok) {
-    if (response.status === 401) _handleUnauthorized();
-    const responseBody = await response.text().catch(() => '');
-    throw new ApiError(response.status, response.statusText, responseBody);
-  }
+  await throwIfNotOk(response);
 
   if (response.status === 204) {
     return undefined as T;
@@ -61,11 +61,7 @@ export async function apiPut<T>(path: string, body: unknown): Promise<T> {
     body: JSON.stringify(body),
   });
 
-  if (!response.ok) {
-    if (response.status === 401) _handleUnauthorized();
-    const responseBody = await response.text().catch(() => '');
-    throw new ApiError(response.status, response.statusText, responseBody);
-  }
+  await throwIfNotOk(response);
 
   if (response.status === 204) {
     return undefined as T;
@@ -80,11 +76,7 @@ export async function apiDelete(path: string): Promise<void> {
     headers: getHeaders('application/json'),
   });
 
-  if (!response.ok) {
-    if (response.status === 401) _handleUnauthorized();
-    const responseBody = await response.text().catch(() => '');
-    throw new ApiError(response.status, response.statusText, responseBody);
-  }
+  await throwIfNotOk(response);
 }
 
 export async function apiUpload<T>(path: string, formData: FormData): Promise<T> {
@@ -94,11 +86,7 @@ export async function apiUpload<T>(path: string, formData: FormData): Promise<T>
     body: formData,
   });
 
-  if (!response.ok) {
-    if (response.status === 401) _handleUnauthorized();
-    const responseBody = await response.text().catch(() => '');
-    throw new ApiError(response.status, response.statusText, responseBody);
-  }
+  await throwIfNotOk(response);
 
   if (response.status === 204) {
     return undefined as T;
@@ -112,11 +100,8 @@ export async function apiRawUpload(
   body: Blob | ArrayBuffer,
   extraHeaders?: Record<string, string>,
 ): Promise<Response> {
-  const headers: Record<string, string> = {
-    ...extraHeaders,
-  };
-  const token = getAuthToken();
-  if (token) headers['Authorization'] = `Bearer ${token}`;
+  const headers = getHeaders();
+  if (extraHeaders) Object.assign(headers, extraHeaders);
 
   const response = await fetch(`${getBaseUrl()}${path}`, {
     method: 'POST',
@@ -124,11 +109,7 @@ export async function apiRawUpload(
     body,
   });
 
-  if (!response.ok) {
-    if (response.status === 401) _handleUnauthorized();
-    const responseBody = await response.text().catch(() => '');
-    throw new ApiError(response.status, response.statusText, responseBody);
-  }
+  await throwIfNotOk(response);
 
   return response;
 }
