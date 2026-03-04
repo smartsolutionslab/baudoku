@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: Spacing.lg,
-    paddingBottom: 40,
+    paddingBottom: Spacing.xxl,
   },
   button: {
     marginTop: Spacing.xl,

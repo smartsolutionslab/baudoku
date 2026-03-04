@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
   },
   listContent: {
     paddingHorizontal: Spacing.lg,
-    paddingBottom: 40,
+    paddingBottom: Spacing.xxl,
   },
   itemCard: {
     backgroundColor: Colors.card,

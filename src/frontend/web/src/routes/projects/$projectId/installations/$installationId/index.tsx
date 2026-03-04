@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { Link, useParams } from '@tanstack/react-router';
-import { projectId as toProjectId, installationId as toInstallationId } from '@baudoku/core';
+import { Link } from '@tanstack/react-router';
 import {
   useInstallation,
   usePhotos,
@@ -9,6 +8,8 @@ import {
   useDeletePhoto,
   useCreateMeasurement,
   useDeleteMeasurement,
+  useProjectIdParam,
+  useInstallationIdParam,
 } from '@/hooks';
 import { StatusBadge, LoadingSkeleton } from '@/components/common';
 import { InfoTab, PhotosTab, MeasurementsTab } from '@/components/installations';
@@ -22,14 +23,8 @@ const TAB_DEFS: { key: Tab; label: string }[] = [
 ];
 
 export function InstallationDetailPage() {
-  const { projectId: rawProjectId, installationId: rawInstallationId } = useParams({
-    strict: false,
-  }) as {
-    projectId: string;
-    installationId: string;
-  };
-  const projectId = toProjectId(rawProjectId);
-  const installationId = toInstallationId(rawInstallationId);
+  const projectId = useProjectIdParam();
+  const installationId = useInstallationIdParam();
 
   const { data: installation, isLoading } = useInstallation(installationId);
   const { data: photos } = usePhotos(installationId);

@@ -1,14 +1,13 @@
-import { Link, useParams } from '@tanstack/react-router';
-import { projectId as toProjectId } from '@baudoku/core';
+import { Link } from '@tanstack/react-router';
 import type { ZoneId } from '@baudoku/core';
-import { useProject, useZones, useDeleteZone, useConfirmDelete } from '@/hooks';
+import { formatAddress } from '@baudoku/projects';
+import { useProject, useZones, useDeleteZone, useConfirmDelete, useProjectIdParam } from '@/hooks';
 import { ZoneTree } from '@/components/projects';
 import { StatusBadge, ConfirmDialog, buttonClassName, LoadingSkeleton } from '@/components/common';
 import { PlusIcon } from '@/components/icons';
 
 export function ProjectDetailPage() {
-  const { projectId: rawProjectId } = useParams({ strict: false }) as { projectId: string };
-  const projectId = toProjectId(rawProjectId);
+  const projectId = useProjectIdParam();
   const { data: project, isLoading: projectLoading } = useProject(projectId);
   const { data: zones, isLoading: zonesLoading } = useZones(projectId);
   const deleteZone = useDeleteZone(projectId);
@@ -43,9 +42,7 @@ export function ProjectDetailPage() {
           <div className="mt-2 flex items-center gap-3">
             <StatusBadge status={status} />
             {city && (
-              <span className="text-sm text-gray-500">
-                {[street, zipCode, city].filter(Boolean).join(', ')}
-              </span>
+              <span className="text-sm text-gray-500">{formatAddress(street, zipCode, city)}</span>
             )}
           </div>
         </div>

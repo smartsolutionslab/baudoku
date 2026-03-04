@@ -4,9 +4,10 @@ import { FormField } from '../common';
 import { Button, Headline } from '../core';
 import { MEASUREMENT_TYPES, type MeasurementTypePreset } from '../../constants';
 import { measurementSchema, type MeasurementFormData } from '../../validation/schemas';
-import { ERROR_TITLE, MUTATION_ERRORS } from '../../constants/strings';
+import { LOCAL_USER, ERROR_TITLE, MUTATION_ERRORS } from '../../constants/strings';
 import { Colors, Spacing, FontSize, Radius } from '../../styles/tokens';
 import { stripEmptyStrings } from '../../utils';
+import { useFormValidation } from '../../hooks/useFormValidation';
 
 type MeasurementFormProps = {
   onSubmit: (data: MeasurementFormData) => Promise<void>;
@@ -16,30 +17,36 @@ type MeasurementFormProps = {
 
 export function MeasurementForm({ onSubmit, onCancel, submitting }: MeasurementFormProps) {
   const [form, setForm] = useState<Record<string, string>>({
-    measuredBy: 'local-user',
+    measuredBy: LOCAL_USER,
   });
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const { errors, setErrors, validate } = useFormValidation<MeasurementFormData>(measurementSchema);
   const [showSuggestions, setShowSuggestions] = useState(false);
 
-  const set = useCallback((key: string, value: string) => {
-    setForm((prev) => ({ ...prev, [key]: value }));
-    setErrors((prev) => {
-      const { [key]: _, ...next } = prev;
-      return next;
-    });
-  }, []);
+  const set = useCallback(
+    (key: string, value: string) => {
+      setForm((prev) => ({ ...prev, [key]: value }));
+      setErrors((prev) => {
+        const { [key]: _, ...next } = prev;
+        return next;
+      });
+    },
+    [setErrors],
+  );
 
-  const applyPreset = useCallback((preset: MeasurementTypePreset) => {
-    setForm((prev) => ({
-      ...prev,
-      type: preset.type,
-      unit: preset.unit,
-      minThreshold: preset.minThreshold != null ? String(preset.minThreshold) : '',
-      maxThreshold: preset.maxThreshold != null ? String(preset.maxThreshold) : '',
-    }));
-    setShowSuggestions(false);
-    setErrors({});
-  }, []);
+  const applyPreset = useCallback(
+    (preset: MeasurementTypePreset) => {
+      setForm((prev) => ({
+        ...prev,
+        type: preset.type,
+        unit: preset.unit,
+        minThreshold: preset.minThreshold != null ? String(preset.minThreshold) : '',
+        maxThreshold: preset.maxThreshold != null ? String(preset.maxThreshold) : '',
+      }));
+      setShowSuggestions(false);
+      setErrors({});
+    },
+    [setErrors],
+  );
 
   const filteredSuggestions = form.type
     ? MEASUREMENT_TYPES.filter((mt) =>
@@ -48,24 +55,14 @@ export function MeasurementForm({ onSubmit, onCancel, submitting }: MeasurementF
     : MEASUREMENT_TYPES;
 
   const handleSubmit = useCallback(async () => {
-    const result = measurementSchema.safeParse(stripEmptyStrings(form));
-    if (!result.success) {
-      const fieldErrors: Record<string, string> = {};
-      for (const issue of result.error.issues) {
-        const key = issue.path[0]?.toString();
-        if (key && !fieldErrors[key]) {
-          fieldErrors[key] = issue.message;
-        }
-      }
-      setErrors(fieldErrors);
-      return;
-    }
+    const data = validate(stripEmptyStrings(form));
+    if (!data) return;
     try {
-      await onSubmit(result.data);
+      await onSubmit(data);
     } catch {
       Alert.alert(ERROR_TITLE, MUTATION_ERRORS.measurementSave);
     }
-  }, [form, onSubmit]);
+  }, [form, onSubmit, validate]);
 
   return (
     <View style={styles.container}>

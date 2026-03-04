@@ -52,17 +52,28 @@ export const MEASUREMENT_TYPES: MeasurementTypePreset[] = [
 // ─── Installation Types ─────────────────────────────────────────
 
 export const INSTALLATION_TYPES = [
-  'Kabelverlegung',
-  'Muffe',
-  'Verteiler',
-  'Schaltschrank',
-  'Steckdose',
-  'Schalter',
-  'Leuchte',
-  'Erdung',
-  'Blitzschutz',
-  'Sonstiges',
+  'cable_tray',
+  'junction_box',
+  'cable_pull',
+  'conduit',
+  'grounding',
+  'lightning_protection',
+  'switchgear',
+  'transformer',
+  'other',
 ] as const;
+
+export const INSTALLATION_TYPE_LABELS: Record<(typeof INSTALLATION_TYPES)[number], string> = {
+  cable_tray: 'Kabeltrasse',
+  junction_box: 'Abzweigdose',
+  cable_pull: 'Kabelzug',
+  conduit: 'Leerrohr',
+  grounding: 'Erdung',
+  lightning_protection: 'Blitzschutz',
+  switchgear: 'Schaltanlage',
+  transformer: 'Trafo',
+  other: 'Sonstige',
+};
 
 // ─── Installation Status ────────────────────────────────────────
 
@@ -114,7 +125,18 @@ export const MEASUREMENT_UNITS = ['Ω', 'MΩ', 'V', 'ms', '%', 'A'] as const;
 
 // ─── Pre-computed Options ────────────────────────────────────────
 
-export const INSTALLATION_TYPE_OPTIONS = INSTALLATION_TYPES.map((t) => ({ value: t, label: t }));
+export const INSTALLATION_TYPE_OPTIONS = INSTALLATION_TYPES.map((t) => ({
+  value: t,
+  label: INSTALLATION_TYPE_LABELS[t],
+}));
+export const INSTALLATION_STATUS_OPTIONS = INSTALLATION_STATUSES.map((s) => ({
+  value: s,
+  label: INSTALLATION_STATUS_LABELS[s],
+}));
+export const PHOTO_TYPE_OPTIONS = PHOTO_TYPES.map((t) => ({
+  value: t,
+  label: PHOTO_TYPE_LABELS[t],
+}));
 export const PHASE_OPTIONS = PHASES.map((p) => ({ value: p, label: p }));
 export const MEASUREMENT_TYPE_OPTIONS = MEASUREMENT_TYPES.map((m) => ({
   value: m.type,

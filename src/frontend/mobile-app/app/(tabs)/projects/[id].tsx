@@ -12,6 +12,7 @@ import { StatusBadge, EmptyState, FloatingActionButton, ActionBar } from '@/comp
 import { Colors, Spacing, FontSize, Radius } from '@/styles/tokens';
 import { formatDate, requiredParam } from '@/utils';
 import { projectId } from '@baudoku/core';
+import { formatAddress } from '@baudoku/projects';
 
 export default function ProjectDetailScreen() {
   const { id: rawId } = useLocalSearchParams<{ id: string }>();
@@ -31,7 +32,7 @@ export default function ProjectDetailScreen() {
 
   const { name, status, street, zipCode, city, clientName, clientContact, createdAt } = project;
 
-  const address = [street, zipCode, city].filter(Boolean).join(', ');
+  const address = formatAddress(street, zipCode, city);
 
   const handleDelete = () => {
     confirmDelete({

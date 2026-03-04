@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: Spacing.lg,
-    paddingBottom: 40,
+    paddingBottom: Spacing.xxl,
   },
   sectionTitle: {
     fontSize: FontSize.headline,

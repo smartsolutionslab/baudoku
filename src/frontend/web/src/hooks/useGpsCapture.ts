@@ -2,6 +2,14 @@ import { useState, useCallback } from 'react';
 import type { Latitude, Longitude } from '@baudoku/core';
 import { latitude as toLatitude, longitude as toLongitude } from '@baudoku/core';
 
+const GPS_ERRORS = {
+  unsupported: 'GPS wird von diesem Browser nicht unterstützt.',
+  denied: 'GPS-Zugriff verweigert. Bitte erlauben Sie den Standortzugriff.',
+  unavailable: 'GPS-Position konnte nicht ermittelt werden.',
+  timeout: 'GPS-Anfrage hat zu lange gedauert.',
+  unknown: 'Unbekannter GPS-Fehler.',
+} as const;
+
 type GpsPosition = {
   latitude: Latitude;
   longitude: Longitude;
@@ -23,7 +31,7 @@ export function useGpsCapture(): UseGpsCaptureReturn {
 
   const capturePosition = useCallback(() => {
     if (!navigator.geolocation) {
-      setError('GPS wird von diesem Browser nicht unterstützt.');
+      setError(GPS_ERRORS.unsupported);
       return;
     }
 
@@ -42,11 +50,11 @@ export function useGpsCapture(): UseGpsCaptureReturn {
       },
       (err) => {
         const messages: Record<number, string> = {
-          1: 'GPS-Zugriff verweigert. Bitte erlauben Sie den Standortzugriff.',
-          2: 'GPS-Position konnte nicht ermittelt werden.',
-          3: 'GPS-Anfrage hat zu lange gedauert.',
+          1: GPS_ERRORS.denied,
+          2: GPS_ERRORS.unavailable,
+          3: GPS_ERRORS.timeout,
         };
-        setError(messages[err.code] ?? 'Unbekannter GPS-Fehler.');
+        setError(messages[err.code] ?? GPS_ERRORS.unknown);
         setCapturing(false);
       },
       { enableHighAccuracy: true, timeout: 15_000, maximumAge: 0 },

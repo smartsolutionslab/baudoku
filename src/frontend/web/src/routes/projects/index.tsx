@@ -13,7 +13,7 @@ import {
   Button,
 } from '@/components/common';
 import { PlusIcon, TrashIcon } from '@/components/icons';
-import { PROJECT_STATUS_OPTIONS } from '@baudoku/projects';
+import { PROJECT_STATUS_OPTIONS, formatAddress } from '@baudoku/projects';
 
 const statusOptions = PROJECT_STATUS_OPTIONS;
 
@@ -91,7 +91,7 @@ export function ProjectListPage() {
                   <h3 className="font-semibold text-gray-900 group-hover:text-blue-700">{name}</h3>
                   {(street || city) && (
                     <p className="mt-1 text-sm text-gray-500">
-                      {[street, zipCode, city].filter(Boolean).join(', ')}
+                      {formatAddress(street, zipCode, city)}
                     </p>
                   )}
                   {clientName && <p className="mt-1 text-sm text-gray-400">{clientName}</p>}

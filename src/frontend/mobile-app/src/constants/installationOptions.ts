@@ -1,16 +1,1 @@
-import { INSTALLATION_STATUS_LABELS } from '@baudoku/documentation';
-import { optionsFromLabels } from '@baudoku/core';
-
-export const INSTALLATION_STATUS_OPTIONS = optionsFromLabels(INSTALLATION_STATUS_LABELS);
-
-export const INSTALLATION_TYPE_OPTIONS = [
-  { value: 'cable_tray', label: 'Kabeltrasse' },
-  { value: 'junction_box', label: 'Abzweigdose' },
-  { value: 'cable_pull', label: 'Kabelzug' },
-  { value: 'conduit', label: 'Leerrohr' },
-  { value: 'grounding', label: 'Erdung' },
-  { value: 'lightning_protection', label: 'Blitzschutz' },
-  { value: 'switchgear', label: 'Schaltanlage' },
-  { value: 'transformer', label: 'Trafo' },
-  { value: 'other', label: 'Sonstige' },
-];
+export { INSTALLATION_STATUS_OPTIONS, INSTALLATION_TYPE_OPTIONS } from '@baudoku/documentation';

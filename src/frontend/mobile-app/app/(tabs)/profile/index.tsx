@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: Spacing.lg,
-    paddingBottom: 40,
+    paddingBottom: Spacing.xxl,
   },
   screenTitle: {
     fontSize: FontSize.title,

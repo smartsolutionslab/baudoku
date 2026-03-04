@@ -2,6 +2,7 @@ import { useRouter } from 'expo-router';
 import { useCreateProject } from '@/hooks';
 import { ProjectForm } from '@/components/projects';
 import type { ProjectFormData } from '@/validation/schemas';
+import { LOCAL_USER } from '@/constants/strings';
 
 export default function NewProjectScreen() {
   const router = useRouter();
@@ -17,7 +18,7 @@ export default function NewProjectScreen() {
         zipCode: data.zipCode || null,
         clientName: data.clientName || null,
         clientContact: data.clientContact || null,
-        createdBy: 'local-user',
+        createdBy: LOCAL_USER,
       });
       router.back();
     } catch {

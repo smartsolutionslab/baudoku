@@ -1,8 +1,13 @@
 import { useState, useMemo } from 'react';
-import { Link, useParams } from '@tanstack/react-router';
-import { projectId as toProjectId } from '@baudoku/core';
+import { Link } from '@tanstack/react-router';
 import type { InstallationId, ZoneId } from '@baudoku/core';
-import { useInstallations, useDeleteInstallation, useZones, useConfirmDelete } from '@/hooks';
+import {
+  useInstallations,
+  useDeleteInstallation,
+  useZones,
+  useConfirmDelete,
+  useProjectIdParam,
+} from '@/hooks';
 import {
   StatusBadge,
   SearchBar,
@@ -13,14 +18,12 @@ import {
   buttonClassName,
 } from '@/components/common';
 import { PlusIcon, TrashIcon } from '@/components/icons';
-import { INSTALLATION_STATUS_LABELS } from '@baudoku/documentation';
-import { optionsFromLabels } from '@baudoku/core';
+import { INSTALLATION_STATUS_OPTIONS } from '@baudoku/documentation';
 
-const statusOptions = optionsFromLabels(INSTALLATION_STATUS_LABELS);
+const statusOptions = INSTALLATION_STATUS_OPTIONS;
 
 export function InstallationListPage() {
-  const { projectId: rawProjectId } = useParams({ strict: false }) as { projectId: string };
-  const projectId = toProjectId(rawProjectId);
+  const projectId = useProjectIdParam();
   const { data: installations, isLoading } = useInstallations(projectId);
   const { data: zones } = useZones(projectId);
   const deleteInstallation = useDeleteInstallation(projectId);

@@ -1,4 +1,4 @@
-import { PROJECT_STATUS_LABELS } from '@baudoku/projects';
+import { PROJECT_STATUS_LABELS, ZONE_TYPE_LABELS } from '@baudoku/projects';
 import { INSTALLATION_STATUS_LABELS, MEASUREMENT_RESULT_LABELS } from '@baudoku/documentation';
 
 const statusStyles: Record<string, string> = {
@@ -11,12 +11,17 @@ const statusStyles: Record<string, string> = {
   passed: 'bg-green-100 text-green-700',
   failed: 'bg-red-100 text-red-700',
   warning: 'bg-yellow-100 text-yellow-700',
+  building: 'bg-indigo-100 text-indigo-700',
+  floor: 'bg-purple-100 text-purple-700',
+  room: 'bg-blue-100 text-blue-700',
+  trench: 'bg-orange-100 text-orange-700',
 };
 
 const allLabels: Record<string, string> = {
   ...PROJECT_STATUS_LABELS,
   ...INSTALLATION_STATUS_LABELS,
   ...MEASUREMENT_RESULT_LABELS,
+  ...ZONE_TYPE_LABELS,
 };
 
 type StatusBadgeProps = {
