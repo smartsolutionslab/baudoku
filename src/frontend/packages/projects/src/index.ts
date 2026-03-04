@@ -10,5 +10,6 @@ export {
   PROJECT_STATUS_LABELS,
   PROJECT_STATUS_OPTIONS,
 } from './constants';
+export { formatAddress } from './format';
 export { buildZoneTree, flattenTree } from './zone-tree';
 export type { ZoneNode } from './zone-tree';

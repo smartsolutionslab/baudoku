@@ -37,7 +37,7 @@ export function ZoneForm({
   } = useForm<ZoneFormData>({
     resolver: typedZodResolver(zoneSchema),
     defaultValues: {
-      type: 'room',
+      type: 'building',
       sortOrder: 0,
       ...defaultValues,
     },

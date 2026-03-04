@@ -5,12 +5,11 @@ import { typedZodResolver } from '@/hooks/useZodForm';
 import {
   installationSchema,
   type InstallationFormData,
-  INSTALLATION_STATUS_LABELS,
   INSTALLATION_TYPE_OPTIONS,
+  INSTALLATION_STATUS_OPTIONS,
   PHASE_OPTIONS,
 } from '@baudoku/documentation';
 import { formatZoneLabel, type Zone } from '@baudoku/projects';
-import { optionsFromLabels } from '@baudoku/core';
 import { Button } from '../common/Button';
 import { formActionsClassName } from '../common/formStyles';
 import { GpsPositionSelector } from './GpsPositionSelector';
@@ -32,7 +31,7 @@ type InstallationFormProps = {
   isSubmitting?: boolean;
 };
 
-const statusOptions = optionsFromLabels(INSTALLATION_STATUS_LABELS);
+const statusOptions = INSTALLATION_STATUS_OPTIONS;
 const typeOptions = INSTALLATION_TYPE_OPTIONS;
 const phaseOptions = PHASE_OPTIONS;
 
@@ -56,7 +55,7 @@ export function InstallationForm({
   } = useForm<InstallationWithZoneFormData>({
     resolver: typedZodResolver(installationWithZoneSchema),
     defaultValues: {
-      status: 'planned',
+      status: 'in_progress',
       zoneId: '',
       ...defaultValues,
     },

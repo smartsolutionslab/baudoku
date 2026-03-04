@@ -1,12 +1,10 @@
-import { useParams, useNavigate } from '@tanstack/react-router';
-import { projectId as toProjectId } from '@baudoku/core';
-import { useZones, useCreateInstallation } from '@/hooks';
+import { useNavigate } from '@tanstack/react-router';
+import { useZones, useCreateInstallation, useProjectIdParam } from '@/hooks';
 import { InstallationForm, type GpsFormData } from '@/components/installations';
 import type { InstallationFormData } from '@baudoku/documentation';
 
 export function InstallationNewPage() {
-  const { projectId: rawProjectId } = useParams({ strict: false }) as { projectId: string };
-  const projectId = toProjectId(rawProjectId);
+  const projectId = useProjectIdParam();
   const navigate = useNavigate();
   const { data: zones } = useZones(projectId);
   const createInstallation = useCreateInstallation(projectId);

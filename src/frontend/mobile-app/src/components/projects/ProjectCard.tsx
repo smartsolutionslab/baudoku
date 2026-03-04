@@ -1,4 +1,5 @@
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { formatAddress } from '@baudoku/projects';
 import type { Project } from '../../db/repositories/types';
 import { StatusBadge } from '../common';
 import { Colors, Spacing, FontSize, Radius } from '../../styles/tokens';
@@ -9,7 +10,7 @@ type ProjectCardProps = {
 };
 
 export function ProjectCard({ project, onPress }: ProjectCardProps) {
-  const address = [project.street, project.zipCode, project.city].filter(Boolean).join(', ');
+  const address = formatAddress(project.street, project.zipCode, project.city);
 
   return (
     <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.7}>

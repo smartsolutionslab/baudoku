@@ -1,3 +1,6 @@
+// ─── Default User ────────────────────────────────────────────────
+export const LOCAL_USER = 'local-user';
+
 // ─── Alert / Error Titles ────────────────────────────────────────
 export const ERROR_TITLE = 'Fehler';
 

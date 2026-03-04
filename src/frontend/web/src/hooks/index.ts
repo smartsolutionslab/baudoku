@@ -25,4 +25,5 @@ export {
   useCreateZone,
   useDeleteZone,
 } from './useProjects';
+export { useProjectIdParam, useInstallationIdParam } from './useRouteParams';
 export { typedZodResolver } from './useZodForm';

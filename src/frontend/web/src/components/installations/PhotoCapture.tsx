@@ -2,15 +2,14 @@ import { useRef, useState } from 'react';
 import { CameraIcon } from '@/components/icons';
 import { Button } from '@/components/common';
 import { inputClassName } from '@/components/common/formStyles';
-import { PHOTO_TYPE_LABELS } from '@baudoku/documentation';
+import { PHOTO_TYPE_OPTIONS } from '@baudoku/documentation';
 import type { PhotoType } from '@baudoku/documentation';
-import { optionsFromLabels } from '@baudoku/core';
 
 type PhotoCaptureProps = {
   onCapture: (file: File, type: PhotoType, caption?: string) => void;
 };
 
-const typeOptions = optionsFromLabels(PHOTO_TYPE_LABELS);
+const typeOptions = PHOTO_TYPE_OPTIONS;
 
 export function PhotoCapture({ onCapture }: PhotoCaptureProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);

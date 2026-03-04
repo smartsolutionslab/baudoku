@@ -1,12 +1,10 @@
-import { useParams, useNavigate } from '@tanstack/react-router';
-import { projectId as toProjectId } from '@baudoku/core';
-import { useZones, useCreateZone } from '@/hooks';
+import { useNavigate } from '@tanstack/react-router';
+import { useZones, useCreateZone, useProjectIdParam } from '@/hooks';
 import { ZoneForm } from '@/components/projects';
 import type { ZoneFormData } from '@baudoku/projects';
 
 export function ZoneNewPage() {
-  const { projectId: rawProjectId } = useParams({ strict: false }) as { projectId: string };
-  const projectId = toProjectId(rawProjectId);
+  const projectId = useProjectIdParam();
   const navigate = useNavigate();
   const { data: zones } = useZones(projectId);
   const createZone = useCreateZone(projectId);

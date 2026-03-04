@@ -21,7 +21,7 @@ import {
   InstallationPhotoSection,
   InstallationMeasurementSection,
 } from '@/components/installations';
-import { Colors } from '@/styles/tokens';
+import { Colors, Spacing } from '@/styles/tokens';
 import type { Measurement } from '@/db/repositories/types';
 import type { MeasurementFormData } from '@/validation/schemas';
 import { installationId } from '@baudoku/core';
@@ -164,6 +164,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
   },
   scroll: {
-    paddingBottom: 40,
+    paddingBottom: Spacing.xxl,
   },
 });

@@ -32,7 +32,7 @@ export const Colors = {
   diffHighlight: '#FFF3CD',
 };
 
-export const Spacing = { xs: 4, sm: 8, md: 12, lg: 16, xl: 24 };
+export const Spacing = { xs: 4, sm: 8, md: 12, lg: 16, xl: 24, xxl: 40 };
 
 export const FontSize = {
   footnote: 12,
