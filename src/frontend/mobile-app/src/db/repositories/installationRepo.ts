@@ -153,3 +153,8 @@ export async function getCountByStatus(): Promise<Record<string, number>> {
 export async function getAll(): Promise<Installation[]> {
   return db.select().from(installations).all() as unknown as Installation[];
 }
+
+export async function getCount(): Promise<number> {
+  const result = await db.select({ count: count() }).from(installations).get();
+  return result?.count ?? 0;
+}

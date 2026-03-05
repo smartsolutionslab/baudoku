@@ -1,15 +1,13 @@
-import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
+import { useRouter, Stack } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
 import * as installationRepo from '@/db/repositories/installationRepo';
-import { useUpdateInstallation, type GpsPosition } from '@/hooks';
+import { useUpdateInstallation, useInstallationIdParam, type GpsPosition } from '@/hooks';
 import { InstallationForm } from '@/components/installations';
 import type { InstallationFormData } from '@/validation/schemas';
-import { installationId } from '@baudoku/core';
-import { toGpsPosition, requiredParam } from '@/utils';
+import { toGpsPosition } from '@/utils';
 
 export default function EditInstallationScreen() {
-  const { id: rawId } = useLocalSearchParams<{ id: string }>();
-  const id = installationId(requiredParam(rawId));
+  const id = useInstallationIdParam();
   const router = useRouter();
   const { data: installation } = useQuery({
     queryKey: ['installation', id],

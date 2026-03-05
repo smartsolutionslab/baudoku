@@ -1,16 +1,16 @@
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useCreateInstallation, type GpsPosition } from '@/hooks';
+import { useRouter } from 'expo-router';
+import {
+  useCreateInstallation,
+  useProjectIdParam,
+  useZoneIdParam,
+  type GpsPosition,
+} from '@/hooks';
 import { InstallationForm } from '@/components/installations';
 import type { InstallationFormData } from '@/validation/schemas';
-import { requiredParam } from '@/utils';
 
 export default function NewInstallationScreen() {
-  const { projectId, zoneId } = useLocalSearchParams<{
-    projectId: string;
-    zoneId: string;
-  }>();
-  const pid = requiredParam(projectId);
-  const zid = requiredParam(zoneId);
+  const pid = useProjectIdParam('projectId');
+  const zid = useZoneIdParam();
   const router = useRouter();
   const createInstallation = useCreateInstallation();
 

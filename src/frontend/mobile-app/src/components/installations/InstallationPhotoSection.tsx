@@ -10,11 +10,9 @@ import {
 } from '@/components/installations';
 import { usePhotoFlow } from '@/hooks/usePhotoFlow';
 import { Colors, Spacing, FontSize, Radius } from '@/styles/tokens';
-import { UPLOAD_STATUS_COLORS, UPLOAD_STATUS_LABELS } from '@/utils/uploadStatus';
+import { UPLOAD_STATUSES, UPLOAD_STATUS_COLORS, UPLOAD_STATUS_LABELS } from '@/utils/uploadStatus';
 import type { Photo } from '@/db/repositories/types';
 import type { InstallationId, PhotoId, Latitude, Longitude } from '@baudoku/core';
-
-const UPLOAD_STATUSES = ['pending', 'uploading', 'uploaded', 'failed'] as const;
 
 type InstallationPhotoSectionProps = {
   installationId: InstallationId;

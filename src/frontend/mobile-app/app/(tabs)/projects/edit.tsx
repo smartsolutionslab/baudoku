@@ -1,13 +1,10 @@
-import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
-import { useProject, useUpdateProject } from '@/hooks';
+import { useRouter, Stack } from 'expo-router';
+import { useProject, useUpdateProject, useProjectIdParam } from '@/hooks';
 import { ProjectForm } from '@/components/projects';
 import type { ProjectFormData } from '@/validation/schemas';
-import { projectId } from '@baudoku/core';
-import { requiredParam } from '@/utils';
 
 export default function EditProjectScreen() {
-  const { id: rawId } = useLocalSearchParams<{ id: string }>();
-  const id = projectId(requiredParam(rawId));
+  const id = useProjectIdParam();
   const router = useRouter();
   const { data: project } = useProject(id);
   const updateProject = useUpdateProject();

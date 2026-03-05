@@ -19,15 +19,15 @@ export function useDashboardStats() {
     queryKey: ['dashboardStats'],
     queryFn: async (): Promise<DashboardStats> => {
       const [
-        projects,
-        allInstallations,
+        projectCount,
+        installationCount,
         installationsByStatus,
         photoCount,
         measurementsByResult,
         unsyncedCount,
       ] = await Promise.all([
-        projectRepo.getAll(),
-        installationRepo.getAll(),
+        projectRepo.getCount(),
+        installationRepo.getCount(),
         installationRepo.getCountByStatus(),
         photoRepo.getCount(),
         measurementRepo.getCountByResult(),
@@ -35,8 +35,8 @@ export function useDashboardStats() {
       ]);
 
       return {
-        projectCount: projects.length,
-        installationCount: allInstallations.length,
+        projectCount,
+        installationCount,
         installationsByStatus,
         photoCount,
         measurementsByResult,

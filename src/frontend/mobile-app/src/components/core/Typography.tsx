@@ -8,14 +8,6 @@ type TypographyProps = {
   numberOfLines?: number;
 };
 
-export function Title({ children, style, numberOfLines }: TypographyProps) {
-  return (
-    <Text style={[styles.title, style]} numberOfLines={numberOfLines}>
-      {children}
-    </Text>
-  );
-}
-
 export function Headline({ children, style, numberOfLines }: TypographyProps) {
   return (
     <Text style={[styles.headline, style]} numberOfLines={numberOfLines}>
@@ -41,11 +33,6 @@ export function Caption({ children, style, numberOfLines }: TypographyProps) {
 }
 
 const styles = StyleSheet.create({
-  title: {
-    fontSize: FontSize.title,
-    fontWeight: '700',
-    color: Colors.textPrimary,
-  },
   headline: {
     fontSize: FontSize.headline,
     fontWeight: '600',
