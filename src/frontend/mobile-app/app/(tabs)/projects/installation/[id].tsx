@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { View, ScrollView, StyleSheet } from 'react-native';
-import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
+import { useRouter, Stack } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
 import * as installationRepo from '@/db/repositories/installationRepo';
 import {
@@ -14,6 +14,7 @@ import {
   useDeleteInstallation,
   useConfirmDelete,
   useToggle,
+  useInstallationIdParam,
 } from '@/hooks';
 import { ActionBar } from '@/components/common';
 import {
@@ -24,12 +25,9 @@ import {
 import { Colors, Spacing } from '@/styles/tokens';
 import type { Measurement } from '@/db/repositories/types';
 import type { MeasurementFormData } from '@/validation/schemas';
-import { installationId } from '@baudoku/core';
-import { requiredParam } from '@/utils';
 
 export default function InstallationDetailScreen() {
-  const { id: rawId } = useLocalSearchParams<{ id: string }>();
-  const id = installationId(requiredParam(rawId));
+  const id = useInstallationIdParam();
   const router = useRouter();
 
   const { data: installation } = useQuery({

@@ -1,6 +1,6 @@
 import { useMemo, useCallback } from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
-import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
+import { useRouter, Stack } from 'expo-router';
 import {
   useZonesByProject,
   useInstallationsByZone,
@@ -8,14 +8,15 @@ import {
   useUpdateZone,
   useConfirmDelete,
   useToggle,
+  useZoneIdParam,
+  useProjectIdParam,
 } from '@/hooks';
 import { InstallationCard } from '@/components/installations';
 import { StatusBadge, EmptyState, FloatingActionButton, ActionBar } from '@/components/common';
 import { ZoneQrSheet } from '@/components/projects';
-import { encodeZoneQr, requiredParam } from '@/utils';
+import { encodeZoneQr } from '@/utils';
 import { Colors, Spacing, FontSize, Radius } from '@/styles/tokens';
 import type { Zone } from '@/db/repositories/types';
-import { projectId as toProjectId, zoneId as toZoneId } from '@baudoku/core';
 import type { ZoneId } from '@baudoku/core';
 
 function buildBreadcrumb(zones: Zone[], id: ZoneId): string[] {
@@ -30,12 +31,8 @@ function buildBreadcrumb(zones: Zone[], id: ZoneId): string[] {
 }
 
 export default function ZoneDetailScreen() {
-  const { zoneId: rawZoneId, projectId: rawProjectId } = useLocalSearchParams<{
-    zoneId: string;
-    projectId: string;
-  }>();
-  const zoneId = toZoneId(requiredParam(rawZoneId));
-  const projectId = toProjectId(requiredParam(rawProjectId));
+  const zoneId = useZoneIdParam();
+  const projectId = useProjectIdParam('projectId');
   const router = useRouter();
   const { data: zones } = useZonesByProject(projectId);
   const { data: installations, isLoading, refetch } = useInstallationsByZone(zoneId);

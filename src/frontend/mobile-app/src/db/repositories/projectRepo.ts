@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm';
+import { eq, count } from 'drizzle-orm';
 import { db } from '../client';
 import { projects } from '../schema';
 import { generateId } from '../../utils';
@@ -8,6 +8,11 @@ import type { ProjectId } from '@baudoku/core';
 
 export async function getAll(): Promise<Project[]> {
   return db.select().from(projects).all() as unknown as Project[];
+}
+
+export async function getCount(): Promise<number> {
+  const result = await db.select({ count: count() }).from(projects).get();
+  return result?.count ?? 0;
 }
 
 export async function getById(id: ProjectId): Promise<Project | undefined> {

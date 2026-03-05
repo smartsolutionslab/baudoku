@@ -1,22 +1,21 @@
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
-import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
+import { useRouter, Stack } from 'expo-router';
 import {
   useProject,
   useZonesByProject,
   useDeleteProject,
   useZoneTree,
   useConfirmDelete,
+  useProjectIdParam,
 } from '@/hooks';
 import { ZoneTree } from '@/components/projects';
 import { StatusBadge, EmptyState, FloatingActionButton, ActionBar } from '@/components/common';
 import { Colors, Spacing, FontSize, Radius } from '@/styles/tokens';
-import { formatDate, requiredParam } from '@/utils';
-import { projectId } from '@baudoku/core';
+import { formatDate } from '@/utils';
 import { formatAddress } from '@baudoku/projects';
 
 export default function ProjectDetailScreen() {
-  const { id: rawId } = useLocalSearchParams<{ id: string }>();
-  const id = projectId(requiredParam(rawId));
+  const id = useProjectIdParam();
   const router = useRouter();
   const { data: project } = useProject(id);
   const { data: zones } = useZonesByProject(id);

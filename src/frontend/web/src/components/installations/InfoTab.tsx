@@ -1,4 +1,5 @@
 import type { Installation } from '@baudoku/documentation';
+import { GPS_SOURCE_LABELS } from '@baudoku/documentation';
 
 type InfoTabProps = {
   installation: Installation;
@@ -76,7 +77,12 @@ export function InfoTab({ installation }: InfoTabProps) {
             ? `±${position.horizontalAccuracy.toFixed(1)} m`
             : null,
         },
-        { label: 'Quelle', value: position?.gpsSource },
+        {
+          label: 'Quelle',
+          value: position?.gpsSource
+            ? (GPS_SOURCE_LABELS[position.gpsSource] ?? position.gpsSource)
+            : undefined,
+        },
       ],
     },
   ];

@@ -14,9 +14,9 @@ export type GpsPosition = {
   longitude: Longitude;
   altitude: number | null;
   horizontalAccuracy: number;
-  gpsSource: string;
-  correctionService: string | null;
-  rtkFixStatus: string | null;
+  gpsSource: GpsSource;
+  correctionService: GpsCorrectionService | null;
+  rtkFixStatus: RtkFixStatus | null;
   satelliteCount: number | null;
   hdop: number | null;
   correctionAge: number | null;

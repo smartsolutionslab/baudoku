@@ -1,20 +1,14 @@
 import { useMemo } from 'react';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
-import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
-import { useZonesByProject, useUpdateZone } from '@/hooks';
+import { useRouter, Stack } from 'expo-router';
+import { useZonesByProject, useUpdateZone, useZoneIdParam, useProjectIdParam } from '@/hooks';
 import { ZoneForm } from '@/components/projects';
 import { Colors } from '@/styles/tokens';
 import type { ZoneFormData } from '@/validation/schemas';
-import { projectId as toProjectId, zoneId as toZoneId } from '@baudoku/core';
-import { requiredParam } from '@/utils';
 
 export default function ZoneEditScreen() {
-  const { zoneId: rawZoneId, projectId: rawProjectId } = useLocalSearchParams<{
-    zoneId: string;
-    projectId: string;
-  }>();
-  const zoneId = toZoneId(requiredParam(rawZoneId));
-  const projectId = toProjectId(requiredParam(rawProjectId));
+  const zoneId = useZoneIdParam();
+  const projectId = useProjectIdParam('projectId');
   const router = useRouter();
   const { data: zones, isLoading } = useZonesByProject(projectId);
   const updateZone = useUpdateZone();

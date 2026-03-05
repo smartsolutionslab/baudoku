@@ -3,12 +3,17 @@ import { Platform } from 'react-native';
 import * as Location from 'expo-location';
 import type { Latitude, Longitude } from '@baudoku/core';
 import { latitude as toLatitude, longitude as toLongitude } from '@baudoku/core';
+import type {
+  GpsSource,
+  GpsCorrectionService as GpsCorrService,
+  RtkFixStatus as GpsRtkStatus,
+} from '@baudoku/documentation';
 import { useSettingsStore } from '../store';
 import { GPS_MESSAGES } from '../constants/strings';
 
-export type GpsSource = 'internal_gps' | 'external_dgnss' | 'external_rtk';
-export type GpsCorrService = 'none' | 'sapos_eps' | 'sapos_heps' | 'sapos_gpps';
-export type GpsRtkStatus = 'no_fix' | 'autonomous' | 'dgps' | 'rtk_float' | 'rtk_fixed';
+export type { GpsSource };
+export type { GpsCorrService };
+export type { GpsRtkStatus };
 
 export type CapturedGpsPosition = {
   latitude: Latitude;

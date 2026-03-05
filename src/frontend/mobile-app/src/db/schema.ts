@@ -104,7 +104,9 @@ export const photos = sqliteTable('photos', {
   gpsLng: real('gps_lng'),
   gpsAccuracy: real('gps_accuracy'),
   gpsSource: text('gps_source', { enum: ['internal_gps', 'external_dgnss', 'external_rtk'] }),
-  gpsCorrService: text('gps_corr_service', { enum: ['none', 'sapos_eps', 'sapos_heps'] }),
+  gpsCorrService: text('gps_corr_service', {
+    enum: ['none', 'sapos_eps', 'sapos_heps', 'sapos_gpps'],
+  }),
   caption: text('caption'),
   exifLatitude: real('exif_latitude'),
   exifLongitude: real('exif_longitude'),

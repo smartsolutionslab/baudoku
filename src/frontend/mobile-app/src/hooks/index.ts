@@ -62,3 +62,4 @@ export {
   useDeleteMeasurement,
 } from './useMeasurementQueries';
 export { useSyncStatusQuery } from './useSyncQueries';
+export { useProjectIdParam, useZoneIdParam, useInstallationIdParam } from './useRouteParams';
