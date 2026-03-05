@@ -2,7 +2,8 @@ import { View, Text, StyleSheet } from 'react-native';
 import type { Installation } from '../../db/repositories/types';
 import { QualityIndicator } from './QualityIndicator';
 import { DetailRow } from '../common/DetailRow';
-import { gpsSourceLabels, corrServiceLabels, rtkLabels } from '../../utils';
+import { gpsSourceLabels } from '../../utils';
+import { GPS_CORRECTION_SERVICE_LABELS, RTK_FIX_STATUS_LABELS } from '@baudoku/documentation';
 import { Colors, Spacing, FontSize, Radius } from '../../styles/tokens';
 
 type InstallationDetailsProps = {
@@ -68,11 +69,15 @@ export function InstallationDetails({ installation }: InstallationDetailsProps) 
           />
           <DetailRow
             label="Korrekturdienst"
-            value={gpsCorrService ? (corrServiceLabels[gpsCorrService] ?? gpsCorrService) : null}
+            value={
+              gpsCorrService
+                ? (GPS_CORRECTION_SERVICE_LABELS[gpsCorrService] ?? gpsCorrService)
+                : null
+            }
           />
           <DetailRow
             label="RTK-Status"
-            value={gpsRtkStatus ? (rtkLabels[gpsRtkStatus] ?? gpsRtkStatus) : null}
+            value={gpsRtkStatus ? (RTK_FIX_STATUS_LABELS[gpsRtkStatus] ?? gpsRtkStatus) : null}
           />
           <DetailRow label="Satelliten" value={gpsSatCount != null ? String(gpsSatCount) : null} />
           <DetailRow label="HDOP" value={gpsHdop != null ? gpsHdop.toFixed(1) : null} />

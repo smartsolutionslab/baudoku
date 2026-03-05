@@ -2,13 +2,14 @@ import { View, Text, StyleSheet } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { calculateGpsQuality, gpsSourceLabels, type GpsQualityResult } from '../../utils';
 import { Colors, Spacing, FontSize, FontFamily } from '../../styles/tokens';
+import type { GpsCorrectionService, GpsSource } from '@baudoku/documentation';
 
 type QualityIndicatorProps = {
   horizontalAccuracy: number;
   hdop?: number | null;
   satelliteCount?: number | null;
-  correctionService?: string | null;
-  gpsSource?: string | null;
+  correctionService?: GpsCorrectionService | null;
+  gpsSource?: GpsSource | null;
   compact?: boolean;
 };
 

@@ -1,6 +1,7 @@
 import { View, Text, TouchableOpacity, Share, StyleSheet } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
-import { BottomSheet, statusLabels } from '../common';
+import { BottomSheet } from '../common';
+import { ZONE_TYPE_LABELS } from '@baudoku/projects';
 import { Colors, Spacing, FontSize, Radius } from '../../styles/tokens';
 
 type ZoneQrSheetProps = {
@@ -20,7 +21,9 @@ export function ZoneQrSheet({ visible, onClose, qrValue, zoneName, zoneType }: Z
     <BottomSheet visible={visible} onClose={onClose}>
       <View style={styles.centered}>
         <Text style={styles.title}>{zoneName}</Text>
-        <Text style={styles.subtitle}>{statusLabels[zoneType] ?? zoneType}</Text>
+        <Text style={styles.subtitle}>
+          {ZONE_TYPE_LABELS[zoneType as keyof typeof ZONE_TYPE_LABELS] ?? zoneType}
+        </Text>
         <View style={styles.qrContainer}>
           <QRCode
             value={qrValue}

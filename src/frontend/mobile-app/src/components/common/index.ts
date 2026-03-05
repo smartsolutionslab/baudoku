@@ -11,4 +11,4 @@ export { FormPicker } from './FormPicker';
 export { OptionSheet, optionSheetStyles } from './OptionSheet';
 export { ScreenErrorFallback } from './ScreenErrorFallback';
 export { SearchBar } from './SearchBar';
-export { StatusBadge, statusLabels } from './StatusBadge';
+export { StatusBadge } from './StatusBadge';
