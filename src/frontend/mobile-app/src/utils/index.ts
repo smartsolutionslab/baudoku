@@ -22,8 +22,6 @@ export {
   type GpsQualityGrade,
   type GpsQualityResult,
   gpsSourceLabels,
-  corrServiceLabels,
-  rtkLabels,
 } from './gpsQuality';
 export { ensurePhotoDir, savePhoto, deletePhotoFile } from './photoStorage';
 export { encodeZoneQr, decodeZoneQr, type DecodedZoneQr } from './qrCode';

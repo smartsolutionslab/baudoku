@@ -29,7 +29,7 @@ describe('calculateGpsQuality', () => {
       horizontalAccuracy: 4.0,
       hdop: 1.5,
       satelliteCount: 10,
-      correctionService: 'SAPOS',
+      correctionService: 'sapos_eps',
     });
     expect(result.grade).toBe('A');
   });
@@ -60,7 +60,7 @@ describe('calculateGpsQuality', () => {
       horizontalAccuracy: 50.0,
       hdop: 1.0,
       satelliteCount: 12,
-      correctionService: 'SAPOS',
+      correctionService: 'sapos_eps',
     });
     expect(result.grade).toBe('C');
   });
@@ -76,7 +76,7 @@ describe('calculateGpsQuality', () => {
       horizontalAccuracy: 0.5,
       hdop: 1.0,
       satelliteCount: 12,
-      correctionService: 'SAPOS',
+      correctionService: 'sapos_eps',
     });
     expect(result.grade).toBe('A');
   });

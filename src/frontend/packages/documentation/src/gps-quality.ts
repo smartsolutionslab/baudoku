@@ -1,10 +1,12 @@
+import type { GpsCorrectionService, RtkFixStatus } from './types';
+
 export type GpsQualityGrade = 'A' | 'B' | 'C' | 'D';
 
 export type GpsQualityInput = {
   horizontalAccuracy: number;
   hdop?: number | null;
   satelliteCount?: number | null;
-  correctionService?: string | null;
+  correctionService?: GpsCorrectionService | null;
 };
 
 export type GpsQualityResult = {
@@ -19,14 +21,14 @@ export const GPS_QUALITY_LABELS: Record<GpsQualityGrade, string> = {
   D: 'Ungenau',
 };
 
-export const GPS_CORRECTION_SERVICE_LABELS: Record<string, string> = {
+export const GPS_CORRECTION_SERVICE_LABELS: Record<GpsCorrectionService, string> = {
   none: 'Keine',
   sapos_eps: 'SAPOS-EPS',
   sapos_heps: 'SAPOS-HEPS',
   sapos_gpps: 'SAPOS-GPPS',
 };
 
-export const RTK_FIX_STATUS_LABELS: Record<string, string> = {
+export const RTK_FIX_STATUS_LABELS: Record<RtkFixStatus, string> = {
   no_fix: 'Kein Fix',
   autonomous: 'Autonom',
   dgps: 'DGPS',

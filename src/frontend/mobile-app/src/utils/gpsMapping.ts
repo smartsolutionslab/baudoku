@@ -1,4 +1,5 @@
-import type { GpsPosition, GpsSource, GpsCorrService, GpsRtkStatus } from '../hooks/useGpsCapture';
+import type { GpsSource, GpsCorrectionService, RtkFixStatus } from '@baudoku/documentation';
+import type { GpsPosition } from '../hooks/useGpsCapture';
 import type { Installation } from '../db/repositories/types';
 
 export function toGpsPosition(installation: Installation): GpsPosition | null {
@@ -9,8 +10,8 @@ export function toGpsPosition(installation: Installation): GpsPosition | null {
     altitude: installation.gpsAltitude ?? null,
     horizontalAccuracy: installation.gpsAccuracy ?? 0,
     gpsSource: (installation.gpsSource as GpsSource) ?? 'internal_gps',
-    correctionService: (installation.gpsCorrService as GpsCorrService) ?? 'none',
-    rtkFixStatus: (installation.gpsRtkStatus as GpsRtkStatus) ?? 'autonomous',
+    correctionService: (installation.gpsCorrService as GpsCorrectionService) ?? 'none',
+    rtkFixStatus: (installation.gpsRtkStatus as RtkFixStatus) ?? 'autonomous',
     satelliteCount: installation.gpsSatCount ?? null,
     hdop: installation.gpsHdop ?? null,
     correctionAge: installation.gpsCorrAge ?? null,

@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Alert, ScrollView } from 'react-native';
 import { FormField } from '../common';
 import { Button, Headline } from '../core';
@@ -9,6 +9,16 @@ import { Colors, Spacing, FontSize, Radius } from '../../styles/tokens';
 import { stripEmptyStrings } from '../../utils';
 import { useFormValidation } from '../../hooks/useFormValidation';
 
+type MeasurementFormState = {
+  type: string;
+  unit: string;
+  value: string;
+  minThreshold: string;
+  maxThreshold: string;
+  notes: string;
+  measuredBy: string;
+};
+
 type MeasurementFormProps = {
   onSubmit: (data: MeasurementFormData) => Promise<void>;
   onCancel: () => void;
@@ -16,14 +26,20 @@ type MeasurementFormProps = {
 };
 
 export function MeasurementForm({ onSubmit, onCancel, submitting }: MeasurementFormProps) {
-  const [form, setForm] = useState<Record<string, string>>({
+  const [form, setForm] = useState<MeasurementFormState>({
+    type: '',
+    unit: '',
+    value: '',
+    minThreshold: '',
+    maxThreshold: '',
+    notes: '',
     measuredBy: LOCAL_USER,
   });
   const { errors, setErrors, validate } = useFormValidation<MeasurementFormData>(measurementSchema);
   const [showSuggestions, setShowSuggestions] = useState(false);
 
   const set = useCallback(
-    (key: string, value: string) => {
+    (key: keyof MeasurementFormState, value: string) => {
       setForm((prev) => ({ ...prev, [key]: value }));
       setErrors((prev) => {
         const { [key]: _, ...next } = prev;
@@ -48,11 +64,13 @@ export function MeasurementForm({ onSubmit, onCancel, submitting }: MeasurementF
     [setErrors],
   );
 
-  const filteredSuggestions = form.type
-    ? MEASUREMENT_TYPES.filter((mt) =>
-        mt.type.toLowerCase().includes((form.type ?? '').toLowerCase()),
-      )
-    : MEASUREMENT_TYPES;
+  const filteredSuggestions = useMemo(
+    () =>
+      form.type
+        ? MEASUREMENT_TYPES.filter((mt) => mt.type.toLowerCase().includes(form.type.toLowerCase()))
+        : MEASUREMENT_TYPES,
+    [form.type],
+  );
 
   const handleSubmit = useCallback(async () => {
     const data = validate(stripEmptyStrings(form));
@@ -72,7 +90,7 @@ export function MeasurementForm({ onSubmit, onCancel, submitting }: MeasurementF
         <FormField
           label="Messtyp"
           required
-          value={form.type ?? ''}
+          value={form.type}
           onChangeText={(v) => {
             set('type', v);
             setShowSuggestions(true);
@@ -97,7 +115,7 @@ export function MeasurementForm({ onSubmit, onCancel, submitting }: MeasurementF
           <FormField
             label="Messwert"
             required
-            value={form.value ?? ''}
+            value={form.value}
             onChangeText={(v) => set('value', v)}
             error={errors.value}
             keyboardType="decimal-pad"
@@ -108,7 +126,7 @@ export function MeasurementForm({ onSubmit, onCancel, submitting }: MeasurementF
           <FormField
             label="Einheit"
             required
-            value={form.unit ?? ''}
+            value={form.unit}
             onChangeText={(v) => set('unit', v)}
             error={errors.unit}
             placeholder="Ω"
@@ -120,7 +138,7 @@ export function MeasurementForm({ onSubmit, onCancel, submitting }: MeasurementF
         <View style={styles.flex1}>
           <FormField
             label="Min-Schwelle"
-            value={form.minThreshold ?? ''}
+            value={form.minThreshold}
             onChangeText={(v) => set('minThreshold', v)}
             keyboardType="decimal-pad"
             placeholder="—"
@@ -129,7 +147,7 @@ export function MeasurementForm({ onSubmit, onCancel, submitting }: MeasurementF
         <View style={styles.flex1}>
           <FormField
             label="Max-Schwelle"
-            value={form.maxThreshold ?? ''}
+            value={form.maxThreshold}
             onChangeText={(v) => set('maxThreshold', v)}
             keyboardType="decimal-pad"
             placeholder="—"
@@ -139,14 +157,14 @@ export function MeasurementForm({ onSubmit, onCancel, submitting }: MeasurementF
 
       <FormField
         label="Notizen"
-        value={form.notes ?? ''}
+        value={form.notes}
         onChangeText={(v) => set('notes', v)}
         placeholder="Optionale Anmerkungen"
       />
       <FormField
         label="Prüfer"
         required
-        value={form.measuredBy ?? ''}
+        value={form.measuredBy}
         onChangeText={(v) => set('measuredBy', v)}
         error={errors.measuredBy}
         placeholder="Name"
