@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace SmartSolutionsLab.BauDoku.Projects.Infrastructure.Services;
 
-public sealed class ActiveProjectCountService(IServiceScopeFactory scopeFactory, ILogger<ActiveProjectCountService> logger)
+public sealed partial class ActiveProjectCountService(IServiceScopeFactory scopeFactory, ILogger<ActiveProjectCountService> logger)
     : BackgroundService
 {
     private static readonly TimeSpan Interval = TimeSpan.FromSeconds(60);
@@ -24,10 +24,14 @@ public sealed class ActiveProjectCountService(IServiceScopeFactory scopeFactory,
             }
             catch (Exception ex) when (ex is not OperationCanceledException)
             {
-                logger.LogWarning(ex, "Failed to update active project count metric");
+                LogMetricUpdateFailed(ex);
             }
 
             await Task.Delay(Interval, stoppingToken);
         }
     }
+
+    [LoggerMessage(EventId = 1001, Level = LogLevel.Warning,
+        Message = "Failed to update active project count metric")]
+    private partial void LogMetricUpdateFailed(Exception exception);
 }

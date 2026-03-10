@@ -5,7 +5,7 @@ using Microsoft.Extensions.Options;
 
 namespace SmartSolutionsLab.BauDoku.ApiGateway.Endpoints;
 
-public static class AuthEndpoints
+public static partial class AuthEndpoints
 {
     public static IEndpointRouteBuilder MapAuthEndpoints(this IEndpointRouteBuilder app)
     {
@@ -27,7 +27,7 @@ public static class AuthEndpoints
         var keycloak = keycloakOptions.Value;
         if (keycloak.Authority.HasNoValue())
         {
-            logger.LogWarning("Keycloak authority not configured — logout skipped");
+            LogKeycloakNotConfigured(logger);
             return TypedResults.Ok();
         }
 
@@ -46,14 +46,26 @@ public static class AuthEndpoints
             var response = await client.PostAsync(revokeUrl, content);
             if (!response.IsSuccessStatusCode)
             {
-                logger.LogWarning("Keycloak token revocation returned {StatusCode}", response.StatusCode);
+                LogTokenRevocationFailed(logger, response.StatusCode);
             }
         }
         catch (Exception ex)
         {
-            logger.LogWarning(ex, "Failed to revoke token at Keycloak");
+            LogTokenRevocationError(logger, ex);
         }
 
         return TypedResults.Ok();
     }
+
+    [LoggerMessage(EventId = 7001, Level = LogLevel.Warning,
+        Message = "Keycloak authority not configured — logout skipped")]
+    private static partial void LogKeycloakNotConfigured(ILogger logger);
+
+    [LoggerMessage(EventId = 7002, Level = LogLevel.Warning,
+        Message = "Keycloak token revocation returned {StatusCode}")]
+    private static partial void LogTokenRevocationFailed(ILogger logger, System.Net.HttpStatusCode statusCode);
+
+    [LoggerMessage(EventId = 7003, Level = LogLevel.Warning,
+        Message = "Failed to revoke token at Keycloak")]
+    private static partial void LogTokenRevocationError(ILogger logger, Exception exception);
 }

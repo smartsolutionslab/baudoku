@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace SmartSolutionsLab.BauDoku.BuildingBlocks.Application.Dispatcher;
 
-public sealed class Dispatcher(IServiceProvider serviceProvider, ILogger<Dispatcher> logger)
+public sealed partial class Dispatcher(IServiceProvider serviceProvider, ILogger<Dispatcher> logger)
     : IDispatcher
 {
     public async Task<TResult> Send<TResult>(ICommand<TResult> command, CancellationToken cancellationToken = default)
@@ -36,7 +36,7 @@ public sealed class Dispatcher(IServiceProvider serviceProvider, ILogger<Dispatc
 
     public async Task Publish(IDomainEvent domainEvent, CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Domain-Event veröffentlicht: {EventType}", domainEvent.GetType().Name);
+        LogDomainEventPublished(domainEvent.GetType().Name);
 
         var handlerType = typeof(IDomainEventHandler<>).MakeGenericType(domainEvent.GetType());
         var handlers = serviceProvider.GetServices(handlerType);
@@ -49,8 +49,16 @@ public sealed class Dispatcher(IServiceProvider serviceProvider, ILogger<Dispatc
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Fehler im DomainEventHandler {HandlerType} für {EventType}", handler!.GetType().Name, domainEvent.GetType().Name);
+                LogDomainEventHandlerError(ex, handler!.GetType().Name, domainEvent.GetType().Name);
             }
         }
     }
+
+    [LoggerMessage(EventId = 9010, Level = LogLevel.Information,
+        Message = "Domain-Event veröffentlicht: {EventType}")]
+    private partial void LogDomainEventPublished(string eventType);
+
+    [LoggerMessage(EventId = 9011, Level = LogLevel.Error,
+        Message = "Fehler im DomainEventHandler {HandlerType} für {EventType}")]
+    private partial void LogDomainEventHandlerError(Exception ex, string handlerType, string eventType);
 }

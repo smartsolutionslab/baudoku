@@ -7,7 +7,7 @@ using Microsoft.Extensions.Options;
 
 namespace SmartSolutionsLab.BauDoku.ResourceService.Services;
 
-public sealed class PodWatcher(IKubernetes kubernetes, IOptions<KubernetesOptions> options, ILogger<PodWatcher> logger)
+public sealed partial class PodWatcher(IKubernetes kubernetes, IOptions<KubernetesOptions> options, ILogger<PodWatcher> logger)
     : BackgroundService
 {
     private readonly KubernetesOptions config = options.Value;
@@ -44,7 +44,7 @@ public sealed class PodWatcher(IKubernetes kubernetes, IOptions<KubernetesOption
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        logger.LogInformation("Starting pod watcher for namespace {Namespace}", config.Namespace);
+        LogPodWatcherStarted(config.Namespace);
 
         while (!stoppingToken.IsCancellationRequested)
         {
@@ -59,7 +59,7 @@ public sealed class PodWatcher(IKubernetes kubernetes, IOptions<KubernetesOption
             catch (Exception ex)
             {
                 var reconnectDelay = TimeSpan.FromSeconds(config.ReconnectDelaySeconds);
-                logger.LogError(ex, "Pod watch stream disconnected, reconnecting in {Delay}s", config.ReconnectDelaySeconds);
+                LogPodWatchDisconnected(ex, config.ReconnectDelaySeconds);
 
                 await Task.Delay(reconnectDelay, stoppingToken);
             }
@@ -99,7 +99,7 @@ public sealed class PodWatcher(IKubernetes kubernetes, IOptions<KubernetesOption
                             }
                         }
                     });
-                    logger.LogDebug("Pod {Pod} {EventType}: {State}", podName, type, resource.State);
+                    LogPodEvent(podName, type.ToString(), resource.State);
                     break;
 
                 case WatchEventType.Deleted:
@@ -121,7 +121,7 @@ public sealed class PodWatcher(IKubernetes kubernetes, IOptions<KubernetesOption
                             }
                         }
                     });
-                    logger.LogDebug("Pod {Pod} deleted", podName);
+                    LogPodDeleted(podName);
                     break;
             }
         }
@@ -147,4 +147,20 @@ public sealed class PodWatcher(IKubernetes kubernetes, IOptions<KubernetesOption
             }
         }
     }
+
+    [LoggerMessage(EventId = 8001, Level = LogLevel.Information,
+        Message = "Starting pod watcher for namespace {Namespace}")]
+    private partial void LogPodWatcherStarted(string @namespace);
+
+    [LoggerMessage(EventId = 8002, Level = LogLevel.Error,
+        Message = "Pod watch stream disconnected, reconnecting in {Delay}s")]
+    private partial void LogPodWatchDisconnected(Exception exception, int delay);
+
+    [LoggerMessage(EventId = 8003, Level = LogLevel.Debug,
+        Message = "Pod {Pod} {EventType}: {State}")]
+    private partial void LogPodEvent(string pod, string eventType, string state);
+
+    [LoggerMessage(EventId = 8004, Level = LogLevel.Debug,
+        Message = "Pod {Pod} deleted")]
+    private partial void LogPodDeleted(string pod);
 }
