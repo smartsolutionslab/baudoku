@@ -1,8 +1,8 @@
 using SmartSolutionsLab.BauDoku.BuildingBlocks.Serialization;
 using SmartSolutionsLab.BauDoku.Documentation.Domain;
+using JasperFx;
+using JasperFx.Events;
 using Marten;
-using Marten.Events;
-using Weasel.Core;
 
 namespace SmartSolutionsLab.BauDoku.Documentation.Infrastructure.Persistence;
 

@@ -6,9 +6,9 @@ using SmartSolutionsLab.BauDoku.Documentation.Infrastructure.Persistence.Reposit
 using SmartSolutionsLab.BauDoku.Documentation.Infrastructure.Projections;
 using SmartSolutionsLab.BauDoku.Documentation.Infrastructure.ReadModel;
 using SmartSolutionsLab.BauDoku.Documentation.Infrastructure.Storage;
+using JasperFx.Events.Daemon;
+using JasperFx.Events.Projections;
 using Marten;
-using Marten.Events.Daemon.Resiliency;
-using Marten.Events.Projections;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

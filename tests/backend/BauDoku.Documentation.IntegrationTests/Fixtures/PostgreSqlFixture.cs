@@ -3,11 +3,10 @@ using SmartSolutionsLab.BauDoku.BuildingBlocks.Serialization;
 using SmartSolutionsLab.BauDoku.Documentation.Domain;
 using SmartSolutionsLab.BauDoku.Documentation.Infrastructure.Persistence;
 using SmartSolutionsLab.BauDoku.Documentation.Infrastructure.ReadModel;
+using JasperFx;
 using Marten;
-using Marten.Events;
 using Microsoft.EntityFrameworkCore;
 using Testcontainers.PostgreSql;
-using Weasel.Core;
 
 namespace SmartSolutionsLab.BauDoku.Documentation.IntegrationTests.Fixtures;
 

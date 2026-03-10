@@ -2,11 +2,11 @@ using SmartSolutionsLab.BauDoku.Documentation.Infrastructure.Persistence;
 using SmartSolutionsLab.BauDoku.Documentation.Infrastructure.ReadModel;
 using SmartSolutionsLab.BauDoku.Projects.Infrastructure.Persistence;
 using SmartSolutionsLab.BauDoku.Sync.Infrastructure.Persistence;
+using JasperFx;
 using Marten;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using Testcontainers.PostgreSql;
-using Weasel.Core;
 
 namespace SmartSolutionsLab.BauDoku.E2E.SmokeTests.Fixtures;
 

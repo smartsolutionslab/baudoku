@@ -1,5 +1,13 @@
 import { View, Text, TouchableOpacity, Share, StyleSheet } from 'react-native';
-import QRCode from 'react-native-qrcode-svg';
+import QRCodeSvg from 'react-native-qrcode-svg';
+
+const QRCode = QRCodeSvg as unknown as React.ComponentType<{
+  value: string;
+  size?: number;
+  backgroundColor?: string;
+  color?: string;
+  ecl?: string;
+}>;
 import { BottomSheet } from '../common';
 import { ZONE_TYPE_LABELS } from '@baudoku/projects';
 import { Colors, Spacing, FontSize, Radius } from '../../styles/tokens';
