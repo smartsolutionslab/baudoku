@@ -14,6 +14,7 @@ import { OfflineBanner } from '@/components/sync';
 import { ToastContainer } from '@/components/core';
 import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
 import { Colors, Spacing, FontSize } from '@/styles/tokens';
+import { markStartup, logStartupSummary } from '@/utils/startupTimer';
 
 export { ErrorBoundary } from 'expo-router';
 
@@ -29,6 +30,7 @@ export default function RootLayout() {
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
     ...FontAwesome.font,
   });
+  const { migrationSuccess, migrationError } = useMigrationsHelper();
   const [timedOut, setTimedOut] = useState(false);
 
   useEffect(() => {
@@ -39,9 +41,16 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (loaded) {
+      markStartup('fonts_loaded');
       SplashScreen.hideAsync();
     }
   }, [loaded]);
+
+  useEffect(() => {
+    if (migrationSuccess) {
+      markStartup('migrations_done');
+    }
+  }, [migrationSuccess]);
 
   // Safety timeout: dismiss splash and continue without custom fonts
   // if font loading hangs (e.g. on CI emulators)
@@ -60,23 +69,6 @@ export default function RootLayout() {
     return null;
   }
 
-  return (
-    <QueryProvider>
-      <RootLayoutNav />
-    </QueryProvider>
-  );
-}
-
-function RootLayoutNav() {
-  const colorScheme = useColorScheme();
-  const { migrationSuccess, migrationError } = useMigrationsHelper();
-
-  useEffect(() => {
-    startConnectivityMonitor();
-    useSettingsStore.getState().hydrate();
-    return () => stopConnectivityMonitor();
-  }, []);
-
   if (migrationError) {
     return (
       <View style={styles.center}>
@@ -93,6 +85,27 @@ function RootLayoutNav() {
       </View>
     );
   }
+
+  return (
+    <QueryProvider>
+      <RootLayoutNav />
+    </QueryProvider>
+  );
+}
+
+function RootLayoutNav() {
+  const colorScheme = useColorScheme();
+
+  useEffect(() => {
+    startConnectivityMonitor();
+    useSettingsStore.getState().hydrate();
+    return () => stopConnectivityMonitor();
+  }, []);
+
+  useEffect(() => {
+    markStartup('providers_mounted');
+    logStartupSummary();
+  }, []);
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
