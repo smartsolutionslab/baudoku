@@ -96,6 +96,22 @@ public sealed class DocumentationAuthTests : IDisposable
     }
 
     [Fact]
+    public async Task ListInstallations_WithNoRoles_Returns403()
+    {
+        TestAuthHandler.Roles = [];
+        try
+        {
+            var response = await client.GetAsync("/api/documentation/installations");
+
+            response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+        }
+        finally
+        {
+            TestAuthHandler.Roles = ["user", "admin"];
+        }
+    }
+
+    [Fact]
     public async Task ListInstallations_WithoutAuthentication_Returns401()
     {
         TestAuthHandler.IsAuthenticated = false;

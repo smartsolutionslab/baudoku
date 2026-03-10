@@ -18,7 +18,7 @@ public static class InstallationEndpoints
     {
         var group = app.MapGroup("/api/documentation/installations")
             .WithTags("Installations")
-            .RequireAuthorization()
+            .RequireAuthorization(AuthPolicies.RequireInspector)
             .ProducesProblem(StatusCodes.Status401Unauthorized);
 
         group.MapPost("/", DocumentInstallation)

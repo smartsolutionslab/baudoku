@@ -87,6 +87,22 @@ public sealed class SyncAuthTests : IDisposable
     }
 
     [Fact]
+    public async Task GetChanges_WithNoRoles_Returns403()
+    {
+        TestAuthHandler.Roles = [];
+        try
+        {
+            var response = await client.GetAsync("/api/sync/changes?deviceId=test-device-auth");
+
+            response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+        }
+        finally
+        {
+            TestAuthHandler.Roles = ["user", "admin"];
+        }
+    }
+
+    [Fact]
     public async Task GetChanges_WithoutAuthentication_Returns401()
     {
         TestAuthHandler.IsAuthenticated = false;
