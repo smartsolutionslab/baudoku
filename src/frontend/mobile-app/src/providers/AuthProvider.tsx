@@ -9,6 +9,7 @@ import {
 } from '../auth';
 import { setAuthToken, setBaseUrl, onUnauthorized, parseJwtPayload } from '@baudoku/core';
 import { API_BASE_URL } from '../config/environment';
+import { markStartup } from '../utils/startupTimer';
 
 function getTokenExpiresIn(token: string): number {
   try {
@@ -74,6 +75,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     async function initAuth() {
       const { accessToken, refreshToken, idToken } = await loadTokens();
+      markStartup('auth_tokens_loaded');
 
       if (!mounted || !accessToken || !refreshToken) return;
 
