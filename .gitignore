@@ -45,6 +45,7 @@ android/
 coverage/
 TestResults/
 *.trx
+**/StrykerOutput/
 
 # ---- Build Output ----
 dist/
