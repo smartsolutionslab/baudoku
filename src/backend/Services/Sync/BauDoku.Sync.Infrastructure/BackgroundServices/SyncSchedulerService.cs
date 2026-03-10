@@ -7,7 +7,7 @@ using Microsoft.Extensions.Options;
 
 namespace SmartSolutionsLab.BauDoku.Sync.Infrastructure.BackgroundServices;
 
-public sealed class SyncSchedulerService(
+public sealed partial class SyncSchedulerService(
     IServiceScopeFactory scopeFactory,
     ILogger<SyncSchedulerService> logger,
     IOptions<SyncOptions> syncOptions) : BackgroundService
@@ -16,7 +16,7 @@ public sealed class SyncSchedulerService(
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        logger.LogInformation("SyncScheduler gestartet. Intervall: {Interval}s", interval.TotalSeconds);
+        LogSchedulerStarted(interval.TotalSeconds);
 
         while (!stoppingToken.IsCancellationRequested)
         {
@@ -30,13 +30,13 @@ public sealed class SyncSchedulerService(
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Fehler im SyncScheduler-Zyklus");
+                LogSchedulerCycleError(ex);
             }
 
             await Task.Delay(interval, stoppingToken);
         }
 
-        logger.LogInformation("SyncScheduler beendet");
+        LogSchedulerStopped();
     }
 
     private async Task ProcessPendingBatchesAsync(CancellationToken cancellationToken)
@@ -50,25 +50,47 @@ public sealed class SyncSchedulerService(
         if (pendingBatches.Count == 0)
             return;
 
-        logger.LogInformation("SyncScheduler: {Count} ausstehende Batches gefunden", pendingBatches.Count);
+        LogPendingBatchesFound(pendingBatches.Count);
 
         foreach (var batch in pendingBatches)
         {
             try
             {
                 // TODO: BD-706 — Implement actual batch processing (delta application, conflict detection, version store updates)
-                logger.LogWarning(
-                    "SyncScheduler: Batch {BatchId} als abgeschlossen markiert (Platzhalter — keine Delta-Verarbeitung)",
-                    batch.Id.Value);
+                LogBatchCompletedPlaceholder(batch.Id.Value);
                 batch.MarkCompleted();
             }
             catch (Exception ex)
             {
-                logger.LogWarning(ex, "SyncScheduler: Fehler bei Batch {BatchId}", batch.Id.Value);
+                LogBatchProcessingError(ex, batch.Id.Value);
                 batch.MarkFailed();
             }
         }
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
     }
+
+    [LoggerMessage(EventId = 3001, Level = LogLevel.Information,
+        Message = "SyncScheduler gestartet. Intervall: {IntervalSeconds}s")]
+    private partial void LogSchedulerStarted(double intervalSeconds);
+
+    [LoggerMessage(EventId = 3002, Level = LogLevel.Error,
+        Message = "Fehler im SyncScheduler-Zyklus")]
+    private partial void LogSchedulerCycleError(Exception exception);
+
+    [LoggerMessage(EventId = 3003, Level = LogLevel.Information,
+        Message = "SyncScheduler beendet")]
+    private partial void LogSchedulerStopped();
+
+    [LoggerMessage(EventId = 3004, Level = LogLevel.Information,
+        Message = "SyncScheduler: {Count} ausstehende Batches gefunden")]
+    private partial void LogPendingBatchesFound(int count);
+
+    [LoggerMessage(EventId = 3005, Level = LogLevel.Warning,
+        Message = "SyncScheduler: Batch {BatchId} als abgeschlossen markiert (Platzhalter — keine Delta-Verarbeitung)")]
+    private partial void LogBatchCompletedPlaceholder(Guid batchId);
+
+    [LoggerMessage(EventId = 3006, Level = LogLevel.Warning,
+        Message = "SyncScheduler: Fehler bei Batch {BatchId}")]
+    private partial void LogBatchProcessingError(Exception exception, Guid batchId);
 }

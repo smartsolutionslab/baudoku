@@ -5,7 +5,7 @@ using Microsoft.Extensions.Options;
 
 namespace SmartSolutionsLab.BauDoku.ResourceService.Services;
 
-public sealed class KubernetesDashboardService(
+public sealed partial class KubernetesDashboardService(
     PodWatcher podWatcher,
     PodLogStreamer podLogStreamer,
     IKubernetes kubernetes,
@@ -22,7 +22,7 @@ public sealed class KubernetesDashboardService(
 
     public override async Task WatchResources(WatchResourcesRequest request, IServerStreamWriter<WatchResourcesUpdate> responseStream, ServerCallContext context)
     {
-        logger.LogInformation("Dashboard connected to WatchResources (reconnect={IsReconnect})", request.IsReconnect);
+        LogDashboardConnected(request.IsReconnect);
 
         // Send initial snapshot
         var initialData = new InitialResourceData();
@@ -56,7 +56,7 @@ public sealed class KubernetesDashboardService(
 
     public override async Task WatchResourceConsoleLogs(WatchResourceConsoleLogsRequest request, IServerStreamWriter<WatchResourceConsoleLogsUpdate> responseStream, ServerCallContext context)
     {
-        logger.LogInformation("Dashboard requested console logs for {Resource}", request.ResourceName);
+        LogConsoleLogsRequested(request.ResourceName);
 
         var lineNumber = 1;
         var follow = !request.SuppressFollow;
@@ -77,7 +77,7 @@ public sealed class KubernetesDashboardService(
 
     public override async Task<ResourceCommandResponse> ExecuteResourceCommand(ResourceCommandRequest request, ServerCallContext context)
     {
-        logger.LogInformation("Executing command {Command} on {Resource}", request.CommandName, request.ResourceName);
+        LogExecutingCommand(request.CommandName, request.ResourceName);
 
         if (request.CommandName == "restart")
         {
@@ -92,7 +92,7 @@ public sealed class KubernetesDashboardService(
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Failed to restart pod {Pod}", request.ResourceName);
+                LogPodRestartFailed(ex, request.ResourceName);
                 return new ResourceCommandResponse
                 {
                     Kind = ResourceCommandResponseKind.Failed,
@@ -116,4 +116,20 @@ public sealed class KubernetesDashboardService(
         // No-op: interactions not needed for K8s resource service
         await Task.Delay(Timeout.Infinite, context.CancellationToken);
     }
+
+    [LoggerMessage(EventId = 8020, Level = LogLevel.Information,
+        Message = "Dashboard connected to WatchResources (reconnect={IsReconnect})")]
+    private partial void LogDashboardConnected(bool isReconnect);
+
+    [LoggerMessage(EventId = 8021, Level = LogLevel.Information,
+        Message = "Dashboard requested console logs for {Resource}")]
+    private partial void LogConsoleLogsRequested(string resource);
+
+    [LoggerMessage(EventId = 8022, Level = LogLevel.Information,
+        Message = "Executing command {Command} on {Resource}")]
+    private partial void LogExecutingCommand(string command, string resource);
+
+    [LoggerMessage(EventId = 8023, Level = LogLevel.Error,
+        Message = "Failed to restart pod {Pod}")]
+    private partial void LogPodRestartFailed(Exception exception, string pod);
 }
