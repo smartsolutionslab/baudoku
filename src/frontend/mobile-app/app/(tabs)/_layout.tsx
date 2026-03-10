@@ -48,6 +48,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="sync"
         options={{
+          lazy: true,
           title: 'Sync',
           tabBarIcon: ({ color }) => <TabBarIcon name="refresh" color={color} />,
           tabBarBadge: formatBadge(unsyncedCount + pendingUploads),
@@ -56,6 +57,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="profile"
         options={{
+          lazy: true,
           title: 'Profil',
           headerShown: false,
           tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,

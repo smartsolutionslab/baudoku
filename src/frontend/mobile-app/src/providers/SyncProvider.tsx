@@ -5,6 +5,7 @@ import { setOnReconnect } from '../sync/ConnectivityMonitor';
 import { useSyncStore } from '../store';
 import { UploadProgressBar } from '../components/sync';
 import * as photoRepo from '../db/repositories/photoRepo';
+import { markStartup } from '../utils/startupTimer';
 
 type SyncContextValue = {
   syncManager: SyncManager;
@@ -44,6 +45,7 @@ export function SyncProvider({ children }: { children: React.ReactNode }) {
 
     schedulerRef.current = scheduler;
     scheduler.start();
+    markStartup('sync_provider_ready');
 
     setOnReconnect(() => {
       void scheduler.triggerNow();

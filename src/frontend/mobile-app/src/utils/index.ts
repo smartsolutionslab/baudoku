@@ -26,3 +26,4 @@ export {
 export { ensurePhotoDir, savePhoto, deletePhotoFile } from './photoStorage';
 export { encodeZoneQr, decodeZoneQr, type DecodedZoneQr } from './qrCode';
 export { generateId } from './uuid';
+export { markStartup, logStartupSummary } from './startupTimer';
