@@ -138,6 +138,83 @@ jobs:
           path: coverage/**/coverage.cobertura.xml
           retention-days: 14
 
+  mutation-testing:
+    name: Mutation Testing (${{ matrix.label }})
+    runs-on: ubuntu-latest
+    needs: backend-unit-tests
+    if: github.event_name == 'pull_request'
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - label: BB-Domain
+            test-project: tests/backend/BauDoku.BuildingBlocks.UnitTests
+            source-project: BauDoku.BuildingBlocks.Domain.csproj
+          - label: BB-Application
+            test-project: tests/backend/BauDoku.BuildingBlocks.UnitTests
+            source-project: BauDoku.BuildingBlocks.Application.csproj
+          - label: BB-Serialization
+            test-project: tests/backend/BauDoku.BuildingBlocks.UnitTests
+            source-project: BauDoku.BuildingBlocks.Serialization.csproj
+          - label: BB-Storage
+            test-project: tests/backend/BauDoku.BuildingBlocks.UnitTests
+            source-project: BauDoku.BuildingBlocks.Storage.csproj
+          - label: Projects-Domain
+            test-project: tests/backend/BauDoku.Projects.UnitTests
+            source-project: BauDoku.Projects.Domain.csproj
+          - label: Projects-Application
+            test-project: tests/backend/BauDoku.Projects.UnitTests
+            source-project: BauDoku.Projects.Application.csproj
+          - label: Docs-Domain
+            test-project: tests/backend/BauDoku.Documentation.UnitTests
+            source-project: BauDoku.Documentation.Domain.csproj
+          - label: Docs-Application
+            test-project: tests/backend/BauDoku.Documentation.UnitTests
+            source-project: BauDoku.Documentation.Application.csproj
+          - label: Docs-Infrastructure
+            test-project: tests/backend/BauDoku.Documentation.UnitTests
+            source-project: BauDoku.Documentation.Infrastructure.csproj
+          - label: Sync-Domain
+            test-project: tests/backend/BauDoku.Sync.UnitTests
+            source-project: BauDoku.Sync.Domain.csproj
+          - label: Sync-Application
+            test-project: tests/backend/BauDoku.Sync.UnitTests
+            source-project: BauDoku.Sync.Application.csproj
+          - label: Sync-Infrastructure
+            test-project: tests/backend/BauDoku.Sync.UnitTests
+            source-project: BauDoku.Sync.Infrastructure.csproj
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('src/backend/Directory.Packages.props', 'src/backend/**/*.csproj', 'tests/backend/**/*.csproj') }}
+          restore-keys: nuget-${{ runner.os }}-
+
+      - name: Install Stryker
+        run: dotnet tool restore
+
+      - name: Run Stryker
+        run: |
+          cd ${{ matrix.test-project }}
+          dotnet stryker --project ${{ matrix.source-project }}
+
+      - name: Upload mutation report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mutation-report-${{ matrix.label }}
+          path: ${{ matrix.test-project }}/StrykerOutput/**/
+          retention-days: 14
+
   backend-integration-tests:
     name: Backend Integration Tests
     runs-on: ubuntu-latest

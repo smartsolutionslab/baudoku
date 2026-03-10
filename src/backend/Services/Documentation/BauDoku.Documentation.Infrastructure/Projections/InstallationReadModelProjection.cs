@@ -1,8 +1,9 @@
 using System.Collections.Frozen;
 using SmartSolutionsLab.BauDoku.Documentation.Domain;
 using SmartSolutionsLab.BauDoku.Documentation.Infrastructure.ReadModel;
+using JasperFx.Events;
+using JasperFx.Events.Projections;
 using Marten;
-using Marten.Events;
 using Marten.Events.Projections;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -30,23 +31,19 @@ public sealed class InstallationReadModelProjection(IServiceScopeFactory scopeFa
 
     private static EventHandler Dispatch<TEvent>(Func<ReadModelDbContext, TEvent, Task> handler) => (db, @event) => handler(db, (TEvent)@event);
 
-    public void Apply(IDocumentOperations operations, IReadOnlyList<StreamAction> streams) => throw new NotSupportedException("Use async projection only.");
+    public void Apply(IDocumentOperations operations, IReadOnlyList<IEvent> events) => throw new NotSupportedException("Use async projection only.");
 
-    public async Task ApplyAsync(IDocumentOperations operations, IReadOnlyList<StreamAction> streams, CancellationToken cancellation)
+    public async Task ApplyAsync(IDocumentOperations operations, IReadOnlyList<IEvent> events, CancellationToken cancellation)
     {
         using var scope = scopeFactory.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<ReadModelDbContext>();
 
-        foreach (var stream in streams)
+        foreach (var @event in events)
         {
-            foreach (var @event in stream.Events)
+            var eventType = @event.Data.GetType();
+            if (eventHandlers.TryGetValue(eventType, out var handler))
             {
-                var eventType = @event.Data.GetType();
-                if (eventHandlers.ContainsKey(eventType))
-                {
-                    EventHandler handler = eventHandlers[eventType];
-                    await handler(dbContext, @event.Data);
-                }
+                await handler(dbContext, @event.Data);
             }
         }
 

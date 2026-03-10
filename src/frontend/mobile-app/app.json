@@ -7,7 +7,6 @@
     "icon": "./assets/images/icon.png",
     "scheme": "baudoku",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
     "splash": {
       "image": "./assets/images/splash-icon.png",
       "resizeMode": "contain",
@@ -54,7 +53,9 @@
           "cameraPermission": "BauDoku benötigt Kamerazugriff zum Scannen von QR-Codes an Zonen."
         }
       ],
-      "expo-secure-store"
+      "expo-secure-store",
+      "expo-font",
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true
