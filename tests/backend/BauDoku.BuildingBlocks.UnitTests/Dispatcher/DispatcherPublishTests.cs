@@ -68,9 +68,11 @@ public sealed class DispatcherPublishTests
 
         await dispatcher.Publish(new DispatcherTestEvent("test"));
 
-        // 2 log calls: 1x LogInformation (event published) + 1x LogError (handler failed)
-        logger.ReceivedWithAnyArgs(2).Log(
-            default, default, default(object), default, default!);
+        // Source-gen [LoggerMessage] checks IsEnabled() before calling Log().
+        // NSubstitute mock returns false for IsEnabled(), so Log() is never called.
+        // Assert on IsEnabled() calls instead: 1x Information (event published) + 1x Error (handler failed)
+        logger.Received().IsEnabled(LogLevel.Information);
+        logger.Received().IsEnabled(LogLevel.Error);
     }
 
     [Fact]
@@ -86,8 +88,7 @@ public sealed class DispatcherPublishTests
 
         await dispatcher.Publish(new DispatcherTestEvent("test"));
 
-        logger.ReceivedWithAnyArgs(1).Log(
-            default, default, default(object), default, default!);
+        logger.Received().IsEnabled(LogLevel.Information);
     }
 
     [Fact]

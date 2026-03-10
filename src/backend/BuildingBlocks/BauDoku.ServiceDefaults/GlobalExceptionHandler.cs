@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace SmartSolutionsLab.BauDoku.ServiceDefaults;
 
-public sealed class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger, IHostEnvironment environment)
+public sealed partial class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger, IHostEnvironment environment)
     : IExceptionHandler
 {
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
@@ -64,11 +64,11 @@ public sealed class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logge
 
         if (problemDetails.Status >= 500)
         {
-            logger.LogError(exception, "Unhandled exception: {Message}", exception.Message);
+            LogUnhandledException(exception, exception.Message);
         }
         else
         {
-            logger.LogWarning(exception, "Handled exception: {ExceptionType} — {Message}", exception.GetType().Name, exception.Message);
+            LogHandledException(exception, exception.GetType().Name, exception.Message);
         }
 
         httpContext.Response.StatusCode = problemDetails.Status ?? StatusCodes.Status500InternalServerError;
@@ -103,4 +103,12 @@ public sealed class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logge
     {
         return exception.GetType().Name == "BusinessRuleException";
     }
+
+    [LoggerMessage(EventId = 9020, Level = LogLevel.Error,
+        Message = "Unhandled exception: {ExceptionMessage}")]
+    private partial void LogUnhandledException(Exception exception, string exceptionMessage);
+
+    [LoggerMessage(EventId = 9021, Level = LogLevel.Warning,
+        Message = "Handled exception: {ExceptionType} — {ExceptionMessage}")]
+    private partial void LogHandledException(Exception exception, string exceptionType, string exceptionMessage);
 }

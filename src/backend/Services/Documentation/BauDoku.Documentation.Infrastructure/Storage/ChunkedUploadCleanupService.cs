@@ -6,7 +6,7 @@ using Microsoft.Extensions.Options;
 
 namespace SmartSolutionsLab.BauDoku.Documentation.Infrastructure.Storage;
 
-public sealed class ChunkedUploadCleanupService(IOptions<PhotoStorageOptions> options, ILogger<ChunkedUploadCleanupService> logger)
+public sealed partial class ChunkedUploadCleanupService(IOptions<PhotoStorageOptions> options, ILogger<ChunkedUploadCleanupService> logger)
     : BackgroundService
 {
     private const string MetadataFileName = "metadata.json";
@@ -52,7 +52,7 @@ public sealed class ChunkedUploadCleanupService(IOptions<PhotoStorageOptions> op
             }
             catch (Exception ex)
             {
-                logger.LogWarning(ex, "Fehler beim Lesen der Session-Metadaten in {SessionDir}", sessionDir);
+                LogSessionMetadataReadError(ex, sessionDir);
                 TryDeleteDirectory(sessionName);
                 cleaned++;
             }
@@ -60,7 +60,7 @@ public sealed class ChunkedUploadCleanupService(IOptions<PhotoStorageOptions> op
 
         if (cleaned > 0)
         {
-            logger.LogInformation("Chunked-Upload-Cleanup: {Count} abgelaufene Sessions entfernt", cleaned);
+            LogCleanupCompleted(cleaned);
         }
     }
 
@@ -72,7 +72,19 @@ public sealed class ChunkedUploadCleanupService(IOptions<PhotoStorageOptions> op
         }
         catch (Exception ex)
         {
-            logger.LogWarning(ex, "Fehler beim Löschen des Session-Verzeichnisses {Path}", relativePath);
+            LogDirectoryDeleteError(ex, relativePath);
         }
     }
+
+    [LoggerMessage(EventId = 2001, Level = LogLevel.Warning,
+        Message = "Fehler beim Lesen der Session-Metadaten in {SessionDir}")]
+    private partial void LogSessionMetadataReadError(Exception exception, string sessionDir);
+
+    [LoggerMessage(EventId = 2002, Level = LogLevel.Information,
+        Message = "Chunked-Upload-Cleanup: {Count} abgelaufene Sessions entfernt")]
+    private partial void LogCleanupCompleted(int count);
+
+    [LoggerMessage(EventId = 2003, Level = LogLevel.Warning,
+        Message = "Fehler beim Löschen des Session-Verzeichnisses {Path}")]
+    private partial void LogDirectoryDeleteError(Exception exception, string path);
 }

@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace SmartSolutionsLab.BauDoku.BuildingBlocks.Auth;
 
-public static class AuthenticationExtensions
+public static partial class AuthenticationExtensions
 {
     private const string AuthLogCategory = "BauDoku.Auth";
 
@@ -50,13 +50,13 @@ public static class AuthenticationExtensions
                     var userId = principal.GetUserId();
                     var roles = principal.GetRoles();
                     var ipAddress = context.HttpContext.Connection.RemoteIpAddress;
-                    logger.LogInformation("User authenticated: {UserId}, Roles: [{Roles}], IP: {IpAddress}", userId, string.Join(", ", roles), ipAddress);
+                    LogUserAuthenticated(logger, userId, string.Join(", ", roles), ipAddress);
                     return Task.CompletedTask;
                 },
                 OnAuthenticationFailed = context =>
                 {
                     var logger = CreateLogger(context.HttpContext);
-                    logger.LogWarning(context.Exception, "Authentication failed");
+                    LogAuthenticationFailed(logger, context.Exception);
 
                     return Task.CompletedTask;
                 },
@@ -87,4 +87,12 @@ public static class AuthenticationExtensions
         var keycloak = configuration.GetSection(KeycloakOptions.SectionName).Get<KeycloakOptions>() ?? new KeycloakOptions();
         return keycloak;
     }
+
+    [LoggerMessage(EventId = 9040, Level = LogLevel.Information,
+        Message = "User authenticated: {UserId}, Roles: [{Roles}], IP: {IpAddress}")]
+    private static partial void LogUserAuthenticated(ILogger logger, string userId, string roles, System.Net.IPAddress? ipAddress);
+
+    [LoggerMessage(EventId = 9041, Level = LogLevel.Warning,
+        Message = "Authentication failed")]
+    private static partial void LogAuthenticationFailed(ILogger logger, Exception exception);
 }

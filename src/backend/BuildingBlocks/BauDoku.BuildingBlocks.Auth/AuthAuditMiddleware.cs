@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 
 namespace SmartSolutionsLab.BauDoku.BuildingBlocks.Auth;
 
-public sealed class AuthAuditMiddleware(RequestDelegate next, ILogger<AuthAuditMiddleware> logger)
+public sealed partial class AuthAuditMiddleware(RequestDelegate next, ILogger<AuthAuditMiddleware> logger)
 {
     public async Task InvokeAsync(HttpContext context)
     {
@@ -15,7 +15,11 @@ public sealed class AuthAuditMiddleware(RequestDelegate next, ILogger<AuthAuditM
             var method = context.Request.Method;
             var path = context.Request.Path;
 
-            logger.LogWarning("Auth {StatusCode}: User={UserId} Method={Method} Path={Path}", context.Response.StatusCode, userId, method, path);
+            LogAuthFailure(context.Response.StatusCode, userId, method, path.Value ?? "/");
         }
     }
+
+    [LoggerMessage(EventId = 9030, Level = LogLevel.Warning,
+        Message = "Auth {StatusCode}: User={UserId} Method={Method} Path={Path}")]
+    private partial void LogAuthFailure(int statusCode, string userId, string method, string path);
 }

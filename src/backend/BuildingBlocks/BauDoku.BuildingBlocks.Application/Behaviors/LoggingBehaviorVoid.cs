@@ -11,12 +11,12 @@ public sealed class LoggingBehaviorVoid<TCommand>(ICommandHandler<TCommand> inne
     public async Task Handle(TCommand command, CancellationToken cancellationToken = default)
     {
         var commandName = typeof(TCommand).Name;
-        logger.LogInformation("Handling command {CommandName}", commandName);
+        BehaviorLogMessages.LogHandlingCommand(logger, commandName);
 
         var stopwatch = Stopwatch.StartNew();
         await inner.Handle(command, cancellationToken);
         stopwatch.Stop();
 
-        logger.LogInformation("Command {CommandName} handled in {ElapsedMs}ms", commandName, stopwatch.ElapsedMilliseconds);
+        BehaviorLogMessages.LogCommandHandled(logger, commandName, stopwatch.ElapsedMilliseconds);
     }
 }
