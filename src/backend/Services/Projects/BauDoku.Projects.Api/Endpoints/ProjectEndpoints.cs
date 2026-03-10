@@ -18,7 +18,7 @@ public static class ProjectEndpoints
     {
         var group = app.MapGroup("/api/projects")
             .WithTags("Projects")
-            .RequireAuthorization()
+            .RequireAuthorization(AuthPolicies.RequireInspector)
             .ProducesProblem(StatusCodes.Status401Unauthorized);
 
         group.MapPost("/", CreateProject)

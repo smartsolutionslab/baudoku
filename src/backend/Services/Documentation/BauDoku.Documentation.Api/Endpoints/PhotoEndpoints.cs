@@ -20,7 +20,7 @@ public static class PhotoEndpoints
     {
         var group = app.MapGroup("/api/documentation")
             .WithTags("Photos")
-            .RequireAuthorization()
+            .RequireAuthorization(AuthPolicies.RequireInspector)
             .ProducesProblem(StatusCodes.Status401Unauthorized);
 
         group.MapPost("/installations/{installationId:guid}/photos", AddPhoto)

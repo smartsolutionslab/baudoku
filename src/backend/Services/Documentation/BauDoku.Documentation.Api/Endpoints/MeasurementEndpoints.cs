@@ -16,7 +16,7 @@ public static class MeasurementEndpoints
     {
         var group = app.MapGroup("/api/documentation")
             .WithTags("Measurements")
-            .RequireAuthorization()
+            .RequireAuthorization(AuthPolicies.RequireInspector)
             .ProducesProblem(StatusCodes.Status401Unauthorized);
 
         group.MapPost("/installations/{installationId:guid}/measurements", RecordMeasurement)

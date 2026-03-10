@@ -65,6 +65,7 @@ public static partial class AuthenticationExtensions
 
         services.AddAuthorization(options =>
         {
+            options.AddPolicy(AuthPolicies.RequireInspector, policy => policy.RequireRole(AuthRoles.Inspector, AuthRoles.User, AuthRoles.Admin));
             options.AddPolicy(AuthPolicies.RequireUser, policy => policy.RequireRole(AuthRoles.User, AuthRoles.Admin));
             options.AddPolicy(AuthPolicies.RequireAdmin, policy => policy.RequireRole(AuthRoles.Admin));
         });
