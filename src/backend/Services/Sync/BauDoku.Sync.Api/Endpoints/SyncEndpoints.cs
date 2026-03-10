@@ -15,7 +15,7 @@ public static class SyncEndpoints
     {
         var group = app.MapGroup("/api/sync")
             .WithTags("Sync")
-            .RequireAuthorization()
+            .RequireAuthorization(AuthPolicies.RequireInspector)
             .ProducesProblem(StatusCodes.Status401Unauthorized);
 
         group.MapPost("/batch", ProcessSyncBatch)

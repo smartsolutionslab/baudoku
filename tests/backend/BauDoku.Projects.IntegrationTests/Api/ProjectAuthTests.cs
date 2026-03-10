@@ -80,6 +80,22 @@ public sealed class ProjectAuthTests : IDisposable
     }
 
     [Fact]
+    public async Task ListProjects_WithNoRoles_Returns403()
+    {
+        TestAuthHandler.Roles = [];
+        try
+        {
+            var response = await client.GetAsync("/api/projects");
+
+            response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+        }
+        finally
+        {
+            TestAuthHandler.Roles = ["user", "admin"];
+        }
+    }
+
+    [Fact]
     public async Task ListProjects_WithoutAuthentication_Returns401()
     {
         TestAuthHandler.IsAuthenticated = false;

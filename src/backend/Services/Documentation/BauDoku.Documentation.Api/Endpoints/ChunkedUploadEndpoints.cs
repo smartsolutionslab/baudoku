@@ -14,7 +14,7 @@ public static class ChunkedUploadEndpoints
     {
         var group = app.MapGroup("/api/documentation/uploads")
             .WithTags("Chunked Upload")
-            .RequireAuthorization()
+            .RequireAuthorization(AuthPolicies.RequireInspector)
             .ProducesProblem(StatusCodes.Status401Unauthorized);
 
         group.MapPost("/init", InitChunkedUpload)
