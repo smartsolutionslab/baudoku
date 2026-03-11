@@ -11,9 +11,11 @@ namespace SmartSolutionsLab.BauDoku.Projects.Infrastructure.Persistence.Reposito
 
 public sealed class ProjectReadRepository(ProjectsReadDbContext context) : IProjectReadRepository
 {
+    private readonly DbSet<Project> projects = context.Projects;
+
     public async Task<ProjectDto> GetByIdAsync(ProjectIdentifier id, CancellationToken cancellationToken = default)
     {
-        var project = (await context.Projects
+        var project = (await projects
             .Include(p => p.Zones)
             .FirstOrDefaultAsync(p => p.Id == id, cancellationToken))
             .OrNotFound("Projekt", id.Value);
@@ -32,7 +34,7 @@ public sealed class ProjectReadRepository(ProjectsReadDbContext context) : IProj
 
     public async Task<PagedResult<ProjectListItemDto>> ListAsync(SearchTerm? search, PaginationParams pagination, CancellationToken cancellationToken = default)
     {
-        var query = context.Projects.AsQueryable();
+        var query = projects.AsQueryable();
 
         if (search is not null)
         {

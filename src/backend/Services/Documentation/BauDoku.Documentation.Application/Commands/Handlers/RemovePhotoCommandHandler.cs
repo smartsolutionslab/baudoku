@@ -14,8 +14,7 @@ public sealed class RemovePhotoCommandHandler(IInstallationRepository installati
         var (installationId, photoId) = command;
 
         var installation = await installations.With(installationId, cancellationToken);
-        var photo = installation.Photos.FirstOrDefault(p => p.Id == photoId) ?? throw new KeyNotFoundException($"Foto mit ID {photoId.Value} nicht gefunden.");
-        installation.RemovePhoto(photoId);
+        var photo = installation.RemovePhoto(photoId);
         await installations.SaveAsync(installation, cancellationToken);
         await photoStorage.DeleteAsync(photo.BlobUrl, cancellationToken);
 

@@ -71,7 +71,7 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
             cableSpec?.CrossSection,
             cableSpec?.Color,
             cableSpec?.ConductorCount,
-            depth?.ValueInMillimeters,
+            depth,
             manufacturer,
             modelName,
             serialNumber,
@@ -128,13 +128,14 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
         RaiseEvent(@event);
     }
 
-    public void RemovePhoto(PhotoIdentifier photoId)
+    public Photo RemovePhoto(PhotoIdentifier photoId)
     {
         CheckRule(new CompletedInstallationCannotBeModified(Status));
 
-        _ = photos.FirstOrDefault(p => p.Id == photoId) ?? throw new InvalidOperationException($"Foto mit ID {photoId.Value} nicht gefunden.");
+        var photo = photos.FirstOrDefault(p => p.Id == photoId) ?? throw new InvalidOperationException($"Foto mit ID {photoId.Value} nicht gefunden.");
 
         RaiseEvent(new PhotoRemoved(Id, photoId, DateTime.UtcNow));
+        return photo;
     }
 
     public void RecordMeasurement(MeasurementIdentifier measurementId, MeasurementType type, MeasurementValue value, Notes? notes = null)
@@ -219,7 +220,7 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
     {
         CheckRule(new CompletedInstallationCannotBeModified(Status));
 
-        RaiseEvent(new InstallationDepthUpdated(Id, depth?.ValueInMillimeters, DateTime.UtcNow));
+        RaiseEvent(new InstallationDepthUpdated(Id, depth, DateTime.UtcNow));
     }
 
     public void MarkAsCompleted()
@@ -259,6 +260,7 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
             [typeof(InstallationDeviceInfoUpdated)] = Dispatch<InstallationDeviceInfoUpdated>((i, @event) => i.Apply(@event)),
             [typeof(InstallationCompleted)] = Dispatch<InstallationCompleted>((i, @event) => i.Apply(@event)),
             [typeof(InstallationDeleted)] = Dispatch<InstallationDeleted>((i, @event) => i.Apply(@event)),
+            [typeof(LowGpsQualityDetected)] = static (_, _) => { }, // notification-only, no state change
         }.ToFrozenDictionary();
 
     private static Action<Installation, IDomainEvent> Dispatch<TEvent>(Action<Installation, TEvent> handler) where TEvent : IDomainEvent =>
@@ -283,7 +285,7 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
         QualityGrade = @event.QualityGrade;
         Description = @event.Description;
         CableSpec = ReconstructCableSpec(@event.CableType, @event.CrossSection, @event.CableColor, @event.ConductorCount);
-        Depth = Depth.FromNullable(@event.DepthMm);
+        Depth = @event.Depth;
         Manufacturer = @event.Manufacturer;
         ModelName = @event.ModelName;
         SerialNumber = @event.SerialNumber;
@@ -368,7 +370,7 @@ public sealed class Installation : EventSourcedAggregateRoot<InstallationIdentif
 
     public void Apply(InstallationDepthUpdated @event)
     {
-        Depth = Depth.FromNullable(@event.DepthMm);
+        Depth = @event.Depth;
     }
 
     public void Apply(InstallationDeviceInfoUpdated @event)

@@ -2,7 +2,7 @@
 
 Mobile App zur Dokumentation elektrischer Installationen auf Baustellen.
 
-**Status:** 🚧 Sprint 8 – MVP Release-Vorbereitung
+**Status:** 🚧 Sprint 7+ – Refactoring & Observability
 
 ## Projektbeschreibung
 
@@ -21,12 +21,15 @@ BauDoku ist eine offline-faehige mobile Anwendung zur systematischen Dokumentati
 
 | Schicht | Technologie |
 |---------|-------------|
-| Mobile App | React Native + Expo (TypeScript) |
-| Backend | .NET 10 Minimal API, DDD + Clean Architecture |
-| Datenbank | PostgreSQL + PostGIS / SQLite (offline) |
+| Mobile App | React Native + Expo (TypeScript), SQLite (Drizzle ORM), Zustand, TanStack Query |
+| Web App | Vite + React (TypeScript), TanStack Router |
+| Backend | .NET 10 Minimal API (C#), DDD + Clean Architecture, eigener Dispatcher |
+| Event Store | Marten 8 (Documentation BC) auf PostgreSQL |
+| Datenbank | PostgreSQL + PostGIS (Backend), SQLite (Mobile Offline) |
 | Auth | Keycloak (OAuth2 + OIDC) |
 | Messaging | RabbitMQ |
-| Orchestrierung | .NET Aspire (dev) / Kubernetes (prod) |
+| Monitoring | OpenTelemetry, Aspire Dashboard, Grafana + Prometheus + Tempo + Loki |
+| Orchestrierung | .NET Aspire 13.1 (dev) / Kubernetes (prod) |
 
 ## Voraussetzungen
 
@@ -43,7 +46,7 @@ BauDoku ist eine offline-faehige mobile Anwendung zur systematischen Dokumentati
 ### Backend (Aspire)
 
 ```bash
-git clone https://github.com/your-org/baudoku.git
+git clone https://github.com/smartsolutionslab/baudoku.git
 cd baudoku
 
 # NuGet-Pakete wiederherstellen
@@ -67,23 +70,49 @@ Das Aspire Dashboard oeffnet sich automatisch unter `https://localhost:17178`. F
 | RabbitMQ | Container | Messaging |
 | pgAdmin | Container | DB-Administration |
 
-### Frontend (Expo)
+### Frontend (npm Workspaces Monorepo)
 
 ```bash
 cd src/frontend
-npm install
-npx expo start
+npm install          # Installiert alle Workspaces (mobile-app, web, packages/*)
+
+# Mobile App (Expo)
+cd mobile-app
+npx expo start       # Dev-Server starten
+npx expo start --android   # Android-Emulator
+npx expo start --ios       # iOS-Simulator
+
+# Web App (Vite)
+cd ../web
+npm run dev          # Vite Dev-Server (Port 5173)
 ```
+
+**Mobile App** (`src/frontend/mobile-app/`):
 
 | Script | Befehl | Beschreibung |
 |--------|--------|--------------|
 | `start` | `npm start` | Expo Dev-Server starten |
 | `android` | `npm run android` | Android-Emulator starten |
 | `ios` | `npm run ios` | iOS-Simulator starten |
-| `web` | `npm run web` | Web-Modus starten |
 | `typecheck` | `npm run typecheck` | TypeScript-Pruefung |
 | `test` | `npm test` | Jest-Tests ausfuehren |
-| `test:watch` | `npm run test:watch` | Jest im Watch-Modus |
+
+**Web App** (`src/frontend/web/`):
+
+| Script | Befehl | Beschreibung |
+|--------|--------|--------------|
+| `dev` | `npm run dev` | Vite Dev-Server starten |
+| `build` | `npm run build` | Production-Build |
+| `typecheck` | `npm run typecheck` | TypeScript-Pruefung |
+
+**Shared Packages** (`src/frontend/packages/`):
+
+| Package | Beschreibung |
+|---------|--------------|
+| `@baudoku/core` | HTTP-Primitives, Auth-Token, JWT-Utils, PagedResult |
+| `@baudoku/projects` | Project/Zone-Typen, Validierung, Konstanten, Zone-Tree-Logik |
+| `@baudoku/documentation` | Installation/Photo/Measurement-Typen, Validierung, Photo-Upload |
+| `@baudoku/sync` | Sync-DTOs und Sync-API-Funktionen (Push/Pull) |
 
 ### Keycloak
 
@@ -96,7 +125,7 @@ Keycloak wird automatisch durch Aspire als Container gestartet und mit dem Realm
 ### Backend
 
 ```bash
-# Alle Unit- und Architektur-Tests (494+)
+# Alle Unit- und Architektur-Tests (740+)
 dotnet test src/backend/BauDoku.slnx
 
 # Einzelnes Testprojekt
@@ -110,6 +139,7 @@ Integrationstests und E2E-Tests benoetigen eine laufende Docker-Instanz (Testcon
 dotnet test tests/backend/BauDoku.Projects.IntegrationTests
 dotnet test tests/backend/BauDoku.Documentation.IntegrationTests
 dotnet test tests/backend/BauDoku.Sync.IntegrationTests
+dotnet test tests/backend/BauDoku.Auth.IntegrationTests
 
 # E2E Smoke Tests (Cross-BC: Projects → Documentation → Sync)
 dotnet test tests/backend/BauDoku.E2E.SmokeTests
@@ -117,14 +147,16 @@ dotnet test tests/backend/BauDoku.E2E.SmokeTests
 
 | Testprojekt | Typ | Tests |
 |-------------|-----|-------|
-| `BauDoku.BuildingBlocks.UnitTests` | Unit | 59 |
-| `BauDoku.Projects.UnitTests` | Unit | 49 |
-| `BauDoku.Documentation.UnitTests` | Unit | 272 |
-| `BauDoku.Sync.UnitTests` | Unit | 100 |
-| `BauDoku.ArchitectureTests` | Architektur | 14 |
-| `BauDoku.Projects.IntegrationTests` | Integration | 2 |
-| `BauDoku.Documentation.IntegrationTests` | Integration | 10 |
-| `BauDoku.Sync.IntegrationTests` | Integration | 14 |
+| `BauDoku.BuildingBlocks.UnitTests` | Unit | 140 |
+| `BauDoku.Projects.UnitTests` | Unit | 88 |
+| `BauDoku.Documentation.UnitTests` | Unit | 336 |
+| `BauDoku.Sync.UnitTests` | Unit | 114 |
+| `BauDoku.ResourceService.UnitTests` | Unit | 53 |
+| `BauDoku.ArchitectureTests` | Architektur | 12 |
+| `BauDoku.Projects.IntegrationTests` | Integration | 15 |
+| `BauDoku.Documentation.IntegrationTests` | Integration | 27 |
+| `BauDoku.Sync.IntegrationTests` | Integration | 23 |
+| `BauDoku.Auth.IntegrationTests` | Integration | 10 |
 | `BauDoku.E2E.SmokeTests` | E2E | 1 |
 
 ### Frontend
@@ -154,7 +186,7 @@ npm test            # Jest Unit-Tests
                     └───────────────────────────────────┘
 ```
 
-Jeder Bounded Context folgt DDD + Clean Architecture (Domain → Application → Infrastructure → Api) mit eigenem Dispatcher (kein MediatR).
+Jeder Bounded Context folgt DDD + Clean Architecture (Domain → Application → Infrastructure → Api) mit eigenem Dispatcher (kein MediatR). Die BuildingBlocks sind in spezialisierte Projekte aufgeteilt: Domain, Application, Auth, Persistence, Serialization, Storage und ServiceDefaults.
 
 Detaillierte Dokumentation:
 - [Architektur-Dokument](docs/baudoku-architektur.md)
@@ -162,9 +194,9 @@ Detaillierte Dokumentation:
 
 ### Bounded Contexts
 
-- **Projects** – Projektverwaltung, Zonen-Hierarchie (Gebaeude → Stockwerk → Raum → Graben)
-- **Documentation** – Installations-Erfassung, Fotos, Messungen, GPS-Positionen, Kabelspezifikationen
-- **Sync** – Offline-Synchronisation (Outbox Pattern, Delta-Sync, Konfliktaufloesung)
+- **Projects** – Projektverwaltung, Zonen-Hierarchie (Gebaeude → Stockwerk → Raum → Graben). EF Core state-based.
+- **Documentation** – Installations-Erfassung, Fotos, Messungen, GPS-Positionen, Kabelspezifikationen. **Event Sourcing mit Marten 8** auf PostgreSQL, async Projektionen auf ein EF Core Read Model.
+- **Sync** – Offline-Synchronisation (Outbox Pattern, Delta-Sync, Konfliktaufloesung). EF Core state-based.
 
 ### Architecture Decision Records (ADR)
 

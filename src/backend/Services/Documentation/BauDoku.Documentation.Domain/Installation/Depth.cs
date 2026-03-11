@@ -5,14 +5,14 @@ namespace SmartSolutionsLab.BauDoku.Documentation.Domain;
 
 public sealed record Depth : IValueObject
 {
-    public int ValueInMillimeters { get; }
+    public int Value { get; }
 
-    private Depth(int valueInMillimeters) => ValueInMillimeters = valueInMillimeters;
+    private Depth(int value) => Value = value;
 
-    public static Depth From(int valueInMillimeters)
+    public static Depth From(int value)
     {
-        Ensure.That(valueInMillimeters).IsNotNegative("Tiefe darf nicht negativ sein.");
-        return new Depth(valueInMillimeters);
+        Ensure.That(value).IsNotNegative("Tiefe darf nicht negativ sein.");
+        return new Depth(value);
     }
 
     public static Depth? FromNullable(int? value) => value.HasValue ? From(value.Value) : null;

@@ -9,14 +9,14 @@ public sealed class DepthTests
     public void Create_WithValidDepth_ShouldSucceed()
     {
         var depth = Depth.From(600);
-        depth.ValueInMillimeters.Should().Be(600);
+        depth.Value.Should().Be(600);
     }
 
     [Fact]
     public void Create_WithZeroDepth_ShouldSucceed()
     {
         var depth = Depth.From(0);
-        depth.ValueInMillimeters.Should().Be(0);
+        depth.Value.Should().Be(0);
     }
 
     [Fact]

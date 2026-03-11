@@ -31,9 +31,4 @@ public abstract class EventSourcedAggregateRoot<TIdentity> : Entity<TIdentity>, 
 
     public void ClearDomainEvents() => domainEvents.Clear();
 
-    protected static void CheckRule(IBusinessRule rule)
-    {
-        Ensure.That(rule).IsNotNull("Business-Rule darf nicht null sein.");
-        if (rule.IsBroken()) throw new BusinessRuleException(rule);
-    }
 }

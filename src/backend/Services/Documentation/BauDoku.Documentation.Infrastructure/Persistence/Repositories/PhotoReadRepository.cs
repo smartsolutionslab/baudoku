@@ -8,10 +8,12 @@ namespace SmartSolutionsLab.BauDoku.Documentation.Infrastructure.Persistence.Rep
 
 public sealed class PhotoReadRepository(ReadModelDbContext context) : IPhotoReadRepository
 {
+    private readonly DbSet<PhotoReadModel> photos = context.Photos;
+
     public async Task<PhotoDto> GetByIdAsync(PhotoIdentifier photoId, CancellationToken cancellationToken = default)
     {
         var id = photoId.Value;
-        return (await context.Photos
+        return (await photos
             .Where(p => p.Id == id)
             .SelectPhotoDtos()
             .FirstOrDefaultAsync(cancellationToken))
@@ -20,7 +22,7 @@ public sealed class PhotoReadRepository(ReadModelDbContext context) : IPhotoRead
 
     public async Task<IReadOnlyList<PhotoDto>> ListByInstallationIdAsync(InstallationIdentifier installationId, CancellationToken cancellationToken = default)
     {
-        return await context.Photos
+        return await photos
             .Where(p => p.InstallationId == installationId.Value)
             .OrderByDescending(p => p.TakenAt)
             .SelectPhotoDtos()

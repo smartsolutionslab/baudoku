@@ -21,7 +21,7 @@ public sealed class InstallationTests
         installation.Position.Latitude.Value.Should().Be(48.1351);
         installation.Description!.Value.Should().Be("Kabeltrasse im Erdgeschoss");
         installation.CableSpec!.CableType.Value.Should().Be("NYM-J 5x2.5");
-        installation.Depth!.ValueInMillimeters.Should().Be(600);
+        installation.Depth!.Value.Should().Be(600);
         installation.Manufacturer!.Value.Should().Be("Hager");
         installation.ModelName!.Value.Should().Be("VZ312N");
         installation.SerialNumber!.Value.Should().Be("SN-12345");

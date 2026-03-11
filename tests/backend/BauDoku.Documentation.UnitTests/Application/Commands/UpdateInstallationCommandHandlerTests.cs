@@ -118,7 +118,7 @@ public sealed class UpdateInstallationCommandHandlerTests
         await handler.Handle(command, CancellationToken.None);
 
         installation.Depth.Should().NotBeNull();
-        installation.Depth!.ValueInMillimeters.Should().Be(600);
+        installation.Depth!.Value.Should().Be(600);
         await installations.Received(1).SaveAsync(Arg.Any<Installation>(), Arg.Any<CancellationToken>());
     }
 

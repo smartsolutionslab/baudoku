@@ -6,9 +6,11 @@ namespace SmartSolutionsLab.BauDoku.Projects.Infrastructure.Persistence.Reposito
 
 public sealed class ProjectRepository(ProjectsDbContext context) : IProjectRepository
 {
+    private readonly DbSet<Project> projects = context.Projects;
+
     public async Task<Project> GetByIdAsync(ProjectIdentifier id, CancellationToken cancellationToken = default)
     {
-        return (await context.Projects
+        return (await projects
             .Include(p => p.Zones)
             .FirstOrDefaultAsync(p => p.Id == id, cancellationToken))
             .OrNotFound("Projekt", id.Value);
@@ -16,16 +18,16 @@ public sealed class ProjectRepository(ProjectsDbContext context) : IProjectRepos
 
     public async Task<bool> ExistsByNameAsync(ProjectName name, CancellationToken cancellationToken = default)
     {
-        return await context.Projects.AnyAsync(p => p.Name == name, cancellationToken);
+        return await projects.AnyAsync(p => p.Name == name, cancellationToken);
     }
 
     public async Task AddAsync(Project aggregate, CancellationToken cancellationToken = default)
     {
-        await context.Projects.AddAsync(aggregate, cancellationToken);
+        await projects.AddAsync(aggregate, cancellationToken);
     }
 
     public void Remove(Project project)
     {
-        context.Projects.Remove(project);
+        projects.Remove(project);
     }
 }

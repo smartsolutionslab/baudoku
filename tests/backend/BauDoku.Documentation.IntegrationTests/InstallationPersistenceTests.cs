@@ -49,7 +49,7 @@ public sealed class InstallationPersistenceTests(PostgreSqlFixture fixture)
         loaded.CableSpec.CrossSection!.Value.Should().Be(25);
         loaded.CableSpec.Color!.Value.Should().Be("grey");
         loaded.CableSpec.ConductorCount!.Value.Should().Be(5);
-        loaded.Depth!.ValueInMillimeters.Should().Be(600);
+        loaded.Depth!.Value.Should().Be(600);
         loaded.Manufacturer!.Value.Should().Be("Hager");
         loaded.ModelName!.Value.Should().Be("VZ312N");
         loaded.SerialNumber!.Value.Should().Be("SN-12345");
