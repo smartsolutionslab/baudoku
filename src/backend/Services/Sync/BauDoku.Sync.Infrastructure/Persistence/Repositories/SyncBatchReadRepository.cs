@@ -7,6 +7,8 @@ namespace SmartSolutionsLab.BauDoku.Sync.Infrastructure.Persistence.Repositories
 
 public sealed class SyncBatchReadRepository(SyncReadDbContext context) : ISyncBatchReadRepository
 {
+    private readonly DbSet<SyncBatch> syncBatches = context.SyncBatches;
+
     private static readonly Expression<Func<ConflictRecord, ConflictDto>> toConflictDto = c => new ConflictDto(
         c.Id.Value,
         c.EntityRef.EntityType.Value,
@@ -23,7 +25,7 @@ public sealed class SyncBatchReadRepository(SyncReadDbContext context) : ISyncBa
         ConflictStatus? status,
         CancellationToken cancellationToken = default)
     {
-        var query = context.SyncBatches.AsQueryable();
+        var query = syncBatches.AsQueryable();
 
         if (deviceId is not null)
             query = query.Where(b => b.DeviceId == deviceId);

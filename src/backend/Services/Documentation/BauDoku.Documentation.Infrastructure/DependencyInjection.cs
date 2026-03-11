@@ -42,9 +42,7 @@ public static class DependencyInjection
 
         services.AddSingleton<IPhotoStorage>(sp => {
             var options = sp.GetRequiredService<IOptions<PhotoStorageOptions>>();
-            return options.Value.IsAzure
-                ? new AzureBlobPhotoStorage(options)
-                : new LocalFilePhotoStorage(options);
+            return options.Value.IsAzure ? new AzureBlobPhotoStorage(options) : new LocalFilePhotoStorage(options);
         });
 
         services.AddSingleton<IChunkedUploadStorage, LocalChunkedUploadStorage>()

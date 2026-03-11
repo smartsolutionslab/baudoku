@@ -6,9 +6,11 @@ namespace SmartSolutionsLab.BauDoku.Sync.Infrastructure.Persistence.Repositories
 
 public sealed class SyncBatchRepository(SyncDbContext context) : ISyncBatchRepository
 {
+    private readonly DbSet<SyncBatch> syncBatches = context.SyncBatches;
+
     public async Task<SyncBatch> GetByIdAsync(SyncBatchIdentifier id, CancellationToken cancellationToken = default)
     {
-        return (await context.SyncBatches
+        return (await syncBatches
             .Include(b => b.Deltas)
             .Include(b => b.Conflicts)
             .FirstOrDefaultAsync(b => b.Id == id, cancellationToken))
@@ -17,7 +19,7 @@ public sealed class SyncBatchRepository(SyncDbContext context) : ISyncBatchRepos
 
     public async Task<SyncBatch> GetByConflictIdAsync(ConflictRecordIdentifier conflictId, CancellationToken cancellationToken = default)
     {
-        return (await context.SyncBatches
+        return (await syncBatches
             .Include(b => b.Deltas)
             .Include(b => b.Conflicts)
             .FirstOrDefaultAsync(b => b.Conflicts.Any(c => c.Id == conflictId), cancellationToken))
@@ -26,7 +28,7 @@ public sealed class SyncBatchRepository(SyncDbContext context) : ISyncBatchRepos
 
     public async Task<List<SyncBatch>> GetPendingBatchesAsync(int limit, CancellationToken cancellationToken = default)
     {
-        return await context.SyncBatches
+        return await syncBatches
             .Include(b => b.Deltas)
             .Include(b => b.Conflicts)
             .Where(b => b.Status == BatchStatus.Pending)
@@ -37,6 +39,6 @@ public sealed class SyncBatchRepository(SyncDbContext context) : ISyncBatchRepos
 
     public async Task AddAsync(SyncBatch aggregate, CancellationToken cancellationToken = default)
     {
-        await context.SyncBatches.AddAsync(aggregate, cancellationToken);
+        await syncBatches.AddAsync(aggregate, cancellationToken);
     }
 }

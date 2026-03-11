@@ -10,35 +10,39 @@ namespace SmartSolutionsLab.BauDoku.Documentation.Infrastructure.Persistence.Rep
 
 public sealed class InstallationReadRepository(ReadModelDbContext context) : IInstallationReadRepository
 {
+    private readonly DbSet<InstallationReadModel> installations = context.Installations;
+    private readonly DbSet<PhotoReadModel> photos = context.Photos;
+    private readonly DbSet<MeasurementReadModel> measurements = context.Measurements;
+
     public async Task<InstallationDto> GetByIdAsync(InstallationIdentifier id, CancellationToken cancellationToken = default)
     {
-        var installation = (await context.Installations
+        var installation = (await installations
             .FirstOrDefaultAsync(i => i.Id == id.Value && !i.IsDeleted, cancellationToken))
             .OrNotFound("Installation", id.Value);
 
-        var photos = await context.Photos
+        var photoList = await photos
             .Where(p => p.InstallationId == id.Value)
             .OrderByDescending(p => p.TakenAt)
             .SelectPhotoDtos()
             .ToListAsync(cancellationToken);
 
-        var measurements = await context.Measurements
+        var measurementList = await measurements
             .Where(m => m.InstallationId == id.Value)
             .OrderByDescending(m => m.MeasuredAt)
             .SelectMeasurementDtos()
             .ToListAsync(cancellationToken);
 
-        return installation.ToInstallationDto(photos, measurements);
+        return installation.ToInstallationDto(photoList, measurementList);
     }
 
     public async Task<IReadOnlyList<MeasurementDto>> GetMeasurementsAsync(InstallationIdentifier installationId, CancellationToken cancellationToken = default)
     {
-        var exists = await context.Installations
+        var exists = await installations
             .AnyAsync(i => i.Id == installationId.Value && !i.IsDeleted, cancellationToken);
 
         if (!exists) throw new KeyNotFoundException($"Installation mit ID '{installationId.Value}' wurde nicht gefunden.");
 
-        return await context.Measurements
+        return await measurements
             .Where(m => m.InstallationId == installationId.Value)
             .OrderByDescending(m => m.MeasuredAt)
             .SelectMeasurementDtos()
@@ -49,7 +53,7 @@ public sealed class InstallationReadRepository(ReadModelDbContext context) : IIn
     {
         var (projectId, zoneId, type, status, search) = filter;
 
-        var query = context.Installations.Where(i => !i.IsDeleted);
+        var query = installations.Where(i => !i.IsDeleted);
 
         if (projectId is not null)
             query = query.Where(i => i.ProjectId == projectId.Value);
@@ -122,19 +126,17 @@ public sealed class InstallationReadRepository(ReadModelDbContext context) : IIn
         PaginationParams pagination,
         CancellationToken cancellationToken = default)
     {
-        var minLatitude = boundingBox.MinLatitude.Value;
-        var minLongitude = boundingBox.MinLongitude.Value;
-        var maxLatitude = boundingBox.MaxLatitude.Value;
-        var maxLongitude = boundingBox.MaxLongitude.Value;
+        var (minLat, minLng, maxLat, maxLng) = boundingBox;
+        var (minLatVal, minLngVal, maxLatVal, maxLngVal) = (minLat.Value, minLng.Value, maxLat.Value, maxLng.Value);
 
-        var query = context.Installations
+        var query = installations
             .FromSqlInterpolated(
                 $"""
                 SELECT * FROM documentation_read.installations
                 WHERE is_deleted = false
                 AND ST_Within(
                     ST_SetSRID(ST_MakePoint(longitude, latitude), 4326),
-                    ST_MakeEnvelope({minLongitude}, {minLatitude}, {maxLongitude}, {maxLatitude}, 4326))
+                    ST_MakeEnvelope({minLngVal}, {minLatVal}, {maxLngVal}, {maxLatVal}, 4326))
                 """)
 ;
 

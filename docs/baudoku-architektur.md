@@ -1,9 +1,9 @@
 # Solution Architecture: BauDoku App
 ## Elektrische Installationsdokumentation für Baustellen
 
-**Version:** 4.0 – DDD-Architektur mit .NET 10, eigenem Dispatcher, sealed record ValueObjects  
-**Datum:** Februar 2026  
-**Stack:** React Native + Expo (TypeScript) / .NET 10 Minimal API (C#) / DDD + Clean Architecture
+**Version:** 5.0 – Event Sourcing, BB-Dekomposition, Web App, npm Workspaces
+**Datum:** Maerz 2026
+**Stack:** React Native + Expo (TypeScript) / Vite + React (TypeScript) / .NET 10 Minimal API (C#) / DDD + Clean Architecture / Marten Event Sourcing
 
 ---
 
@@ -20,20 +20,22 @@ Die App implementiert ein dreistufiges Positionierungskonzept: Stufe 1 nutzt int
 | Schicht | Technologie | Begründung |
 |---------|-------------|------------|
 | **Mobile App** | React Native + Expo (TypeScript) | Größtes Ökosystem, Offline-First-Support, Web-Target möglich, TypeScript-Erfahrung vorhanden |
-| **Web-Portal** | Expo Web (react-native-web) | Code-Sharing mit Native App (~60-70%), Dashboard für Bauleiter |
+| **Web App** | Vite + React (TypeScript), TanStack Router | Eigenstaendige Web-Anwendung fuer Bauleiter/Auftraggeber, optimiert fuer Desktop |
 | **Backend API** | .NET 10 Minimal API (C#) | 19+ Jahre C#/.NET-Expertise, DDD + Clean Architecture, eigener Dispatcher (kein MediatR), sealed record ValueObjects |
 | **Datenbank** | PostgreSQL + PostGIS | Geo-Queries, Open Source, bewährt |
 | **Dateispeicher** | Azure Blob Storage / S3 | Skalierbar für Fotos |
 | **Auth** | Keycloak / Azure AD B2C | Enterprise-ready, OIDC/OAuth2 |
 
-### Strategischer Vorteil: Eine Codebase, drei Targets
+### Strategischer Vorteil: Shared Packages, spezialisierte Apps
 
 ```
-Expo Codebase (TypeScript)
-├── expo run:android   → Play Store (Bauarbeiter)
-├── expo run:ios       → App Store (Bauarbeiter)
-└── expo export:web    → PWA/Web-Portal (Bauleiter/Auftraggeber)
+npm Workspaces Monorepo (src/frontend/)
+├── mobile-app/        → React Native + Expo (Android + iOS)
+├── web/               → Vite + React + TanStack Router (Desktop)
+└── packages/          → Geteilte Logik (@baudoku/core, /projects, /documentation, /sync)
 ```
+
+Typen, Validierung, Konstanten und API-Funktionen werden ueber npm Workspace Packages zwischen Mobile und Web geteilt. Die UIs sind jeweils plattformoptimiert.
 
 ---
 
@@ -137,23 +139,22 @@ Expo Codebase (TypeScript)
 │                        CLIENTS                                    │
 │                                                                    │
 │  ┌─────────────────────┐   ┌─────────────────────────────────┐   │
-│  │   Native App         │   │   Web-Portal / PWA               │   │
-│  │   (Expo + RN)        │   │   (Expo Web)                     │   │
+│  │   Mobile App         │   │   Web App                        │   │
+│  │   (Expo + RN)        │   │   (Vite + React + TanStack)      │   │
 │  │                      │   │                                   │   │
 │  │   iOS + Android      │   │   Bauleiter / Auftraggeber       │   │
 │  │   Offline-First      │   │   Online, Read-Heavy             │   │
 │  │   Kamera, GPS, Skia  │   │   Dashboard, Berichte, Suche    │   │
-│  │   SQLite + FileSystem│   │   Service Worker Cache           │   │
+│  │   SQLite + FileSystem│   │                                   │   │
 │  │   BLE → Ext. GNSS    │   │                                   │   │
 │  │   NTRIP → SAPOS      │   │                                   │   │
 │  └──────────┬──────────┘   └───────────────┬─────────────────┘   │
 │             │                               │                      │
-│             │     Shared Codebase:          │                      │
-│             │     - DTOs / Interfaces       │                      │
-│             │     - API Client (fetch/axios) │                     │
-│             │     - Validierung             │                      │
-│             │     - State Management        │                      │
-│             │     - UI Komponenten (~60%)   │                      │
+│             │  Shared npm Packages:         │                      │
+│             │  - @baudoku/core (HTTP, Auth) │                      │
+│             │  - @baudoku/projects          │                      │
+│             │  - @baudoku/documentation     │                      │
+│             │  - @baudoku/sync              │                      │
 └─────────────┼───────────────────────────────┼──────────────────────┘
               │          REST / gRPC          │
               ▼                               ▼
@@ -187,7 +188,7 @@ Expo Codebase (TypeScript)
 │                     INFRASTRUKTUR                                 │
 │  Docker + Kubernetes (AKS / EKS)                                  │
 │  CI/CD: GitHub Actions                                            │
-│  Monitoring: Seq + Grafana + Prometheus                           │
+│  Monitoring: OpenTelemetry + Aspire Dashboard + Grafana Stack     │
 │  Environments: Dev → QA → Staging → Production                    │
 └──────────────────────────────────────────────────────────────────┘
 ```
@@ -367,14 +368,21 @@ Die Backend-Architektur folgt dem Vorbild der Orange Car Rental Solution: Domain
 ```
 BauDoku.Server/
 ├── src/
-│   ├── BuildingBlocks/                         # Shared DDD Infrastructure
-│   │   ├── BauDoku.BuildingBlocks.Domain/      # Basis-Klassen für DDD
-│   │   │   ├── Entity.cs                       # abstract class Entity<TId>
-│   │   │   ├── AggregateRoot.cs                # abstract class AggregateRoot<TId> : Entity<TId>
-│   │   │   ├── ValueObject.cs                  # abstract record ValueObject
+│   ├── BuildingBlocks/                         # Shared DDD Infrastructure (7 Projekte)
+│   │   ├── BauDoku.BuildingBlocks.Domain/      # Basis-Klassen fuer DDD
+│   │   │   ├── Entity.cs                       # abstract class Entity<TId> where TId : IValueObject
+│   │   │   ├── AggregateRoot.cs                # abstract class AggregateRoot<TId> : Entity<TId>, IAggregateRoot
+│   │   │   ├── EventSourcedAggregateRoot.cs    # abstract class fuer Event Sourcing (RaiseEvent, Apply, Version)
+│   │   │   ├── IValueObject.cs                 # Marker-Interface fuer alle ValueObjects
 │   │   │   ├── IDomainEvent.cs                 # interface IDomainEvent
 │   │   │   ├── IBusinessRule.cs                # interface IBusinessRule
-│   │   │   └── BusinessRuleException.cs        # Exception bei Regelverletzung
+│   │   │   ├── BusinessRuleException.cs        # Exception bei Regelverletzung
+│   │   │   └── Guards/                         # Fluent Guard-Validierung (zero-alloc ref structs)
+│   │   │       ├── Ensure.cs                   # Ensure.That(value) Einstiegspunkt
+│   │   │       ├── StringGuard.cs              # IsNotNullOrWhiteSpace, MaxLengthIs, ...
+│   │   │       ├── GuidGuard.cs                # IsNotEmpty
+│   │   │       ├── NumericGuard.cs             # IsBetween, IsPositive, ...
+│   │   │       └── ReferenceGuard.cs           # IsNotNull
 │   │   │
 │   │   ├── BauDoku.BuildingBlocks.Application/ # Shared Application Patterns
 │   │   │   ├── Dispatcher/                     # Eigener CQRS Dispatcher
@@ -385,58 +393,71 @@ BauDoku.Server/
 │   │   │   │   ├── IQuery.cs                   # interface IQuery<TResult>
 │   │   │   │   ├── IQueryHandler.cs            # interface IQueryHandler<TQuery, TResult>
 │   │   │   │   ├── IDomainEventHandler.cs      # interface IDomainEventHandler<TEvent>
-│   │   │   │   └── DispatcherRegistration.cs   # IServiceCollection Extensions
+│   │   │   │   └── DispatcherRegistration.cs   # IServiceCollection Extensions (Scrutor Scanning)
 │   │   │   ├── Behaviors/                      # Pipeline-Behaviors (Cross-Cutting)
 │   │   │   │   ├── ValidationBehavior.cs       # FluentValidation vor Handler
-│   │   │   │   ├── LoggingBehavior.cs          # Structured Logging
+│   │   │   │   ├── LoggingBehavior.cs          # Structured Logging (Serilog)
 │   │   │   │   └── TransactionBehavior.cs      # Unit of Work / SaveChanges
-│   │   │   └── IUnitOfWork.cs                  # interface IUnitOfWork
+│   │   │   └── Persistence/
+│   │   │       ├── IUnitOfWork.cs              # interface IUnitOfWork
+│   │   │       └── IRepository.cs              # interface IRepository<T, TId>
 │   │   │
-│   │   └── BauDoku.BuildingBlocks.Infrastructure/  # Shared Infra
-│   │       ├── Persistence/
-│   │       │   ├── BaseDbContext.cs             # EF Core Basis mit Domain Events
-│   │       │   └── UnitOfWork.cs               # IUnitOfWork-Implementierung
-│   │       ├── Auth/
-│   │       │   └── KeycloakExtensions.cs
-│   │       └── Messaging/
-│   │           └── RabbitMqEventPublisher.cs
+│   │   ├── BauDoku.BuildingBlocks.Auth/        # Keycloak/OIDC Integration
+│   │   │   └── KeycloakExtensions.cs           # AddKeycloakAuth(), RequireInspector Policy
+│   │   │
+│   │   ├── BauDoku.BuildingBlocks.Persistence/ # EF Core Basis
+│   │   │   ├── BaseDbContext.cs                # Domain Events dispatchen bei SaveChanges
+│   │   │   └── UnitOfWork.cs                   # IUnitOfWork-Implementierung
+│   │   │
+│   │   ├── BauDoku.BuildingBlocks.Serialization/ # JSON-Serialisierung
+│   │   │   └── ValueObjectJsonConverterFactory.cs # Auto-Serialisierung von IValueObject-Typen
+│   │   │
+│   │   ├── BauDoku.BuildingBlocks.Storage/     # Blob Storage Abstraktionen
+│   │   │   └── IBlobStorage.cs
+│   │   │
+│   │   └── BauDoku.ServiceDefaults/            # .NET Aspire Shared (OpenTelemetry, Health Checks)
 │   │
 │   ├── Services/                               # Bounded Contexts
 │   │   │
-│   │   ├── Documentation/                      # BC: Installationsdokumentation
+│   │   ├── Documentation/                      # BC: Installationsdokumentation (EVENT SOURCING)
 │   │   │   ├── BauDoku.Documentation.Domain/
 │   │   │   │   ├── Aggregates/
 │   │   │   │   │   ├── Installation/
-│   │   │   │   │   │   ├── Installation.cs     # Aggregate Root
-│   │   │   │   │   │   ├── InstallationId.cs   # sealed record : ValueObject
-│   │   │   │   │   │   ├── InstallationType.cs # sealed record : ValueObject
+│   │   │   │   │   │   ├── Installation.cs     # EventSourcedAggregateRoot (Marten Event Store)
+│   │   │   │   │   │   ├── InstallationIdentifier.cs  # sealed record : IValueObject
+│   │   │   │   │   │   ├── InstallationType.cs # sealed record : IValueObject (enum-artig)
 │   │   │   │   │   │   └── InstallationStatus.cs
 │   │   │   │   │   ├── Photo/
-│   │   │   │   │   │   ├── Photo.cs            # Entity (gehört zu Installation)
-│   │   │   │   │   │   ├── PhotoId.cs          # sealed record : ValueObject
-│   │   │   │   │   │   └── PhotoType.cs        # sealed record : ValueObject
+│   │   │   │   │   │   ├── Photo.cs            # Entity (gehoert zu Installation)
+│   │   │   │   │   │   ├── PhotoIdentifier.cs  # sealed record : IValueObject
+│   │   │   │   │   │   └── PhotoType.cs        # sealed record : IValueObject (enum-artig)
 │   │   │   │   │   └── Measurement/
 │   │   │   │   │       ├── Measurement.cs      # Entity
-│   │   │   │   │       ├── MeasurementId.cs
+│   │   │   │   │       ├── MeasurementIdentifier.cs
 │   │   │   │   │       ├── MeasurementType.cs
 │   │   │   │   │       └── MeasurementValue.cs # sealed record (value + unit + passed)
 │   │   │   │   ├── ValueObjects/
-│   │   │   │   │   ├── GpsPosition.cs          # sealed record (lat, lng, accuracy, source, ...)
+│   │   │   │   │   ├── GpsPosition.cs          # sealed record : IValueObject, Guard-Validierung
 │   │   │   │   │   ├── CableSpecification.cs   # sealed record (type, crossSection, length)
 │   │   │   │   │   ├── CircuitAssignment.cs    # sealed record (circuitId, fuseType, rating)
-│   │   │   │   │   ├── Depth.cs                # sealed record (mm) mit Validierung
+│   │   │   │   │   ├── Depth.cs                # sealed record (mm) mit Guard-Validierung
 │   │   │   │   │   └── Annotation.cs           # sealed record (JSON arrows, lines, labels)
-│   │   │   │   ├── Events/
-│   │   │   │   │   ├── InstallationDocumented.cs       # IDomainEvent
-│   │   │   │   │   ├── InstallationStatusChanged.cs
+│   │   │   │   ├── Events/                     # Events verwenden primitive Typen (Guid, string, double)
+│   │   │   │   │   ├── InstallationDocumented.cs       # IDomainEvent (initial event)
+│   │   │   │   │   ├── InstallationPositionUpdated.cs  # Spezifische Aenderung
+│   │   │   │   │   ├── InstallationDescriptionUpdated.cs
+│   │   │   │   │   ├── InstallationCableSpecUpdated.cs
+│   │   │   │   │   ├── InstallationDepthUpdated.cs
+│   │   │   │   │   ├── InstallationDeviceInfoUpdated.cs
 │   │   │   │   │   ├── PhotoAdded.cs
 │   │   │   │   │   ├── MeasurementRecorded.cs
-│   │   │   │   │   └── InstallationInspected.cs
+│   │   │   │   │   ├── InstallationInspected.cs
+│   │   │   │   │   └── LowGpsQualityDetected.cs        # Notification-only (no-op Apply)
 │   │   │   │   ├── Rules/                      # Business Rules
 │   │   │   │   │   ├── MeasurementMustHaveValidValue.cs
 │   │   │   │   │   └── InstallationMustBeInZone.cs
 │   │   │   │   └── Repositories/
-│   │   │   │       └── IInstallationRepository.cs      # interface
+│   │   │   │       └── IInstallationRepository.cs      # IEventSourcedRepository<T, TId>
 │   │   │   │
 │   │   │   ├── BauDoku.Documentation.Application/
 │   │   │   │   ├── Commands/
@@ -453,7 +474,7 @@ BauDoku.Server/
 │   │   │   │   │   └── ChangeInstallationStatus/
 │   │   │   │   │       ├── ChangeInstallationStatusCommand.cs
 │   │   │   │   │       └── ChangeInstallationStatusHandler.cs
-│   │   │   │   ├── Queries/
+│   │   │   │   ├── Queries/                    # Lesen vom EF Core Read Model (nicht Event Store)
 │   │   │   │   │   ├── GetInstallation/
 │   │   │   │   │   │   ├── GetInstallationQuery.cs
 │   │   │   │   │   │   ├── GetInstallationHandler.cs
@@ -461,18 +482,22 @@ BauDoku.Server/
 │   │   │   │   │   └── ListInstallationsByZone/
 │   │   │   │   │       ├── ListInstallationsByZoneQuery.cs
 │   │   │   │   │       └── ListInstallationsByZoneHandler.cs
-│   │   │   │   └── EventHandlers/
-│   │   │   │       └── InstallationDocumentedHandler.cs
+│   │   │   │   ├── EventHandlers/
+│   │   │   │   │   └── InstallationDocumentedHandler.cs
+│   │   │   │   └── Projections/
+│   │   │   │       └── InstallationReadModelProjection.cs  # Async Marten → EF Core Read Model
 │   │   │   │
 │   │   │   ├── BauDoku.Documentation.Infrastructure/
 │   │   │   │   ├── Persistence/
-│   │   │   │   │   ├── DocumentationDbContext.cs
+│   │   │   │   │   ├── ReadModelDbContext.cs    # EF Core fuer Queries (ersetzt DocumentationDbContext)
 │   │   │   │   │   ├── Configurations/
-│   │   │   │   │   │   ├── InstallationConfiguration.cs  # EF Core Fluent API
+│   │   │   │   │   │   ├── InstallationReadModelConfiguration.cs
 │   │   │   │   │   │   ├── PhotoConfiguration.cs
 │   │   │   │   │   │   └── MeasurementConfiguration.cs
 │   │   │   │   │   └── Repositories/
-│   │   │   │   │       └── InstallationRepository.cs
+│   │   │   │   │       └── MartenInstallationRepository.cs  # Marten Event Store
+│   │   │   │   ├── EventPublishing/
+│   │   │   │   │   └── MartenEventPublisher.cs  # Session Listener → IDispatcher
 │   │   │   │   └── Storage/
 │   │   │   │       └── PhotoBlobStorage.cs
 │   │   │   │
@@ -537,33 +562,33 @@ BauDoku.Server/
 │
 ├── docker-compose.yml
 ├── Dockerfile
-└── BauDoku.sln
+└── BauDoku.slnx
 ```
 
 ### 5.5 BuildingBlocks: DDD Basis-Klassen
 
-#### ValueObject (sealed record mit Konstruktor-Properties)
+#### ValueObject (IValueObject Marker-Interface + sealed record + Guard-Validierung)
 
 ```csharp
-// BuildingBlocks/BauDoku.BuildingBlocks.Domain/ValueObject.cs
+// BuildingBlocks/BauDoku.BuildingBlocks.Domain/IValueObject.cs
 
 namespace BauDoku.BuildingBlocks.Domain;
 
 /// <summary>
-/// Basis für alle ValueObjects. Verwendet sealed record mit
-/// Konstruktor-Property-Definitionen statt positional records.
-/// Equality und GetHashCode werden automatisch von record bereitgestellt.
+/// Marker-Interface fuer alle ValueObjects.
+/// Verwendet sealed record mit privaten Konstruktoren und statischen Factory-Methoden.
+/// Validierung ueber Ensure.That() Guard-API (zero-alloc ref structs).
 /// </summary>
-public abstract record ValueObject;
+public interface IValueObject;
 ```
 
 ```csharp
-// Beispiel: GpsPosition als sealed record mit Konstruktor-Properties
+// Beispiel: GpsPosition als komplexes ValueObject mit Guard-Validierung
 // Services/Documentation/BauDoku.Documentation.Domain/ValueObjects/GpsPosition.cs
 
 namespace BauDoku.Documentation.Domain.ValueObjects;
 
-public sealed record GpsPosition : ValueObject
+public sealed record GpsPosition : IValueObject
 {
     public double Latitude { get; }
     public double Longitude { get; }
@@ -576,25 +601,12 @@ public sealed record GpsPosition : ValueObject
     public double? Hdop { get; }
     public double? CorrectionAge { get; }
 
-    public GpsPosition(
-        double latitude,
-        double longitude,
-        double horizontalAccuracy,
-        PositionSource source,
-        CorrectionService correctionService = CorrectionService.None,
-        RtkFixStatus rtkFixStatus = RtkFixStatus.Autonomous,
-        double? altitude = null,
-        int? satelliteCount = null,
-        double? hdop = null,
-        double? correctionAge = null)
+    private GpsPosition(
+        double latitude, double longitude, double horizontalAccuracy,
+        PositionSource source, CorrectionService correctionService,
+        RtkFixStatus rtkFixStatus, double? altitude,
+        int? satelliteCount, double? hdop, double? correctionAge)
     {
-        if (latitude is < -90 or > 90)
-            throw new ArgumentOutOfRangeException(nameof(latitude));
-        if (longitude is < -180 or > 180)
-            throw new ArgumentOutOfRangeException(nameof(longitude));
-        if (horizontalAccuracy < 0)
-            throw new ArgumentOutOfRangeException(nameof(horizontalAccuracy));
-
         Latitude = latitude;
         Longitude = longitude;
         Altitude = altitude;
@@ -607,109 +619,101 @@ public sealed record GpsPosition : ValueObject
         CorrectionAge = correctionAge;
     }
 
+    public static GpsPosition Create(
+        double latitude, double longitude, double horizontalAccuracy,
+        PositionSource source,
+        CorrectionService? correctionService = null,
+        RtkFixStatus? rtkFixStatus = null,
+        double? altitude = null, int? satelliteCount = null,
+        double? hdop = null, double? correctionAge = null)
+    {
+        Ensure.That(latitude).IsBetween(-90.0, 90.0);
+        Ensure.That(longitude).IsBetween(-180.0, 180.0);
+        Ensure.That(horizontalAccuracy).IsPositive();
+        Ensure.That(source).IsNotNull();
+
+        return new GpsPosition(latitude, longitude, horizontalAccuracy,
+            source, correctionService ?? CorrectionService.None,
+            rtkFixStatus ?? RtkFixStatus.Autonomous,
+            altitude, satelliteCount, hdop, correctionAge);
+    }
+
     public bool MeetsAccuracy(double requiredMeters) =>
         HorizontalAccuracy <= requiredMeters;
 }
 
-public sealed record PositionSource : ValueObject
+// Enum-artige ValueObjects (statt C# enums): ValidValues HashSet VOR statischen Instanzen
+public sealed record PositionSource : IValueObject
 {
+    private static readonly HashSet<string> ValidValues = ["internal_gps", "external_dgnss", "external_rtk"];
+
     public static readonly PositionSource InternalGps = new("internal_gps");
     public static readonly PositionSource ExternalDgnss = new("external_dgnss");
     public static readonly PositionSource ExternalRtk = new("external_rtk");
 
     public string Value { get; }
+    private PositionSource(string value) => Value = value;
 
-    public PositionSource(string value)
+    public static PositionSource From(string value)
     {
-        Value = value ?? throw new ArgumentNullException(nameof(value));
-    }
-}
-
-public sealed record CorrectionService : ValueObject
-{
-    public static readonly CorrectionService None = new("none");
-    public static readonly CorrectionService SaposEps = new("sapos_eps");
-    public static readonly CorrectionService SaposHeps = new("sapos_heps");
-    public static readonly CorrectionService SaposGpps = new("sapos_gpps");
-
-    public string Value { get; }
-
-    public CorrectionService(string value)
-    {
-        Value = value ?? throw new ArgumentNullException(nameof(value));
-    }
-}
-
-public sealed record RtkFixStatus : ValueObject
-{
-    public static readonly RtkFixStatus NoFix = new("no_fix");
-    public static readonly RtkFixStatus Autonomous = new("autonomous");
-    public static readonly RtkFixStatus Dgps = new("dgps");
-    public static readonly RtkFixStatus RtkFloat = new("rtk_float");
-    public static readonly RtkFixStatus RtkFixed = new("rtk_fixed");
-
-    public string Value { get; }
-
-    public RtkFixStatus(string value)
-    {
-        Value = value ?? throw new ArgumentNullException(nameof(value));
+        Ensure.That(value).IsNotNullOrWhiteSpace().IsOneOf(ValidValues);
+        return new PositionSource(value);
     }
 }
 ```
 
 ```csharp
-// Weitere ValueObject-Beispiele
+// Weitere ValueObject-Beispiele (private Konstruktoren + From()/Create() Factories)
 
-public sealed record CableSpecification : ValueObject
+public sealed record CableSpecification : IValueObject
 {
     public string CableType { get; }          // z.B. "NYM-J 5x2.5"
     public double CrossSectionMm2 { get; }
     public double LengthMeters { get; }
 
-    public CableSpecification(string cableType, double crossSectionMm2, double lengthMeters)
+    private CableSpecification(string cableType, double crossSectionMm2, double lengthMeters)
     {
-        if (string.IsNullOrWhiteSpace(cableType))
-            throw new ArgumentException("Kabeltyp darf nicht leer sein.", nameof(cableType));
-        if (crossSectionMm2 <= 0)
-            throw new ArgumentOutOfRangeException(nameof(crossSectionMm2));
-        if (lengthMeters <= 0)
-            throw new ArgumentOutOfRangeException(nameof(lengthMeters));
-
         CableType = cableType;
         CrossSectionMm2 = crossSectionMm2;
         LengthMeters = lengthMeters;
     }
+
+    public static CableSpecification Create(string cableType, double crossSectionMm2, double lengthMeters)
+    {
+        Ensure.That(cableType).IsNotNullOrWhiteSpace("Kabeltyp darf nicht leer sein.");
+        Ensure.That(crossSectionMm2).IsPositive();
+        Ensure.That(lengthMeters).IsPositive();
+        return new CableSpecification(cableType, crossSectionMm2, lengthMeters);
+    }
 }
 
-public sealed record Depth : ValueObject
+public sealed record Depth : IValueObject
 {
     public int Millimeters { get; }
+    private Depth(int millimeters) => Millimeters = millimeters;
 
-    public Depth(int millimeters)
+    public static Depth From(int millimeters)
     {
-        if (millimeters < 0)
-            throw new ArgumentOutOfRangeException(nameof(millimeters), "Tiefe darf nicht negativ sein.");
-
-        Millimeters = millimeters;
+        Ensure.That(millimeters).IsPositive("Tiefe darf nicht negativ sein.");
+        return new Depth(millimeters);
     }
 
     public double ToMeters() => Millimeters / 1000.0;
     public double ToCentimeters() => Millimeters / 10.0;
 }
 
-public sealed record InstallationId : ValueObject
+// ID-ValueObject: *Identifier Namenskonvention (nicht *Id)
+public sealed record InstallationIdentifier : IValueObject
 {
     public Guid Value { get; }
+    private InstallationIdentifier(Guid value) => Value = value;
 
-    public InstallationId(Guid value)
+    public static InstallationIdentifier From(Guid value)
     {
-        if (value == Guid.Empty)
-            throw new ArgumentException("ID darf nicht leer sein.", nameof(value));
-
-        Value = value;
+        Ensure.That(value).IsNotEmpty("Installations-ID darf nicht leer sein.");
+        return new InstallationIdentifier(value);
     }
-
-    public static InstallationId New() => new(Guid.NewGuid());
+    public static InstallationIdentifier New() => new(Guid.NewGuid());
 }
 ```
 
@@ -720,48 +724,65 @@ public sealed record InstallationId : ValueObject
 
 namespace BauDoku.BuildingBlocks.Domain;
 
-public abstract class Entity<TId> where TId : ValueObject
+public abstract class Entity<TId> where TId : IValueObject
 {
     public TId Id { get; protected set; } = default!;
-
-    public override bool Equals(object? obj)
-    {
-        if (obj is not Entity<TId> other) return false;
-        if (ReferenceEquals(this, other)) return true;
-        return Id.Equals(other.Id);
-    }
-
-    public override int GetHashCode() => Id.GetHashCode();
-
-    public static bool operator ==(Entity<TId>? left, Entity<TId>? right) =>
-        Equals(left, right);
-
-    public static bool operator !=(Entity<TId>? left, Entity<TId>? right) =>
-        !Equals(left, right);
 }
 ```
 
 ```csharp
 // BuildingBlocks/BauDoku.BuildingBlocks.Domain/AggregateRoot.cs
+// State-based (Projects BC, Sync BC)
 
 namespace BauDoku.BuildingBlocks.Domain;
 
-public abstract class AggregateRoot<TId> : Entity<TId> where TId : ValueObject
+public abstract class AggregateRoot<TId> : Entity<TId>, IAggregateRoot where TId : IValueObject
 {
-    private readonly List<IDomainEvent> _domainEvents = [];
+    private readonly List<IDomainEvent> domainEvents = [];  // kein Underscore-Prefix
 
-    public IReadOnlyList<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
+    public IReadOnlyList<IDomainEvent> DomainEvents => domainEvents.AsReadOnly();
 
     protected void AddDomainEvent(IDomainEvent domainEvent) =>
-        _domainEvents.Add(domainEvent);
+        domainEvents.Add(domainEvent);
 
-    public void ClearDomainEvents() => _domainEvents.Clear();
+    public void ClearDomainEvents() => domainEvents.Clear();
 
     protected static void CheckRule(IBusinessRule rule)
     {
         if (rule.IsBroken())
             throw new BusinessRuleException(rule);
     }
+}
+```
+
+```csharp
+// BuildingBlocks/BauDoku.BuildingBlocks.Domain/EventSourcedAggregateRoot.cs
+// Event Sourcing (Documentation BC)
+
+namespace BauDoku.BuildingBlocks.Domain;
+
+public abstract class EventSourcedAggregateRoot<TId> : Entity<TId>, IAggregateRoot where TId : IValueObject
+{
+    private readonly List<IDomainEvent> uncommittedEvents = [];
+
+    public long Version { get; private set; }
+    public IReadOnlyList<IDomainEvent> UncommittedEvents => uncommittedEvents.AsReadOnly();
+
+    protected void RaiseEvent(IDomainEvent domainEvent)
+    {
+        Apply(domainEvent);   // Zustand aendern
+        uncommittedEvents.Add(domainEvent);
+    }
+
+    protected abstract void Apply(IDomainEvent domainEvent);
+
+    public void LoadFromHistory(IEnumerable<IDomainEvent> events, long version)
+    {
+        foreach (var e in events) Apply(e);
+        Version = version;
+    }
+
+    public void ClearUncommittedEvents() => uncommittedEvents.Clear();
 }
 ```
 
@@ -2137,7 +2158,7 @@ services:
 Push to main
     │
     ├── Backend Pipeline (pro Bounded Context)
-    │   ├── dotnet build BauDoku.sln
+    │   ├── dotnet build BauDoku.slnx
     │   ├── dotnet test (Unit + Integration pro BC)
     │   ├── Docker build pro Service (Documentation, Projects, Sync, Gateway)
     │   ├── Docker push → Container Registry
@@ -2175,35 +2196,25 @@ Ein einziges Git-Repository für Frontend, Backend und Infrastruktur. Kein Turbo
 baudoku/
 ├── src/
 │   ├── backend/                                # .NET 10 Solution
-│   │   ├── BuildingBlocks/
+│   │   ├── BuildingBlocks/                     # 7 Projekte (dekomponiert Maerz 2026)
 │   │   │   ├── BauDoku.BuildingBlocks.Domain/
 │   │   │   │   ├── Entity.cs
 │   │   │   │   ├── AggregateRoot.cs
-│   │   │   │   ├── ValueObject.cs              # abstract record ValueObject
+│   │   │   │   ├── EventSourcedAggregateRoot.cs
+│   │   │   │   ├── IValueObject.cs             # Marker-Interface (kein abstract record)
 │   │   │   │   ├── IDomainEvent.cs
 │   │   │   │   ├── IBusinessRule.cs
-│   │   │   │   └── BusinessRuleException.cs
+│   │   │   │   ├── BusinessRuleException.cs
+│   │   │   │   └── Guards/                     # Ensure.That() fluent API
 │   │   │   ├── BauDoku.BuildingBlocks.Application/
 │   │   │   │   ├── Dispatcher/
-│   │   │   │   │   ├── IDispatcher.cs
-│   │   │   │   │   ├── Dispatcher.cs
-│   │   │   │   │   ├── ICommand.cs
-│   │   │   │   │   ├── ICommandHandler.cs
-│   │   │   │   │   ├── IQuery.cs
-│   │   │   │   │   ├── IQueryHandler.cs
-│   │   │   │   │   ├── IDomainEventHandler.cs
-│   │   │   │   │   └── DispatcherRegistration.cs
 │   │   │   │   ├── Behaviors/
-│   │   │   │   │   ├── ValidationBehavior.cs
-│   │   │   │   │   ├── LoggingBehavior.cs
-│   │   │   │   │   └── TransactionBehavior.cs
-│   │   │   │   └── IUnitOfWork.cs
-│   │   │   └── BauDoku.BuildingBlocks.Infrastructure/
-│   │   │       ├── Persistence/
-│   │   │       │   ├── BaseDbContext.cs
-│   │   │       │   └── UnitOfWork.cs
-│   │   │       ├── Auth/
-│   │   │       └── Messaging/
+│   │   │   │   └── Persistence/                # IUnitOfWork, IRepository
+│   │   │   ├── BauDoku.BuildingBlocks.Auth/    # Keycloak/OIDC
+│   │   │   ├── BauDoku.BuildingBlocks.Persistence/  # BaseDbContext, UnitOfWork
+│   │   │   ├── BauDoku.BuildingBlocks.Serialization/ # ValueObjectJsonConverterFactory
+│   │   │   ├── BauDoku.BuildingBlocks.Storage/ # Blob Storage
+│   │   │   └── BauDoku.ServiceDefaults/        # Aspire (OpenTelemetry, Health Checks)
 │   │   │
 │   │   ├── Services/
 │   │   │   ├── Documentation/                  # BC: Installationsdokumentation
@@ -2227,35 +2238,43 @@ baudoku/
 │   │   ├── AppHost/
 │   │   │   └── BauDoku.AppHost/                # .NET Aspire
 │   │   │
-│   │   ├── BauDoku.sln
+│   │   ├── BauDoku.slnx
 │   │   ├── Directory.Build.props               # Shared .NET Properties
 │   │   ├── Directory.Packages.props            # Central Package Management
 │   │   └── .editorconfig
 │   │
-│   └── frontend/                               # React Native + Expo
-│       ├── app/                                # Expo Router Pages
-│       ├── src/
-│       │   ├── components/
-│       │   ├── hooks/
-│       │   ├── services/
-│       │   ├── stores/
-│       │   ├── db/
-│       │   ├── gnss/
-│       │   └── types/
-│       ├── app.json
-│       ├── package.json
-│       └── tsconfig.json
+│   └── frontend/                               # npm Workspaces Monorepo
+│       ├── package.json                        # Workspaces: mobile-app, web, packages/*
+│       ├── package-lock.json
+│       ├── mobile-app/                         # React Native + Expo (TypeScript)
+│       │   ├── app/                            # Expo Router (File-based Routing)
+│       │   ├── src/                            # Components, hooks, stores, sync, db
+│       │   ├── drizzle/                        # SQLite Migrations
+│       │   ├── app.json
+│       │   └── package.json
+│       ├── web/                                # Vite + React + TanStack Router
+│       │   ├── src/                            # Components, hooks, routes, auth
+│       │   ├── Dockerfile
+│       │   └── package.json
+│       └── packages/                           # Shared npm Packages
+│           ├── core/                           # @baudoku/core (HTTP, Auth, JWT)
+│           ├── projects/                       # @baudoku/projects (Typen, Validierung)
+│           ├── documentation/                  # @baudoku/documentation (Typen, Photo-Upload)
+│           └── sync/                           # @baudoku/sync (DTOs, API-Funktionen)
 │
 ├── tests/
-│   ├── backend/
-│   │   ├── BauDoku.Documentation.UnitTests/
-│   │   ├── BauDoku.Documentation.IntegrationTests/
-│   │   ├── BauDoku.Projects.UnitTests/
-│   │   ├── BauDoku.Sync.IntegrationTests/
-│   │   └── BauDoku.Architecture.Tests/         # ArchUnit-Style Tests
-│   └── frontend/
-│       ├── __tests__/
-│       └── e2e/                                # Detox E2E
+│   └── backend/                                # 10 Testprojekte (819+ Tests)
+│       ├── BauDoku.BuildingBlocks.UnitTests/
+│       ├── BauDoku.Projects.UnitTests/
+│       ├── BauDoku.Documentation.UnitTests/
+│       ├── BauDoku.Sync.UnitTests/
+│       ├── BauDoku.ResourceService.UnitTests/
+│       ├── BauDoku.ArchitectureTests/
+│       ├── BauDoku.Projects.IntegrationTests/
+│       ├── BauDoku.Documentation.IntegrationTests/
+│       ├── BauDoku.Sync.IntegrationTests/
+│       ├── BauDoku.Auth.IntegrationTests/      # Keycloak Testcontainer
+│       └── BauDoku.E2E.SmokeTests/             # Cross-BC (Projects → Docs → Sync)
 │
 ├── infrastructure/
 │   ├── docker/
@@ -2282,9 +2301,9 @@ baudoku/
 │
 ├── .github/
 │   └── workflows/
-│       ├── backend-ci.yml
-│       ├── mobile-ci.yml
-│       └── web-ci.yml
+│       ├── ci.yml                              # Backend + Frontend CI (Push/PR)
+│       ├── e2e.yml                             # Naechtliche mobile E2E-Tests
+│       └── deploy.yml                          # Staging Deployment (AKS + Helm)
 │
 ├── .gitignore
 ├── README.md
@@ -2294,39 +2313,49 @@ baudoku/
 ### 13.2 .NET Solution-Struktur
 
 ```xml
-<!-- BauDoku.sln – Solution Folders spiegeln die Ordnerstruktur -->
+<!-- BauDoku.slnx – .NET 10 XML-basiertes Solution-Format (29 Projekte) -->
 
 Solution
-├── BuildingBlocks
+├── BuildingBlocks (7 Projekte)
 │   ├── BauDoku.BuildingBlocks.Domain.csproj
 │   ├── BauDoku.BuildingBlocks.Application.csproj
-│   └── BauDoku.BuildingBlocks.Infrastructure.csproj
-├── Services
-│   ├── Documentation
+│   ├── BauDoku.BuildingBlocks.Auth.csproj
+│   ├── BauDoku.BuildingBlocks.Persistence.csproj
+│   ├── BauDoku.BuildingBlocks.Serialization.csproj
+│   ├── BauDoku.BuildingBlocks.Storage.csproj
+│   └── BauDoku.ServiceDefaults.csproj                 → Aspire Shared
+├── Services (12 Projekte)
+│   ├── Documentation                                  → Event Sourcing (Marten 8)
 │   │   ├── BauDoku.Documentation.Domain.csproj        → refs BuildingBlocks.Domain
-│   │   ├── BauDoku.Documentation.Application.csproj   → refs Documentation.Domain, BuildingBlocks.Application
-│   │   ├── BauDoku.Documentation.Infrastructure.csproj→ refs Documentation.Application, BuildingBlocks.Infrastructure
+│   │   ├── BauDoku.Documentation.Application.csproj   → refs Documentation.Domain, BB.Application
+│   │   ├── BauDoku.Documentation.Infrastructure.csproj→ refs Documentation.Application, BB.Persistence, Marten
 │   │   └── BauDoku.Documentation.Api.csproj           → refs Documentation.Infrastructure
-│   ├── Projects
+│   ├── Projects                                       → EF Core state-based
 │   │   ├── BauDoku.Projects.Domain.csproj
 │   │   ├── BauDoku.Projects.Application.csproj
 │   │   ├── BauDoku.Projects.Infrastructure.csproj
 │   │   └── BauDoku.Projects.Api.csproj
-│   └── Sync
+│   └── Sync                                           → EF Core state-based
 │       ├── BauDoku.Sync.Domain.csproj
 │       ├── BauDoku.Sync.Application.csproj
 │       ├── BauDoku.Sync.Infrastructure.csproj
 │       └── BauDoku.Sync.Api.csproj
 ├── Gateway
-│   └── BauDoku.ApiGateway.csproj
+│   └── BauDoku.ApiGateway.csproj                      → YARP Reverse Proxy
 ├── Orchestration
-│   └── BauDoku.AppHost.csproj                         → .NET Aspire
-└── Tests
-    ├── BauDoku.Documentation.UnitTests.csproj
-    ├── BauDoku.Documentation.IntegrationTests.csproj
+│   └── BauDoku.AppHost.csproj                         → .NET Aspire 13.1.1
+└── Tests (10 Projekte, unter tests/backend/)
+    ├── BauDoku.BuildingBlocks.UnitTests.csproj
     ├── BauDoku.Projects.UnitTests.csproj
+    ├── BauDoku.Documentation.UnitTests.csproj
+    ├── BauDoku.Sync.UnitTests.csproj
+    ├── BauDoku.ResourceService.UnitTests.csproj
+    ├── BauDoku.ArchitectureTests.csproj
+    ├── BauDoku.Projects.IntegrationTests.csproj
+    ├── BauDoku.Documentation.IntegrationTests.csproj
     ├── BauDoku.Sync.IntegrationTests.csproj
-    └── BauDoku.Architecture.Tests.csproj
+    ├── BauDoku.Auth.IntegrationTests.csproj
+    └── BauDoku.E2E.SmokeTests.csproj
 ```
 
 **Dependency Rule (Clean Architecture):** Domain → ∅ (keine Abhängigkeiten), Application → Domain, Infrastructure → Application, Api → Infrastructure. Niemals rückwärts.
@@ -2334,36 +2363,41 @@ Solution
 ### 13.3 Central Package Management
 
 ```xml
-<!-- Directory.Packages.props -->
+<!-- Directory.Packages.props (CPM – keine Floating Versions erlaubt) -->
 <Project>
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup>
     <!-- Framework -->
-    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="10.0.*" />
-    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.*" />
-    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL.NetTopologySuite" Version="10.0.*" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="10.0.3" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.3" />
+    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0" />
+    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL.NetTopologySuite" Version="10.0.0" />
+
+    <!-- Event Sourcing (Documentation BC) -->
+    <PackageVersion Include="Marten" Version="8.23.0" />
 
     <!-- DDD / Application -->
-    <PackageVersion Include="FluentValidation" Version="11.*" />
-    <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="11.*" />
-    <PackageVersion Include="Scrutor" Version="5.*" />
+    <PackageVersion Include="FluentValidation" Version="12.1.1" />
+    <PackageVersion Include="Scrutor" Version="7.0.0" />
 
     <!-- Infrastructure -->
     <PackageVersion Include="Polly" Version="8.*" />
-    <PackageVersion Include="Serilog.AspNetCore" Version="9.*" />
+    <PackageVersion Include="Serilog.AspNetCore" Version="10.0.0" />
     <PackageVersion Include="RabbitMQ.Client" Version="7.*" />
     <PackageVersion Include="Azure.Storage.Blobs" Version="12.*" />
-    <PackageVersion Include="Yarp.ReverseProxy" Version="2.*" />
+    <PackageVersion Include="Yarp.ReverseProxy" Version="2.3.0" />
 
-    <!-- Aspire -->
-    <PackageVersion Include="Aspire.Hosting" Version="9.*" />
-    <PackageVersion Include="Aspire.Hosting.PostgreSQL" Version="9.*" />
+    <!-- Aspire (kein Aspire.Hosting – implizit im SDK) -->
+    <PackageVersion Include="Aspire.Hosting.JavaScript" Version="13.1.1" />
+    <PackageVersion Include="Aspire.Hosting.PostgreSQL" Version="13.1.1" />
+    <PackageVersion Include="Aspire.Hosting.Redis" Version="13.1.1" />
+    <PackageVersion Include="Aspire.Hosting.RabbitMQ" Version="13.1.1" />
 
     <!-- Testing -->
-    <PackageVersion Include="xunit" Version="2.*" />
-    <PackageVersion Include="AwesomeAssertions" Version="9.*" />
+    <PackageVersion Include="xunit" Version="2.9.3" />
+    <PackageVersion Include="AwesomeAssertions" Version="9.4.0" />
     <PackageVersion Include="Testcontainers.PostgreSql" Version="4.*" />
     <PackageVersion Include="NSubstitute" Version="5.*" />
   </ItemGroup>
@@ -2453,7 +2487,7 @@ Ziel: Repo-Grundgerüst, BuildingBlocks lauffähig, alle Services starten mit As
 | **9–10** | **GNSS: BLE + NTRIP** | Eigener BLE-Stack (react-native-ble-plx), NMEA-Parser, NTRIP-Client für SAPOS-EPS, ExternalGnssProvider, PositionManager mit automatischer Quellenwahl, ~30–50 cm Genauigkeit |
 | **11** | **Foto-Annotation** | react-native-skia Integration, Pfeile/Maßlinien/Textlabels auf Fotos zeichnen, Annotation als JSON speichern |
 | **12** | **PDF-Berichte** | Report BC (oder Service in Documentation), VDE/DIN-konforme PDF-Generierung, Prüfprotokoll-Vorlagen, Export per E-Mail/Share |
-| **13** | **Web-Portal** | Expo Web Build, Dashboard für Bauleiter (Projekt-Übersicht, Fortschritt, Foto-Galerie), Read-Only Ansicht |
+| **13** | **Web App** | Vite + React + TanStack Router, Dashboard fuer Bauleiter (Projekt-Uebersicht, Fortschritt, Foto-Galerie), Read-Only Ansicht |
 | **14** | **QR-Code + Unterschriften** | QR-Scanner für Komponentenidentifikation, digitale Unterschrift für Abnahmeprotokolle |
 
 ### Phase 3: Premium (2–3 Monate, Sprint 15–20)
@@ -2573,4 +2607,4 @@ Ziel: Repo-Grundgerüst, BuildingBlocks lauffähig, alle Services starten mit As
 
 ---
 
-*Dieses Dokument definiert die Zielarchitektur für BauDoku (v4.0). Backend: .NET 10 mit DDD, Clean Architecture, eigenem Dispatcher und sealed record ValueObjects nach dem Vorbild der Orange Car Rental Solution. Frontend: React Native + Expo. Enthält die vollständige GPS/GNSS-Strategie mit SAPOS-Integration. Alle Schätzungen sind Richtwerte und werden nach Phase 0 Foundation, Tech-Spike und UX-Workshops verfeinert.*
+*Dieses Dokument definiert die Zielarchitektur fuer BauDoku (v5.0). Backend: .NET 10 mit DDD, Clean Architecture, eigenem Dispatcher, IValueObject + Guard-Validierung und Event Sourcing (Marten 8) im Documentation BC. Frontend: React Native + Expo (Mobile) und Vite + React (Web) mit geteilten npm Workspace Packages. Referenz-Architektur: Orange Car Rental Solution. Enthaelt die vollstaendige GPS/GNSS-Strategie mit SAPOS-Integration.*
