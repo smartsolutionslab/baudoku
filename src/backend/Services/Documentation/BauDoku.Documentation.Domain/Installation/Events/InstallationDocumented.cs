@@ -24,7 +24,7 @@ public sealed record InstallationDocumented(
     CrossSection? CrossSection,
     CableColor? CableColor,
     ConductorCount? ConductorCount,
-    int? DepthMm,
+    Depth? Depth,
     Manufacturer? Manufacturer,
     ModelName? ModelName,
     SerialNumber? SerialNumber,

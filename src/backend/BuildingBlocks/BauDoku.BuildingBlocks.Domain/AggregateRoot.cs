@@ -10,8 +10,4 @@ public abstract class AggregateRoot<TIdentity> : Entity<TIdentity>, IAggregateRo
 
     public void ClearDomainEvents() => domainEvents.Clear();
 
-    protected static void CheckRule(IBusinessRule rule)
-    {
-        if (rule.IsBroken()) throw new BusinessRuleException(rule);
-    }
 }

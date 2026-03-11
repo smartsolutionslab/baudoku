@@ -4,5 +4,5 @@ namespace SmartSolutionsLab.BauDoku.Documentation.Domain;
 
 public sealed record InstallationDepthUpdated(
     InstallationIdentifier InstallationId,
-    int? DepthMm,
+    Depth? Depth,
     DateTime OccurredOn) : IDomainEvent;

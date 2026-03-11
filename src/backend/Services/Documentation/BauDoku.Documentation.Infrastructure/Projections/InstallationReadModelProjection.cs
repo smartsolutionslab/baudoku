@@ -83,7 +83,7 @@ public sealed class InstallationReadModelProjection(IServiceScopeFactory scopeFa
             CrossSection = @event.CrossSection?.Value,
             CableColor = @event.CableColor?.Value,
             ConductorCount = @event.ConductorCount?.Value,
-            DepthMm = @event.DepthMm,
+            DepthMm = @event.Depth?.ValueInMillimeters,
             Manufacturer = @event.Manufacturer?.Value,
             ModelName = @event.ModelName?.Value,
             SerialNumber = @event.SerialNumber?.Value,
@@ -195,7 +195,7 @@ public sealed class InstallationReadModelProjection(IServiceScopeFactory scopeFa
         });
 
     private static Task ApplyDepthUpdated(ReadModelDbContext dbContext, InstallationDepthUpdated @event) =>
-        UpdateInstallation(dbContext, @event.InstallationId.Value, i => i.DepthMm = @event.DepthMm);
+        UpdateInstallation(dbContext, @event.InstallationId.Value, i => i.DepthMm = @event.Depth?.ValueInMillimeters);
 
     private static Task ApplyDeviceInfoUpdated(ReadModelDbContext dbContext, InstallationDeviceInfoUpdated @event) =>
         UpdateInstallation(dbContext, @event.InstallationId.Value, i =>

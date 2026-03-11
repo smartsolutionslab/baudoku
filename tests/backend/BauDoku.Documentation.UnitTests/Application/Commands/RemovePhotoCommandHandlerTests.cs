@@ -77,6 +77,6 @@ public sealed class RemovePhotoCommandHandlerTests
 
         var act = () => handler.Handle(command, CancellationToken.None);
 
-        await act.Should().ThrowAsync<KeyNotFoundException>();
+        await act.Should().ThrowAsync<InvalidOperationException>();
     }
 }
