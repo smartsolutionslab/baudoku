@@ -45,6 +45,7 @@ RUN dotnet publish Tools/BauDoku.MigrationRunner/BauDoku.MigrationRunner.csproj 
     /p:UseAppHost=false
 
 FROM $RUNTIME_IMAGE AS final
+RUN apk upgrade --no-cache
 WORKDIR /app
 USER $APP_UID
 COPY --from=build /app/publish .

@@ -37,6 +37,7 @@ RUN dotnet publish Services/Documentation/BauDoku.Documentation.Api/BauDoku.Docu
     /p:UseAppHost=false
 
 FROM $RUNTIME_IMAGE AS final
+RUN apk upgrade --no-cache
 WORKDIR /app
 EXPOSE 8080
 RUN mkdir -p /app/uploads/photos /app/uploads/chunks && chown -R $APP_UID:$APP_UID /app/uploads

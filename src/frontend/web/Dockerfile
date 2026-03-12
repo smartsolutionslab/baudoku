@@ -16,6 +16,7 @@ COPY src/frontend/web/ ./web/
 RUN npm run build --workspace=web
 
 FROM nginx:stable-alpine-slim AS final
+RUN apk upgrade --no-cache
 # Remove default config
 RUN rm -rf /usr/share/nginx/html/*
 COPY --from=build /app/web/dist /usr/share/nginx/html
