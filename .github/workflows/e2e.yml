@@ -19,6 +19,7 @@ jobs:
         with:
           ref: development
           fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Check for commits in last 24h
         id: check

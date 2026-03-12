@@ -31,6 +31,7 @@ RUN dotnet publish ApiGateway/BauDoku.ApiGateway/BauDoku.ApiGateway.csproj \
     /p:UseAppHost=false
 
 FROM $RUNTIME_IMAGE AS final
+RUN apk upgrade --no-cache
 WORKDIR /app
 EXPOSE 8080
 USER $APP_UID

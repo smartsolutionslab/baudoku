@@ -25,6 +25,7 @@ RUN dotnet publish Tools/BauDoku.ResourceService/BauDoku.ResourceService.csproj 
     /p:UseAppHost=false
 
 FROM $RUNTIME_IMAGE AS final
+RUN apk upgrade --no-cache
 WORKDIR /app
 EXPOSE 5001
 USER $APP_UID
